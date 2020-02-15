@@ -21,18 +21,22 @@ public final class OneReaderOneWriterBlockingRingBuffer<T> {
         } else {
             newWritePosition++;
         }
-        while (readPosition == newWritePosition) ;
+        while (readPosition == newWritePosition) {
+            Thread.onSpinWait();
+        }
         buffer[writePosition] = element;
         writePosition = newWritePosition;
     }
 
     public T take() {
         int oldReadPosition = readPosition;
-        while (writePosition == oldReadPosition) ;
+        while (writePosition == oldReadPosition) {
+            Thread.onSpinWait();
+        }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
-            readPosition++;
+            readPosition = oldReadPosition + 1;
         }
         return (T) buffer[oldReadPosition];
     }

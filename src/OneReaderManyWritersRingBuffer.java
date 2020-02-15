@@ -27,7 +27,9 @@ public final class OneReaderManyWritersRingBuffer<T> {
 
     public T take() {
         int oldReadPosition = readPosition;
-        while (writePosition == oldReadPosition) ;
+        while (writePosition == oldReadPosition) {
+            Thread.onSpinWait();
+        }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
