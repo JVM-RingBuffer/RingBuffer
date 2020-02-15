@@ -1,8 +1,6 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
-public final class OneReaderManyWritersRingBuffer<T> {
+public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
@@ -10,9 +8,7 @@ public final class OneReaderManyWritersRingBuffer<T> {
     private int readPosition;
     private volatile int writePosition;
 
-    private int newWritePosition;
-
-    public OneReaderManyWritersRingBuffer(int capacity) {
+    public OneReaderManyWritersGarbageCollectedRingBuffer(int capacity) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
@@ -21,30 +17,8 @@ public final class OneReaderManyWritersRingBuffer<T> {
         capacityMinusOne = capacity - 1;
     }
 
-    public OneReaderManyWritersRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
-    }
-
     public int getCapacity() {
         return capacity;
-    }
-
-    public T put() {
-        int writePosition = this.writePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
-        return (T) buffer[writePosition];
-    }
-
-    public void commit() {
-        writePosition = newWritePosition;
     }
 
     public synchronized void put(Object element) {
@@ -68,7 +42,11 @@ public final class OneReaderManyWritersRingBuffer<T> {
         } else {
             readPosition++;
         }
-        return (T) buffer[oldReadPosition];
+        try {
+            return (T) buffer[oldReadPosition];
+        } finally {
+            buffer[oldReadPosition] = null;
+        }
     }
 
     public int size() {

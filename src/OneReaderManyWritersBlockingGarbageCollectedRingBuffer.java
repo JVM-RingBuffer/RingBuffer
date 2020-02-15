@@ -1,18 +1,14 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
-public final class OneReaderManyWritersRingBuffer<T> {
+public final class OneReaderManyWritersBlockingGarbageCollectedRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
 
-    private int readPosition;
+    private volatile int readPosition;
     private volatile int writePosition;
 
-    private int newWritePosition;
-
-    public OneReaderManyWritersRingBuffer(int capacity) {
+    public OneReaderManyWritersBlockingGarbageCollectedRingBuffer(int capacity) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
@@ -21,30 +17,8 @@ public final class OneReaderManyWritersRingBuffer<T> {
         capacityMinusOne = capacity - 1;
     }
 
-    public OneReaderManyWritersRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
-    }
-
     public int getCapacity() {
         return capacity;
-    }
-
-    public T put() {
-        int writePosition = this.writePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
-        return (T) buffer[writePosition];
-    }
-
-    public void commit() {
-        writePosition = newWritePosition;
     }
 
     public synchronized void put(Object element) {
@@ -53,6 +27,9 @@ public final class OneReaderManyWritersRingBuffer<T> {
             newWritePosition = 0;
         } else {
             newWritePosition++;
+        }
+        while (readPosition == newWritePosition) {
+            Thread.onSpinWait();
         }
         buffer[writePosition] = element;
         writePosition = newWritePosition;
@@ -66,13 +43,18 @@ public final class OneReaderManyWritersRingBuffer<T> {
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
-            readPosition++;
+            readPosition = oldReadPosition + 1;
         }
-        return (T) buffer[oldReadPosition];
+        try {
+            return (T) buffer[oldReadPosition];
+        } finally {
+            buffer[oldReadPosition] = null;
+        }
     }
 
     public int size() {
         int writePosition = this.writePosition;
+        int readPosition = this.readPosition;
         if (writePosition > readPosition) {
             return writePosition - readPosition;
         }

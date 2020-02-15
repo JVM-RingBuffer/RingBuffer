@@ -2,27 +2,33 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Supplier;
 
-public final class OneReaderManyWritersRingBuffer<T> {
+public final class ManyReadersOneWriterDiscardingRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
 
-    private int readPosition;
+    private volatile int readPosition;
     private volatile int writePosition;
 
+    private final boolean notPrefilled;
     private int newWritePosition;
 
-    public OneReaderManyWritersRingBuffer(int capacity) {
+    private ManyReadersOneWriterDiscardingRingBuffer(int capacity, boolean notPrefilled) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
         buffer = new Object[capacity];
         this.capacity = capacity;
         capacityMinusOne = capacity - 1;
+        this.notPrefilled = notPrefilled;
     }
 
-    public OneReaderManyWritersRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
+    public ManyReadersOneWriterDiscardingRingBuffer(int capacity) {
+        this(capacity, true);
+    }
+
+    public ManyReadersOneWriterDiscardingRingBuffer(int capacity, Supplier<T> filler) {
+        this(capacity, false);
 
         for (int i = 0; i < capacity; i++) {
             buffer[i] = filler.get();
@@ -47,18 +53,20 @@ public final class OneReaderManyWritersRingBuffer<T> {
         writePosition = newWritePosition;
     }
 
-    public synchronized void put(Object element) {
+    public void put(Object element) {
         int newWritePosition = writePosition;
         if (newWritePosition == capacityMinusOne) {
             newWritePosition = 0;
         } else {
             newWritePosition++;
         }
-        buffer[writePosition] = element;
-        writePosition = newWritePosition;
+        if (readPosition != newWritePosition) {
+            buffer[writePosition] = element;
+            writePosition = newWritePosition;
+        }
     }
 
-    public T take() {
+    public synchronized T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
             Thread.onSpinWait();
@@ -66,13 +74,20 @@ public final class OneReaderManyWritersRingBuffer<T> {
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
-            readPosition++;
+            readPosition = oldReadPosition + 1;
         }
-        return (T) buffer[oldReadPosition];
+        try {
+            return (T) buffer[oldReadPosition];
+        } finally {
+            if (notPrefilled) {
+                buffer[oldReadPosition] = null;
+            }
+        }
     }
 
     public int size() {
         int writePosition = this.writePosition;
+        int readPosition = this.readPosition;
         if (writePosition > readPosition) {
             return writePosition - readPosition;
         }
