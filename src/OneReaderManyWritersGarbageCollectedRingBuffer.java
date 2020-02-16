@@ -49,7 +49,7 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
 
     public int size() {
         int writePosition = this.writePosition;
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

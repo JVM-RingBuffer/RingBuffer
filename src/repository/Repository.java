@@ -1,12 +1,13 @@
 package eu.menzani.ringbuffer.repository;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public final class Repository<T> {
     private final Object[] buffer;
     private final int capacity;
 
-    private int position;
+    private final AtomicInteger position;
 
     public Repository(int capacity, Supplier<T> filler) {
         if (capacity < 2) {
@@ -18,30 +19,30 @@ public final class Repository<T> {
         for (int i = 0; i < capacity; i++) {
             buffer[i] = filler.get();
         }
-        position = capacity;
+        position = new AtomicInteger(capacity);
     }
 
     public int getCapacity() {
         return capacity;
     }
 
-    public void insert(Object element) {
-        buffer[position++] = element;
+    public void add(Object element) {
+        buffer[position.getAndIncrement()] = element;
     }
 
-    public T take() {
-        return (T) buffer[--position];
+    public T remove() {
+        return (T) buffer[position.decrementAndGet()];
     }
 
     public int size() {
-        return position;
+        return position.get();
     }
 
     public boolean isEmpty() {
-        return position == 0;
+        return position.get() == 0;
     }
 
     public boolean isNotEmpty() {
-        return position != 0;
+        return position.get() != 0;
     }
 }

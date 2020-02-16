@@ -43,7 +43,7 @@ public final class OneReaderManyWritersRingBuffer<T> {
         return (T) buffer[writePosition];
     }
 
-    public void commit() {
+    public void endPut() {
         writePosition = newWritePosition;
     }
 
@@ -73,7 +73,7 @@ public final class OneReaderManyWritersRingBuffer<T> {
 
     public int size() {
         int writePosition = this.writePosition;
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

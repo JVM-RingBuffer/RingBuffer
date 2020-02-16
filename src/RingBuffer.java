@@ -51,11 +51,10 @@ public final class RingBuffer<T> {
     }
 
     public T take() {
-        while (writePosition == readPosition) {
-            Thread.onSpinWait();
+        if (writePosition == readPosition) {
+            return null;
         }
         Object element = buffer[readPosition];
-        buffer[readPosition] = null;
         if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
@@ -65,7 +64,7 @@ public final class RingBuffer<T> {
     }
 
     public int size() {
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public final class GarbageCollectedRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
@@ -19,14 +17,6 @@ public final class GarbageCollectedRingBuffer<T> {
         capacityMinusOne = capacity - 1;
     }
 
-    public GarbageCollectedRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
-    }
-
     public int getCapacity() {
         return capacity;
     }
@@ -41,10 +31,11 @@ public final class GarbageCollectedRingBuffer<T> {
     }
 
     public T take() {
-        while (writePosition == readPosition) {
-            Thread.onSpinWait();
+        if (writePosition == readPosition) {
+            return null;
         }
         Object element = buffer[readPosition];
+        buffer[readPosition] = null;
         if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
@@ -54,7 +45,7 @@ public final class GarbageCollectedRingBuffer<T> {
     }
 
     public int size() {
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

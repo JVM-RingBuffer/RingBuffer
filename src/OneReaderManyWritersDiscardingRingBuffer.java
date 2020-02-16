@@ -6,23 +6,25 @@ public final class OneReaderManyWritersDiscardingRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final T dummyElement;
 
     private volatile int readPosition;
     private volatile int writePosition;
 
     private int newWritePosition;
 
-    public OneReaderManyWritersDiscardingRingBuffer(int capacity) {
+    public OneReaderManyWritersDiscardingRingBuffer(int capacity, T dummyElement) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
         buffer = new Object[capacity];
         this.capacity = capacity;
         capacityMinusOne = capacity - 1;
+        this.dummyElement = dummyElement;
     }
 
     public OneReaderManyWritersDiscardingRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
+        this(capacity, filler.get());
 
         for (int i = 0; i < capacity; i++) {
             buffer[i] = filler.get();
@@ -40,10 +42,13 @@ public final class OneReaderManyWritersDiscardingRingBuffer<T> {
         } else {
             newWritePosition = writePosition + 1;
         }
+        if (readPosition == newWritePosition) {
+            return dummyElement;
+        }
         return (T) buffer[writePosition];
     }
 
-    public void commit() {
+    public void endPut() {
         writePosition = newWritePosition;
     }
 
@@ -76,7 +81,7 @@ public final class OneReaderManyWritersDiscardingRingBuffer<T> {
     public int size() {
         int writePosition = this.writePosition;
         int readPosition = this.readPosition;
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

@@ -48,7 +48,7 @@ public final class OneReaderOneWriterDiscardingRingBuffer<T> {
         return (T) buffer[writePosition];
     }
 
-    public void commit() {
+    public void endPut() {
         writePosition = newWritePosition;
     }
 
@@ -81,7 +81,7 @@ public final class OneReaderOneWriterDiscardingRingBuffer<T> {
     public int size() {
         int writePosition = this.writePosition;
         int readPosition = this.readPosition;
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

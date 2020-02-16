@@ -6,11 +6,11 @@ public final class ManyReadersOneWriterBlockingRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final boolean prefilled;
 
     private volatile int readPosition;
     private volatile int writePosition;
 
-    private final boolean prefilled;
     private int newWritePosition;
 
     private ManyReadersOneWriterBlockingRingBuffer(int capacity, boolean prefilled) {
@@ -49,7 +49,7 @@ public final class ManyReadersOneWriterBlockingRingBuffer<T> {
         return (T) buffer[writePosition];
     }
 
-    public void commit() {
+    public void endPut() {
         writePosition = newWritePosition;
     }
 
@@ -88,7 +88,7 @@ public final class ManyReadersOneWriterBlockingRingBuffer<T> {
     public int size() {
         int writePosition = this.writePosition;
         int readPosition = this.readPosition;
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);

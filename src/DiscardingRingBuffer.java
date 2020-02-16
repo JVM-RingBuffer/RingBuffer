@@ -59,20 +59,20 @@ public final class DiscardingRingBuffer<T> {
     }
 
     public T take() {
-        int oldReadPosition = readPosition;
-        while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+        if (writePosition == readPosition) {
+            return null;
         }
-        if (oldReadPosition == capacityMinusOne) {
+        Object element = buffer[readPosition];
+        if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
             readPosition++;
         }
-        return (T) buffer[oldReadPosition];
+        return (T) element;
     }
 
     public int size() {
-        if (writePosition > readPosition) {
+        if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);
