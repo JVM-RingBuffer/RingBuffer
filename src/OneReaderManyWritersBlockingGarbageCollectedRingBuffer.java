@@ -45,11 +45,9 @@ public final class OneReaderManyWritersBlockingGarbageCollectedRingBuffer<T> {
         } else {
             readPosition = oldReadPosition + 1;
         }
-        try {
-            return (T) buffer[oldReadPosition];
-        } finally {
-            buffer[oldReadPosition] = null;
-        }
+        Object element = buffer[oldReadPosition];
+        buffer[oldReadPosition] = null;
+        return (T) element;
     }
 
     public int size() {

@@ -42,11 +42,9 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
         } else {
             readPosition++;
         }
-        try {
-            return (T) buffer[oldReadPosition];
-        } finally {
-            buffer[oldReadPosition] = null;
-        }
+        Object element = buffer[oldReadPosition];
+        buffer[oldReadPosition] = null;
+        return (T) element;
     }
 
     public int size() {

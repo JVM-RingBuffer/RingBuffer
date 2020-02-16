@@ -10,25 +10,25 @@ public final class ManyReadersOneWriterDiscardingRingBuffer<T> {
     private volatile int readPosition;
     private volatile int writePosition;
 
-    private final boolean notPrefilled;
+    private final boolean prefilled;
     private int newWritePosition;
 
-    private ManyReadersOneWriterDiscardingRingBuffer(int capacity, boolean notPrefilled) {
+    private ManyReadersOneWriterDiscardingRingBuffer(int capacity, boolean prefilled) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
         buffer = new Object[capacity];
         this.capacity = capacity;
         capacityMinusOne = capacity - 1;
-        this.notPrefilled = notPrefilled;
+        this.prefilled = prefilled;
     }
 
     public ManyReadersOneWriterDiscardingRingBuffer(int capacity) {
-        this(capacity, true);
+        this(capacity, false);
     }
 
     public ManyReadersOneWriterDiscardingRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity, false);
+        this(capacity, true);
 
         for (int i = 0; i < capacity; i++) {
             buffer[i] = filler.get();
@@ -76,13 +76,12 @@ public final class ManyReadersOneWriterDiscardingRingBuffer<T> {
         } else {
             readPosition = oldReadPosition + 1;
         }
-        try {
+        if (prefilled) {
             return (T) buffer[oldReadPosition];
-        } finally {
-            if (notPrefilled) {
-                buffer[oldReadPosition] = null;
-            }
         }
+        Object element = buffer[oldReadPosition];
+        buffer[oldReadPosition] = null;
+        return (T) element;
     }
 
     public int size() {

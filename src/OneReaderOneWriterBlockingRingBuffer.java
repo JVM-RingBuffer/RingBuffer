@@ -40,6 +40,9 @@ public final class OneReaderOneWriterBlockingRingBuffer<T> {
         } else {
             newWritePosition = writePosition + 1;
         }
+        while (readPosition == newWritePosition) {
+            Thread.onSpinWait();
+        }
         return (T) buffer[writePosition];
     }
 
