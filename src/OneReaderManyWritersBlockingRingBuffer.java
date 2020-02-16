@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Supplier;
 
-public final class OneReaderManyWritersBlockingRingBuffer<T> {
+public class OneReaderManyWritersBlockingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
@@ -29,10 +29,12 @@ public final class OneReaderManyWritersBlockingRingBuffer<T> {
         }
     }
 
+    @Override
     public int getCapacity() {
         return capacity;
     }
 
+    @Override
     public T put() {
         int writePosition = this.writePosition;
         if (writePosition == capacityMinusOne) {
@@ -40,14 +42,19 @@ public final class OneReaderManyWritersBlockingRingBuffer<T> {
         } else {
             newWritePosition = writePosition + 1;
         }
+        while (readPosition == newWritePosition) {
+            Thread.onSpinWait();
+        }
         return (T) buffer[writePosition];
     }
 
+    @Override
     public void endPut() {
         writePosition = newWritePosition;
     }
 
-    public synchronized void put(Object element) {
+    @Override
+    public synchronized void put(T element) {
         int newWritePosition = writePosition;
         if (newWritePosition == capacityMinusOne) {
             newWritePosition = 0;
@@ -61,6 +68,7 @@ public final class OneReaderManyWritersBlockingRingBuffer<T> {
         writePosition = newWritePosition;
     }
 
+    @Override
     public T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
@@ -74,6 +82,7 @@ public final class OneReaderManyWritersBlockingRingBuffer<T> {
         return (T) buffer[oldReadPosition];
     }
 
+    @Override
     public int size() {
         int writePosition = this.writePosition;
         int readPosition = this.readPosition;
@@ -83,10 +92,12 @@ public final class OneReaderManyWritersBlockingRingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
 
+    @Override
     public boolean isNotEmpty() {
         return writePosition != readPosition;
     }

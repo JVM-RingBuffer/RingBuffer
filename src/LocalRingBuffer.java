@@ -1,6 +1,8 @@
 package eu.menzani.ringbuffer;
 
-public final class GarbageCollectedRingBuffer<T> {
+import java.util.function.Supplier;
+
+public class LocalRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
@@ -8,7 +10,7 @@ public final class GarbageCollectedRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    public GarbageCollectedRingBuffer(int capacity) {
+    public LocalRingBuffer(int capacity) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
@@ -17,11 +19,36 @@ public final class GarbageCollectedRingBuffer<T> {
         capacityMinusOne = capacity - 1;
     }
 
+    public LocalRingBuffer(int capacity, Supplier<T> filler) {
+        this(capacity);
+
+        for (int i = 0; i < capacity; i++) {
+            buffer[i] = filler.get();
+        }
+    }
+
+    @Override
     public int getCapacity() {
         return capacity;
     }
 
-    public void put(Object element) {
+    @Override
+    public T put() {
+        Object element = buffer[writePosition];
+        if (writePosition == capacityMinusOne) {
+            writePosition = 0;
+        } else {
+            writePosition++;
+        }
+        return (T) element;
+    }
+
+    @Override
+    public void endPut() {
+    }
+
+    @Override
+    public void put(T element) {
         buffer[writePosition] = element;
         if (writePosition == capacityMinusOne) {
             writePosition = 0;
@@ -30,12 +57,12 @@ public final class GarbageCollectedRingBuffer<T> {
         }
     }
 
+    @Override
     public T take() {
         if (writePosition == readPosition) {
             return null;
         }
         Object element = buffer[readPosition];
-        buffer[readPosition] = null;
         if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
@@ -44,6 +71,7 @@ public final class GarbageCollectedRingBuffer<T> {
         return (T) element;
     }
 
+    @Override
     public int size() {
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
@@ -51,10 +79,12 @@ public final class GarbageCollectedRingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
 
+    @Override
     public boolean isNotEmpty() {
         return writePosition != readPosition;
     }

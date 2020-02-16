@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer;
 
-public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
+public class OneReaderManyWritersGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
@@ -17,11 +17,13 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
         capacityMinusOne = capacity - 1;
     }
 
+    @Override
     public int getCapacity() {
         return capacity;
     }
 
-    public synchronized void put(Object element) {
+    @Override
+    public synchronized void put(T element) {
         int newWritePosition = writePosition;
         if (newWritePosition == capacityMinusOne) {
             newWritePosition = 0;
@@ -32,6 +34,7 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
         writePosition = newWritePosition;
     }
 
+    @Override
     public T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
@@ -47,6 +50,7 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
         return (T) element;
     }
 
+    @Override
     public int size() {
         int writePosition = this.writePosition;
         if (writePosition >= readPosition) {
@@ -55,10 +59,12 @@ public final class OneReaderManyWritersGarbageCollectedRingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
 
+    @Override
     public boolean isNotEmpty() {
         return writePosition != readPosition;
     }

@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Supplier;
 
-public final class DiscardingRingBuffer<T> {
+public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
@@ -11,7 +11,7 @@ public final class DiscardingRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    public DiscardingRingBuffer(int capacity, T dummyElement) {
+    public LocalDiscardingRingBuffer(int capacity, T dummyElement) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
@@ -21,7 +21,7 @@ public final class DiscardingRingBuffer<T> {
         this.dummyElement = dummyElement;
     }
 
-    public DiscardingRingBuffer(int capacity, Supplier<T> filler) {
+    public LocalDiscardingRingBuffer(int capacity, Supplier<T> filler) {
         this(capacity, filler.get());
 
         for (int i = 0; i < capacity; i++) {
@@ -29,10 +29,12 @@ public final class DiscardingRingBuffer<T> {
         }
     }
 
+    @Override
     public int getCapacity() {
         return capacity;
     }
 
+    @Override
     public T put() {
         int oldWritePosition = writePosition;
         if (oldWritePosition == capacityMinusOne) {
@@ -46,7 +48,12 @@ public final class DiscardingRingBuffer<T> {
         return (T) buffer[oldWritePosition];
     }
 
-    public void put(Object element) {
+    @Override
+    public void endPut() {
+    }
+
+    @Override
+    public void put(T element) {
         int oldWritePosition = writePosition;
         if (oldWritePosition == capacityMinusOne) {
             writePosition = 0;
@@ -58,6 +65,7 @@ public final class DiscardingRingBuffer<T> {
         }
     }
 
+    @Override
     public T take() {
         if (writePosition == readPosition) {
             return null;
@@ -71,6 +79,7 @@ public final class DiscardingRingBuffer<T> {
         return (T) element;
     }
 
+    @Override
     public int size() {
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
@@ -78,10 +87,12 @@ public final class DiscardingRingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
 
+    @Override
     public boolean isNotEmpty() {
         return writePosition != readPosition;
     }

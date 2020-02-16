@@ -1,14 +1,14 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderOneWriterBlockingGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
+public class LocalDiscardingGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
 
-    private volatile int readPosition;
-    private volatile int writePosition;
+    private int readPosition;
+    private int writePosition;
 
-    public OneReaderOneWriterBlockingGarbageCollectedRingBuffer(int capacity) {
+    public LocalDiscardingGarbageCollectedRingBuffer(int capacity) {
         if (capacity < 2) {
             throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
         }
@@ -24,39 +24,34 @@ public class OneReaderOneWriterBlockingGarbageCollectedRingBuffer<T> implements 
 
     @Override
     public void put(T element) {
-        int newWritePosition = writePosition;
-        if (newWritePosition == capacityMinusOne) {
-            newWritePosition = 0;
+        int oldWritePosition = writePosition;
+        if (oldWritePosition == capacityMinusOne) {
+            writePosition = 0;
         } else {
-            newWritePosition++;
+            writePosition++;
         }
-        while (readPosition == newWritePosition) {
-            Thread.onSpinWait();
+        if (readPosition != writePosition) {
+            buffer[oldWritePosition] = element;
         }
-        buffer[writePosition] = element;
-        writePosition = newWritePosition;
     }
 
     @Override
     public T take() {
-        int oldReadPosition = readPosition;
-        while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+        if (writePosition == readPosition) {
+            return null;
         }
-        if (oldReadPosition == capacityMinusOne) {
+        Object element = buffer[readPosition];
+        buffer[readPosition] = null;
+        if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {
-            readPosition = oldReadPosition + 1;
+            readPosition++;
         }
-        Object element = buffer[oldReadPosition];
-        buffer[oldReadPosition] = null;
         return (T) element;
     }
 
     @Override
     public int size() {
-        int writePosition = this.writePosition;
-        int readPosition = this.readPosition;
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }

@@ -1,9 +1,11 @@
 package eu.menzani.ringbuffer;
 
-public interface RingBuffer<T> {
+public interface PrefilledRingBuffer<T> {
     int getCapacity();
 
-    void put(T element);
+    T put();
+
+    void endPut();
 
     T take();
 
