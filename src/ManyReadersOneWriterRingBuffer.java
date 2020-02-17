@@ -1,11 +1,10 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
     private final boolean prefilled;
 
     private int readPosition;
@@ -13,26 +12,12 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
 
     private int newWritePosition;
 
-    private ManyReadersOneWriterRingBuffer(int capacity, boolean prefilled) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
-        this.prefilled = prefilled;
-    }
-
-    public ManyReadersOneWriterRingBuffer(int capacity) {
-        this(capacity, false);
-    }
-
-    public ManyReadersOneWriterRingBuffer(int capacity, Supplier<? extends T> filler) {
-        this(capacity, true);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+    public ManyReadersOneWriterRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newBuffer();
+        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+        prefilled = options.isPrefilled();
     }
 
     @Override
@@ -72,7 +57,7 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
     public synchronized T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+            readBusyWaitStrategy.tick();
         }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;

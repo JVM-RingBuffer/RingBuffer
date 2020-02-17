@@ -1,32 +1,19 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
     private final T dummyElement;
 
     private int readPosition;
     private int writePosition;
 
-    public LocalDiscardingRingBuffer(int capacity, T dummyElement) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
-        this.dummyElement = dummyElement;
-    }
-
-    public LocalDiscardingRingBuffer(int capacity, Supplier<? extends T> filler) {
-        this(capacity, filler.get());
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+    public LocalDiscardingRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newBuffer();
+        dummyElement = options.getDummyElement();
     }
 
     @Override

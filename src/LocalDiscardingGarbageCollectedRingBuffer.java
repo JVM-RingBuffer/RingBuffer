@@ -1,20 +1,17 @@
 package eu.menzani.ringbuffer;
 
 public class LocalDiscardingGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
 
     private int readPosition;
     private int writePosition;
 
-    public LocalDiscardingGarbageCollectedRingBuffer(int capacity) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
+    public LocalDiscardingGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newEmptyBuffer();
     }
 
     @Override

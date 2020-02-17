@@ -3,8 +3,8 @@ package eu.menzani.ringbuffer;
 public class OneReaderManyWritersDiscardingGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
     private final OneReaderOneWriterDiscardingGarbageCollectedRingBuffer delegate;
 
-    public OneReaderManyWritersDiscardingGarbageCollectedRingBuffer(int capacity) {
-        delegate = new OneReaderOneWriterDiscardingGarbageCollectedRingBuffer(capacity);
+    public OneReaderManyWritersDiscardingGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+        delegate = new OneReaderOneWriterDiscardingGarbageCollectedRingBuffer<>(options);
     }
 
     @Override

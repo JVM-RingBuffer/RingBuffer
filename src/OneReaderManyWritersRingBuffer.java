@@ -1,16 +1,10 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
     private final OneReaderOneWriterRingBuffer delegate;
 
-    public OneReaderManyWritersRingBuffer(int capacity) {
-        delegate = new OneReaderOneWriterRingBuffer(capacity);
-    }
-
-    public OneReaderManyWritersRingBuffer(int capacity, Supplier<? extends T> filler) {
-        delegate = new OneReaderOneWriterRingBuffer(capacity, filler);
+    public OneReaderManyWritersRingBuffer(RingBufferOptions<T> options) {
+        delegate = new OneReaderOneWriterRingBuffer<>(options);
     }
 
     @Override

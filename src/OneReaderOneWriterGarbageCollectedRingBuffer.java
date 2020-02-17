@@ -1,20 +1,19 @@
 package eu.menzani.ringbuffer;
 
 public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
     private volatile int writePosition;
 
-    public OneReaderOneWriterGarbageCollectedRingBuffer(int capacity) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
+    public OneReaderOneWriterGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newEmptyBuffer();
+        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
     }
 
     @Override
@@ -38,7 +37,7 @@ public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuff
     public T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+            readBusyWaitStrategy.tick();
         }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;

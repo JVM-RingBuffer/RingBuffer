@@ -1,32 +1,23 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
     private volatile int readPosition;
     private volatile int writePosition;
 
     private int newWritePosition;
 
-    public OneReaderOneWriterBlockingRingBuffer(int capacity) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
-    }
-
-    public OneReaderOneWriterBlockingRingBuffer(int capacity, Supplier<? extends T> filler) {
-        this(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+    public OneReaderOneWriterBlockingRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newBuffer();
+        writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
+        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
     }
 
     @Override
@@ -43,7 +34,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
             newWritePosition = writePosition + 1;
         }
         while (readPosition == newWritePosition) {
-            Thread.onSpinWait();
+            writeBusyWaitStrategy.tick();
         }
         return (T) buffer[writePosition];
     }
@@ -62,7 +53,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
             newWritePosition++;
         }
         while (readPosition == newWritePosition) {
-            Thread.onSpinWait();
+            writeBusyWaitStrategy.tick();
         }
         buffer[writePosition] = element;
         writePosition = newWritePosition;
@@ -72,7 +63,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
     public T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+            readBusyWaitStrategy.tick();
         }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;

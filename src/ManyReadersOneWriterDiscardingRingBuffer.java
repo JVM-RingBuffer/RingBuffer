@@ -1,11 +1,10 @@
 package eu.menzani.ringbuffer;
 
-import java.util.function.Supplier;
-
 public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
-    private final Object[] buffer;
     private final int capacity;
     private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
     private final boolean prefilled;
 
@@ -14,27 +13,13 @@ public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T
 
     private int newWritePosition;
 
-    private ManyReadersOneWriterDiscardingRingBuffer(int capacity, T dummyElement, boolean prefilled) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
-        this.dummyElement = dummyElement;
-        this.prefilled = prefilled;
-    }
-
-    public ManyReadersOneWriterDiscardingRingBuffer(int capacity, T dummyElement) {
-        this(capacity, dummyElement, false);
-    }
-
-    public ManyReadersOneWriterDiscardingRingBuffer(int capacity, Supplier<? extends T> filler) {
-        this(capacity, filler.get(), true);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+    public ManyReadersOneWriterDiscardingRingBuffer(RingBufferOptions<T> options) {
+        capacity = options.getCapacity();
+        capacityMinusOne = options.getCapacityMinusOne();
+        buffer = options.newBuffer();
+        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+        dummyElement = options.getDummyElement();
+        prefilled = options.isPrefilled();
     }
 
     @Override
@@ -79,7 +64,7 @@ public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T
     public synchronized T take() {
         int oldReadPosition = readPosition;
         while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
+            readBusyWaitStrategy.tick();
         }
         if (oldReadPosition == capacityMinusOne) {
             readPosition = 0;
