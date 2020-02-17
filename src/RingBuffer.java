@@ -1,15 +1,5 @@
 package eu.menzani.ringbuffer;
 
-public interface RingBuffer<T> {
-    int getCapacity();
-
+public interface RingBuffer<T> extends AbstractRingBuffer<T> {
     void put(T element);
-
-    T take();
-
-    int size();
-
-    boolean isEmpty();
-
-    boolean isNotEmpty();
 }

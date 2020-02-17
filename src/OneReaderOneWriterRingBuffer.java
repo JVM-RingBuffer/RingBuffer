@@ -46,7 +46,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
     }
 
     @Override
-    public void endPut() {
+    public void commit() {
         writePosition = newWritePosition;
     }
 
@@ -88,10 +88,5 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
     }
 }

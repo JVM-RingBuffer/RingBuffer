@@ -49,7 +49,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
     }
 
     @Override
-    public void endPut() {
+    public void commit() {
         writePosition = newWritePosition;
     }
 
@@ -95,10 +95,5 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
     }
 }

@@ -49,7 +49,7 @@ public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRin
     }
 
     @Override
-    public void endPut() {
+    public void commit() {
     }
 
     @Override
@@ -90,10 +90,5 @@ public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRin
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
     }
 }

@@ -63,9 +63,4 @@ public class OneReaderManyWritersGarbageCollectedRingBuffer<T> implements RingBu
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
-    }
 }

@@ -67,9 +67,4 @@ public class OneReaderManyWritersBlockingGarbageCollectedRingBuffer<T> implement
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
-    }
 }

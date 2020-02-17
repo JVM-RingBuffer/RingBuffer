@@ -62,9 +62,4 @@ public class LocalDiscardingGarbageCollectedRingBuffer<T> implements RingBuffer<
     public boolean isEmpty() {
         return writePosition == readPosition;
     }
-
-    @Override
-    public boolean isNotEmpty() {
-        return writePosition != readPosition;
-    }
 }
