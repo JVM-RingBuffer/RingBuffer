@@ -21,7 +21,7 @@ public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRin
         this.dummyElement = dummyElement;
     }
 
-    public LocalDiscardingRingBuffer(int capacity, Supplier<T> filler) {
+    public LocalDiscardingRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity, filler.get());
 
         for (int i = 0; i < capacity; i++) {

@@ -19,7 +19,7 @@ public class LocalRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T>
         capacityMinusOne = capacity - 1;
     }
 
-    public LocalRingBuffer(int capacity, Supplier<T> filler) {
+    public LocalRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity);
 
         for (int i = 0; i < capacity; i++) {

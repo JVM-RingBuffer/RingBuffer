@@ -29,7 +29,7 @@ public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T
         this(capacity, dummyElement, false);
     }
 
-    public ManyReadersOneWriterDiscardingRingBuffer(int capacity, Supplier<T> filler) {
+    public ManyReadersOneWriterDiscardingRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity, filler.get(), true);
 
         for (int i = 0; i < capacity; i++) {

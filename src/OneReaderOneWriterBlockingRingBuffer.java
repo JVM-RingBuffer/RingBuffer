@@ -21,7 +21,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
         capacityMinusOne = capacity - 1;
     }
 
-    public OneReaderOneWriterBlockingRingBuffer(int capacity, Supplier<T> filler) {
+    public OneReaderOneWriterBlockingRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity);
 
         for (int i = 0; i < capacity; i++) {

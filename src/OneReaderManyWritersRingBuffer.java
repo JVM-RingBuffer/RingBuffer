@@ -3,90 +3,48 @@ package eu.menzani.ringbuffer;
 import java.util.function.Supplier;
 
 public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
-    private final Object[] buffer;
-    private final int capacity;
-    private final int capacityMinusOne;
-
-    private int readPosition;
-    private volatile int writePosition;
-
-    private int newWritePosition;
+    private final OneReaderOneWriterRingBuffer delegate;
 
     public OneReaderManyWritersRingBuffer(int capacity) {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
-        buffer = new Object[capacity];
-        this.capacity = capacity;
-        capacityMinusOne = capacity - 1;
+        delegate = new OneReaderOneWriterRingBuffer(capacity);
     }
 
-    public OneReaderManyWritersRingBuffer(int capacity, Supplier<T> filler) {
-        this(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+    public OneReaderManyWritersRingBuffer(int capacity, Supplier<? extends T> filler) {
+        delegate = new OneReaderOneWriterRingBuffer(capacity, filler);
     }
 
     @Override
     public int getCapacity() {
-        return capacity;
+        return delegate.getCapacity();
     }
 
     @Override
     public T put() {
-        int writePosition = this.writePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
-        return (T) buffer[writePosition];
+        return (T) delegate.put();
     }
 
     @Override
     public void commit() {
-        writePosition = newWritePosition;
+        delegate.commit();
     }
 
     @Override
     public synchronized void put(T element) {
-        int newWritePosition = writePosition;
-        if (newWritePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition++;
-        }
-        buffer[writePosition] = element;
-        writePosition = newWritePosition;
+        delegate.put(element);
     }
 
     @Override
     public T take() {
-        int oldReadPosition = readPosition;
-        while (writePosition == oldReadPosition) {
-            Thread.onSpinWait();
-        }
-        if (oldReadPosition == capacityMinusOne) {
-            readPosition = 0;
-        } else {
-            readPosition++;
-        }
-        return (T) buffer[oldReadPosition];
+        return (T) delegate.take();
     }
 
     @Override
     public int size() {
-        int writePosition = this.writePosition;
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
-        }
-        return capacity - (readPosition - writePosition);
+        return delegate.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return writePosition == readPosition;
+        return delegate.isEmpty();
     }
 }

@@ -21,7 +21,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         capacityMinusOne = capacity - 1;
     }
 
-    public OneReaderOneWriterRingBuffer(int capacity, Supplier<T> filler) {
+    public OneReaderOneWriterRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity);
 
         for (int i = 0; i < capacity; i++) {

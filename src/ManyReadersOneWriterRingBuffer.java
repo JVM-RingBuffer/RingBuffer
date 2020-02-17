@@ -27,7 +27,7 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
         this(capacity, false);
     }
 
-    public ManyReadersOneWriterRingBuffer(int capacity, Supplier<T> filler) {
+    public ManyReadersOneWriterRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity, true);
 
         for (int i = 0; i < capacity; i++) {

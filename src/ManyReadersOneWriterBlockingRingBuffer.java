@@ -27,7 +27,7 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
         this(capacity, false);
     }
 
-    public ManyReadersOneWriterBlockingRingBuffer(int capacity, Supplier<T> filler) {
+    public ManyReadersOneWriterBlockingRingBuffer(int capacity, Supplier<? extends T> filler) {
         this(capacity, true);
 
         for (int i = 0; i < capacity; i++) {
