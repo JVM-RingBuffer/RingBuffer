@@ -19,7 +19,7 @@ public class RingBufferOptions<T> {
         return options;
     }
 
-    public static <T> RingBufferOptions<T> prefillBuffer(int capacity, Supplier<? extends T> filler) {
+    public static <T> RingBufferOptions<T> prefilledBuffer(int capacity, Supplier<? extends T> filler) {
         RingBufferOptions<T> options = new RingBufferOptions<>();
         options.capacity = capacity;
         options.filler = filler;

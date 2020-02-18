@@ -71,10 +71,11 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
             while (readPosition == newWritePosition) {
                 writeBusyWaitStrategy.tick();
             }
-        } else if (readPosition != newWritePosition) {
-            buffer[writePosition] = element;
-            writePosition = newWritePosition;
+        } else if (readPosition == newWritePosition) {
+            return;
         }
+        buffer[writePosition] = element;
+        writePosition = newWritePosition;
     }
 
     @Override
