@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.wait;
 
 public class YieldBusyWaitStrategy extends CompoundBusyWaitStrategy {
     public YieldBusyWaitStrategy() {

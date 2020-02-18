@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.wait;
 
 public abstract class CompoundBusyWaitStrategy implements BusyWaitStrategy {
     private final BusyWaitStrategy initialStrategy;

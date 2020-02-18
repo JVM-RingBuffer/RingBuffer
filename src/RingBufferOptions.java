@@ -1,5 +1,8 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
+
 import java.util.function.Supplier;
 
 public class RingBufferOptions<T> {

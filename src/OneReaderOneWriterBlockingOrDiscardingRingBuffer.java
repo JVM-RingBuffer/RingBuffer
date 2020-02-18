@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+
 class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends AbstractRingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final boolean blocking;

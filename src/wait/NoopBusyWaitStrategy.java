@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.wait;
 
 public class NoopBusyWaitStrategy implements BusyWaitStrategy {
     @Override
