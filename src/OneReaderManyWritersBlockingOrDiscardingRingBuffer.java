@@ -1,10 +1,10 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderManyWritersBlockingRingBuffer<T> implements RingBuffer<T> {
-    private final OneReaderOneWriterBlockingRingBuffer delegate;
+class OneReaderManyWritersBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
+    private final OneReaderOneWriterBlockingOrDiscardingRingBuffer delegate;
 
-    public OneReaderManyWritersBlockingRingBuffer(RingBufferOptions<?> options) {
-        delegate = new OneReaderOneWriterBlockingRingBuffer<>(options);
+    OneReaderManyWritersBlockingOrDiscardingRingBuffer(OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> delegate) {
+        this.delegate = delegate;
     }
 
     @Override

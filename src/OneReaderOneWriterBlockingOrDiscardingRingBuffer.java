@@ -1,18 +1,35 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderOneWriterBlockingRingBuffer<T> extends AbstractRingBuffer<T> {
-    private final BusyWaitStrategy writeBusyWaitStrategy;
+class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends AbstractRingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
+    private final boolean blocking;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+    private final T dummyElement;
 
     private volatile int readPosition;
     private volatile int writePosition;
 
     private int newWritePosition;
 
-    public OneReaderOneWriterBlockingRingBuffer(RingBufferOptions<?> options) {
+    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> blocking(RingBufferOptions<?> options) {
+        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, true);
+    }
+
+    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> discarding(RingBufferOptions<T> options) {
+        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, false);
+    }
+
+    private OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferOptions<?> options, boolean blocking) {
         super(options);
-        writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+        this.blocking = blocking;
+        if (blocking) {
+            writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
+            dummyElement = null;
+        } else {
+            writeBusyWaitStrategy = null;
+            dummyElement = ((RingBufferOptions<T>) options).getDummyElement();
+        }
     }
 
     @Override
@@ -23,9 +40,13 @@ public class OneReaderOneWriterBlockingRingBuffer<T> extends AbstractRingBuffer<
         } else {
             newWritePosition = writePosition + 1;
         }
-        writeBusyWaitStrategy.reset();
-        while (readPosition == newWritePosition) {
-            writeBusyWaitStrategy.tick();
+        if (blocking) {
+            writeBusyWaitStrategy.reset();
+            while (readPosition == newWritePosition) {
+                writeBusyWaitStrategy.tick();
+            }
+        } else if (readPosition == newWritePosition) {
+            return dummyElement;
         }
         return (T) buffer[writePosition];
     }
@@ -43,12 +64,15 @@ public class OneReaderOneWriterBlockingRingBuffer<T> extends AbstractRingBuffer<
         } else {
             newWritePosition++;
         }
-        writeBusyWaitStrategy.reset();
-        while (readPosition == newWritePosition) {
-            writeBusyWaitStrategy.tick();
+        if (blocking) {
+            writeBusyWaitStrategy.reset();
+            while (readPosition == newWritePosition) {
+                writeBusyWaitStrategy.tick();
+            }
+        } else if (readPosition != newWritePosition) {
+            buffer[writePosition] = element;
+            writePosition = newWritePosition;
         }
-        buffer[writePosition] = element;
-        writePosition = newWritePosition;
     }
 
     @Override

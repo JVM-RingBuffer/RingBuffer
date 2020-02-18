@@ -1,6 +1,14 @@
 package eu.menzani.ringbuffer;
 
 public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T> {
+    public static <T> RingBuffer<T> blocking(RingBufferOptions<?> options) {
+        return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(options));
+    }
+
+    public static <T> RingBuffer<T> discarding(RingBufferOptions<T> options) {
+        return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(options));
+    }
+
     private final OneReaderOneWriterRingBuffer delegate;
 
     public ManyReadersOneWriterRingBuffer(RingBufferOptions<?> options) {

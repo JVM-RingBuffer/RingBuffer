@@ -1,6 +1,14 @@
 package eu.menzani.ringbuffer;
 
 public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
+    public static <T> RingBuffer<T> blocking(RingBufferOptions<?> options) {
+        return OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(options);
+    }
+
+    public static <T> RingBuffer<T> discarding(RingBufferOptions<T> options) {
+        return OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(options);
+    }
+
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -72,6 +80,14 @@ public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    /**
+     * Must be called from the reader thread.
+     */
+    @Override
+    public boolean isEmpty() {
+        return writePosition == readPosition;
+    }
+
     // Used by ManyReadersOneWriterRingBuffer
     int size(Object monitor) {
         int writePosition = this.writePosition;
@@ -83,14 +99,6 @@ public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);
-    }
-
-    /**
-     * Must be called from the reader thread.
-     */
-    @Override
-    public boolean isEmpty() {
-        return writePosition == readPosition;
     }
 
     // Used by ManyReadersOneWriterRingBuffer
