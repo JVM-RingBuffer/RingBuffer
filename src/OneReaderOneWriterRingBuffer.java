@@ -84,11 +84,33 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
+    // Used by ManyReadersOneWriterRingBuffer
+    int size(Object monitor) {
+        int writePosition = this.writePosition;
+        int readPosition;
+        synchronized (monitor) {
+            readPosition = this.readPosition;
+        }
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
     /**
      * Must be called from the reader thread.
      */
     @Override
     public boolean isEmpty() {
+        return writePosition == readPosition;
+    }
+
+    // Used by ManyReadersOneWriterRingBuffer
+    boolean isEmpty(Object monitor) {
+        int readPosition;
+        synchronized (monitor) {
+            readPosition = this.readPosition;
+        }
         return writePosition == readPosition;
     }
 }
