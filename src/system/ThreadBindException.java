@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.threadbind;
+package eu.menzani.ringbuffer.system;
 
 public class ThreadBindException extends Exception {
     private final int errorCode;

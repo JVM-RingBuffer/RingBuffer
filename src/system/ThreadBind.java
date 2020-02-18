@@ -1,10 +1,13 @@
-package eu.menzani.ringbuffer.threadbind;
+package eu.menzani.ringbuffer.system;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Currently requires Linux; tested on CentOS 7 only.
+ */
 public class ThreadBind {
     private static final String libraryName = "libthreadbind.so";
 

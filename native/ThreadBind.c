@@ -5,7 +5,7 @@
 #include <errno.h>
 #include "ThreadBind.h"
 
-JNIEXPORT int JNICALL Java_eu_menzani_ringbuffer_threadbind_ThreadBind_bindCurrentThread(JNIEnv * env, jclass clazz, int cpu)
+JNIEXPORT int JNICALL Java_eu_menzani_ringbuffer_system_ThreadBind_bindCurrentThread(JNIEnv * env, jclass clazz, int cpu)
 {
     cpu_set_t mask;
     CPU_ZERO(&mask);
