@@ -1,2 +1,2 @@
-.idea/
-RingBuffer.iml
+.idea/*
+!.idea/modules.xml
