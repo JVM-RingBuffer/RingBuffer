@@ -6,20 +6,20 @@ import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 import java.util.function.Supplier;
 
 public class RingBufferOptions<T> {
-    public static RingBufferOptions<?> empty(int capacity) {
+    public static RingBufferOptions<?> emptyBuffer(int capacity) {
         RingBufferOptions<?> options = new RingBufferOptions<>();
         options.capacity = capacity;
         return options;
     }
 
-    public static <T> RingBufferOptions<T> empty(int capacity, T dummyElement) {
+    public static <T> RingBufferOptions<T> emptyBuffer(int capacity, T dummyElement) {
         RingBufferOptions<T> options = new RingBufferOptions<>();
         options.capacity = capacity;
         options.dummyElement = dummyElement;
         return options;
     }
 
-    public static <T> RingBufferOptions<T> prefilled(int capacity, Supplier<? extends T> filler) {
+    public static <T> RingBufferOptions<T> prefillBuffer(int capacity, Supplier<? extends T> filler) {
         RingBufferOptions<T> options = new RingBufferOptions<>();
         options.capacity = capacity;
         options.filler = filler;

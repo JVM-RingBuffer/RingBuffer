@@ -11,6 +11,8 @@ public interface RingBuffer<T> {
 
     T take();
 
+    boolean contains(T element);
+
     int size();
 
     boolean isEmpty();

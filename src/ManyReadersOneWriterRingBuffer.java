@@ -41,12 +41,26 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public boolean contains(T element) {
+        return delegate.contains(getReadPosition(), delegate.getWritePosition(), element);
+    }
+
+    @Override
     public int size() {
-        return delegate.size(this);
+        return delegate.size(getReadPosition(), delegate.getWritePosition());
     }
 
     @Override
     public boolean isEmpty() {
-        return delegate.isEmpty(this);
+        return delegate.isEmpty(getReadPosition(), delegate.getWritePosition());
+    }
+
+    @Override
+    public String toString() {
+        return delegate.toString(getReadPosition(), delegate.getWritePosition());
+    }
+
+    private synchronized int getReadPosition() {
+        return delegate.getReadPosition();
     }
 }

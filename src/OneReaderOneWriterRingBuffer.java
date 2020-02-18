@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
+public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
     public static <T> RingBuffer<T> blocking(RingBufferOptions<?> options) {
         return OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(options);
     }
@@ -74,12 +74,16 @@ public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
      * Must be called from the reader thread.
      */
     @Override
+    public boolean contains(T element) {
+        return contains(readPosition, writePosition, element);
+    }
+
+    /**
+     * Must be called from the reader thread.
+     */
+    @Override
     public int size() {
-        int writePosition = this.writePosition;
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
-        }
-        return capacity - (readPosition - writePosition);
+        return size(readPosition, writePosition);
     }
 
     /**
@@ -87,28 +91,22 @@ public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
      */
     @Override
     public boolean isEmpty() {
-        return writePosition == readPosition;
+        return isEmpty(readPosition, writePosition);
     }
 
-    // Used by ManyReadersOneWriterRingBuffer
-    int size(Object monitor) {
-        int writePosition = this.writePosition;
-        int readPosition;
-        synchronized (monitor) {
-            readPosition = this.readPosition;
-        }
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
-        }
-        return capacity - (readPosition - writePosition);
+    /**
+     * Must be called from the reader thread.
+     */
+    @Override
+    public String toString() {
+        return toString(readPosition, writePosition);
     }
 
-    // Used by ManyReadersOneWriterRingBuffer
-    boolean isEmpty(Object monitor) {
-        int readPosition;
-        synchronized (monitor) {
-            readPosition = this.readPosition;
-        }
-        return writePosition == readPosition;
+    // Needed by ManyReadersOneWriterRingBuffer
+    int getReadPosition() {
+        return readPosition;
+    }
+    int getWritePosition() {
+        return writePosition;
     }
 }

@@ -33,6 +33,11 @@ class ManyReadersOneWriterBlockingOrDiscardingRingBuffer<T> implements RingBuffe
     }
 
     @Override
+    public boolean contains(T element) {
+        return delegate.contains(element);
+    }
+
+    @Override
     public int size() {
         return delegate.size();
     }
@@ -40,5 +45,10 @@ class ManyReadersOneWriterBlockingOrDiscardingRingBuffer<T> implements RingBuffe
     @Override
     public boolean isEmpty() {
         return delegate.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return delegate.toString();
     }
 }

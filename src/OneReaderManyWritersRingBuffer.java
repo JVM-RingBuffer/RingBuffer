@@ -44,6 +44,14 @@ public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T> {
      * Must be called from the reader thread.
      */
     @Override
+    public boolean contains(T element) {
+        return delegate.contains(element);
+    }
+
+    /**
+     * Must be called from the reader thread.
+     */
+    @Override
     public int size() {
         return delegate.size();
     }
@@ -54,5 +62,13 @@ public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T> {
     @Override
     public boolean isEmpty() {
         return delegate.isEmpty();
+    }
+
+    /**
+     * Must be called from the reader thread.
+     */
+    @Override
+    public String toString() {
+        return delegate.toString();
     }
 }

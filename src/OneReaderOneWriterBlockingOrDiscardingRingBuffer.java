@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends AbstractRingBuffer<T> {
+class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final boolean blocking;
     private final BusyWaitStrategy writeBusyWaitStrategy;
@@ -97,17 +97,22 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends AbstractRingBu
     }
 
     @Override
+    public boolean contains(T element) {
+        return contains(readPosition, writePosition, element);
+    }
+
+    @Override
     public int size() {
-        int writePosition = this.writePosition;
-        int readPosition = this.readPosition;
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
-        }
-        return capacity - (readPosition - writePosition);
+        return size(readPosition, writePosition);
     }
 
     @Override
     public boolean isEmpty() {
-        return writePosition == readPosition;
+        return isEmpty(readPosition, writePosition);
+    }
+
+    @Override
+    public String toString() {
+        return toString(readPosition, writePosition);
     }
 }
