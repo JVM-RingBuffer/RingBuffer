@@ -9,7 +9,7 @@ public class OneReaderOneWriterDiscardingGarbageCollectedRingBuffer<T> implement
     private volatile int readPosition;
     private volatile int writePosition;
 
-    public OneReaderOneWriterDiscardingGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderOneWriterDiscardingGarbageCollectedRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newEmptyBuffer();
@@ -38,6 +38,7 @@ public class OneReaderOneWriterDiscardingGarbageCollectedRingBuffer<T> implement
     @Override
     public T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }

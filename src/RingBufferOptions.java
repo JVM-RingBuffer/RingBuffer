@@ -3,8 +3,8 @@ package eu.menzani.ringbuffer;
 import java.util.function.Supplier;
 
 public class RingBufferOptions<T> {
-    public static <T> RingBufferOptions<T> empty(int capacity) {
-        RingBufferOptions<T> options = new RingBufferOptions<>();
+    public static RingBufferOptions<?> empty(int capacity) {
+        RingBufferOptions<?> options = new RingBufferOptions<>();
         options.capacity = capacity;
         return options;
     }
@@ -28,6 +28,7 @@ public class RingBufferOptions<T> {
     private T dummyElement;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
+    private boolean gc;
 
     public RingBufferOptions<T> withWriteBusyWaitStrategy(BusyWaitStrategy writeBusyWaitStrategy) {
         this.writeBusyWaitStrategy = writeBusyWaitStrategy;
@@ -36,6 +37,11 @@ public class RingBufferOptions<T> {
 
     public RingBufferOptions<T> withReadBusyWaitStrategy(BusyWaitStrategy readBusyWaitStrategy) {
         this.readBusyWaitStrategy = readBusyWaitStrategy;
+        return this;
+    }
+
+    public RingBufferOptions<T> withGC() {
+        gc = true;
         return this;
     }
 
@@ -69,14 +75,14 @@ public class RingBufferOptions<T> {
 
     BusyWaitStrategy getWriteBusyWaitStrategy() {
         if (writeBusyWaitStrategy == null) {
-            return HintBusyWaitStrategy.INSTANCE;
+            return new HintBusyWaitStrategy();
         }
         return writeBusyWaitStrategy;
     }
 
     BusyWaitStrategy getReadBusyWaitStrategy() {
         if (readBusyWaitStrategy == null) {
-            return HintBusyWaitStrategy.INSTANCE;
+            return new HintBusyWaitStrategy();
         }
         return readBusyWaitStrategy;
     }
@@ -88,7 +94,13 @@ public class RingBufferOptions<T> {
         return dummyElement;
     }
 
-    boolean isPrefilled() {
-        return filler != null;
+    boolean getGC() {
+        if (filler == null) {
+            return gc;
+        }
+        if (gc) {
+            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
+        }
+        return false;
     }
 }

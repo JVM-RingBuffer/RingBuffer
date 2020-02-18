@@ -6,20 +6,20 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
     private final Object[] buffer;
     private final BusyWaitStrategy writeBusyWaitStrategy;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final boolean prefilled;
+    private final boolean gc;
 
     private volatile int readPosition;
     private volatile int writePosition;
 
     private int newWritePosition;
 
-    public ManyReadersOneWriterBlockingRingBuffer(RingBufferOptions<T> options) {
+    public ManyReadersOneWriterBlockingRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
         writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
-        prefilled = options.isPrefilled();
+        gc = options.getGC();
     }
 
     @Override
@@ -35,6 +35,7 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
         } else {
             newWritePosition = writePosition + 1;
         }
+        writeBusyWaitStrategy.reset();
         while (readPosition == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
@@ -54,6 +55,7 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
         } else {
             newWritePosition++;
         }
+        writeBusyWaitStrategy.reset();
         while (readPosition == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
@@ -64,6 +66,7 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
     @Override
     public synchronized T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }
@@ -72,11 +75,10 @@ public class ManyReadersOneWriterBlockingRingBuffer<T> implements RingBuffer<T>,
         } else {
             readPosition = oldReadPosition + 1;
         }
-        if (prefilled) {
-            return (T) buffer[oldReadPosition];
-        }
         Object element = buffer[oldReadPosition];
-        buffer[oldReadPosition] = null;
+        if (gc) {
+            buffer[oldReadPosition] = null;
+        }
         return (T) element;
     }
 

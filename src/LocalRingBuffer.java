@@ -8,7 +8,7 @@ public class LocalRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T>
     private int readPosition;
     private int writePosition;
 
-    public LocalRingBuffer(RingBufferOptions<T> options) {
+    public LocalRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();

@@ -9,7 +9,7 @@ public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuff
     private int readPosition;
     private volatile int writePosition;
 
-    public OneReaderOneWriterGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderOneWriterGarbageCollectedRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newEmptyBuffer();
@@ -36,6 +36,7 @@ public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuff
     @Override
     public T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }
@@ -49,6 +50,7 @@ public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuff
         return (T) element;
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public int size() {
         int writePosition = this.writePosition;
@@ -58,6 +60,7 @@ public class OneReaderOneWriterGarbageCollectedRingBuffer<T> implements RingBuff
         return capacity - (readPosition - writePosition);
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;

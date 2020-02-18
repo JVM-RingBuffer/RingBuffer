@@ -3,7 +3,7 @@ package eu.menzani.ringbuffer;
 public class OneReaderManyWritersBlockingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
     private final OneReaderOneWriterBlockingRingBuffer delegate;
 
-    public OneReaderManyWritersBlockingRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderManyWritersBlockingRingBuffer(RingBufferOptions<?> options) {
         delegate = new OneReaderOneWriterBlockingRingBuffer<>(options);
     }
 

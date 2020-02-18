@@ -61,6 +61,7 @@ public class OneReaderOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>,
     @Override
     public T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }

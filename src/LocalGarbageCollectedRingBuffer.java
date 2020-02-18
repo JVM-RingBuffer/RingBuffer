@@ -8,7 +8,7 @@ public class LocalGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    public LocalGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+    public LocalGarbageCollectedRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newEmptyBuffer();

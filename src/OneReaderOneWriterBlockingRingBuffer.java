@@ -12,7 +12,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
 
     private int newWritePosition;
 
-    public OneReaderOneWriterBlockingRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderOneWriterBlockingRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
@@ -33,6 +33,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
         } else {
             newWritePosition = writePosition + 1;
         }
+        writeBusyWaitStrategy.reset();
         while (readPosition == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
@@ -52,6 +53,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
         } else {
             newWritePosition++;
         }
+        writeBusyWaitStrategy.reset();
         while (readPosition == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
@@ -62,6 +64,7 @@ public class OneReaderOneWriterBlockingRingBuffer<T> implements RingBuffer<T>, P
     @Override
     public T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }

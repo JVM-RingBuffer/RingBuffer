@@ -3,7 +3,7 @@ package eu.menzani.ringbuffer;
 public class OneReaderManyWritersGarbageCollectedRingBuffer<T> implements RingBuffer<T> {
     private final OneReaderOneWriterGarbageCollectedRingBuffer delegate;
 
-    public OneReaderManyWritersGarbageCollectedRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderManyWritersGarbageCollectedRingBuffer(RingBufferOptions<?> options) {
         delegate = new OneReaderOneWriterGarbageCollectedRingBuffer<>(options);
     }
 
@@ -22,11 +22,13 @@ public class OneReaderManyWritersGarbageCollectedRingBuffer<T> implements RingBu
         return (T) delegate.take();
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public int size() {
         return delegate.size();
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public boolean isEmpty() {
         return delegate.isEmpty();

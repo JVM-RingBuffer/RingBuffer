@@ -5,19 +5,19 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
     private final int capacityMinusOne;
     private final Object[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final boolean prefilled;
+    private final boolean gc;
 
     private int readPosition;
     private volatile int writePosition;
 
     private int newWritePosition;
 
-    public ManyReadersOneWriterRingBuffer(RingBufferOptions<T> options) {
+    public ManyReadersOneWriterRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
-        prefilled = options.isPrefilled();
+        gc = options.getGC();
     }
 
     @Override
@@ -56,6 +56,7 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
     @Override
     public synchronized T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }
@@ -64,11 +65,10 @@ public class ManyReadersOneWriterRingBuffer<T> implements RingBuffer<T>, Prefill
         } else {
             readPosition++;
         }
-        if (prefilled) {
-            return (T) buffer[oldReadPosition];
-        }
         Object element = buffer[oldReadPosition];
-        buffer[oldReadPosition] = null;
+        if (gc) {
+            buffer[oldReadPosition] = null;
+        }
         return (T) element;
     }
 

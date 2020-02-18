@@ -11,7 +11,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
 
     private int newWritePosition;
 
-    public OneReaderOneWriterRingBuffer(RingBufferOptions<T> options) {
+    public OneReaderOneWriterRingBuffer(RingBufferOptions<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
@@ -54,6 +54,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
     @Override
     public T take() {
         int oldReadPosition = readPosition;
+        readBusyWaitStrategy.reset();
         while (writePosition == oldReadPosition) {
             readBusyWaitStrategy.tick();
         }
@@ -65,6 +66,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         return (T) buffer[oldReadPosition];
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public int size() {
         int writePosition = this.writePosition;
@@ -74,6 +76,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         return capacity - (readPosition - writePosition);
     }
 
+    /** Must be called from the reader thread. */
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;
