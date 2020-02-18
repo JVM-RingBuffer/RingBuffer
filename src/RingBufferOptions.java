@@ -66,6 +66,16 @@ public class RingBufferOptions<T> {
         return buffer;
     }
 
+    boolean getGC() {
+        if (filler == null) {
+            return gc;
+        }
+        if (gc) {
+            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
+        }
+        return false;
+    }
+
     BusyWaitStrategy getWriteBusyWaitStrategy() {
         if (writeBusyWaitStrategy == null) {
             return new HintBusyWaitStrategy();
@@ -85,15 +95,5 @@ public class RingBufferOptions<T> {
             return filler.get();
         }
         return dummyElement;
-    }
-
-    boolean getGC() {
-        if (filler == null) {
-            return gc;
-        }
-        if (gc) {
-            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
-        }
-        return false;
     }
 }

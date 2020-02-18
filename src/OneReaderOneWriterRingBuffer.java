@@ -1,11 +1,7 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T> {
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final Object[] buffer;
+public class OneReaderOneWriterRingBuffer<T> extends AbstractRingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final boolean gc;
 
     private int readPosition;
     private volatile int writePosition;
@@ -13,16 +9,8 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T> {
     private int newWritePosition;
 
     public OneReaderOneWriterRingBuffer(RingBufferOptions<?> options) {
-        capacity = options.getCapacity();
-        capacityMinusOne = options.getCapacityMinusOne();
-        buffer = options.newBuffer();
+        super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
-        gc = options.getGC();
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
     }
 
     @Override

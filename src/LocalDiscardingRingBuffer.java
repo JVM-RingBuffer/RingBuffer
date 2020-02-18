@@ -1,26 +1,14 @@
 package eu.menzani.ringbuffer;
 
-public class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final Object[] buffer;
+public class LocalDiscardingRingBuffer<T> extends AbstractRingBuffer<T> {
     private final T dummyElement;
-    private final boolean gc;
 
     private int readPosition;
     private int writePosition;
 
     public LocalDiscardingRingBuffer(RingBufferOptions<T> options) {
-        capacity = options.getCapacity();
-        capacityMinusOne = options.getCapacityMinusOne();
-        buffer = options.newBuffer();
+        super(options);
         dummyElement = options.getDummyElement();
-        gc = options.getGC();
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
     }
 
     @Override
