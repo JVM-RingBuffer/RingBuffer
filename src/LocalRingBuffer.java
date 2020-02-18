@@ -8,17 +8,17 @@ public class LocalRingBuffer<T> extends LocalRingBufferBase<T> {
     @Override
     public T put() {
         Object element = buffer[writePosition];
-        if (writePosition == capacityMinusOne) {
-            writePosition = 0;
-        } else {
-            writePosition++;
-        }
+        incrementWritePosition();
         return (T) element;
     }
 
     @Override
     public void put(T element) {
         buffer[writePosition] = element;
+        incrementWritePosition();
+    }
+
+    private void incrementWritePosition() {
         if (writePosition == capacityMinusOne) {
             writePosition = 0;
         } else {

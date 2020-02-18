@@ -26,11 +26,7 @@ public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
     @Override
     public T put() {
         int writePosition = this.writePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
+        newWritePosition = incrementWritePosition(writePosition);
         return (T) buffer[writePosition];
     }
 
@@ -41,12 +37,7 @@ public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     @Override
     public void put(T element) {
-        int newWritePosition = writePosition;
-        if (newWritePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition++;
-        }
+        int newWritePosition = incrementWritePosition(writePosition);
         buffer[writePosition] = element;
         writePosition = newWritePosition;
     }

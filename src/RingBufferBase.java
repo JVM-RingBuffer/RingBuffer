@@ -20,6 +20,13 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
         return capacity;
     }
 
+    int incrementWritePosition(int writePosition) {
+        if (writePosition == capacityMinusOne) {
+            return 0;
+        }
+        return ++writePosition;
+    }
+
     boolean contains(int readPosition, int writePosition, Object element) {
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {

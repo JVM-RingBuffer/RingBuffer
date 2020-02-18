@@ -37,11 +37,7 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
     @Override
     public T put() {
         int writePosition = this.writePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
+        newWritePosition = incrementWritePosition(writePosition);
         if (blocking) {
             writeBusyWaitStrategy.reset();
             while (readPosition == newWritePosition) {
@@ -60,12 +56,7 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
 
     @Override
     public void put(T element) {
-        int newWritePosition = writePosition;
-        if (newWritePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition++;
-        }
+        int newWritePosition = incrementWritePosition(writePosition);
         if (blocking) {
             writeBusyWaitStrategy.reset();
             while (readPosition == newWritePosition) {

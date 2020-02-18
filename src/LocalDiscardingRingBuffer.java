@@ -10,12 +10,7 @@ public class LocalDiscardingRingBuffer<T> extends LocalRingBufferBase<T> {
 
     @Override
     public T put() {
-        int oldWritePosition = writePosition;
-        if (oldWritePosition == capacityMinusOne) {
-            writePosition = 0;
-        } else {
-            writePosition++;
-        }
+        int oldWritePosition = incrementWritePosition();
         if (readPosition == writePosition) {
             return dummyElement;
         }
@@ -24,14 +19,19 @@ public class LocalDiscardingRingBuffer<T> extends LocalRingBufferBase<T> {
 
     @Override
     public void put(T element) {
+        int oldWritePosition = incrementWritePosition();
+        if (readPosition != writePosition) {
+            buffer[oldWritePosition] = element;
+        }
+    }
+
+    private int incrementWritePosition() {
         int oldWritePosition = writePosition;
         if (oldWritePosition == capacityMinusOne) {
             writePosition = 0;
         } else {
             writePosition++;
         }
-        if (readPosition != writePosition) {
-            buffer[oldWritePosition] = element;
-        }
+        return oldWritePosition;
     }
 }
