@@ -1,10 +1,11 @@
 package eu.menzani.ringbuffer;
 
-public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
+public class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final Object[] buffer;
     private final T dummyElement;
+    private final boolean gc;
 
     private int readPosition;
     private int writePosition;
@@ -14,6 +15,7 @@ public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRin
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
         dummyElement = options.getDummyElement();
+        gc = options.getGC();
     }
 
     @Override
@@ -58,6 +60,9 @@ public class LocalDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRin
             return null;
         }
         Object element = buffer[readPosition];
+        if (gc) {
+            buffer[readPosition] = null;
+        }
         if (readPosition == capacityMinusOne) {
             readPosition = 0;
         } else {

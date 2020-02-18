@@ -1,10 +1,11 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
+public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final Object[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
+    private final boolean gc;
 
     private int readPosition;
     private volatile int writePosition;
@@ -16,6 +17,7 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+        gc = options.getGC();
     }
 
     @Override
@@ -63,10 +65,16 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         } else {
             readPosition++;
         }
-        return (T) buffer[oldReadPosition];
+        Object element = buffer[oldReadPosition];
+        if (gc) {
+            buffer[oldReadPosition] = null;
+        }
+        return (T) element;
     }
 
-    /** Must be called from the reader thread. */
+    /**
+     * Must be called from the reader thread.
+     */
     @Override
     public int size() {
         int writePosition = this.writePosition;
@@ -76,7 +84,9 @@ public class OneReaderOneWriterRingBuffer<T> implements RingBuffer<T>, Prefilled
         return capacity - (readPosition - writePosition);
     }
 
-    /** Must be called from the reader thread. */
+    /**
+     * Must be called from the reader thread.
+     */
     @Override
     public boolean isEmpty() {
         return writePosition == readPosition;

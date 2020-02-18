@@ -1,11 +1,12 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
+public class OneReaderOneWriterDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final Object[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
+    private final boolean gc;
 
     private volatile int readPosition;
     private volatile int writePosition;
@@ -18,6 +19,7 @@ public class OneReaderOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>,
         buffer = options.newBuffer();
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
         dummyElement = options.getDummyElement();
+        gc = options.getGC();
     }
 
     @Override
@@ -70,7 +72,11 @@ public class OneReaderOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>,
         } else {
             readPosition = oldReadPosition + 1;
         }
-        return (T) buffer[oldReadPosition];
+        Object element = buffer[oldReadPosition];
+        if (gc) {
+            buffer[oldReadPosition] = null;
+        }
+        return (T) element;
     }
 
     @Override

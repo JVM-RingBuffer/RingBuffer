@@ -9,14 +9,23 @@ public class SleepBusyWaitStrategy extends CompoundBusyWaitStrategy {
         this(1L);
     }
 
+    /**
+     * @param sleepTime In nanoseconds.
+     */
     public SleepBusyWaitStrategy(long sleepTime) {
         this(sleepTime, 100);
     }
 
+    /**
+     * @param sleepTime In nanoseconds.
+     */
     public SleepBusyWaitStrategy(long sleepTime, int initialStrategyTicks) {
         this(sleepTime, new YieldBusyWaitStrategy(), initialStrategyTicks);
     }
 
+    /**
+     * @param sleepTime In nanoseconds.
+     */
     public SleepBusyWaitStrategy(long sleepTime, BusyWaitStrategy initialStrategy, int initialStrategyTicks) {
         super(initialStrategy, initialStrategyTicks);
         this.sleepTime = sleepTime;

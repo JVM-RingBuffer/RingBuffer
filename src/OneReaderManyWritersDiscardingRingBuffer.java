@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderManyWritersDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
+public class OneReaderManyWritersDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final OneReaderOneWriterDiscardingRingBuffer delegate;
 
     public OneReaderManyWritersDiscardingRingBuffer(RingBufferOptions<T> options) {

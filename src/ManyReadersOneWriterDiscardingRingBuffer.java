@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer;
 
-public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T>, PrefilledRingBuffer<T> {
+public class ManyReadersOneWriterDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final Object[] buffer;

@@ -56,13 +56,6 @@ public class RingBufferOptions<T> {
         return capacity - 1;
     }
 
-    Object[] newEmptyBuffer() {
-        if (filler != null) {
-            throw new IllegalArgumentException("A garbage collected ring buffer cannot be pre-filled.");
-        }
-        return new Object[capacity];
-    }
-
     Object[] newBuffer() {
         Object[] buffer = new Object[capacity];
         if (filler != null) {
