@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import java.util.function.Supplier;
+
 public interface RingBuffer<T> {
     int getCapacity();
 
@@ -16,4 +18,16 @@ public interface RingBuffer<T> {
     int size();
 
     boolean isEmpty();
+
+    static RingBufferBuilder empty(int capacity) {
+        return new RingBufferBuilder(capacity, null, null);
+    }
+
+    static RingBufferBuilder empty(int capacity, Object dummyElement) {
+        return new RingBufferBuilder(capacity, null, dummyElement);
+    }
+
+    static RingBufferBuilder prefilled(int capacity, Supplier<?> filler) {
+        return new RingBufferBuilder(capacity, filler, null);
+    }
 }

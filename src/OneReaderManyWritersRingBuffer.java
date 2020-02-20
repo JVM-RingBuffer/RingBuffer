@@ -1,17 +1,9 @@
 package eu.menzani.ringbuffer;
 
-public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T> {
-    public static <T> RingBuffer<T> blocking(RingBufferOptions<?> options) {
-        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(options));
-    }
-
-    public static <T> RingBuffer<T> discarding(RingBufferOptions<T> options) {
-        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(options));
-    }
-
+class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T> {
     private final OneReaderOneWriterRingBuffer delegate;
 
-    public OneReaderManyWritersRingBuffer(RingBufferOptions<?> options) {
+    OneReaderManyWritersRingBuffer(RingBufferBuilder options) {
         delegate = new OneReaderOneWriterRingBuffer<>(options);
     }
 
@@ -40,33 +32,25 @@ public class OneReaderManyWritersRingBuffer<T> implements RingBuffer<T> {
         return (T) delegate.take();
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public boolean contains(T element) {
         return delegate.contains(element);
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public int size() {
         return delegate.size();
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public boolean isEmpty() {
         return delegate.isEmpty();
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public String toString() {
         return delegate.toString();

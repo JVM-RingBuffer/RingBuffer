@@ -2,15 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
-    public static <T> RingBuffer<T> blocking(RingBufferOptions<?> options) {
-        return OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(options);
-    }
-
-    public static <T> RingBuffer<T> discarding(RingBufferOptions<T> options) {
-        return OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(options);
-    }
-
+class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -18,7 +10,7 @@ public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     private int newWritePosition;
 
-    public OneReaderOneWriterRingBuffer(RingBufferOptions<?> options) {
+    OneReaderOneWriterRingBuffer(RingBufferBuilder options) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
     }
@@ -61,33 +53,25 @@ public class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
         return (T) element;
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public boolean contains(T element) {
         return contains(readPosition, writePosition, element);
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public int size() {
         return size(readPosition, writePosition);
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public boolean isEmpty() {
         return isEmpty(readPosition, writePosition);
     }
 
-    /**
-     * Must be called from the reader thread.
-     */
+    // Must be called from the reader thread
     @Override
     public String toString() {
         return toString(readPosition, writePosition);

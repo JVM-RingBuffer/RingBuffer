@@ -1,11 +1,11 @@
 package eu.menzani.ringbuffer;
 
-public class LocalDiscardingRingBuffer<T> extends LocalRingBufferBase<T> {
+class LocalDiscardingRingBuffer<T> extends LocalRingBufferBase<T> {
     private final T dummyElement;
 
-    public LocalDiscardingRingBuffer(RingBufferOptions<T> options) {
+    LocalDiscardingRingBuffer(RingBufferBuilder options) {
         super(options);
-        dummyElement = options.getDummyElement();
+        dummyElement = (T) options.getDummyElement();
     }
 
     @Override

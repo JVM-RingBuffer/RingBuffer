@@ -4,7 +4,7 @@ abstract class LocalRingBufferBase<T> extends RingBufferBase<T> {
     int readPosition;
     int writePosition;
 
-    LocalRingBufferBase(RingBufferOptions<?> options) {
+    LocalRingBufferBase(RingBufferBuilder options) {
         super(options);
     }
 
