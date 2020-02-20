@@ -8,7 +8,7 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
     final Object[] buffer;
     final boolean gc;
 
-    RingBufferBase(RingBufferBuilder options) {
+    RingBufferBase(RingBufferBuilder<?> options) {
         capacity = options.getCapacity();
         capacityMinusOne = options.getCapacityMinusOne();
         buffer = options.newBuffer();
@@ -20,14 +20,10 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
         return capacity;
     }
 
-    int incrementWritePosition(int writePosition) {
-        if (writePosition == capacityMinusOne) {
-            return 0;
-        }
-        return ++writePosition;
-    }
-
-    boolean contains(int readPosition, int writePosition, Object element) {
+    @Override
+    public boolean contains(T element) {
+        int readPosition = getReadPosition();
+        int writePosition = getWritePosition();
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
                 if (buffer[i].equals(element)) {
@@ -44,18 +40,25 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
         return false;
     }
 
-    int size(int readPosition, int writePosition) {
+    @Override
+    public int size() {
+        int readPosition = getReadPosition();
+        int writePosition = getWritePosition();
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }
         return capacity - (readPosition - writePosition);
     }
 
-    boolean isEmpty(int readPosition, int writePosition) {
-        return writePosition == readPosition;
+    @Override
+    public boolean isEmpty() {
+        return getWritePosition() == getReadPosition();
     }
 
-    String toString(int readPosition, int writePosition) {
+    @Override
+    public String toString() {
+        int readPosition = getReadPosition();
+        int writePosition = getWritePosition();
         StringJoiner joiner = new StringJoiner(", ", "[", "]");
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
@@ -67,5 +70,16 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
             }
         }
         return joiner.toString();
+    }
+
+    abstract int getReadPosition();
+
+    abstract int getWritePosition();
+
+    int incrementWritePosition(int writePosition) {
+        if (writePosition == capacityMinusOne) {
+            return 0;
+        }
+        return ++writePosition;
     }
 }

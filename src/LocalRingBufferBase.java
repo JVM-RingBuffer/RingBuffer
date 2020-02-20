@@ -4,7 +4,7 @@ abstract class LocalRingBufferBase<T> extends RingBufferBase<T> {
     int readPosition;
     int writePosition;
 
-    LocalRingBufferBase(RingBufferBuilder options) {
+    LocalRingBufferBase(RingBufferBuilder<?> options) {
         super(options);
     }
 
@@ -30,22 +30,20 @@ abstract class LocalRingBufferBase<T> extends RingBufferBase<T> {
     }
 
     @Override
-    public boolean contains(T element) {
-        return contains(readPosition, writePosition, element);
+    int getReadPosition() {
+        return readPosition;
     }
 
     @Override
-    public int size() {
-        return size(readPosition, writePosition);
+    int getWritePosition() {
+        return writePosition;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return isEmpty(readPosition, writePosition);
-    }
-
-    @Override
-    public String toString() {
-        return toString(readPosition, writePosition);
+    void incrementWritePosition() {
+        if (writePosition == capacityMinusOne) {
+            writePosition = 0;
+        } else {
+            writePosition++;
+        }
     }
 }

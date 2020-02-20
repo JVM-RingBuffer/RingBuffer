@@ -19,15 +19,15 @@ public interface RingBuffer<T> {
 
     boolean isEmpty();
 
-    static RingBufferBuilder empty(int capacity) {
-        return new RingBufferBuilder(capacity, null, null);
+    static <T> RingBufferBuilder<T> empty(int capacity) {
+        return new RingBufferBuilder<>(capacity, null, null);
     }
 
-    static RingBufferBuilder empty(int capacity, Object dummyElement) {
-        return new RingBufferBuilder(capacity, null, dummyElement);
+    static <T> RingBufferBuilder<T> empty(int capacity, T dummyElement) {
+        return new RingBufferBuilder<>(capacity, null, dummyElement);
     }
 
-    static RingBufferBuilder prefilled(int capacity, Supplier<?> filler) {
-        return new RingBufferBuilder(capacity, filler, null);
+    static <T> RingBufferBuilder<T> prefilled(int capacity, Supplier<? extends T> filler) {
+        return new RingBufferBuilder<>(capacity, filler, null);
     }
 }

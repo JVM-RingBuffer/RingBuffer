@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
 class LocalRingBuffer<T> extends LocalRingBufferBase<T> {
-    LocalRingBuffer(RingBufferBuilder options) {
+    LocalRingBuffer(RingBufferBuilder<?> options) {
         super(options);
     }
 
@@ -16,13 +16,5 @@ class LocalRingBuffer<T> extends LocalRingBufferBase<T> {
     public void put(T element) {
         buffer[writePosition] = element;
         incrementWritePosition();
-    }
-
-    private void incrementWritePosition() {
-        if (writePosition == capacityMinusOne) {
-            writePosition = 0;
-        } else {
-            writePosition++;
-        }
     }
 }

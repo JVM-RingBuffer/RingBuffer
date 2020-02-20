@@ -10,7 +10,7 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     private int newWritePosition;
 
-    OneReaderOneWriterRingBuffer(RingBufferBuilder options) {
+    OneReaderOneWriterRingBuffer(RingBufferBuilder<?> options) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
     }
@@ -29,58 +29,45 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     @Override
     public void put(T element) {
-        int newWritePosition = incrementWritePosition(writePosition);
+        int writePosition = this.writePosition;
         buffer[writePosition] = element;
-        writePosition = newWritePosition;
+        this.writePosition = incrementWritePosition(writePosition);
     }
 
     @Override
     public T take() {
-        int oldReadPosition = readPosition;
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (writePosition == oldReadPosition) {
+        while (writePosition == readPosition) {
             readBusyWaitStrategy.tick();
         }
-        if (oldReadPosition == capacityMinusOne) {
-            readPosition = 0;
+        if (readPosition == capacityMinusOne) {
+            this.readPosition = 0;
         } else {
-            readPosition++;
+            this.readPosition++;
         }
-        Object element = buffer[oldReadPosition];
+        Object element = buffer[readPosition];
         if (gc) {
-            buffer[oldReadPosition] = null;
+            buffer[readPosition] = null;
         }
         return (T) element;
     }
 
-    // Must be called from the reader thread
-    @Override
-    public boolean contains(T element) {
-        return contains(readPosition, writePosition, element);
-    }
+    /*
+    Must be called from the reader thread:
 
-    // Must be called from the reader thread
-    @Override
-    public int size() {
-        return size(readPosition, writePosition);
-    }
+    public boolean contains(T element);
+    public int size();
+    public boolean isEmpty();
+    public String toString();
+     */
 
-    // Must be called from the reader thread
     @Override
-    public boolean isEmpty() {
-        return isEmpty(readPosition, writePosition);
-    }
-
-    // Must be called from the reader thread
-    @Override
-    public String toString() {
-        return toString(readPosition, writePosition);
-    }
-
-    // Needed by ManyReadersOneWriterRingBuffer
     int getReadPosition() {
         return readPosition;
     }
+
+    @Override
     int getWritePosition() {
         return writePosition;
     }

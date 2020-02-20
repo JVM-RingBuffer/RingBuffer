@@ -5,69 +5,70 @@ import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.util.function.Supplier;
 
-public class RingBufferBuilder {
+public class RingBufferBuilder<T> {
     private final int capacity;
-    private final Supplier<?> filler;
-    private final Object dummyElement;
-    private Boolean oneReader;
+    private final Supplier<? extends T> filler;
+    private final T dummyElement;
     private Boolean oneWriter;
+    private Boolean oneReader;
     private RingBufferType type = RingBufferType.OVERWRITING;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
     private boolean gc;
 
-    RingBufferBuilder(int capacity, Supplier<?> filler, Object dummyElement) {
+    RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
         this.capacity = capacity;
         this.filler = filler;
         this.dummyElement = dummyElement;
     }
 
-    public RingBufferBuilder oneReader() {
-        oneReader = true;
-        return this;
-    }
-
-    public RingBufferBuilder manyReaders() {
-        oneReader = false;
-        return this;
-    }
-
-    public RingBufferBuilder oneWriter() {
+    public RingBufferBuilder<T> oneWriter() {
         oneWriter = true;
         return this;
     }
 
-    public RingBufferBuilder manyWriters() {
+    public RingBufferBuilder<T> manyWriters() {
         oneWriter = false;
         return this;
     }
 
-    public RingBufferBuilder blocking() {
-        type = RingBufferType.BLOCKING;
+    public RingBufferBuilder<T> oneReader() {
+        oneReader = true;
         return this;
     }
 
-    public RingBufferBuilder discarding() {
+    public RingBufferBuilder<T> manyReaders() {
+        oneReader = false;
+        return this;
+    }
+
+    public RingBufferBuilder<T> blocking() {
+        blocking(new HintBusyWaitStrategy());
+        return this;
+    }
+
+    public RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy) {
+        type = RingBufferType.BLOCKING;
+        writeBusyWaitStrategy = busyWaitStrategy;
+        return this;
+    }
+
+    public RingBufferBuilder<T> discarding() {
         type = RingBufferType.DISCARDING;
         return this;
     }
 
-    public RingBufferBuilder withWriteBusyWaitStrategy(BusyWaitStrategy writeBusyWaitStrategy) {
-        this.writeBusyWaitStrategy = writeBusyWaitStrategy;
+    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
+        readBusyWaitStrategy = busyWaitStrategy;
         return this;
     }
 
-    public RingBufferBuilder withReadBusyWaitStrategy(BusyWaitStrategy readBusyWaitStrategy) {
-        this.readBusyWaitStrategy = readBusyWaitStrategy;
-        return this;
-    }
-
-    public RingBufferBuilder withGC() {
+    public RingBufferBuilder<T> withGC() {
         gc = true;
         return this;
     }
 
-    public <T> RingBuffer<T> build() {
+    public RingBuffer<T> build() {
         if (oneReader == null && oneWriter == null) {
             switch (type) {
                 case OVERWRITING:
@@ -75,7 +76,7 @@ public class RingBufferBuilder {
                 case DISCARDING:
                     return new LocalDiscardingRingBuffer<>(this);
                 case BLOCKING:
-                    throw new IllegalArgumentException("A local ring buffer is not blocking.");
+                    throw new IllegalArgumentException("A local ring buffer cannot be blocking.");
             }
         }
         if (oneReader == null) {
@@ -150,9 +151,6 @@ public class RingBufferBuilder {
     }
 
     BusyWaitStrategy getWriteBusyWaitStrategy() {
-        if (writeBusyWaitStrategy == null) {
-            return new HintBusyWaitStrategy();
-        }
         return writeBusyWaitStrategy;
     }
 
@@ -163,7 +161,7 @@ public class RingBufferBuilder {
         return readBusyWaitStrategy;
     }
 
-    Object getDummyElement() {
+    T getDummyElement() {
         if (isPrefilled()) {
             return filler.get();
         }
