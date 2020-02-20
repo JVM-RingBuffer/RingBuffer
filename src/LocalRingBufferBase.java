@@ -9,8 +9,7 @@ abstract class LocalRingBufferBase<T> extends RingBufferBase<T> {
     }
 
     @Override
-    public void commit() {
-    }
+    public void commit() {}
 
     @Override
     public T take() {
