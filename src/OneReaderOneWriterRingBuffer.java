@@ -6,7 +6,7 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
-    private volatile int writePosition;
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
 
     private int newWritePosition;
 
@@ -17,28 +17,28 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     @Override
     public T put() {
-        int writePosition = this.writePosition;
+        int writePosition = this.writePosition.getFromSameThread();
         newWritePosition = incrementWritePosition(writePosition);
         return (T) buffer[writePosition];
     }
 
     @Override
     public void commit() {
-        writePosition = newWritePosition;
+        writePosition.set(newWritePosition);
     }
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition;
+        int writePosition = this.writePosition.getFromSameThread();
         buffer[writePosition] = element;
-        this.writePosition = incrementWritePosition(writePosition);
+        this.writePosition.set(incrementWritePosition(writePosition));
     }
 
     @Override
     public T take() {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (writePosition == readPosition) {
+        while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == capacityMinusOne) {
@@ -69,6 +69,6 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     @Override
     int getWritePosition() {
-        return writePosition;
+        return writePosition.get();
     }
 }

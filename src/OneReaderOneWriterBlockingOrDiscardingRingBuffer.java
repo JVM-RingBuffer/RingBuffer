@@ -4,82 +4,82 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final boolean blocking;
+    private final boolean discarding;
     private final BusyWaitStrategy writeBusyWaitStrategy;
     private final T dummyElement;
 
-    private volatile int readPosition;
-    private volatile int writePosition;
+    private final LazyVolatileInteger readPosition = new LazyVolatileInteger();
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
 
     private int newWritePosition;
 
     static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> blocking(RingBufferBuilder<?> options) {
-        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, true);
-    }
-
-    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> discarding(RingBufferBuilder<T> options) {
         return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, false);
     }
 
-    private OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean blocking) {
+    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> discarding(RingBufferBuilder<T> options) {
+        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, true);
+    }
+
+    private OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
-        this.blocking = blocking;
+        this.discarding = discarding;
         writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
-        if (blocking) {
-            dummyElement = null;
-        } else {
+        if (discarding) {
             dummyElement = ((RingBufferBuilder<T>) options).getDummyElement();
+        } else {
+            dummyElement = null;
         }
     }
 
     @Override
     public T put() {
-        int writePosition = this.writePosition;
+        int writePosition = this.writePosition.getFromSameThread();
         newWritePosition = incrementWritePosition(writePosition);
-        if (blocking) {
-            writeBusyWaitStrategy.reset();
-            while (readPosition == newWritePosition) {
-                writeBusyWaitStrategy.tick();
-            }
-        } else if (readPosition == newWritePosition) {
-            return dummyElement;
+        if (waitForRead(newWritePosition)) {
+            return (T) buffer[writePosition];
         }
-        return (T) buffer[writePosition];
+        return dummyElement;
     }
 
     @Override
     public void commit() {
-        writePosition = newWritePosition;
+        writePosition.set(newWritePosition);
     }
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition;
+        int writePosition = this.writePosition.getFromSameThread();
         int newWritePosition = incrementWritePosition(writePosition);
-        if (blocking) {
-            writeBusyWaitStrategy.reset();
-            while (readPosition == newWritePosition) {
-                writeBusyWaitStrategy.tick();
-            }
-        } else if (readPosition == newWritePosition) {
-            return;
+        if (waitForRead(newWritePosition)) {
+            buffer[writePosition] = element;
+            this.writePosition.set(newWritePosition);
         }
-        buffer[writePosition] = element;
-        this.writePosition = newWritePosition;
+    }
+
+    private boolean waitForRead(int newWritePosition) {
+        if (discarding) {
+            return readPosition.get() != newWritePosition;
+        }
+        writeBusyWaitStrategy.reset();
+        while (readPosition.get() == newWritePosition) {
+            writeBusyWaitStrategy.tick();
+        }
+        return true;
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition;
+        int readPosition = this.readPosition.getFromSameThread();
         readBusyWaitStrategy.reset();
-        while (writePosition == readPosition) {
+        while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == capacityMinusOne) {
-            this.readPosition = 0;
+            this.readPosition.set(0);
         } else {
-            this.readPosition = readPosition + 1;
+            this.readPosition.set(readPosition + 1);
         }
         Object element = buffer[readPosition];
         if (gc) {
@@ -90,11 +90,11 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
 
     @Override
     int getReadPosition() {
-        return readPosition;
+        return readPosition.get();
     }
 
     @Override
     int getWritePosition() {
-        return writePosition;
+        return writePosition.get();
     }
 }
