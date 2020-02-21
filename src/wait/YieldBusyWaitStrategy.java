@@ -1,20 +1,16 @@
 package eu.menzani.ringbuffer.wait;
 
-public class YieldBusyWaitStrategy extends CompoundBusyWaitStrategy {
-    public YieldBusyWaitStrategy() {
-        this(100);
-    }
+public class YieldBusyWaitStrategy implements BusyWaitStrategy {
+    private static final YieldBusyWaitStrategy instance = new YieldBusyWaitStrategy();
 
-    public YieldBusyWaitStrategy(int initialStrategyTicks) {
-        this(new HintBusyWaitStrategy(), initialStrategyTicks);
-    }
-
-    public YieldBusyWaitStrategy(BusyWaitStrategy initialStrategy, int initialStrategyTicks) {
-        super(initialStrategy, initialStrategyTicks);
+    public static BusyWaitStrategy getDefault() {
+        return MultiStepBusyWaitStrategy.endWith(instance)
+                .after(HintBusyWaitStrategy.getDefault(), 100)
+                .build();
     }
 
     @Override
-    protected void doTick() {
+    public void tick() {
         Thread.yield();
     }
 }

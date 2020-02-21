@@ -2,37 +2,26 @@ package eu.menzani.ringbuffer.wait;
 
 import java.util.concurrent.locks.LockSupport;
 
-public class SleepBusyWaitStrategy extends CompoundBusyWaitStrategy {
-    private final long sleepTime;
+public class SleepBusyWaitStrategy implements BusyWaitStrategy {
+    private static final SleepBusyWaitStrategy instance = new SleepBusyWaitStrategy(1L);
 
-    public SleepBusyWaitStrategy() {
-        this(1L);
+    public static BusyWaitStrategy getDefault() {
+        return MultiStepBusyWaitStrategy.endWith(instance)
+                .after(YieldBusyWaitStrategy.getDefault(), 100)
+                .build();
     }
+
+    private final long sleepTime;
 
     /**
      * @param sleepTime In nanoseconds.
      */
     public SleepBusyWaitStrategy(long sleepTime) {
-        this(sleepTime, 100);
-    }
-
-    /**
-     * @param sleepTime In nanoseconds.
-     */
-    public SleepBusyWaitStrategy(long sleepTime, int initialStrategyTicks) {
-        this(sleepTime, new YieldBusyWaitStrategy(), initialStrategyTicks);
-    }
-
-    /**
-     * @param sleepTime In nanoseconds.
-     */
-    public SleepBusyWaitStrategy(long sleepTime, BusyWaitStrategy initialStrategy, int initialStrategyTicks) {
-        super(initialStrategy, initialStrategyTicks);
         this.sleepTime = sleepTime;
     }
 
     @Override
-    protected void doTick() {
+    public void tick() {
         LockSupport.parkNanos(sleepTime);
     }
 }

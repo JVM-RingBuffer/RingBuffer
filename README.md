@@ -7,7 +7,7 @@ RingBuffer<Integer> processorToConsumers = RingBuffer.<Integer>empty(5)
         .oneWriter()
         .manyReaders()
         .blocking()
-        .waitingWith(new YieldBusyWaitStrategy())
+        .waitingWith(YieldBusyWaitStrategy.getDefault())
         .withGC()
         .build();
 

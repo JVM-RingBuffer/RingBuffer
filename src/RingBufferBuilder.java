@@ -43,13 +43,13 @@ public class RingBufferBuilder<T> {
     }
 
     public RingBufferBuilder<T> blocking() {
-        blocking(new HintBusyWaitStrategy());
+        blocking(HintBusyWaitStrategy.getDefault());
         return this;
     }
 
-    public RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy) {
+    public RingBufferBuilder<T> blocking(BusyWaitStrategy strategy) {
         type = RingBufferType.BLOCKING;
-        writeBusyWaitStrategy = busyWaitStrategy;
+        writeBusyWaitStrategy = strategy;
         return this;
     }
 
@@ -58,8 +58,8 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
-    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
-        readBusyWaitStrategy = busyWaitStrategy;
+    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy strategy) {
+        readBusyWaitStrategy = strategy;
         return this;
     }
 
@@ -156,7 +156,7 @@ public class RingBufferBuilder<T> {
 
     BusyWaitStrategy getReadBusyWaitStrategy() {
         if (readBusyWaitStrategy == null) {
-            return new HintBusyWaitStrategy();
+            return HintBusyWaitStrategy.getDefault();
         }
         return readBusyWaitStrategy;
     }

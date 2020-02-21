@@ -8,7 +8,10 @@ public class LazyVolatileInteger {
 
     static {
         try {
-            handle = MethodHandles.lookup().in(LazyVolatileInteger.class).findVarHandle(LazyVolatileInteger.class, "value", int.class);
+            final Class<?> clazz = LazyVolatileInteger.class;
+            handle = MethodHandles.lookup()
+                    .in(clazz)
+                    .findVarHandle(clazz, "value", int.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new Error(e);
         }

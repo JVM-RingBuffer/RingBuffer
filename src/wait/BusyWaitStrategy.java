@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer.wait;
 
 public interface BusyWaitStrategy {
-    void reset();
+    default void reset() {}
 
     void tick();
 }
