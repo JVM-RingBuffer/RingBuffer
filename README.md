@@ -33,9 +33,7 @@ Runnable consumer = () -> {
 
 for (int i = 0; i < 3; i++) {
     new Thread(producer).start();
-}
-new Thread(processor).start();
-for (int i = 0; i < 3; i++) {
     new Thread(consumer).start();
 }
+new Thread(processor).start();
 ```
