@@ -1,8 +1,8 @@
 package eu.menzani.ringbuffer;
 
 class LocalRingBuffer<T> extends LocalRingBufferBase<T> {
-    LocalRingBuffer(RingBufferBuilder<?> options) {
-        super(options);
+    LocalRingBuffer(RingBufferBuilder<?> builder) {
+        super(builder);
     }
 
     @Override

@@ -10,9 +10,9 @@ class VolatileRingBuffer<T> extends RingBufferBase<T> {
 
     private int newWritePosition;
 
-    VolatileRingBuffer(RingBufferBuilder<?> options) {
-        super(options);
-        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+    VolatileRingBuffer(RingBufferBuilder<?> builder) {
+        super(builder);
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
     @Override

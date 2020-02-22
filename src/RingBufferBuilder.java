@@ -101,29 +101,29 @@ public class RingBufferBuilder<T> {
             if (!oneWriter && !isPrefilled()) {
                 switch (type) {
                     case OVERWRITING:
-                        return new AtomicWriteRingBuffer<>(this);
+                        return new AtomicWriteRingBuffer<>(new VolatileRingBuffer<>(this));
                     case BLOCKING:
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.blocking(this));
                     case DISCARDING:
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.discarding(this));
                 }
             }
             switch (type) {
                 case OVERWRITING:
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
-                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
+                    return VolatileBlockingOrDiscardingRingBuffer.blocking(this);
                 case DISCARDING:
-                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, true);
+                    return VolatileBlockingOrDiscardingRingBuffer.discarding(this);
             }
         }
         switch (type) {
             case OVERWRITING:
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.blocking(this));
             case DISCARDING:
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, true);
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.discarding(this));
         }
         throw new AssertionError();
     }

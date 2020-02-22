@@ -13,13 +13,21 @@ class VolatileBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
 
     private int newWritePosition;
 
-    VolatileBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
-        super(options);
-        readBusyWaitStrategy = options.getReadBusyWaitStrategy();
+    static <T> VolatileBlockingOrDiscardingRingBuffer<T> blocking(RingBufferBuilder<?> builder) {
+        return new VolatileBlockingOrDiscardingRingBuffer<>(builder, false);
+    }
+
+    static <T> VolatileBlockingOrDiscardingRingBuffer<T> discarding(RingBufferBuilder<?> builder) {
+        return new VolatileBlockingOrDiscardingRingBuffer<>(builder, true);
+    }
+
+    private VolatileBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> builder, boolean discarding) {
+        super(builder);
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         this.discarding = discarding;
-        writeBusyWaitStrategy = options.getWriteBusyWaitStrategy();
+        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         if (discarding) {
-            dummyElement = ((RingBufferBuilder<T>) options).getDummyElement();
+            dummyElement = ((RingBufferBuilder<T>) builder).getDummyElement();
         } else {
             dummyElement = null;
         }
@@ -29,7 +37,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
     public T put() {
         int writePosition = this.writePosition.getFromSameThread();
         newWritePosition = incrementWritePosition(writePosition);
-        if (bufferIsFull(newWritePosition)) {
+        if (isBufferNotFull(newWritePosition)) {
             return (T) buffer[writePosition];
         }
         return dummyElement;
@@ -44,13 +52,13 @@ class VolatileBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
     public void put(T element) {
         int writePosition = this.writePosition.getFromSameThread();
         int newWritePosition = incrementWritePosition(writePosition);
-        if (bufferIsFull(newWritePosition)) {
+        if (isBufferNotFull(newWritePosition)) {
             buffer[writePosition] = element;
             this.writePosition.set(newWritePosition);
         }
     }
 
-    private boolean bufferIsFull(int newWritePosition) {
+    private boolean isBufferNotFull(int newWritePosition) {
         if (discarding) {
             return readPosition.get() != newWritePosition;
         }

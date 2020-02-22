@@ -8,11 +8,11 @@ abstract class RingBufferBase<T> implements RingBuffer<T> {
     final Object[] buffer;
     final boolean gc;
 
-    RingBufferBase(RingBufferBuilder<?> options) {
-        capacity = options.getCapacity();
-        capacityMinusOne = options.getCapacityMinusOne();
-        buffer = options.newBuffer();
-        gc = options.getGC();
+    RingBufferBase(RingBufferBuilder<?> builder) {
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.newBuffer();
+        gc = builder.getGC();
     }
 
     @Override
