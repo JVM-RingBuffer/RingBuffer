@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
+class VolatileRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -10,7 +10,7 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
 
     private int newWritePosition;
 
-    OneReaderOneWriterRingBuffer(RingBufferBuilder<?> options) {
+    VolatileRingBuffer(RingBufferBuilder<?> options) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
     }

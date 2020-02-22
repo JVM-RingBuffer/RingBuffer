@@ -5,6 +5,19 @@ import java.util.function.Supplier;
 public interface RingBuffer<T> {
     int getCapacity();
 
+    /**
+     * If the ring buffer is non-local, then after the returned object has been populated,
+     * <code>commit()</code> must be called.
+     * <br>
+     * Moreover, if there are multiple writers, then a lock on this object
+     * must be held between the two method invocations:
+     *
+     * <pre>{@code synchronized (ringBuffer) {
+     *     T element = ringBuffer.put();
+     *     // Populate element
+     *     ringBuffer.commit();
+     * } }</pre>
+     */
     T put();
 
     void commit();

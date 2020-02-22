@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
-class OneReaderManyWritersRingBuffer<T> extends OneReaderOneWriterRingBuffer<T> {
-    OneReaderManyWritersRingBuffer(RingBufferBuilder<?> options) {
+class AtomicWriteRingBuffer<T> extends VolatileRingBuffer<T> {
+    AtomicWriteRingBuffer(RingBufferBuilder<?> options) {
         super(options);
     }
 

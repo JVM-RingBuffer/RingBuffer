@@ -32,6 +32,15 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
+    /**
+     * If the ring buffer is not blocking nor discarding,
+     * then the following methods can only be called from the reader thread:
+     *
+     * <pre>{@code contains(T element)
+     * size()
+     * isEmpty()
+     * toString() }</pre>
+     */
     public RingBufferBuilder<T> oneReader() {
         oneReader = true;
         return this;
@@ -92,29 +101,29 @@ public class RingBufferBuilder<T> {
             if (!oneWriter && !isPrefilled()) {
                 switch (type) {
                     case OVERWRITING:
-                        return new OneReaderManyWritersRingBuffer<>(this);
+                        return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
-                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(this, false);
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
                     case DISCARDING:
-                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(this, true);
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
                 }
             }
             switch (type) {
                 case OVERWRITING:
-                    return new OneReaderOneWriterRingBuffer<>(this);
+                    return new VolatileRingBuffer<>(this);
                 case BLOCKING:
-                    return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(this, false);
+                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
-                    return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(this, true);
+                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, true);
             }
         }
         switch (type) {
             case OVERWRITING:
-                return new ManyReadersOneWriterRingBuffer<>(this);
+                return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
-                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(this, false);
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:
-                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(this, true);
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, true);
         }
         throw new AssertionError();
     }

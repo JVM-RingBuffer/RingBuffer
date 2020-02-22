@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
+class VolatileBlockingOrDiscardingRingBuffer<T> extends RingBufferBase<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final boolean discarding;
     private final BusyWaitStrategy writeBusyWaitStrategy;
@@ -13,7 +13,7 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
 
     private int newWritePosition;
 
-    OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
+    VolatileBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
         this.discarding = discarding;
@@ -29,7 +29,7 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
     public T put() {
         int writePosition = this.writePosition.getFromSameThread();
         newWritePosition = incrementWritePosition(writePosition);
-        if (waitForRead(newWritePosition)) {
+        if (bufferIsFull(newWritePosition)) {
             return (T) buffer[writePosition];
         }
         return dummyElement;
@@ -44,13 +44,13 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
     public void put(T element) {
         int writePosition = this.writePosition.getFromSameThread();
         int newWritePosition = incrementWritePosition(writePosition);
-        if (waitForRead(newWritePosition)) {
+        if (bufferIsFull(newWritePosition)) {
             buffer[writePosition] = element;
             this.writePosition.set(newWritePosition);
         }
     }
 
-    private boolean waitForRead(int newWritePosition) {
+    private boolean bufferIsFull(int newWritePosition) {
         if (discarding) {
             return readPosition.get() != newWritePosition;
         }
