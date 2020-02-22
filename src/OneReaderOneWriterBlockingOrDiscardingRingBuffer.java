@@ -13,15 +13,7 @@ class OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> extends RingBufferBase
 
     private int newWritePosition;
 
-    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> blocking(RingBufferBuilder<?> options) {
-        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, false);
-    }
-
-    static <T> OneReaderOneWriterBlockingOrDiscardingRingBuffer<T> discarding(RingBufferBuilder<T> options) {
-        return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(options, true);
-    }
-
-    private OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
+    OneReaderOneWriterBlockingOrDiscardingRingBuffer(RingBufferBuilder<?> options, boolean discarding) {
         super(options);
         readBusyWaitStrategy = options.getReadBusyWaitStrategy();
         this.discarding = discarding;

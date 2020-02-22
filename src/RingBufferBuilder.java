@@ -94,27 +94,27 @@ public class RingBufferBuilder<T> {
                     case OVERWRITING:
                         return new OneReaderManyWritersRingBuffer<>(this);
                     case BLOCKING:
-                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(this));
+                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(this, false);
                     case DISCARDING:
-                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(this));
+                        return new OneReaderManyWritersBlockingOrDiscardingRingBuffer<>(this, true);
                 }
             }
             switch (type) {
                 case OVERWRITING:
                     return new OneReaderOneWriterRingBuffer<>(this);
                 case BLOCKING:
-                    return OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(this);
+                    return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
-                    return OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(this);
+                    return new OneReaderOneWriterBlockingOrDiscardingRingBuffer<>(this, true);
             }
         }
         switch (type) {
             case OVERWRITING:
                 return new ManyReadersOneWriterRingBuffer<>(this);
             case BLOCKING:
-                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.blocking(this));
+                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:
-                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(OneReaderOneWriterBlockingOrDiscardingRingBuffer.discarding(this));
+                return new ManyReadersOneWriterBlockingOrDiscardingRingBuffer<>(this, true);
         }
         throw new AssertionError();
     }

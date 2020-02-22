@@ -53,15 +53,6 @@ class OneReaderOneWriterRingBuffer<T> extends RingBufferBase<T> {
         return (T) element;
     }
 
-    /*
-    Must be called from the reader thread:
-
-    public boolean contains(T element);
-    public int size();
-    public boolean isEmpty();
-    public String toString();
-     */
-
     @Override
     int getReadPosition() {
         return readPosition;
