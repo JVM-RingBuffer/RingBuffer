@@ -2,7 +2,13 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-class VolatileRingBuffer<T> extends RingBufferBase<T> {
+import java.util.StringJoiner;
+
+class VolatileRingBuffer<T> implements RingBuffer<T> {
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -11,14 +17,26 @@ class VolatileRingBuffer<T> extends RingBufferBase<T> {
     private int newWritePosition;
 
     VolatileRingBuffer(RingBufferBuilder<?> builder) {
-        super(builder);
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.newBuffer();
+        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacity;
     }
 
     @Override
     public T put() {
         int writePosition = this.writePosition.getFromSameThread();
-        newWritePosition = incrementWritePosition(writePosition);
+        if (writePosition == capacityMinusOne) {
+            newWritePosition = 0;
+        } else {
+            newWritePosition = writePosition + 1;
+        }
         return (T) buffer[writePosition];
     }
 
@@ -31,7 +49,11 @@ class VolatileRingBuffer<T> extends RingBufferBase<T> {
     public void put(T element) {
         int writePosition = this.writePosition.getFromSameThread();
         buffer[writePosition] = element;
-        this.writePosition.set(incrementWritePosition(writePosition));
+        if (writePosition == capacityMinusOne) {
+            this.writePosition.set(0);
+        } else {
+            this.writePosition.set(writePosition + 1);
+        }
     }
 
     @Override
@@ -47,19 +69,58 @@ class VolatileRingBuffer<T> extends RingBufferBase<T> {
             this.readPosition++;
         }
         Object element = buffer[readPosition];
-        if (gc) {
+        if (gcEnabled) {
             buffer[readPosition] = null;
         }
         return (T) element;
     }
 
     @Override
-    int getReadPosition() {
-        return readPosition;
+    public boolean contains(T element) {
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                if (buffer[i].equals(element)) {
+                    return true;
+                }
+            }
+        } else {
+            for (int i = writePosition; i < readPosition; i++) {
+                if (buffer[i].equals(element)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
-    int getWritePosition() {
-        return writePosition.get();
+    public int size() {
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.writePosition.get() == readPosition;
+    }
+
+    @Override
+    public String toString() {
+        int writePosition = this.writePosition.get();
+        StringJoiner joiner = new StringJoiner(", ", "[", "]");
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                joiner.add(buffer[i].toString());
+            }
+        } else {
+            for (int i = writePosition; i < readPosition; i++) {
+                joiner.add(buffer[i].toString());
+            }
+        }
+        return joiner.toString();
     }
 }

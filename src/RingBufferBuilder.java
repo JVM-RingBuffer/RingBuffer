@@ -14,7 +14,7 @@ public class RingBufferBuilder<T> {
     private RingBufferType type = RingBufferType.OVERWRITING;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
-    private boolean gc;
+    private boolean gcEnabled;
 
     RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
         this.capacity = capacity;
@@ -73,7 +73,7 @@ public class RingBufferBuilder<T> {
     }
 
     public RingBufferBuilder<T> withGC() {
-        gc = true;
+        gcEnabled = true;
         return this;
     }
 
@@ -101,29 +101,29 @@ public class RingBufferBuilder<T> {
             if (!oneWriter && !isPrefilled()) {
                 switch (type) {
                     case OVERWRITING:
-                        return new AtomicWriteRingBuffer<>(new VolatileRingBuffer<>(this));
+                        return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.blocking(this));
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
                     case DISCARDING:
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.discarding(this));
+                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
                 }
             }
             switch (type) {
                 case OVERWRITING:
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
-                    return VolatileBlockingOrDiscardingRingBuffer.blocking(this);
+                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
-                    return VolatileBlockingOrDiscardingRingBuffer.discarding(this);
+                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, true);
             }
         }
         switch (type) {
             case OVERWRITING:
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.blocking(this));
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(VolatileBlockingOrDiscardingRingBuffer.discarding(this));
+                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, true);
         }
         throw new AssertionError();
     }
@@ -149,11 +149,11 @@ public class RingBufferBuilder<T> {
         return buffer;
     }
 
-    boolean getGC() {
+    boolean isGCEnabled() {
         if (!isPrefilled()) {
-            return gc;
+            return gcEnabled;
         }
-        if (gc) {
+        if (gcEnabled) {
             throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
         }
         return false;

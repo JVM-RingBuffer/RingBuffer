@@ -1,61 +1,136 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+
+import java.util.StringJoiner;
+
 class AtomicReadRingBuffer<T> implements RingBuffer<T> {
-    private final VolatileRingBuffer delegate;
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final Object[] buffer;
+    private final boolean gcEnabled;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+
+    private int readPosition;
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
+
+    private int newWritePosition;
 
     AtomicReadRingBuffer(RingBufferBuilder<?> builder) {
-        delegate = new VolatileRingBuffer<>(builder) {
-            @Override
-            synchronized int getReadPosition() {
-                return super.getReadPosition();
-            }
-        };
-    }
-
-    @Override
-    public T put() {
-        return (T) delegate.put();
-    }
-
-    @Override
-    public void commit() {
-        delegate.commit();
-    }
-
-    @Override
-    public void put(T element) {
-        delegate.put(element);
-    }
-
-    @Override
-    public T take() {
-        synchronized (delegate) {
-            return (T) delegate.take();
-        }
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.newBuffer();
+        gcEnabled = builder.isGCEnabled();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
     @Override
     public int getCapacity() {
-        return delegate.getCapacity();
+        return capacity;
+    }
+
+    @Override
+    public T put() {
+        int writePosition = this.writePosition.getFromSameThread();
+        if (writePosition == capacityMinusOne) {
+            newWritePosition = 0;
+        } else {
+            newWritePosition = writePosition + 1;
+        }
+        return (T) buffer[writePosition];
+    }
+
+    @Override
+    public void commit() {
+        writePosition.set(newWritePosition);
+    }
+
+    @Override
+    public void put(T element) {
+        int writePosition = this.writePosition.getFromSameThread();
+        buffer[writePosition] = element;
+        if (writePosition == capacityMinusOne) {
+            this.writePosition.set(0);
+        } else {
+            this.writePosition.set(writePosition + 1);
+        }
+    }
+
+    @Override
+    public T take() {
+        int readPosition;
+        synchronized (this) {
+            readPosition = this.readPosition;
+            readBusyWaitStrategy.reset();
+            while (writePosition.get() == readPosition) {
+                readBusyWaitStrategy.tick();
+            }
+            if (readPosition == capacityMinusOne) {
+                this.readPosition = 0;
+            } else {
+                this.readPosition++;
+            }
+        }
+        Object element = buffer[readPosition];
+        if (gcEnabled) {
+            buffer[readPosition] = null;
+        }
+        return (T) element;
     }
 
     @Override
     public boolean contains(T element) {
-        return delegate.contains(element);
+        int readPosition = getReadPosition();
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                if (buffer[i].equals(element)) {
+                    return true;
+                }
+            }
+        } else {
+            for (int i = writePosition; i < readPosition; i++) {
+                if (buffer[i].equals(element)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
     public int size() {
-        return delegate.size();
+        int readPosition = getReadPosition();
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
     }
 
     @Override
     public boolean isEmpty() {
-        return delegate.isEmpty();
+        return this.writePosition.get() == getReadPosition();
     }
 
     @Override
     public String toString() {
-        return delegate.toString();
+        int readPosition = getReadPosition();
+        int writePosition = this.writePosition.get();
+        StringJoiner joiner = new StringJoiner(", ", "[", "]");
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                joiner.add(buffer[i].toString());
+            }
+        } else {
+            for (int i = writePosition; i < readPosition; i++) {
+                joiner.add(buffer[i].toString());
+            }
+        }
+        return joiner.toString();
+    }
+
+    private synchronized int getReadPosition() {
+        return readPosition;
     }
 }
