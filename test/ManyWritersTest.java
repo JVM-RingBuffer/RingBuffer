@@ -12,10 +12,10 @@ public class ManyWritersTest {
     }
 
     static void run() throws InterruptedException {
+        Reader reader = new Reader(Test.TOTAL_ELEMENTS);
         for (int i = 0; i < Test.CONCURRENCY; i++) {
             new Writer(Test.NUM_ITERATIONS);
         }
-        Reader reader = new Reader(Test.TOTAL_ELEMENTS);
         reader.join();
         System.out.println(reader.getSum());
     }
