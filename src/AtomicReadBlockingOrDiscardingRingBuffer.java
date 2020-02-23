@@ -40,7 +40,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public T put() {
+    public T next() {
         int writePosition = this.writePosition.getFromSameThread();
         if (writePosition == capacityMinusOne) {
             newWritePosition = 0;
@@ -54,7 +54,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void commit() {
+    public void put() {
         writePosition.set(newWritePosition);
     }
 

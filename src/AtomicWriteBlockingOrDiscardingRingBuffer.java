@@ -15,9 +15,7 @@ class AtomicWriteBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final T dummyElement;
 
     private final LazyVolatileInteger readPosition = new LazyVolatileInteger();
-    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
-
-    private int newWritePosition;
+    private final LazyAtomicInteger writePosition = new LazyAtomicInteger();
 
     AtomicWriteBlockingOrDiscardingRingBuffer(RingBufferBuilder<T> builder, boolean discarding) {
         capacity = builder.getCapacity();
@@ -40,37 +38,35 @@ class AtomicWriteBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public T put() {
-        int writePosition = this.writePosition.getFromSameThread();
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
-        }
-        if (isBufferNotFull(newWritePosition)) {
-            return (T) buffer[writePosition];
+    public T next() {
+        long intPair = incrementWritePosition();
+        if (isBufferNotFull(IntPair.getSecond(intPair))) {
+            return (T) buffer[IntPair.getFirst(intPair)];
         }
         return dummyElement;
     }
 
     @Override
-    public void commit() {
-        writePosition.set(newWritePosition);
+    public void put() {
+        writePosition.afterUpdate();
     }
 
     @Override
-    public synchronized void put(T element) {
-        int writePosition = this.writePosition.getFromSameThread();
-        int newWritePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
-        } else {
-            newWritePosition = writePosition + 1;
+    public void put(T element) {
+        long intPair = incrementWritePosition();
+        if (isBufferNotFull(IntPair.getSecond(intPair))) {
+            buffer[IntPair.getFirst(intPair)] = element;
+            writePosition.afterUpdate();
         }
-        if (isBufferNotFull(newWritePosition)) {
-            buffer[writePosition] = element;
-            this.writePosition.set(newWritePosition);
-        }
+    }
+
+    private long incrementWritePosition() {
+        return writePosition.update(capacityMinusOne, (writePosition, capacityMinusOne) -> {
+            if (writePosition == capacityMinusOne) {
+                return 0;
+            }
+            return writePosition + 1;
+        });
     }
 
     private boolean isBufferNotFull(int newWritePosition) {
