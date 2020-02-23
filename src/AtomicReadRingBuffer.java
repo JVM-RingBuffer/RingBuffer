@@ -57,19 +57,16 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public T take() {
-        int readPosition;
-        synchronized (this) {
-            readPosition = this.readPosition;
-            readBusyWaitStrategy.reset();
-            while (writePosition.get() == readPosition) {
-                readBusyWaitStrategy.tick();
-            }
-            if (readPosition == capacityMinusOne) {
-                this.readPosition = 0;
-            } else {
-                this.readPosition++;
-            }
+    public synchronized T take() {
+        int readPosition = this.readPosition;
+        readBusyWaitStrategy.reset();
+        while (writePosition.get() == readPosition) {
+            readBusyWaitStrategy.tick();
+        }
+        if (readPosition == capacityMinusOne) {
+            this.readPosition = 0;
+        } else {
+            this.readPosition++;
         }
         Object element = buffer[readPosition];
         if (gcEnabled) {

@@ -85,19 +85,16 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public T take() {
-        int readPosition;
-        synchronized (this) {
-            readPosition = this.readPosition.getFromSameThread();
-            readBusyWaitStrategy.reset();
-            while (writePosition.get() == readPosition) {
-                readBusyWaitStrategy.tick();
-            }
-            if (readPosition == capacityMinusOne) {
-                this.readPosition.set(0);
-            } else {
-                this.readPosition.set(readPosition + 1);
-            }
+    public synchronized T take() {
+        int readPosition = this.readPosition.getFromSameThread();
+        readBusyWaitStrategy.reset();
+        while (writePosition.get() == readPosition) {
+            readBusyWaitStrategy.tick();
+        }
+        if (readPosition == capacityMinusOne) {
+            this.readPosition.set(0);
+        } else {
+            this.readPosition.set(readPosition + 1);
         }
         Object element = buffer[readPosition];
         if (gcEnabled) {

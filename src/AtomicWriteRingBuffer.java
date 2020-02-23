@@ -12,7 +12,9 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
-    private final LazyAtomicInteger writePosition = new LazyAtomicInteger();
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
+
+    private int newWritePosition;
 
     AtomicWriteRingBuffer(RingBufferBuilder<?> builder) {
         capacity = builder.getCapacity();
@@ -29,27 +31,29 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        return (T) buffer[incrementWritePosition()];
+        int writePosition = this.writePosition.getFromSameThread();
+        if (writePosition == capacityMinusOne) {
+            newWritePosition = 0;
+        } else {
+            newWritePosition = writePosition + 1;
+        }
+        return (T) buffer[writePosition];
     }
 
     @Override
     public void put() {
-        writePosition.afterUpdate();
+        writePosition.set(newWritePosition);
     }
 
     @Override
-    public void put(T element) {
-        buffer[incrementWritePosition()] = element;
-        writePosition.afterUpdate();
-    }
-
-    private int incrementWritePosition() {
-        return IntPair.getFirst(writePosition.update(capacityMinusOne, (writePosition, capacityMinusOne) -> {
-            if (writePosition == capacityMinusOne) {
-                return 0;
-            }
-            return writePosition + 1;
-        }));
+    public synchronized void put(T element) {
+        int writePosition = this.writePosition.getFromSameThread();
+        buffer[writePosition] = element;
+        if (writePosition == capacityMinusOne) {
+            this.writePosition.set(0);
+        } else {
+            this.writePosition.set(writePosition + 1);
+        }
     }
 
     @Override

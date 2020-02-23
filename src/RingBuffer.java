@@ -8,6 +8,15 @@ public interface RingBuffer<T> {
     /**
      * If the ring buffer is non-local, then after the returned object has been populated,
      * <code>put()</code> must be called.
+     * <br>
+     * Moreover, if there are multiple writers, then a lock on this object
+     * must be held between the two method invocations:
+     *
+     * <pre>{@code synchronized (ringBuffer) {
+     *     T element = ringBuffer.next();
+     *     // Populate element
+     *     ringBuffer.put();
+     * } }</pre>
      */
     T next();
 

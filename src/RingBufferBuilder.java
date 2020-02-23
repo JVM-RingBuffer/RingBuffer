@@ -98,7 +98,7 @@ public class RingBufferBuilder<T> {
             throw new IllegalArgumentException("A ring buffer does not support many readers and writers. Consider using a blocking queue instead.");
         }
         if (oneReader) {
-            if (!oneWriter) {
+            if (!oneWriter && !isPrefilled()) {
                 switch (type) {
                     case OVERWRITING:
                         return new AtomicWriteRingBuffer<>(this);
