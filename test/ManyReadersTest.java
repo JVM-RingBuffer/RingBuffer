@@ -14,7 +14,7 @@ public class ManyReadersTest {
         run();
     }
 
-    static void run() throws InterruptedException {
+    private static void run() throws InterruptedException {
         List<Reader> readers = new ArrayList<>();
         for (int i = 0; i < Test.CONCURRENCY; i++) {
             readers.add(new Reader(Test.NUM_ITERATIONS));

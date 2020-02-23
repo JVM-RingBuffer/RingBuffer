@@ -12,7 +12,9 @@ public class PrefilledOneToOneTest {
     }
 
     private static void run() throws InterruptedException {
+        Reader reader = new Reader(Test.NUM_ITERATIONS);
         new PrefilledWriter(Test.NUM_ITERATIONS);
-        OneToOneTest.run();
+        reader.join();
+        System.out.println(reader.getSum());
     }
 }

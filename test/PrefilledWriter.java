@@ -11,9 +11,13 @@ class PrefilledWriter extends Thread {
     @Override
     public void run() {
         for (int i = 0; i < numIterations; i++) {
-            Event event = Test.ringBuffer.next();
-            event.setData(i);
-            Test.ringBuffer.put();
+            write(i);
         }
+    }
+
+    void write(int i) {
+        Event event = Test.ringBuffer.next();
+        event.setData(i);
+        Test.ringBuffer.put();
     }
 }

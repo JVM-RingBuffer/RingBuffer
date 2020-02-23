@@ -7,17 +7,13 @@ public class OneToOneTest {
                 .oneWriter()
                 .build();
 
-        _run();
-        _run();
-    }
-
-    private static void _run() throws InterruptedException {
-        new Writer(Test.NUM_ITERATIONS);
+        run();
         run();
     }
 
-    static void run() throws InterruptedException {
+    private static void run() throws InterruptedException {
         Reader reader = new Reader(Test.NUM_ITERATIONS);
+        new Writer(Test.NUM_ITERATIONS);
         reader.join();
         System.out.println(reader.getSum());
     }
