@@ -1,0 +1,22 @@
+package eu.menzani.ringbuffer;
+
+public class ManyWritersTest {
+    public static void main(String[] args) throws InterruptedException {
+        Test.ringBuffer = RingBuffer.<Event>empty(Test.TOTAL_ELEMENTS + 1)
+                .oneReader()
+                .manyWriters()
+                .build();
+
+        run();
+        run();
+    }
+
+    static void run() throws InterruptedException {
+        for (int i = 0; i < Test.CONCURRENCY; i++) {
+            new Writer(Test.NUM_ITERATIONS);
+        }
+        Reader reader = new Reader(Test.TOTAL_ELEMENTS);
+        reader.join();
+        System.out.println(reader.getSum());
+    }
+}
