@@ -107,7 +107,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return this.writePosition.get() == getReadPosition();
+        return writePosition.get() == getReadPosition();
     }
 
     @Override
