@@ -1,23 +1,19 @@
 package eu.menzani.ringbuffer;
 
-public class PrefilledManyWritersBlockingTest {
-    public static void main(String[] args) throws InterruptedException {
-        Test.ringBuffer = RingBuffer.prefilled(5, Event::new)
+public class PrefilledManyWritersBlockingTest extends RingBufferTest {
+    public PrefilledManyWritersBlockingTest() {
+        super(VolatileBlockingOrDiscardingRingBuffer.class, RingBuffer.prefilled(SMALL_BUFFER_SIZE, Event::new)
                 .oneReader()
                 .manyWriters()
-                .blocking()
-                .build();
-
-        run();
-        run();
+                .blocking());
     }
 
-    private static void run() throws InterruptedException {
-        Reader reader = new Reader(Test.TOTAL_ELEMENTS);
-        for (int i = 0; i < Test.CONCURRENCY; i++) {
-            new PrefilledSynchronizedWriter(Test.NUM_ITERATIONS);
+    int run() throws InterruptedException {
+        Reader reader = new Reader(TOTAL_ELEMENTS);
+        for (int i = 0; i < CONCURRENCY; i++) {
+            new PrefilledSynchronizedWriter(NUM_ITERATIONS);
         }
         reader.join();
-        System.out.println(reader.getSum());
+        return reader.getSum();
     }
 }

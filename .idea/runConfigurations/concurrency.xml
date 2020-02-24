@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="concurrency" type="JUnit" factoryName="JUnit">
+    <module name="RingBuffer" />
+    <useClassPathOnly />
+    <option name="PACKAGE_NAME" value="eu.menzani.ringbuffer" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <option name="PARAMETERS" value="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

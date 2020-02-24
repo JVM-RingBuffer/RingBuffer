@@ -1,20 +1,16 @@
 package eu.menzani.ringbuffer;
 
-public class PrefilledOneToOneTest {
-    public static void main(String[] args) throws InterruptedException {
-        Test.ringBuffer = RingBuffer.prefilled(Test.NUM_ITERATIONS + 1, Event::new)
+public class PrefilledOneToOneTest extends RingBufferTest {
+    public PrefilledOneToOneTest() {
+        super(VolatileRingBuffer.class, RingBuffer.prefilled(NUM_ITERATIONS + 1, Event::new)
                 .oneReader()
-                .oneWriter()
-                .build();
-
-        run();
-        run();
+                .oneWriter());
     }
 
-    private static void run() throws InterruptedException {
-        Reader reader = new Reader(Test.NUM_ITERATIONS);
-        new PrefilledWriter(Test.NUM_ITERATIONS);
+    int run() throws InterruptedException {
+        Reader reader = new Reader(NUM_ITERATIONS);
+        new PrefilledWriter(NUM_ITERATIONS);
         reader.join();
-        System.out.println(reader.getSum());
+        return reader.getSum();
     }
 }
