@@ -1,2 +1,5 @@
 .idea/*
+!.idea/libraries
 !.idea/modules.xml
+
+lib/
