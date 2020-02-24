@@ -32,15 +32,6 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
-    /**
-     * If the ring buffer is not blocking nor discarding,
-     * then the following methods can only be called from the reader thread:
-     *
-     * <pre>{@code contains(T element)
-     * size()
-     * isEmpty()
-     * toString() }</pre>
-     */
     public RingBufferBuilder<T> oneReader() {
         oneReader = true;
         return this;
@@ -121,6 +112,9 @@ public class RingBufferBuilder<T> {
             case OVERWRITING:
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
+                if (isPrefilled()) {
+                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
+                }
                 return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:
                 return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, true);
