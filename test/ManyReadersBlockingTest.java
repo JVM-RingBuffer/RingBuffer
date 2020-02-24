@@ -2,14 +2,14 @@ package eu.menzani.ringbuffer;
 
 public class ManyReadersBlockingTest extends RingBufferTest {
     public ManyReadersBlockingTest() {
-        super(AtomicReadBlockingOrDiscardingRingBuffer.class, RingBuffer.<Event>empty(SMALL_BUFFER_SIZE)
+        super(AtomicReadBlockingOrDiscardingRingBuffer.class, 17999997000000L, RingBuffer.<Event>empty(SMALL_BUFFER_SIZE)
                 .manyReaders()
                 .oneWriter()
                 .blocking()
                 .withGC());
     }
 
-    int run() throws InterruptedException {
+    long run() throws InterruptedException {
         ReaderGroup readerGroup = new ReaderGroup();
         for (int i = 0; i < CONCURRENCY; i++) {
             readerGroup.add(new Reader(NUM_ITERATIONS, ringBuffer));

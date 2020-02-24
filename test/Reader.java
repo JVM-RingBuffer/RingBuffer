@@ -1,13 +1,13 @@
 package eu.menzani.ringbuffer;
 
 class Reader extends TestThread {
-    private int sum;
+    private long sum;
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
-    int getSum() {
+    long getSum() {
         return sum;
     }
 

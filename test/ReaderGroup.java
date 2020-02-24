@@ -10,10 +10,10 @@ class ReaderGroup {
         readers.add(reader);
     }
 
-    int getSum() throws InterruptedException {
+    long getSum() throws InterruptedException {
         for (Reader reader : readers) {
             reader.join();
         }
-        return readers.stream().mapToInt(Reader::getSum).sum();
+        return readers.stream().mapToLong(Reader::getSum).sum();
     }
 }

@@ -33,10 +33,10 @@ public class ProducersToProcessorToConsumersTest {
 
     @Test
     public void testConcurrency() throws InterruptedException {
-        assertEquals(run(), run());
+        assertEquals(2999997000000L, run());
     }
 
-    private int run() throws InterruptedException {
+    private long run() throws InterruptedException {
         ReaderGroup readerGroup = new ReaderGroup();
         for (int i = 0; i < RingBufferTest.CONCURRENCY; i++) {
             readerGroup.add(new Reader(RingBufferTest.NUM_ITERATIONS, processorToConsumers));

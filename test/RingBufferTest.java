@@ -12,10 +12,12 @@ abstract class RingBufferTest {
     static final int TOTAL_ELEMENTS = CONCURRENCY * NUM_ITERATIONS;
 
     private final Class<? extends RingBuffer<?>> clazz;
+    private final long sum;
     final RingBuffer<Event> ringBuffer;
 
-    <T extends RingBuffer<?>> RingBufferTest(Class<T> clazz, RingBufferBuilder<Event> builder) {
+    <T extends RingBuffer<?>> RingBufferTest(Class<T> clazz, long sum, RingBufferBuilder<Event> builder) {
         this.clazz = clazz;
+        this.sum = sum;
         ringBuffer = builder.build();
     }
 
@@ -26,8 +28,8 @@ abstract class RingBufferTest {
 
     @Test
     public void testConcurrency() throws InterruptedException {
-        assertEquals(run(), run());
+        assertEquals(sum, run());
     }
 
-    abstract int run() throws InterruptedException;
+    abstract long run() throws InterruptedException;
 }
