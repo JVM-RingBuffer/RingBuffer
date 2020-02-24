@@ -14,9 +14,9 @@ RingBuffer<Integer> processorToConsumers = RingBuffer.<Integer>empty(5)
 Runnable producer = () -> {
     for (int i = 0; i < 100; i++) {
         synchronized (producersToProcessor) {
-            Event event = producersToProcessor.put();
+            Event event = producersToProcessor.next();
             event.setData(i);
-            producersToProcessor.commit();
+            producersToProcessor.put();
         }
     }
 };

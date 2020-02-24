@@ -105,7 +105,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return this.writePosition.get() == readPosition;
+        return writePosition.get() == readPosition;
     }
 
     @Override
