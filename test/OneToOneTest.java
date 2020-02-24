@@ -8,8 +8,8 @@ public class OneToOneTest extends RingBufferTest {
     }
 
     int run() throws InterruptedException {
-        Reader reader = new Reader(NUM_ITERATIONS);
-        new Writer(NUM_ITERATIONS);
+        Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
+        new Writer(NUM_ITERATIONS, ringBuffer);
         reader.join();
         return reader.getSum();
     }

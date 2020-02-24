@@ -8,9 +8,9 @@ public class PrefilledManyWritersTest extends RingBufferTest {
     }
 
     int run() throws InterruptedException {
-        Reader reader = new Reader(TOTAL_ELEMENTS);
+        Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
         for (int i = 0; i < CONCURRENCY; i++) {
-            new PrefilledSynchronizedWriter(NUM_ITERATIONS);
+            new PrefilledSynchronizedWriter(NUM_ITERATIONS, ringBuffer);
         }
         reader.join();
         return reader.getSum();
