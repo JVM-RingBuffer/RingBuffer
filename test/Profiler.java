@@ -2,11 +2,17 @@ package eu.menzani.ringbuffer;
 
 class Profiler {
     private final String prefix;
+    private final int divideBy;
     private long start;
     private long executionTime;
 
     Profiler(Object instance, String methodName) {
+        this(instance, methodName, 1);
+    }
+
+    Profiler(Object instance, String methodName, int divideBy) {
         prefix = instance.getClass().getSimpleName() + '#' + methodName + ": ";
+        this.divideBy = divideBy;
     }
 
     String getPrefix() {
@@ -23,15 +29,11 @@ class Profiler {
 
     void stop() {
         final long end = System.nanoTime();
-        executionTime = end - start;
+        executionTime = (end - start) / divideBy;
     }
 
     void report() {
-        report(1);
-    }
-
-    void report(int divideBy) {
-        report(prefix, executionTime / divideBy);
+        report(prefix, executionTime);
     }
 
     static void report(String prefix, long executionTime) {

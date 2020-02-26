@@ -7,7 +7,7 @@ abstract class TestThread extends Thread {
 
     TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
         this.numIterations = numIterations;
-        profiler = new Profiler(this, "tick()");
+        profiler = new Profiler(this, "tick()", numIterations);
         this.ringBuffer = ringBuffer;
         start();
     }
@@ -31,7 +31,7 @@ abstract class TestThread extends Thread {
 
     void reportPerformance() throws InterruptedException {
         waitForCompletion();
-        profiler.report(numIterations);
+        profiler.report();
     }
 
     interface Factory {
