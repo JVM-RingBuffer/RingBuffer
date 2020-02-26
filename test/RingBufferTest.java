@@ -27,12 +27,8 @@ abstract class RingBufferTest {
     }
 
     @Test
-    public void testCorrectness() {
+    public void testWriteAndRead() {
         assertEquals(sum, run());
-    }
-
-    @Test
-    public void measurePerformance() {
         measurePerformanceIfEnabled(this::run);
     }
 
