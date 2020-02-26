@@ -12,7 +12,7 @@ class TestThreadGroup {
         }
     }
 
-    void reportPerformance() throws InterruptedException {
+    void reportPerformance() {
         ProfilerGroup profilerGroup = new ProfilerGroup();
         for (TestThread testThread : testThreads) {
             testThread.waitForCompletion();

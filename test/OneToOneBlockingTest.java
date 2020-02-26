@@ -9,7 +9,7 @@ public class OneToOneBlockingTest extends RingBufferTest {
                 .withGC());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
         Writer writer = new Writer(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();

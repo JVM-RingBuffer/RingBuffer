@@ -27,9 +27,22 @@ abstract class RingBufferTest {
     }
 
     @Test
-    public void testConcurrency() throws InterruptedException {
+    public void testCorrectness() {
         assertEquals(sum, run());
     }
 
-    abstract long run() throws InterruptedException;
+    @Test
+    public void measurePerformance() {
+        measurePerformanceIfEnabled(this::run);
+    }
+
+    abstract long run();
+
+    static void measurePerformanceIfEnabled(Runnable runnable) {
+        if (Boolean.getBoolean("measurePerformance")) {
+            Profiler.enable();
+            runnable.run();
+            Profiler.disable();
+        }
+    }
 }

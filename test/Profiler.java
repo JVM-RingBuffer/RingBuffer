@@ -1,6 +1,16 @@
 package eu.menzani.ringbuffer;
 
 class Profiler {
+    private static boolean enabled;
+
+    static void enable() {
+        enabled = true;
+    }
+
+    static void disable() {
+        enabled = false;
+    }
+
     private final String prefix;
     private final int divideBy;
     private long start;
@@ -37,12 +47,14 @@ class Profiler {
     }
 
     static void report(String prefix, long executionTime) {
-        if (executionTime < 2_000L) {
-            System.out.println(prefix + executionTime + "ns");
-        } else if (executionTime < 2_000_000L) {
-            System.out.println(prefix + (executionTime / 1_000L) + "us");
-        } else {
-            System.out.println(prefix + (executionTime / 1_000_000L) + "ms");
+        if (enabled) {
+            if (executionTime < 2_000L) {
+                System.out.println(prefix + executionTime + "ns");
+            } else if (executionTime < 2_000_000L) {
+                System.out.println(prefix + (executionTime / 1_000L) + "us");
+            } else {
+                System.out.println(prefix + (executionTime / 1_000_000L) + "ms");
+            }
         }
     }
 }

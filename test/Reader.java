@@ -21,7 +21,11 @@ class Reader extends TestThread {
     }
 
     @Override
-    void waitForCompletion() throws InterruptedException {
-        join();
+    void waitForCompletion() {
+        try {
+            join();
+        } catch (InterruptedException e) {
+            throw new AssertionError(e);
+        }
     }
 }

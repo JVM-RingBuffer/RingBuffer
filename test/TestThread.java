@@ -27,9 +27,9 @@ abstract class TestThread extends Thread {
 
     abstract void tick(int i);
 
-    void waitForCompletion() throws InterruptedException {}
+    void waitForCompletion() {}
 
-    void reportPerformance() throws InterruptedException {
+    void reportPerformance() {
         waitForCompletion();
         profiler.report();
     }

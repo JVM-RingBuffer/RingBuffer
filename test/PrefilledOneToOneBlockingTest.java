@@ -8,7 +8,7 @@ public class PrefilledOneToOneBlockingTest extends RingBufferTest {
                 .blocking());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();

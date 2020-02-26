@@ -7,7 +7,7 @@ public class PrefilledManyWritersTest extends RingBufferTest {
                 .manyWriters());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(ringBuffer);
         reader.reportPerformance();

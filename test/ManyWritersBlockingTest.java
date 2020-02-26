@@ -9,7 +9,7 @@ public class ManyWritersBlockingTest extends RingBufferTest {
                 .withGC());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);
         reader.reportPerformance();

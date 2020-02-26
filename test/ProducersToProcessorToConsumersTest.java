@@ -32,11 +32,16 @@ public class ProducersToProcessorToConsumersTest {
     }
 
     @Test
-    public void testConcurrency() throws InterruptedException {
+    public void testCorrectness() {
         assertEquals(2999997000000L, run());
     }
 
-    private long run() throws InterruptedException {
+    @Test
+    public void measurePerformance() {
+        RingBufferTest.measurePerformanceIfEnabled(this::run);
+    }
+
+    private long run() {
         TestThreadGroup readerGroup = Reader.newGroup(processorToConsumers);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(producersToProcessor);
         Processor processor = new Processor(RingBufferTest.TOTAL_ELEMENTS);

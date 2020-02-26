@@ -7,7 +7,7 @@ public class ManyWritersTest extends RingBufferTest {
                 .manyWriters());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);
         reader.reportPerformance();

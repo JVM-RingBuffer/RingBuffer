@@ -7,7 +7,7 @@ public class OneToOneTest extends RingBufferTest {
                 .oneWriter());
     }
 
-    long run() throws InterruptedException {
+    long run() {
         Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
         Writer writer = new Writer(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();
