@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer;
 
-class PrefilledSynchronizedWriter extends PrefilledWriter {
+class PrefilledSynchronizedWriter extends TestThread {
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
         return new TestThreadGroup(PrefilledSynchronizedWriter::new, ringBuffer);
     }
@@ -10,9 +10,13 @@ class PrefilledSynchronizedWriter extends PrefilledWriter {
     }
 
     @Override
-    void tick(int i) {
-        synchronized (ringBuffer) {
-            super.tick(i);
+    void loop() {
+        for (int i = 0; i < numIterations; i++) {
+            synchronized (ringBuffer) {
+                Event event = ringBuffer.next();
+                event.setData(i);
+                ringBuffer.put();
+            }
         }
     }
 }

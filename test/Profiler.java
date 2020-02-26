@@ -16,12 +16,12 @@ class Profiler {
     private long start;
     private long executionTime;
 
-    Profiler(Object instance, String methodName) {
-        this(instance, methodName, 1);
+    Profiler(Object instance) {
+        this(instance, 1);
     }
 
-    Profiler(Object instance, String methodName, int divideBy) {
-        prefix = instance.getClass().getSimpleName() + '#' + methodName + ": ";
+    Profiler(Object instance, int divideBy) {
+        prefix = instance.getClass().getSimpleName() + ": ";
         this.divideBy = divideBy;
     }
 

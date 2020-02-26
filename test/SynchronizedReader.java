@@ -10,9 +10,11 @@ class SynchronizedReader extends Reader {
     }
 
     @Override
-    void tick(int i) {
-        synchronized (ringBuffer) {
-            super.tick(i);
+    void loop() {
+        for (int i = 0; i < numIterations; i++) {
+            synchronized (ringBuffer) {
+                sum += ringBuffer.take().getData();
+            }
         }
     }
 }

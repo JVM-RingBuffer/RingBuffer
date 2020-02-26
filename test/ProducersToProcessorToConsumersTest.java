@@ -53,8 +53,10 @@ public class ProducersToProcessorToConsumersTest {
         }
 
         @Override
-        void tick(int i) {
-            processorToConsumers.put(producersToProcessor.take());
+        void loop() {
+            for (int i = 0; i < numIterations; i++) {
+                processorToConsumers.put(producersToProcessor.take());
+            }
         }
     }
 }

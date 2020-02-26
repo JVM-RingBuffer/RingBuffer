@@ -10,7 +10,9 @@ class Writer extends TestThread {
     }
 
     @Override
-    void tick(int i) {
-        ringBuffer.put(new Event(i));
+    void loop() {
+        for (int i = 0; i < numIterations; i++) {
+            ringBuffer.put(new Event(i));
+        }
     }
 }

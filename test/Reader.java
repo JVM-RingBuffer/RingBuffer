@@ -5,7 +5,7 @@ class Reader extends TestThread {
         return new TestThreadGroup(Reader::new, ringBuffer);
     }
 
-    private long sum;
+    long sum;
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
@@ -16,8 +16,10 @@ class Reader extends TestThread {
     }
 
     @Override
-    void tick(int i) {
-        sum += ringBuffer.take().getData();
+    void loop() {
+        for (int i = 0; i < numIterations; i++) {
+            sum += ringBuffer.take().getData();
+        }
     }
 
     @Override

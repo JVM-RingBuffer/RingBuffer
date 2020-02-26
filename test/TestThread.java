@@ -1,13 +1,13 @@
 package eu.menzani.ringbuffer;
 
 abstract class TestThread extends Thread {
-    private final int numIterations;
+    final int numIterations;
     private final Profiler profiler;
     final RingBuffer<Event> ringBuffer;
 
     TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
         this.numIterations = numIterations;
-        profiler = new Profiler(this, "tick()", numIterations);
+        profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
         start();
     }
@@ -19,13 +19,11 @@ abstract class TestThread extends Thread {
     @Override
     public void run() {
         profiler.start();
-        for (int i = 0; i < numIterations; i++) {
-            tick(i);
-        }
+        loop();
         profiler.stop();
     }
 
-    abstract void tick(int i);
+    abstract void loop();
 
     void waitForCompletion() {}
 
