@@ -10,11 +10,10 @@ public class ManyReadersBlockingTest extends RingBufferTest {
     }
 
     long run() throws InterruptedException {
-        ReaderGroup readerGroup = new ReaderGroup();
-        for (int i = 0; i < CONCURRENCY; i++) {
-            readerGroup.add(new Reader(NUM_ITERATIONS, ringBuffer));
-        }
-        new Writer(TOTAL_ELEMENTS, ringBuffer);
-        return readerGroup.getSum();
+        TestThreadGroup readerGroup = Reader.newGroup(ringBuffer);
+        Writer writer = new Writer(TOTAL_ELEMENTS, ringBuffer);
+        readerGroup.reportPerformance();
+        writer.reportPerformance();
+        return readerGroup.getReaderSum();
     }
 }

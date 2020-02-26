@@ -9,10 +9,9 @@ public class ManyWritersTest extends RingBufferTest {
 
     long run() throws InterruptedException {
         Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
-        for (int i = 0; i < CONCURRENCY; i++) {
-            new Writer(NUM_ITERATIONS, ringBuffer);
-        }
-        reader.join();
+        TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);
+        reader.reportPerformance();
+        writerGroup.reportPerformance();
         return reader.getSum();
     }
 }

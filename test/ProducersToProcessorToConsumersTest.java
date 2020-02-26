@@ -12,7 +12,7 @@ public class ProducersToProcessorToConsumersTest {
 
     @Before
     public void setUp() {
-        producersToProcessor = RingBuffer.prefilled(RingBufferTest.TOTAL_ELEMENTS + 1, Event::new)
+        producersToProcessor = RingBuffer.prefilled(RingBufferTest.TOTAL_ELEMENTS + 1, Event.RING_BUFFER_FILLER)
                 .manyWriters()
                 .oneReader()
                 .build();
@@ -37,13 +37,13 @@ public class ProducersToProcessorToConsumersTest {
     }
 
     private long run() throws InterruptedException {
-        ReaderGroup readerGroup = new ReaderGroup();
-        for (int i = 0; i < RingBufferTest.CONCURRENCY; i++) {
-            readerGroup.add(new Reader(RingBufferTest.NUM_ITERATIONS, processorToConsumers));
-            new PrefilledSynchronizedWriter(RingBufferTest.NUM_ITERATIONS, producersToProcessor);
-        }
-        new Processor(RingBufferTest.TOTAL_ELEMENTS);
-        return readerGroup.getSum();
+        TestThreadGroup readerGroup = Reader.newGroup(processorToConsumers);
+        TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(producersToProcessor);
+        Processor processor = new Processor(RingBufferTest.TOTAL_ELEMENTS);
+        readerGroup.reportPerformance();
+        writerGroup.reportPerformance();
+        processor.reportPerformance();
+        return readerGroup.getReaderSum();
     }
 
     private class Processor extends TestThread {

@@ -1,14 +1,16 @@
 package eu.menzani.ringbuffer;
 
 class Writer extends TestThread {
+    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(Writer::new, ringBuffer);
+    }
+
     Writer(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     void tick(int i) {
-        Event event = new Event();
-        event.setData(i);
-        ringBuffer.put(event);
+        ringBuffer.put(new Event(i));
     }
 }

@@ -11,8 +11,9 @@ public class OneToOneBlockingTest extends RingBufferTest {
 
     long run() throws InterruptedException {
         Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
-        new Writer(NUM_ITERATIONS, ringBuffer);
-        reader.join();
+        Writer writer = new Writer(NUM_ITERATIONS, ringBuffer);
+        reader.reportPerformance();
+        writer.reportPerformance();
         return reader.getSum();
     }
 }

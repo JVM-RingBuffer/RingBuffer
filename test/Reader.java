@@ -1,6 +1,10 @@
 package eu.menzani.ringbuffer;
 
 class Reader extends TestThread {
+    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(Reader::new, ringBuffer);
+    }
+
     private long sum;
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
@@ -14,5 +18,10 @@ class Reader extends TestThread {
     @Override
     void tick(int i) {
         sum += ringBuffer.take().getData();
+    }
+
+    @Override
+    void waitForCompletion() throws InterruptedException {
+        join();
     }
 }

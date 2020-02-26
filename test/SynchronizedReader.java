@@ -1,7 +1,11 @@
 package eu.menzani.ringbuffer;
 
 class SynchronizedReader extends Reader {
-    SynchronizedReader(int numIterations, RingBuffer<Event> ringBuffer) {
+    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(SynchronizedReader::new, ringBuffer);
+    }
+
+    private SynchronizedReader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
