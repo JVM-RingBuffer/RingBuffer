@@ -33,8 +33,12 @@ public class ProducersToProcessorToConsumersTest {
 
     @Test
     public void testWritesAndReads() {
+        doTest();
+        RingBufferTest.measurePerformanceIfEnabled(this::doTest);
+    }
+
+    private void doTest() {
         assertEquals(2999997000000L, run());
-        RingBufferTest.measurePerformanceIfEnabled(this::run);
     }
 
     private long run() {
@@ -49,7 +53,7 @@ public class ProducersToProcessorToConsumersTest {
 
     private class Processor extends TestThread {
         private Processor(int numIterations) {
-            super(numIterations, null);
+            super(true, numIterations, null);
         }
 
         @Override

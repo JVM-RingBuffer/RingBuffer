@@ -8,7 +8,7 @@ public class ManyWritersTest extends RingBufferTest {
     }
 
     long run() {
-        Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
+        Reader reader = Reader.newReader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);
         reader.reportPerformance();
         writerGroup.reportPerformance();

@@ -8,8 +8,8 @@ public class OneToOneTest extends RingBufferTest {
     }
 
     long run() {
-        Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
-        Writer writer = new Writer(NUM_ITERATIONS, ringBuffer);
+        Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
+        Writer writer = Writer.newWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();
         writer.reportPerformance();
         return reader.getSum();

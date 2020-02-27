@@ -1,5 +1,8 @@
 package eu.menzani.ringbuffer.wait;
 
+import eu.menzani.ringbuffer.java.Assert;
+import eu.menzani.ringbuffer.java.Assume;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -50,9 +53,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         }
 
         public Builder after(BusyWaitStrategy strategy, int strategyTicks) {
-            if (strategyTicks < 1) {
-                throw new IllegalArgumentException("strategyTicks must be at least 1, but is " + strategyTicks);
-            }
+            Assume.notLesser(strategyTicks, 1, "strategyTicks");
             if (strategy instanceof MultiStepBusyWaitStrategy) {
                 Node node = ((MultiStepBusyWaitStrategy) strategy).initialStrategy;
                 Deque<BusyWaitStrategy> strategies = new ArrayDeque<>();
@@ -76,7 +77,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         }
 
         public BusyWaitStrategy build() {
-            assert strategies.size() == strategiesTicks.size();
+            Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {
                 throw new IllegalStateException("No steps added.");
             }

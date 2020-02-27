@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.system;
 
-public class ThreadBindException extends Exception {
+public class ThreadBindException extends RuntimeException {
     private final int errorCode;
 
     ThreadBindException(Throwable cause) {

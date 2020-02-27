@@ -1,5 +1,6 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.system.ThreadBind;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,14 +29,19 @@ abstract class RingBufferTest {
 
     @Test
     public void testWriteAndRead() {
+        doTest();
+        measurePerformanceIfEnabled(this::doTest);
+    }
+
+    private void doTest() {
         assertEquals(sum, run());
-        measurePerformanceIfEnabled(this::run);
     }
 
     abstract long run();
 
     static void measurePerformanceIfEnabled(Runnable runnable) {
         if (Boolean.getBoolean("measurePerformance")) {
+            ThreadBind.loadNativeLibrary();
             Profiler.enable();
             runnable.run();
             Profiler.disable();

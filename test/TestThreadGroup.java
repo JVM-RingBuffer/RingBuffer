@@ -1,14 +1,16 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Assert;
+
 import java.util.HashSet;
 import java.util.Set;
 
 class TestThreadGroup {
     private final Set<TestThread> testThreads = new HashSet<>();
 
-    TestThreadGroup(TestThread.Factory testThreadFactory, RingBuffer<Event> ringBuffer) {
+    TestThreadGroup(TestThread.Factory testThreadFactory) {
         for (int i = 0; i < RingBufferTest.CONCURRENCY; i++) {
-            testThreads.add(testThreadFactory.newInstance(RingBufferTest.NUM_ITERATIONS, ringBuffer));
+            testThreads.add(testThreadFactory.newInstance(RingBufferTest.NUM_ITERATIONS));
         }
     }
 
@@ -18,7 +20,7 @@ class TestThreadGroup {
             testThread.waitForCompletion();
             profilerGroup.add(testThread.getProfiler());
         }
-        assert profilerGroup.getSize() == RingBufferTest.CONCURRENCY;
+        Assert.equal(profilerGroup.getSize(), RingBufferTest.CONCURRENCY);
         profilerGroup.report();
     }
 

@@ -1,5 +1,6 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -123,9 +124,7 @@ public class RingBufferBuilder<T> {
     }
 
     int getCapacity() {
-        if (capacity < 2) {
-            throw new IllegalArgumentException("capacity must be at least 2, but is " + capacity);
-        }
+        Assume.notLesser(capacity, 2, "capacity");
         return capacity;
     }
 

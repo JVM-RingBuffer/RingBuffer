@@ -8,7 +8,7 @@ public class PrefilledOneToOneTest extends RingBufferTest {
     }
 
     long run() {
-        Reader reader = new Reader(NUM_ITERATIONS, ringBuffer);
+        Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();
         writer.reportPerformance();

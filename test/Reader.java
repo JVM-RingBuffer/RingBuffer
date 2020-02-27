@@ -2,13 +2,17 @@ package eu.menzani.ringbuffer;
 
 class Reader extends TestThread {
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(Reader::new, ringBuffer);
+        return new TestThreadGroup(numIterations -> new Reader(false, numIterations, ringBuffer));
+    }
+
+    static Reader newReader(int numIterations, RingBuffer<Event> ringBuffer) {
+        return new Reader(true, numIterations, ringBuffer);
     }
 
     long sum;
 
-    Reader(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+    Reader(boolean bind, int numIterations, RingBuffer<Event> ringBuffer) {
+        super(bind, numIterations, ringBuffer);
     }
 
     long getSum() {

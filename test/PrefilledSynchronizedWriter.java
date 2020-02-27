@@ -2,11 +2,11 @@ package eu.menzani.ringbuffer;
 
 class PrefilledSynchronizedWriter extends TestThread {
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(PrefilledSynchronizedWriter::new, ringBuffer);
+        return new TestThreadGroup(numIterations -> new PrefilledSynchronizedWriter(numIterations, ringBuffer));
     }
 
     private PrefilledSynchronizedWriter(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+        super(false, numIterations, ringBuffer);
     }
 
     @Override

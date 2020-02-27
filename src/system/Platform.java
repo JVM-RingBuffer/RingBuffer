@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
+import java.nio.file.Path;
+
 public enum Platform {
     LINUX_32(false, true),
     LINUX_64(false, false),
@@ -42,5 +44,13 @@ public enum Platform {
             return LINUX_32;
         }
         return LINUX_64;
+    }
+
+    public static Path getTempFolder() {
+        return TempFolder.value;
+    }
+
+    private static class TempFolder {
+        private static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
     }
 }

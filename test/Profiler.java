@@ -3,6 +3,10 @@ package eu.menzani.ringbuffer;
 class Profiler {
     private static boolean enabled;
 
+    static boolean isEnabled() {
+        return enabled;
+    }
+
     static void enable() {
         enabled = true;
     }

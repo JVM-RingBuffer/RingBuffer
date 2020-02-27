@@ -9,7 +9,7 @@ public class PrefilledManyWritersBlockingTest extends RingBufferTest {
     }
 
     long run() {
-        Reader reader = new Reader(TOTAL_ELEMENTS, ringBuffer);
+        Reader reader = Reader.newReader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(ringBuffer);
         reader.reportPerformance();
         writerGroup.reportPerformance();
