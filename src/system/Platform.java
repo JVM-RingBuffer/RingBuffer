@@ -51,6 +51,6 @@ public enum Platform {
     }
 
     private static class TempFolder {
-        private static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
+        static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
     }
 }

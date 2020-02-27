@@ -19,11 +19,11 @@ public class ThreadBind {
         return Optional.ofNullable(libraryPath);
     }
 
-    public static void loadNativeLibrary() throws ThreadBindException {
+    public static void loadNativeLibrary() {
         loadNativeLibrary(Platform.current(), Platform.getTempFolder());
     }
 
-    public static synchronized void loadNativeLibrary(Platform platform, Path libraryDirectory) throws ThreadBindException {
+    public static synchronized void loadNativeLibrary(Platform platform, Path libraryDirectory) {
         if (libraryPath != null) {
             throw new IllegalStateException("A native library has already been loaded.");
         }
@@ -57,16 +57,16 @@ public class ThreadBind {
         throw new AssertionError();
     }
 
-    public static ThreadBind spread() {
+    public static Spread spread() {
         int lastCPU = Runtime.getRuntime().availableProcessors() - 1;
         return spread(lastCPU == 0 ? 0 : 1, lastCPU);
     }
 
-    public static ThreadBind spread(int firstCPU, int lastCPU) {
-        return new ThreadBind(firstCPU, lastCPU);
+    public static Spread spread(int firstCPU, int lastCPU) {
+        return new Spread(firstCPU, lastCPU);
     }
 
-    public static void bindCurrentThreadToCPU(int cpu) throws ThreadBindException {
+    public static void bindCurrentThreadToCPU(int cpu) {
         try {
             int errorCode = bindCurrentThread(cpu);
             if (errorCode != 0) {
@@ -79,25 +79,27 @@ public class ThreadBind {
 
     private static native int bindCurrentThread(int cpu);
 
-    private final int firstCPU;
-    private final int lastCPU;
-    private final AtomicInteger cpu;
+    public static class Spread {
+        private final int firstCPU;
+        private final int lastCPU;
+        private final AtomicInteger cpu;
 
-    private ThreadBind(int firstCPU, int lastCPU) {
-        Assume.notNegative(firstCPU, "firstCPU");
-        Assume.notNegative(lastCPU, "lastCPU");
-        Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
-        this.firstCPU = firstCPU;
-        this.lastCPU = lastCPU;
-        cpu = new AtomicInteger(firstCPU);
-    }
+        private Spread(int firstCPU, int lastCPU) {
+            Assume.notNegative(firstCPU, "firstCPU");
+            Assume.notNegative(lastCPU, "lastCPU");
+            Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
+            this.firstCPU = firstCPU;
+            this.lastCPU = lastCPU;
+            cpu = new AtomicInteger(firstCPU);
+        }
 
-    public void bindCurrentThread() throws ThreadBindException {
-        ThreadBind.bindCurrentThreadToCPU(cpu.getAndUpdate(cpu -> {
-            if (cpu == lastCPU) {
-                return firstCPU;
-            }
-            return cpu + 1;
-        }));
+        public void bindCurrentThreadToNextCPU() {
+            ThreadBind.bindCurrentThreadToCPU(cpu.getAndUpdate(cpu -> {
+                if (cpu == lastCPU) {
+                    return firstCPU;
+                }
+                return cpu + 1;
+            }));
+        }
     }
 }

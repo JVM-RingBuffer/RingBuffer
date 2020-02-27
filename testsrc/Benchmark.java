@@ -28,11 +28,11 @@ class Benchmark {
         private final String prefix;
         private long value = Long.MAX_VALUE;
 
-        private Result(String prefix) {
+        Result(String prefix) {
             this.prefix = prefix;
         }
 
-        private void update(long newValue) {
+        void update(long newValue) {
             if (newValue < value) {
                 value = newValue;
             }

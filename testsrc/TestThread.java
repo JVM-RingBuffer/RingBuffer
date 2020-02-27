@@ -3,15 +3,15 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.system.ThreadBind;
 
 abstract class TestThread extends Thread {
-    private static final ThreadBind spread = ThreadBind.spread();
+    private static final ThreadBind.Spread spread = ThreadBind.spread();
 
-    private final boolean bind;
+    private final boolean bindToCPU;
     final int numIterations;
     private final Profiler profiler;
     final RingBuffer<Event> ringBuffer;
 
-    TestThread(boolean bind, int numIterations, RingBuffer<Event> ringBuffer) {
-        this.bind = bind;
+    TestThread(boolean bindToCPU, int numIterations, RingBuffer<Event> ringBuffer) {
+        this.bindToCPU = bindToCPU;
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
@@ -24,8 +24,8 @@ abstract class TestThread extends Thread {
 
     @Override
     public void run() {
-        if (bind) {
-            spread.bindCurrentThread();
+        if (bindToCPU) {
+            spread.bindCurrentThreadToNextCPU();
         }
         profiler.start();
         loop();

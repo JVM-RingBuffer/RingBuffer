@@ -100,7 +100,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         final int strategyTicks;
         final Node next;
 
-        private Node(BusyWaitStrategy strategy, int strategyTicks, Node next) {
+        Node(BusyWaitStrategy strategy, int strategyTicks, Node next) {
             this.strategy = strategy;
             this.strategyTicks = strategyTicks;
             this.next = next;

@@ -9,8 +9,8 @@ class Writer extends TestThread {
         return new Writer(true, numIterations, ringBuffer);
     }
 
-    private Writer(boolean bind, int numIterations, RingBuffer<Event> ringBuffer) {
-        super(bind, numIterations, ringBuffer);
+    private Writer(boolean bindToCPU, int numIterations, RingBuffer<Event> ringBuffer) {
+        super(bindToCPU, numIterations, ringBuffer);
     }
 
     @Override

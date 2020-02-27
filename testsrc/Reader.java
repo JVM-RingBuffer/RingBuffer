@@ -11,8 +11,8 @@ class Reader extends TestThread {
 
     long sum;
 
-    Reader(boolean bind, int numIterations, RingBuffer<Event> ringBuffer) {
-        super(bind, numIterations, ringBuffer);
+    Reader(boolean bindToCPU, int numIterations, RingBuffer<Event> ringBuffer) {
+        super(bindToCPU, numIterations, ringBuffer);
     }
 
     long getSum() {

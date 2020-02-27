@@ -47,7 +47,7 @@ public class ProducersToProcessorToConsumersTest {
     }
 
     private class Processor extends TestThread {
-        private Processor(int numIterations) {
+        Processor(int numIterations) {
             super(true, numIterations, null);
         }
 
