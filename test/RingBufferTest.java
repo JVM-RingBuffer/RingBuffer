@@ -12,6 +12,10 @@ abstract class RingBufferTest {
     static final int CONCURRENCY = 6;
     static final int TOTAL_ELEMENTS = CONCURRENCY * NUM_ITERATIONS;
 
+    static {
+        ThreadBind.loadNativeLibrary();
+    }
+
     private final Class<? extends RingBuffer<?>> clazz;
     private final long sum;
     final RingBuffer<Event> ringBuffer;
@@ -29,22 +33,18 @@ abstract class RingBufferTest {
 
     @Test
     public void testWriteAndRead() {
-        doTest();
-        measurePerformanceIfEnabled(this::doTest);
+        runTest(() -> assertEquals(sum, run()), getBenchmarkRepeatTimes());
     }
 
-    private void doTest() {
-        assertEquals(sum, run());
-    }
+    abstract int getBenchmarkRepeatTimes();
 
     abstract long run();
 
-    static void measurePerformanceIfEnabled(Runnable runnable) {
-        if (Boolean.getBoolean("measurePerformance")) {
-            ThreadBind.loadNativeLibrary();
-            Profiler.enable();
-            runnable.run();
-            Profiler.disable();
+    static void runTest(Runnable test, int benchmarkRepeatTimes) {
+        int repeatTimes = Benchmark.isEnabled() ? benchmarkRepeatTimes : 1;
+        for (int i = 0; i < repeatTimes; i++) {
+            test.run();
         }
+        Benchmark.report();
     }
 }

@@ -33,12 +33,7 @@ public class ProducersToProcessorToConsumersTest {
 
     @Test
     public void testWritesAndReads() {
-        doTest();
-        RingBufferTest.measurePerformanceIfEnabled(this::doTest);
-    }
-
-    private void doTest() {
-        assertEquals(2999997000000L, run());
+        RingBufferTest.runTest(() -> assertEquals(2999997000000L, run()), 5);
     }
 
     private long run() {

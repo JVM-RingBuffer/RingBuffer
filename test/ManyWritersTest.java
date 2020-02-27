@@ -7,6 +7,11 @@ public class ManyWritersTest extends RingBufferTest {
                 .manyWriters());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 6;
+    }
+
     long run() {
         Reader reader = Reader.newReader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);

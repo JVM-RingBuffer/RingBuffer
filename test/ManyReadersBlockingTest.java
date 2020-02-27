@@ -9,6 +9,11 @@ public class ManyReadersBlockingTest extends RingBufferTest {
                 .withGC());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 5;
+    }
+
     long run() {
         TestThreadGroup readerGroup = Reader.newGroup(ringBuffer);
         Writer writer = Writer.newWriter(TOTAL_ELEMENTS, ringBuffer);

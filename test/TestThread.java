@@ -24,7 +24,7 @@ abstract class TestThread extends Thread {
 
     @Override
     public void run() {
-        if (bind && Profiler.isEnabled()) {
+        if (bind) {
             spread.bindCurrentThread();
         }
         profiler.start();
@@ -38,7 +38,7 @@ abstract class TestThread extends Thread {
 
     void reportPerformance() {
         waitForCompletion();
-        profiler.report();
+        Benchmark.add(profiler);
     }
 
     interface Factory {

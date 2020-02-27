@@ -7,6 +7,11 @@ public class PrefilledManyReadersTest extends RingBufferTest {
                 .oneWriter());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 17;
+    }
+
     long run() {
         TestThreadGroup readerGroup = Reader.newGroup(ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(TOTAL_ELEMENTS, ringBuffer);

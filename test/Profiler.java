@@ -1,20 +1,6 @@
 package eu.menzani.ringbuffer;
 
-class Profiler {
-    private static boolean enabled;
-
-    static boolean isEnabled() {
-        return enabled;
-    }
-
-    static void enable() {
-        enabled = true;
-    }
-
-    static void disable() {
-        enabled = false;
-    }
-
+class Profiler implements Measure {
     private final String prefix;
     private final int divideBy;
     private long start;
@@ -29,11 +15,13 @@ class Profiler {
         this.divideBy = divideBy;
     }
 
-    String getPrefix() {
+    @Override
+    public String getPrefix() {
         return prefix;
     }
 
-    long getExecutionTime() {
+    @Override
+    public long getExecutionTime() {
         return executionTime;
     }
 
@@ -44,21 +32,5 @@ class Profiler {
     void stop() {
         final long end = System.nanoTime();
         executionTime = (end - start) / divideBy;
-    }
-
-    void report() {
-        report(prefix, executionTime);
-    }
-
-    static void report(String prefix, long executionTime) {
-        if (enabled) {
-            if (executionTime < 2_000L) {
-                System.out.println(prefix + executionTime + "ns");
-            } else if (executionTime < 2_000_000L) {
-                System.out.println(prefix + (executionTime / 1_000L) + "us");
-            } else {
-                System.out.println(prefix + (executionTime / 1_000_000L) + "ms");
-            }
-        }
     }
 }

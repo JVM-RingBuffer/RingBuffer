@@ -9,6 +9,11 @@ public class OneToOneBlockingTest extends RingBufferTest {
                 .withGC());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 50;
+    }
+
     long run() {
         Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         Writer writer = Writer.newWriter(NUM_ITERATIONS, ringBuffer);

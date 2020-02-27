@@ -7,6 +7,11 @@ public class OneToOneTest extends RingBufferTest {
                 .oneWriter());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 100;
+    }
+
     long run() {
         Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         Writer writer = Writer.newWriter(NUM_ITERATIONS, ringBuffer);

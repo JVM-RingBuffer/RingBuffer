@@ -8,6 +8,11 @@ public class PrefilledOneToOneBlockingTest extends RingBufferTest {
                 .blocking());
     }
 
+    @Override
+    int getBenchmarkRepeatTimes() {
+        return 100;
+    }
+
     long run() {
         Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, ringBuffer);

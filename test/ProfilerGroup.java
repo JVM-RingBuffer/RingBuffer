@@ -1,15 +1,9 @@
 package eu.menzani.ringbuffer;
 
-import java.util.HashSet;
-import java.util.Set;
-
-class ProfilerGroup {
-    private final Set<Profiler> profilers = new HashSet<>();
+class ProfilerGroup implements Measure {
     private String prefix;
-
-    int getSize() {
-        return profilers.size();
-    }
+    private long executionTime;
+    private int size;
 
     void add(Profiler profiler) {
         if (prefix == null) {
@@ -17,11 +11,21 @@ class ProfilerGroup {
         } else if (!prefix.equals(profiler.getPrefix())) {
             throw new IllegalArgumentException("All profilers must be of the same method.");
         }
-        profilers.add(profiler);
+        executionTime += profiler.getExecutionTime();
+        size++;
     }
 
-    void report() {
-        long executionTime = profilers.stream().mapToLong(Profiler::getExecutionTime).sum() / profilers.size();
-        Profiler.report(prefix, executionTime);
+    @Override
+    public String getPrefix() {
+        return prefix;
+    }
+
+    @Override
+    public long getExecutionTime() {
+        return executionTime / size;
+    }
+
+    int getSize() {
+        return size;
     }
 }

@@ -21,7 +21,7 @@ class TestThreadGroup {
             profilerGroup.add(testThread.getProfiler());
         }
         Assert.equal(profilerGroup.getSize(), RingBufferTest.CONCURRENCY);
-        profilerGroup.report();
+        Benchmark.add(profilerGroup);
     }
 
     long getReaderSum() {
