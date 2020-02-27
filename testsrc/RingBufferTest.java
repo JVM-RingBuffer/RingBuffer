@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.system.ThreadBind;
 import org.junit.Test;
 
+import java.util.function.LongSupplier;
+
 import static org.junit.Assert.*;
 
 abstract class RingBufferTest {
@@ -33,17 +35,17 @@ abstract class RingBufferTest {
 
     @Test
     public void testWriteAndRead() {
-        runTest(() -> assertEquals(sum, run()), getBenchmarkRepeatTimes());
+        runTest(sum, this::run, getBenchmarkRepeatTimes());
     }
 
     abstract int getBenchmarkRepeatTimes();
 
     abstract long run();
 
-    static void runTest(Runnable test, int benchmarkRepeatTimes) {
+    static void runTest(long sum, LongSupplier test, int benchmarkRepeatTimes) {
         int repeatTimes = Benchmark.isEnabled() ? benchmarkRepeatTimes : 1;
         for (int i = 0; i < repeatTimes; i++) {
-            test.run();
+            assertEquals(sum, test.getAsLong());
         }
         Benchmark.report();
     }
