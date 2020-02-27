@@ -10,6 +10,7 @@ RingBuffer<Integer> processorToConsumers = RingBuffer.<Integer>empty(5)
         .waitingWith(YieldBusyWaitStrategy.getDefault())
         .withGC()
         .build();
+ThreadBind.loadNativeLibrary();
 
 Runnable producer = () -> {
     for (int i = 0; i < 100; i++) {
@@ -21,6 +22,7 @@ Runnable producer = () -> {
     }
 };
 Runnable processor = () -> {
+    ThreadBind.bindCurrentThreadToCPU(5);
     for (int i = 0; i < 300; i++) {
         processorToConsumers.put(producersToProcessor.take().getData());
     }
