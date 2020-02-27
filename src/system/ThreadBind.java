@@ -6,15 +6,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Currently requires Linux; tested on CentOS 7 only.
+ * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
  */
 public class ThreadBind {
-    private static final String libraryName = "libthreadbind.so";
-
     private final Path libraryPath;
+    private final String libraryName;
 
-    public ThreadBind(Path libraryDirectory) {
+    public ThreadBind(Path libraryDirectory, Platform platform) {
+        libraryName = libraryNameFor(platform);
         libraryPath = libraryDirectory.resolve(libraryName);
+    }
+
+    private static String libraryNameFor(Platform platform) {
+        switch (platform) {
+            case LINUX_32:
+                return "libthreadbind_32.so";
+            case LINUX_64:
+                return "libthreadbind_64.so";
+            case WINDOWS_32:
+                return "ThreadBind_32.dll";
+            case WINDOWS_64:
+                return "ThreadBind_64.dll";
+        }
+        throw new AssertionError();
     }
 
     public Path getLibraryPath() {

@@ -1,0 +1,14 @@
+Linux:
+
+yum install gcc glibc-devel.i686 libgcc.i686
+yum install java-11-openjdk-devel
+gcc -I/usr/lib/jvm/java-11-openjdk-11.0.6.10-1.el7_7.x86_64/include -I/usr/lib/jvm/java-11-openjdk-11.0.6.10-1.el7_7.x86_64/include/linux -o libthreadbind.so -shared -fPIC ThreadBind_linux.c
+32-bit: gcc -m32
+
+Windows:
+
+Build Tools for Visual Studio
+Workload: C++ build tools
+Optional: MSVC - VS C++ x64/x86 build tools, Windows 10 SDK
+cl /I "%JAVA_HOME%\include" /I "%JAVA_HOME%\include\win32" /FeThreadBind /LD ThreadBind_windows.c
+32-bit: x86 Native Tools Command Prompt
