@@ -1,11 +1,11 @@
 package eu.menzani.ringbuffer;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class Benchmark {
     private static final boolean enabled = Boolean.getBoolean("benchmark");
-    private static final Map<String, Result> results = new HashMap<>();
+    private static final Map<String, Result> results = new LinkedHashMap<>();
 
     static boolean isEnabled() {
         return enabled;

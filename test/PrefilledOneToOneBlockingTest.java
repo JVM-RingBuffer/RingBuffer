@@ -10,7 +10,7 @@ public class PrefilledOneToOneBlockingTest extends RingBufferTest {
 
     @Override
     int getBenchmarkRepeatTimes() {
-        return 100;
+        return 50;
     }
 
     long run() {

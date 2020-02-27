@@ -9,7 +9,7 @@ public class PrefilledManyReadersTest extends RingBufferTest {
 
     @Override
     int getBenchmarkRepeatTimes() {
-        return 17;
+        return 34;
     }
 
     long run() {

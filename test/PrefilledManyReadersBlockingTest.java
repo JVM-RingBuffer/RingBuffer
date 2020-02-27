@@ -10,7 +10,7 @@ public class PrefilledManyReadersBlockingTest extends RingBufferTest {
 
     @Override
     int getBenchmarkRepeatTimes() {
-        return 6;
+        return 12;
     }
 
     long run() {

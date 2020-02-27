@@ -11,7 +11,7 @@ public class ManyWritersBlockingTest extends RingBufferTest {
 
     @Override
     int getBenchmarkRepeatTimes() {
-        return 5;
+        return 10;
     }
 
     long run() {

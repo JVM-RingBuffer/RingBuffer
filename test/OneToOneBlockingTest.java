@@ -11,7 +11,7 @@ public class OneToOneBlockingTest extends RingBufferTest {
 
     @Override
     int getBenchmarkRepeatTimes() {
-        return 80;
+        return 50;
     }
 
     long run() {
