@@ -8,7 +8,9 @@ public class Assume {
     }
 
     public static void notNegative(int value, String variableName) {
-        notLesser(value, 0, variableName);
+        if (value < 0) {
+            throw new IllegalArgumentException(variableName + " must not be negative, but is " + value);
+        }
     }
 
     public static void notGreater(int value, int cap, String valueVariableName, String capVariableName) {

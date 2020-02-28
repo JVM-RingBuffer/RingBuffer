@@ -31,7 +31,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        int writePosition = this.writePosition.getFromSameThread();
+        int writePosition = this.writePosition.getPlain();
         if (writePosition == capacityMinusOne) {
             newWritePosition = 0;
         } else {
@@ -47,7 +47,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition.getFromSameThread();
+        int writePosition = this.writePosition.getPlain();
         buffer[writePosition] = element;
         if (writePosition == capacityMinusOne) {
             this.writePosition.set(0);

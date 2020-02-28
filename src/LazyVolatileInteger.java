@@ -13,7 +13,7 @@ class LazyVolatileInteger {
         return value.getAcquire();
     }
 
-    int getFromSameThread() {
+    int getPlain() {
         return value.getPlain();
     }
 }

@@ -41,7 +41,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        int writePosition = this.writePosition.getFromSameThread();
+        int writePosition = this.writePosition.getPlain();
         if (writePosition == capacityMinusOne) {
             newWritePosition = 0;
         } else {
@@ -60,7 +60,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition.getFromSameThread();
+        int writePosition = this.writePosition.getPlain();
         int newWritePosition;
         if (writePosition == capacityMinusOne) {
             newWritePosition = 0;
@@ -86,7 +86,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getFromSameThread();
+        int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();

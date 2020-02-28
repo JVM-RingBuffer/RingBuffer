@@ -101,13 +101,14 @@ public class ThreadBind {
 
         public void bindCurrentThreadToNextCPU() {
             ThreadBind.bindCurrentThreadToCPU(cpu.getAndUpdate(cpu -> {
-                if (cpu >= lastCPU) {
-                    if (cycle) {
-                        return firstCPU;
-                    }
-                    throw new ThreadBindException("No more CPUs are available to bind to.");
+                int next = cpu + increment;
+                if (next <= lastCPU) {
+                    return next;
                 }
-                return cpu + increment;
+                if (cycle) {
+                    return firstCPU;
+                }
+                throw new ThreadBindException("No more CPUs are available to bind to.");
             }));
         }
     }

@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
+import java.util.OptionalInt;
+
 public class ThreadBindException extends RuntimeException {
     private final int errorCode;
 
@@ -17,11 +19,10 @@ public class ThreadBindException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public boolean hasErrorCode() {
-        return errorCode != 0;
-    }
-
-    public int getErrorCode() {
-        return errorCode;
+    public OptionalInt getErrorCode() {
+        if (errorCode == 0) {
+            return OptionalInt.empty();
+        }
+        return OptionalInt.of(errorCode);
     }
 }
