@@ -59,11 +59,12 @@ public class ThreadBind {
 
     public static Spread spread() {
         int lastCPU = Runtime.getRuntime().availableProcessors() - 1;
-        return spread(lastCPU == 0 ? 0 : 1, lastCPU);
+        boolean manyCPUs = lastCPU >= 6 - 1;
+        return spread(manyCPUs ? 2 : 0, lastCPU, manyCPUs ? 2 : 1, true);
     }
 
-    public static Spread spread(int firstCPU, int lastCPU) {
-        return new Spread(firstCPU, lastCPU);
+    public static Spread spread(int firstCPU, int lastCPU, int increment, boolean cycle) {
+        return new Spread(firstCPU, lastCPU, increment, cycle);
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
@@ -82,23 +83,31 @@ public class ThreadBind {
     public static class Spread {
         private final int firstCPU;
         private final int lastCPU;
+        private final int increment;
+        private final boolean cycle;
         private final AtomicInteger cpu;
 
-        private Spread(int firstCPU, int lastCPU) {
+        private Spread(int firstCPU, int lastCPU, int increment, boolean cycle) {
             Assume.notNegative(firstCPU, "firstCPU");
             Assume.notNegative(lastCPU, "lastCPU");
             Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
+            Assume.notLesser(increment, 1, "increment");
             this.firstCPU = firstCPU;
             this.lastCPU = lastCPU;
+            this.increment = increment;
+            this.cycle = cycle;
             cpu = new AtomicInteger(firstCPU);
         }
 
         public void bindCurrentThreadToNextCPU() {
             ThreadBind.bindCurrentThreadToCPU(cpu.getAndUpdate(cpu -> {
-                if (cpu == lastCPU) {
-                    return firstCPU;
+                if (cpu >= lastCPU) {
+                    if (cycle) {
+                        return firstCPU;
+                    }
+                    throw new ThreadBindException("No more CPUs are available to bind to.");
                 }
-                return cpu + 1;
+                return cpu + increment;
             }));
         }
     }

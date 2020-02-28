@@ -8,6 +8,11 @@ public class ThreadBindException extends RuntimeException {
         errorCode = 0;
     }
 
+    ThreadBindException(String message) {
+        super(message);
+        errorCode = 0;
+    }
+
     ThreadBindException(int errorCode) {
         this.errorCode = errorCode;
     }

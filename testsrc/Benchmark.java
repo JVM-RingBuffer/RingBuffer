@@ -33,7 +33,7 @@ class Benchmark {
         }
 
         void update(long newValue) {
-            if (newValue < value) {
+            if (newValue < value && newValue != 0L) {
                 value = newValue;
             }
         }
