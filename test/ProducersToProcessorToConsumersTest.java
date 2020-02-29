@@ -6,17 +6,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ProducersToProcessorToConsumersTest {
+public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffer.Test {
     private RingBuffer<Event> producersToProcessor;
     private RingBuffer<Event> processorToConsumers;
 
     @Before
     public void setUp() {
-        producersToProcessor = RingBuffer.prefilled(RingBufferTest.TOTAL_ELEMENTS + 1, Event.RING_BUFFER_FILLER)
+        producersToProcessor = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
                 .manyWriters()
                 .oneReader()
                 .build();
-        processorToConsumers = RingBuffer.<Event>empty(RingBufferTest.SMALL_BUFFER_SIZE)
+        processorToConsumers = RingBuffer.<Event>empty(BLOCKING_SIZE)
                 .oneWriter()
                 .manyReaders()
                 .blocking()
@@ -33,13 +33,14 @@ public class ProducersToProcessorToConsumersTest {
 
     @Test
     public void testWritesAndReads() {
-        RingBufferTest.runTest(2999997000000L, this::run, 10);
+        runTest(10, MANY_WRITERS_SUM);
     }
 
-    private long run() {
+    @Override
+    public long run() {
         TestThreadGroup readerGroup = Reader.newGroup(processorToConsumers);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(producersToProcessor);
-        Processor processor = new Processor(RingBufferTest.TOTAL_ELEMENTS);
+        Processor processor = new Processor(TOTAL_ELEMENTS);
         readerGroup.reportPerformance();
         writerGroup.reportPerformance();
         processor.reportPerformance();

@@ -2,9 +2,14 @@ package eu.menzani.ringbuffer;
 
 public class ManyWritersTest extends RingBufferTest {
     public ManyWritersTest() {
-        super(AtomicWriteRingBuffer.class, 2999997000000L, RingBuffer.<Event>empty(TOTAL_ELEMENTS + 1)
+        super(RingBuffer.<Event>empty(MANY_READERS_OR_WRITERS_SIZE)
                 .oneReader()
                 .manyWriters());
+    }
+
+    @Override
+    Class<?> getClazz() {
+        return AtomicWriteRingBuffer.class;
     }
 
     @Override
@@ -12,7 +17,13 @@ public class ManyWritersTest extends RingBufferTest {
         return 12;
     }
 
-    long run() {
+    @Override
+    long getSum() {
+        return MANY_WRITERS_SUM;
+    }
+
+    @Override
+    public long run() {
         Reader reader = Reader.newReader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = Writer.newGroup(ringBuffer);
         reader.reportPerformance();

@@ -9,8 +9,8 @@ class TestThreadGroup {
     private final Set<TestThread> testThreads = new HashSet<>();
 
     TestThreadGroup(TestThread.Factory testThreadFactory) {
-        for (int i = 0; i < RingBufferTest.CONCURRENCY; i++) {
-            testThreads.add(testThreadFactory.newInstance(RingBufferTest.NUM_ITERATIONS));
+        for (int i = 0; i < Test.CONCURRENCY; i++) {
+            testThreads.add(testThreadFactory.newInstance(Test.NUM_ITERATIONS));
         }
     }
 
@@ -20,7 +20,7 @@ class TestThreadGroup {
             testThread.waitForCompletion();
             profilerGroup.add(testThread.getProfiler());
         }
-        Assert.equal(profilerGroup.getSize(), RingBufferTest.CONCURRENCY);
+        Assert.equal(profilerGroup.getSize(), Test.CONCURRENCY);
         Benchmark.add(profilerGroup);
     }
 

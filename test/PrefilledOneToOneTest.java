@@ -2,9 +2,14 @@ package eu.menzani.ringbuffer;
 
 public class PrefilledOneToOneTest extends RingBufferTest {
     public PrefilledOneToOneTest() {
-        super(VolatileRingBuffer.class, 499999500000L, RingBuffer.prefilled(NUM_ITERATIONS + 1, Event.RING_BUFFER_FILLER)
+        super(RingBuffer.prefilled(ONE_TO_ONE_SIZE, FILLER)
                 .oneReader()
                 .oneWriter());
+    }
+
+    @Override
+    Class<?> getClazz() {
+        return VolatileRingBuffer.class;
     }
 
     @Override
@@ -12,7 +17,13 @@ public class PrefilledOneToOneTest extends RingBufferTest {
         return 50;
     }
 
-    long run() {
+    @Override
+    long getSum() {
+        return ONE_TO_ONE_SUM;
+    }
+
+    @Override
+    public long run() {
         Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();

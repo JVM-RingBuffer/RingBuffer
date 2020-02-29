@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 public class OneToOneBlockingTest extends RingBufferTest {
     public OneToOneBlockingTest() {
-        super(VolatileBlockingOrDiscardingRingBuffer.class, 499999500000L, RingBuffer.<Event>empty(SMALL_BUFFER_SIZE)
+        super(RingBuffer.<Event>empty(BLOCKING_SIZE)
                 .oneReader()
                 .oneWriter()
                 .blocking()
@@ -10,11 +10,22 @@ public class OneToOneBlockingTest extends RingBufferTest {
     }
 
     @Override
+    Class<?> getClazz() {
+        return VolatileBlockingOrDiscardingRingBuffer.class;
+    }
+
+    @Override
     int getBenchmarkRepeatTimes() {
         return 50;
     }
 
-    long run() {
+    @Override
+    long getSum() {
+        return ONE_TO_ONE_SUM;
+    }
+
+    @Override
+    public long run() {
         Reader reader = Reader.newReader(NUM_ITERATIONS, ringBuffer);
         Writer writer = Writer.newWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();

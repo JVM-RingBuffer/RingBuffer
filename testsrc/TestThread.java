@@ -5,6 +5,10 @@ import eu.menzani.ringbuffer.system.ThreadBind;
 abstract class TestThread extends Thread {
     private static final ThreadBind.Spread spread = ThreadBind.spread();
 
+    static {
+        ThreadBind.loadNativeLibrary();
+    }
+
     private final boolean bindToCPU;
     final int numIterations;
     private final Profiler profiler;
