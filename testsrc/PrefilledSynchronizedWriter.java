@@ -6,7 +6,7 @@ class PrefilledSynchronizedWriter extends TestThread {
     }
 
     private PrefilledSynchronizedWriter(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(false, numIterations, ringBuffer);
+        super(numIterations, ringBuffer);
     }
 
     @Override

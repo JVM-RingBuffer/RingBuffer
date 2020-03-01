@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 class PrefilledWriter extends TestThread {
     PrefilledWriter(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(true, numIterations, ringBuffer);
+        super(numIterations, ringBuffer);
     }
 
     @Override

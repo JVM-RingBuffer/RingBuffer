@@ -2,15 +2,15 @@ package eu.menzani.ringbuffer;
 
 class Writer extends TestThread {
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup((numIterations) -> new Writer(false, numIterations, ringBuffer));
+        return new TestThreadGroup((numIterations) -> new Writer(numIterations, ringBuffer));
     }
 
     static Writer newWriter(int numIterations, RingBuffer<Event> ringBuffer) {
-        return new Writer(true, numIterations, ringBuffer);
+        return new Writer(numIterations, ringBuffer);
     }
 
-    private Writer(boolean bindToCPU, int numIterations, RingBuffer<Event> ringBuffer) {
-        super(bindToCPU, numIterations, ringBuffer);
+    private Writer(int numIterations, RingBuffer<Event> ringBuffer) {
+        super(numIterations, ringBuffer);
     }
 
     @Override

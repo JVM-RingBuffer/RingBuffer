@@ -6,7 +6,7 @@ class SynchronizedReader extends Reader {
     }
 
     private SynchronizedReader(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(false, numIterations, ringBuffer);
+        super(numIterations, ringBuffer);
     }
 
     @Override

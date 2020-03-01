@@ -49,7 +49,7 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
 
     private class Processor extends TestThread {
         Processor(int numIterations) {
-            super(true, numIterations, null);
+            super(numIterations, null);
         }
 
         @Override

@@ -1,21 +1,11 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.system.ThreadBind;
-
 abstract class TestThread extends Thread {
-    private static final ThreadBind.Spread spread = ThreadBind.spread(2, 2);
-
-    static {
-        ThreadBind.loadNativeLibrary();
-    }
-
-    private final boolean bindToCPU;
     final int numIterations;
     private final Profiler profiler;
     final RingBuffer<Event> ringBuffer;
 
-    TestThread(boolean bindToCPU, int numIterations, RingBuffer<Event> ringBuffer) {
-        this.bindToCPU = bindToCPU;
+    TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
@@ -28,9 +18,6 @@ abstract class TestThread extends Thread {
 
     @Override
     public void run() {
-        if (bindToCPU) {
-            spread.bindCurrentThreadToNextCPU();
-        }
         profiler.start();
         loop();
         profiler.stop();
