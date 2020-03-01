@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.java.Assert;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,13 +13,10 @@ class TestThreadGroup {
     }
 
     void reportPerformance() {
-        ProfilerGroup profilerGroup = new ProfilerGroup();
         for (TestThread testThread : testThreads) {
             testThread.waitForCompletion();
-            profilerGroup.add(testThread.getProfiler());
+            Benchmark.add(testThread.getProfiler());
         }
-        Assert.equal(profilerGroup.size(), Test.CONCURRENCY);
-        Benchmark.add(profilerGroup);
     }
 
     long getReaderSum() {

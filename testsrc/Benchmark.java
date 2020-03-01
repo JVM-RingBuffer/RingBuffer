@@ -6,9 +6,9 @@ import java.util.Map;
 class Benchmark {
     private static final Map<String, Result> results = new LinkedHashMap<>();
 
-    static void add(Measure measure) {
-        results.computeIfAbsent(measure.getPrefix(), Result::new)
-                .update(measure.getExecutionTime());
+    static void add(Profiler profiler) {
+        results.computeIfAbsent(profiler.getPrefix(), Result::new)
+                .update(profiler.getExecutionTime());
     }
 
     static void reset() {
@@ -42,8 +42,8 @@ class Benchmark {
         }
 
         void report() {
-            String average = Measure.formatExecutionTime(sum / count);
-            String minimum = Measure.formatExecutionTime(this.minimum);
+            String average = Profiler.formatExecutionTime(sum / count);
+            String minimum = Profiler.formatExecutionTime(this.minimum);
             System.out.println(prefix + average + " avg, " + minimum + " min");
         }
     }
