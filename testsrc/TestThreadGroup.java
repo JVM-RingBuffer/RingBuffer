@@ -20,7 +20,7 @@ class TestThreadGroup {
             testThread.waitForCompletion();
             profilerGroup.add(testThread.getProfiler());
         }
-        Assert.equal(profilerGroup.getSize(), Test.CONCURRENCY);
+        Assert.equal(profilerGroup.size(), Test.CONCURRENCY);
         Benchmark.add(profilerGroup);
     }
 

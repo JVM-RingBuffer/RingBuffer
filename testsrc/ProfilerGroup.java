@@ -9,7 +9,7 @@ class ProfilerGroup implements Measure {
         if (prefix == null) {
             prefix = profiler.getPrefix();
         } else if (!prefix.equals(profiler.getPrefix())) {
-            throw new IllegalArgumentException("All profilers must be of the same method.");
+            throw new IllegalArgumentException("All profilers must have the same prefix.");
         }
         executionTime += profiler.getExecutionTime();
         size++;
@@ -25,7 +25,7 @@ class ProfilerGroup implements Measure {
         return executionTime / size;
     }
 
-    int getSize() {
+    int size() {
         return size;
     }
 }

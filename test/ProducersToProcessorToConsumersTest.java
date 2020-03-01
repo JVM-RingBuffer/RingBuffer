@@ -33,7 +33,7 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
 
     @Test
     public void testWritesAndReads() {
-        runTest(10, MANY_WRITERS_SUM);
+        runTest(MANY_WRITERS_SUM, 10);
     }
 
     @Override

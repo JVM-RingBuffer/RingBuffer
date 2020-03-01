@@ -21,11 +21,20 @@ public interface Test {
 
     long run();
 
-    default void runTest(int benchmarkRepeatTimes, long sum) {
-        int repeatTimes = Benchmark.isEnabled() ? benchmarkRepeatTimes : 1;
+    default void runTest(long sum, int benchmarkRepeatTimes) {
+        if (Boolean.getBoolean("benchmark")) {
+            test(benchmarkRepeatTimes, sum);
+            Benchmark.reset();
+            test(benchmarkRepeatTimes, sum);
+            Benchmark.report();
+        } else {
+            test(1, sum);
+        }
+    }
+
+    private void test(int repeatTimes, long sum) {
         for (int i = 0; i < repeatTimes; i++) {
             assertEquals(sum, run());
         }
-        Benchmark.report();
     }
 }

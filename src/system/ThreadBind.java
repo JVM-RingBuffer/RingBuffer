@@ -57,10 +57,8 @@ public class ThreadBind {
         throw new AssertionError();
     }
 
-    public static Spread spread() {
-        int lastCPU = Runtime.getRuntime().availableProcessors() - 1;
-        boolean manyCPUs = lastCPU >= 6 - 1;
-        return spread(manyCPUs ? 2 : 0, lastCPU, manyCPUs ? 2 : 1, true);
+    public static Spread spread(int firstCPU, int increment) {
+        return spread(firstCPU, Runtime.getRuntime().availableProcessors() - 1, increment, true);
     }
 
     public static Spread spread(int firstCPU, int lastCPU, int increment, boolean cycle) {

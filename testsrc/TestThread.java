@@ -3,7 +3,7 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.system.ThreadBind;
 
 abstract class TestThread extends Thread {
-    private static final ThreadBind.Spread spread = ThreadBind.spread();
+    private static final ThreadBind.Spread spread = ThreadBind.spread(2, 2);
 
     static {
         ThreadBind.loadNativeLibrary();

@@ -20,7 +20,7 @@ abstract class RingBufferTest implements eu.menzani.ringbuffer.Test {
 
     @Test
     public void testWriteAndRead() {
-        runTest(getBenchmarkRepeatTimes(), getSum());
+        runTest(getSum(), getBenchmarkRepeatTimes());
     }
 
     abstract int getBenchmarkRepeatTimes();
