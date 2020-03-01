@@ -26,6 +26,7 @@ class Benchmark {
         private long sum;
         private int count;
         private long minimum = Long.MAX_VALUE;
+        private long maximum = Long.MIN_VALUE;
 
         Result(String prefix) {
             this.prefix = prefix;
@@ -38,13 +39,17 @@ class Benchmark {
                 if (value < minimum) {
                     minimum = value;
                 }
+                if (value > maximum) {
+                    maximum = value;
+                }
             }
         }
 
         void report() {
-            String average = Profiler.formatExecutionTime(sum / count);
             String minimum = Profiler.formatExecutionTime(this.minimum);
-            System.out.println(prefix + average + " avg, " + minimum + " min");
+            String average = Profiler.formatExecutionTime(sum / count);
+            String maximum = Profiler.formatExecutionTime(this.maximum);
+            System.out.println(prefix + minimum + " min, " + average + " avg, " + maximum + " max");
         }
     }
 }

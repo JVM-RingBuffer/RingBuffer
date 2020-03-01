@@ -2,13 +2,13 @@ package eu.menzani.ringbuffer;
 
 class Profiler {
     private final String prefix;
-    private final int divideBy;
+    private final double divideBy;
     private long start;
     private long executionTime;
 
     Profiler() {
         prefix = null;
-        divideBy = 0;
+        divideBy = 0D;
         start();
     }
 
@@ -31,7 +31,7 @@ class Profiler {
 
     void stop() {
         final long end = System.nanoTime();
-        executionTime = (end - start) / divideBy;
+        executionTime = Math.round((end - start) / divideBy);
     }
 
     void report() {
