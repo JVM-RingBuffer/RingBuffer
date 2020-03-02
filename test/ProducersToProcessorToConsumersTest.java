@@ -54,6 +54,9 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
 
         @Override
         void loop() {
+            int numIterations = getNumIterations();
+            RingBuffer<Event> processorToConsumers = ProducersToProcessorToConsumersTest.this.processorToConsumers;
+            RingBuffer<Event> producersToProcessor = ProducersToProcessorToConsumersTest.this.producersToProcessor;
             for (int i = 0; i < numIterations; i++) {
                 processorToConsumers.put(producersToProcessor.take());
             }

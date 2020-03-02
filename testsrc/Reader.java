@@ -21,9 +21,13 @@ class Reader extends TestThread {
 
     @Override
     void loop() {
+        int numIterations = getNumIterations();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
+        long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             sum += ringBuffer.take().getData();
         }
+        this.sum = sum;
     }
 
     @Override

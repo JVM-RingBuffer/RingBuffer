@@ -11,6 +11,8 @@ class PrefilledSynchronizedWriter extends TestThread {
 
     @Override
     void loop() {
+        int numIterations = getNumIterations();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             synchronized (ringBuffer) {
                 Event event = ringBuffer.next();

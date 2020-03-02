@@ -1,9 +1,9 @@
 package eu.menzani.ringbuffer;
 
 abstract class TestThread extends Thread {
-    final int numIterations;
+    private final int numIterations;
     private final Profiler profiler;
-    final RingBuffer<Event> ringBuffer;
+    private final RingBuffer<Event> ringBuffer;
 
     TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
         this.numIterations = numIterations;
@@ -12,8 +12,16 @@ abstract class TestThread extends Thread {
         start();
     }
 
+    int getNumIterations() {
+        return numIterations;
+    }
+
     Profiler getProfiler() {
         return profiler;
+    }
+
+    RingBuffer<Event> getRingBuffer() {
+        return ringBuffer;
     }
 
     @Override

@@ -11,10 +11,14 @@ class SynchronizedReader extends Reader {
 
     @Override
     void loop() {
+        int numIterations = getNumIterations();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
+        long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             synchronized (ringBuffer) {
                 sum += ringBuffer.take().getData();
             }
         }
+        this.sum = sum;
     }
 }

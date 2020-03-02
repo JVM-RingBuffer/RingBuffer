@@ -15,6 +15,8 @@ class Writer extends TestThread {
 
     @Override
     void loop() {
+        int numIterations = getNumIterations();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             ringBuffer.put(new Event(i));
         }

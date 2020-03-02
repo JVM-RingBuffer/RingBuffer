@@ -7,6 +7,8 @@ class PrefilledWriter extends TestThread {
 
     @Override
     void loop() {
+        int numIterations = getNumIterations();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             Event event = ringBuffer.next();
             event.setData(i);
