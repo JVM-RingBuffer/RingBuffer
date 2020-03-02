@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
-public class ManyReadersBlockingTest extends RingBufferTest {
-    public ManyReadersBlockingTest() {
+class ManyReadersBlockingTest extends RingBufferTest {
+    ManyReadersBlockingTest() {
         super(RingBuffer.<Event>empty(BLOCKING_SIZE)
                 .manyReaders()
                 .oneWriter()

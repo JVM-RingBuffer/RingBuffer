@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
-public class PrefilledManyWritersTest extends RingBufferTest {
-    public PrefilledManyWritersTest() {
+class PrefilledManyWritersTest extends RingBufferTest {
+    PrefilledManyWritersTest() {
         super(RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
                 .oneReader()
                 .manyWriters());

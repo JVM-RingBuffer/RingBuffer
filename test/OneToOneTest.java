@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
-public class OneToOneTest extends RingBufferTest {
-    public OneToOneTest() {
+class OneToOneTest extends RingBufferTest {
+    OneToOneTest() {
         super(RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
                 .oneReader()
                 .oneWriter());

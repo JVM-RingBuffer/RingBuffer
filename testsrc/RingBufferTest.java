@@ -1,8 +1,8 @@
 package eu.menzani.ringbuffer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 abstract class RingBufferTest implements eu.menzani.ringbuffer.Test {
     final RingBuffer<Event> ringBuffer;
@@ -12,14 +12,14 @@ abstract class RingBufferTest implements eu.menzani.ringbuffer.Test {
     }
 
     @Test
-    public void testClass() {
+    void testClass() {
         assertEquals(getClazz(), ringBuffer.getClass());
     }
 
     abstract Class<?> getClazz();
 
     @Test
-    public void testWriteAndRead() {
+    void testWriteAndRead() {
         runTest(getSum(), getBenchmarkRepeatTimes());
     }
 

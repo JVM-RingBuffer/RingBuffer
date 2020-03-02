@@ -3,9 +3,9 @@ package eu.menzani.ringbuffer;
 import java.util.function.Supplier;
 import java.util.stream.LongStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public interface Test {
+interface Test {
     int NUM_ITERATIONS = 1_000_000;
     int CONCURRENCY = 6;
     int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;

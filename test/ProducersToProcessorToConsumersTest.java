@@ -1,17 +1,17 @@
 package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffer.Test {
-    private RingBuffer<Event> producersToProcessor;
-    private RingBuffer<Event> processorToConsumers;
+class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffer.Test {
+    private static RingBuffer<Event> producersToProcessor;
+    private static RingBuffer<Event> processorToConsumers;
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    static void setUp() {
         producersToProcessor = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
                 .manyWriters()
                 .oneReader()
@@ -26,13 +26,13 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
     }
 
     @Test
-    public void testClasses() {
+    void testClasses() {
         assertEquals(VolatileRingBuffer.class, producersToProcessor.getClass());
         assertEquals(AtomicReadBlockingOrDiscardingRingBuffer.class, processorToConsumers.getClass());
     }
 
     @Test
-    public void testWritesAndReads() {
+    void testWritesAndReads() {
         runTest(MANY_WRITERS_SUM, 10);
     }
 
@@ -47,7 +47,7 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
         return readerGroup.getReaderSum();
     }
 
-    private class Processor extends TestThread {
+    private static class Processor extends TestThread {
         Processor(int numIterations) {
             super(numIterations, null);
         }
@@ -55,8 +55,8 @@ public class ProducersToProcessorToConsumersTest implements eu.menzani.ringbuffe
         @Override
         void loop() {
             int numIterations = getNumIterations();
-            RingBuffer<Event> processorToConsumers = ProducersToProcessorToConsumersTest.this.processorToConsumers;
-            RingBuffer<Event> producersToProcessor = ProducersToProcessorToConsumersTest.this.producersToProcessor;
+            RingBuffer<Event> processorToConsumers = ProducersToProcessorToConsumersTest.processorToConsumers;
+            RingBuffer<Event> producersToProcessor = ProducersToProcessorToConsumersTest.producersToProcessor;
             for (int i = 0; i < numIterations; i++) {
                 processorToConsumers.put(producersToProcessor.take());
             }
