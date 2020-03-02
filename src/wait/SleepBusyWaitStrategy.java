@@ -3,10 +3,8 @@ package eu.menzani.ringbuffer.wait;
 import java.util.concurrent.locks.LockSupport;
 
 public class SleepBusyWaitStrategy implements BusyWaitStrategy {
-    private static final SleepBusyWaitStrategy instance = new SleepBusyWaitStrategy();
-
     public static BusyWaitStrategy getDefault() {
-        return MultiStepBusyWaitStrategy.endWith(instance)
+        return MultiStepBusyWaitStrategy.endWith(new SleepBusyWaitStrategy())
                 .after(YieldBusyWaitStrategy.getDefault(), 100)
                 .build();
     }

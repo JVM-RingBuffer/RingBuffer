@@ -1,10 +1,8 @@
 package eu.menzani.ringbuffer.wait;
 
 public class YieldBusyWaitStrategy implements BusyWaitStrategy {
-    private static final YieldBusyWaitStrategy instance = new YieldBusyWaitStrategy();
-
     public static BusyWaitStrategy getDefault() {
-        return MultiStepBusyWaitStrategy.endWith(instance)
+        return MultiStepBusyWaitStrategy.endWith(new YieldBusyWaitStrategy())
                 .after(HintBusyWaitStrategy.getDefault(), 100)
                 .build();
     }

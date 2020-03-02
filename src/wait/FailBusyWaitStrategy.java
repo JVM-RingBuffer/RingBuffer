@@ -3,17 +3,12 @@ package eu.menzani.ringbuffer.wait;
 import java.util.function.Supplier;
 
 public class FailBusyWaitStrategy implements BusyWaitStrategy {
-    private static final FailBusyWaitStrategy readingTooSlow = new FailBusyWaitStrategy(
-            () -> BusyWaitException.whileWriting("The reading side is slower than expected."));
-    private static final FailBusyWaitStrategy writingTooSlow = new FailBusyWaitStrategy(
-            () -> BusyWaitException.whileReading("The writing side is slower than expected."));
-
     public static BusyWaitStrategy readingTooSlow() {
-        return readingTooSlow;
+        return new FailBusyWaitStrategy(() -> BusyWaitException.whileWriting("The reading side is slower than expected."));
     }
 
     public static BusyWaitStrategy writingTooSlow() {
-        return writingTooSlow;
+        return new FailBusyWaitStrategy(() -> BusyWaitException.whileReading("The writing side is slower than expected."));
     }
 
     private final Supplier<? extends BusyWaitException> exceptionSupplier;
