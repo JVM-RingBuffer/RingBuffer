@@ -3,7 +3,7 @@ package eu.menzani.ringbuffer.wait;
 import java.util.concurrent.locks.LockSupport;
 
 public class SleepBusyWaitStrategy implements BusyWaitStrategy {
-    private static final SleepBusyWaitStrategy instance = new SleepBusyWaitStrategy(1L);
+    private static final SleepBusyWaitStrategy instance = new SleepBusyWaitStrategy();
 
     public static BusyWaitStrategy getDefault() {
         return MultiStepBusyWaitStrategy.endWith(instance)
@@ -12,6 +12,10 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     private final long sleepTime;
+
+    public SleepBusyWaitStrategy() {
+        this(1L);
+    }
 
     /**
      * @param sleepTime In nanoseconds.

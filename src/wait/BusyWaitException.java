@@ -4,15 +4,15 @@ public class BusyWaitException extends RuntimeException {
     private final boolean wasReading;
 
     public static BusyWaitException whileReading(String message) {
-        return new BusyWaitException(message, null, true);
+        return new BusyWaitException(message, null, true, true, true);
     }
 
     public static BusyWaitException whileWriting(String message) {
-        return new BusyWaitException(message, null, false);
+        return new BusyWaitException(message, null, true, true, false);
     }
 
-    protected BusyWaitException(String message, Throwable cause, boolean wasReading) {
-        super(message, cause);
+    public BusyWaitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, boolean wasReading) {
+        super(message, cause, enableSuppression, writableStackTrace);
         this.wasReading = wasReading;
     }
 

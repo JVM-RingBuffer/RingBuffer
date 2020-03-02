@@ -24,7 +24,7 @@ class Benchmark {
     private static class Result {
         private final String prefix;
         private long sum;
-        private int count;
+        private double count;
         private long minimum = Long.MAX_VALUE;
         private long maximum = Long.MIN_VALUE;
 
@@ -47,7 +47,7 @@ class Benchmark {
 
         void report() {
             String minimum = Profiler.formatExecutionTime(this.minimum);
-            String average = Profiler.formatExecutionTime(sum / count);
+            String average = Profiler.formatExecutionTime(Math.round(sum / count));
             String maximum = Profiler.formatExecutionTime(this.maximum);
             System.out.println(prefix + minimum + " min, " + average + " avg, " + maximum + " max");
         }
