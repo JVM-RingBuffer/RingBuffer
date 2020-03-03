@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PrefilledManyReadersTest" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="perftest.PrefilledManyReadersTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms108m -Xmx108m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
