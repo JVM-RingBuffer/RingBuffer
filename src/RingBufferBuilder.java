@@ -18,6 +18,7 @@ public class RingBufferBuilder<T> {
     private boolean gcEnabled;
 
     RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
+        Assume.notLesser(capacity, 2, "capacity");
         this.capacity = capacity;
         this.filler = filler;
         this.dummyElement = dummyElement;
@@ -124,7 +125,6 @@ public class RingBufferBuilder<T> {
     }
 
     int getCapacity() {
-        Assume.notLesser(capacity, 2, "capacity");
         return capacity;
     }
 

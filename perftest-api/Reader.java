@@ -37,7 +37,7 @@ class Reader extends TestThread {
         try {
             join();
         } catch (InterruptedException e) {
-            throw new AssertionError(e);
+            throw new AssertionError();
         }
     }
 }

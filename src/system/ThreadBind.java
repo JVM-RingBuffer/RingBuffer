@@ -8,27 +8,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
  */
 public class ThreadBind {
-    private static volatile Path libraryPath;
+    private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
     public static Optional<Path> getLibraryPath() {
-        return Optional.ofNullable(libraryPath);
+        return Optional.ofNullable(libraryPath.get());
     }
 
     public static void loadNativeLibrary() {
         loadNativeLibrary(Platform.current(), Platform.getTempFolder());
     }
 
-    public static synchronized void loadNativeLibrary(Platform platform, Path libraryDirectory) {
-        if (libraryPath != null) {
+    public static void loadNativeLibrary(Platform platform, Path libraryDirectory) {
+        String libraryName = libraryNameFor(platform);
+        Path libraryPath = libraryDirectory.resolve(libraryName);
+        if (!ThreadBind.libraryPath.compareAndSet(null, libraryPath)) {
             throw new IllegalStateException("A native library has already been loaded.");
         }
-        String libraryName = libraryNameFor(platform);
-        libraryPath = libraryDirectory.resolve(libraryName);
         if (Files.notExists(libraryPath)) {
             try (InputStream stream = ThreadBind.class.getResourceAsStream(libraryName)) {
                 Files.copy(stream, libraryPath);
@@ -57,12 +58,8 @@ public class ThreadBind {
         throw new AssertionError();
     }
 
-    public static Spread spread(int firstCPU, int increment) {
-        return spread(firstCPU, Runtime.getRuntime().availableProcessors() - 1, increment, true);
-    }
-
-    public static Spread spread(int firstCPU, int lastCPU, int increment, boolean cycle) {
-        return new Spread(firstCPU, lastCPU, increment, cycle);
+    public static Spread.Builder spread(int firstCPU, int increment) {
+        return new Spread.Builder(firstCPU, increment);
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
@@ -83,22 +80,18 @@ public class ThreadBind {
         private final int lastCPU;
         private final int increment;
         private final boolean cycle;
-        private final AtomicInteger cpu;
+        private final AtomicInteger nextCPU;
 
-        private Spread(int firstCPU, int lastCPU, int increment, boolean cycle) {
-            Assume.notNegative(firstCPU, "firstCPU");
-            Assume.notNegative(lastCPU, "lastCPU");
-            Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
-            Assume.notLesser(increment, 1, "increment");
-            this.firstCPU = firstCPU;
-            this.lastCPU = lastCPU;
-            this.increment = increment;
-            this.cycle = cycle;
-            cpu = new AtomicInteger(firstCPU);
+        private Spread(Builder builder) {
+            firstCPU = builder.firstCPU;
+            lastCPU = builder.lastCPU;
+            increment = builder.increment;
+            cycle = builder.cycle;
+            nextCPU = new AtomicInteger(firstCPU);
         }
 
         public void bindCurrentThreadToNextCPU() {
-            ThreadBind.bindCurrentThreadToCPU(cpu.getAndUpdate(cpu -> {
+            ThreadBind.bindCurrentThreadToCPU(nextCPU.getAndUpdate(cpu -> {
                 int next = cpu + increment;
                 if (next <= lastCPU) {
                     return next;
@@ -108,6 +101,36 @@ public class ThreadBind {
                 }
                 throw new ThreadBindException("No more CPUs are available to bind to.");
             }));
+        }
+
+        public static class Builder {
+            private final int firstCPU;
+            private final int increment;
+            private int lastCPU;
+            private boolean cycle;
+
+            private Builder(int firstCPU, int increment) {
+                Assume.notNegative(firstCPU, "firstCPU");
+                Assume.notLesser(increment, 1, "increment");
+                this.firstCPU = firstCPU;
+                this.increment = increment;
+            }
+
+            public Builder lastCPU(int lastCPU) {
+                Assume.notNegative(lastCPU, "lastCPU");
+                Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
+                this.lastCPU = lastCPU;
+                return this;
+            }
+
+            public Builder cycle() {
+                cycle = true;
+                return this;
+            }
+
+            public Spread build() {
+                return new Spread(this);
+            }
         }
     }
 }
