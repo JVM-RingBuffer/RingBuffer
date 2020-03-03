@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" relativeOutputPath="eu.menzani.ringbuffer.system" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" packagePrefix="eu.menzani.ringbuffer" />
       <sourceFolder url="file://$MODULE_DIR$/testsrc" isTestSource="true" packagePrefix="eu.menzani.ringbuffer" />
+      <sourceFolder url="file://$MODULE_DIR$/perftest" isTestSource="true" packagePrefix="perftest" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
