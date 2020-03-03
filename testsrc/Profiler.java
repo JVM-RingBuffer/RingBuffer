@@ -6,10 +6,9 @@ class Profiler {
     private long start;
     private long executionTime;
 
-    Profiler() {
-        prefix = null;
-        divideBy = 0D;
-        start();
+    Profiler(int divideBy) {
+        prefix = "";
+        this.divideBy = divideBy;
     }
 
     Profiler(Object instance, int divideBy) {

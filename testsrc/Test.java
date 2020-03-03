@@ -24,7 +24,7 @@ interface Test {
     default void runTest(long sum, int benchmarkRepeatTimes) {
         if (Boolean.getBoolean("benchmark")) {
             test(benchmarkRepeatTimes, sum);
-            Benchmark.reset();
+            Benchmark.begin();
             test(benchmarkRepeatTimes, sum);
             Benchmark.report();
         } else {

@@ -11,7 +11,7 @@ class Benchmark {
                 .update(profiler.getExecutionTime());
     }
 
-    static void reset() {
+    static void begin() {
         results.clear();
     }
 

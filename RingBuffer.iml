@@ -11,5 +11,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="JUnit" level="project" />
+    <orderEntry type="library" scope="TEST" name="Disruptor" level="project" />
   </component>
 </module>
