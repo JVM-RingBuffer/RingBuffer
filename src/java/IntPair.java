@@ -2,14 +2,14 @@ package eu.menzani.ringbuffer.java;
 
 public class IntPair {
     public static long of(int first, int second) {
-        return (long) first << 32 | second & 0xFFFFFFFFL;
+        return (long) second << 32 | first & 0xFFFFFFFFL;
     }
 
     public static int getFirst(long intPair) {
-        return (int) (intPair >> 32);
+        return (int) intPair;
     }
 
     public static int getSecond(long intPair) {
-        return (int) intPair;
+        return (int) (intPair >> 32);
     }
 }

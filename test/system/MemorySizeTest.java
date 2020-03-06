@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.heap;
+package eu.menzani.ringbuffer.system;
 
 import org.junit.jupiter.api.Test;
 

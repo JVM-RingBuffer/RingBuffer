@@ -1,12 +1,13 @@
 package eu.menzani.ringbuffer.java;
 
-import eu.menzani.ringbuffer.Random;
 import org.junit.jupiter.api.Test;
+
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class IntPairTest {
-    private static final Random random = Random.INSTANCE;
+    private static final Random random = new Random();
 
     @Test
     void packIntegers() {

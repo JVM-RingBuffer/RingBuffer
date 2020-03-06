@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.heap;
+package eu.menzani.ringbuffer.system;
 
 import eu.menzani.ringbuffer.java.Immutable;
 
