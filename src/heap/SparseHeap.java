@@ -3,9 +3,10 @@ package eu.menzani.ringbuffer.heap;
 import eu.menzani.ringbuffer.java.IntPair;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class SparseHeap {
-    private static final int blockSize = 32;
+    private static final int blockSize = 4;
 
     private final ByteBuffer memory;
     private final MemorySize size;
@@ -13,7 +14,7 @@ public class SparseHeap {
     private int position;
 
     public SparseHeap(MemorySize size) {
-        memory = ByteBuffer.allocateDirect(size.getBytes());
+        memory = ByteBuffer.allocateDirect(size.getBytes()).order(ByteOrder.nativeOrder());
         this.size = size;
 
         int stackSize = memory.capacity() / blockSize;

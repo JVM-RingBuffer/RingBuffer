@@ -118,7 +118,7 @@ class SparseHeapTest {
     @Test
     void deallocate() {
         SparseHeap heap = new SparseHeap(twoKilobytes);
-        MemorySize thirtyTwoBytes = MemorySize.ofBytes(32);
+        MemorySize thirtyTwoBytes = MemorySize.ofBytes(4);
 
         assertEquals(twoKilobytes, heap.freeMemory());
         assertEquals(MemorySize.ZERO, heap.usedMemory());
@@ -133,7 +133,7 @@ class SparseHeapTest {
     @Test
     void deallocate64() {
         SparseHeap heap = new SparseHeap(twoKilobytes);
-        MemorySize sixtyFourBytes = MemorySize.ofBytes(64);
+        MemorySize sixtyFourBytes = MemorySize.ofBytes(8);
 
         assertEquals(twoKilobytes, heap.freeMemory());
         assertEquals(MemorySize.ZERO, heap.usedMemory());
