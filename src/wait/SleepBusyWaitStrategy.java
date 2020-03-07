@@ -2,6 +2,9 @@ package eu.menzani.ringbuffer.wait;
 
 import java.util.concurrent.locks.LockSupport;
 
+/**
+ * Requires Linux.
+ */
 public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     public static BusyWaitStrategy getDefault() {
         return MultiStepBusyWaitStrategy.endWith(new SleepBusyWaitStrategy())

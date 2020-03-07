@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="Unit Tests" type="JUnit" factoryName="JUnit">
     <module name="RingBuffer" />
     <useClassPathOnly />
     <option name="MAIN_CLASS_NAME" value="" />

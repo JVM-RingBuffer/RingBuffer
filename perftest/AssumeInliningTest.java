@@ -2,7 +2,7 @@ package perftest;
 
 import eu.menzani.ringbuffer.java.Assume;
 
-public class AssumeInliningTest {
+class AssumeInliningTest {
     private static final int numIterations = 100_000;
 
     public static void main(String[] args) {
