@@ -20,37 +20,36 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         @Override
         public void reset() {
             counter = STEP_TICKS - 1;
-            step = 5;
+            step = 6;
         }
 
         @Override
         public void tick() {
             switch (step) {
-                case 0:
+                case 1:
                     countDown(SIXTH);
-                case -1:
+                case 0:
                     SIXTH.tick();
                     break;
-                case 1:
+                case 2:
                     countDown(FIFTH);
                     FIFTH.tick();
                     break;
-                case 2:
+                case 3:
                     countDown(FOURTH);
                     FOURTH.tick();
                     break;
-                case 3:
+                case 4:
                     countDown(THIRD);
                     THIRD.tick();
                     break;
-                case 4:
+                case 5:
                     countDown(SECOND);
                     SECOND.tick();
                     break;
-                case 5:
+                case 6:
                     countDown(FIRST);
                     FIRST.tick();
-                    break;
             }
         }
 

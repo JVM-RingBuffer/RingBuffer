@@ -24,9 +24,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void reset() {
-        initialStrategy.strategy.reset();
         currentStrategy = initialStrategy;
-        counter = currentStrategy.strategyTicks;
     }
 
     @Override
@@ -58,19 +56,15 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
             Assume.notLesser(strategyTicks, 1, "strategyTicks");
             if (strategy instanceof LinkedMultiStepBusyWaitStrategy) {
-                Node node = ((LinkedMultiStepBusyWaitStrategy) strategy).initialStrategy;
+                Node node = ((LinkedMultiStepBusyWaitStrategy) strategy).initialStrategy.next;
                 Deque<BusyWaitStrategy> strategies = new ArrayDeque<>();
                 Deque<Integer> strategiesTicks = new ArrayDeque<>();
-                boolean first = true;
                 do {
                     strategies.addFirst(node.strategy);
                     if (node.strategyTicks == 0) {
-                        strategiesTicks.addFirst(strategyTicks);
-                    } else if (first) {
-                        strategiesTicks.addFirst(node.strategyTicks);
-                        first = false;
+                        strategiesTicks.addFirst(strategyTicks - 1);
                     } else {
-                        strategiesTicks.addFirst(node.strategyTicks + 1);
+                        strategiesTicks.addFirst(node.strategyTicks);
                     }
                     node = node.next;
                 } while (node != null);
@@ -78,7 +72,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
                 this.strategiesTicks.addAll(strategiesTicks);
             } else {
                 strategies.add(strategy);
-                strategiesTicks.add(strategyTicks);
+                strategiesTicks.add(strategyTicks - 1);
             }
             return this;
         }
@@ -88,9 +82,6 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {
                 MultiStepBusyWaitStrategyBuilder.throwNoIntermediateStepsAdded();
-            }
-            for (int i = 0; i < strategiesTicks.size() - 1; i++) {
-                strategiesTicks.set(i, strategiesTicks.get(i) - 1);
             }
             return new LinkedMultiStepBusyWaitStrategy(this);
         }
@@ -102,7 +93,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
             while (strategies.hasNext()) {
                 initialStrategy = new Node(strategies.next(), strategiesTicks.next(), initialStrategy);
             }
-            return initialStrategy;
+            return new Node(null, 0, initialStrategy);
         }
     }
 

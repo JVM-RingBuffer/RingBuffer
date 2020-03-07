@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
+    private final int initialStrategyIndex;
     private final BusyWaitStrategy[] strategies;
     private final int[] strategiesTicks;
 
@@ -20,16 +21,14 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     private MultiStepBusyWaitStrategy(Builder builder) {
+        initialStrategyIndex = builder.getInitialStrategyIndex();
         strategies = builder.getStrategies();
         strategiesTicks = builder.getStrategiesTicks();
     }
 
     @Override
     public void reset() {
-        currentStrategyIndex = strategies.length - 1;
-        currentStrategy = strategies[currentStrategyIndex];
-        currentStrategy.reset();
-        counter = strategiesTicks[currentStrategyIndex];
+        currentStrategyIndex = initialStrategyIndex;
     }
 
     @Override
@@ -60,20 +59,15 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         @Override
         public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
             Assume.notLesser(strategyTicks, 1, "strategyTicks");
+            strategiesTicks.add(strategyTicks - 1);
             if (strategy instanceof MultiStepBusyWaitStrategy) {
                 MultiStepBusyWaitStrategy multiStepStrategy = (MultiStepBusyWaitStrategy) strategy;
                 Collections.addAll(strategies, multiStepStrategy.strategies);
-                strategiesTicks.add(strategyTicks);
-                for (int i = 1, length = multiStepStrategy.strategiesTicks.length; i < length; i++) {
-                    int multiStepStrategyTicks = multiStepStrategy.strategiesTicks[i];
-                    if (i != length - 1) {
-                        multiStepStrategyTicks++;
-                    }
-                    strategiesTicks.add(multiStepStrategyTicks);
+                for (int i = 1; i < multiStepStrategy.strategiesTicks.length; i++) {
+                    strategiesTicks.add(multiStepStrategy.strategiesTicks[i]);
                 }
             } else {
                 strategies.add(strategy);
-                strategiesTicks.add(strategyTicks);
             }
             return this;
         }
@@ -84,10 +78,11 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
             if (strategies.size() == 1) {
                 MultiStepBusyWaitStrategyBuilder.throwNoIntermediateStepsAdded();
             }
-            for (int i = 0; i < strategiesTicks.size() - 1; i++) {
-                strategiesTicks.set(i, strategiesTicks.get(i) - 1);
-            }
             return new MultiStepBusyWaitStrategy(this);
+        }
+
+        private int getInitialStrategyIndex() {
+            return strategies.size();
         }
 
         private BusyWaitStrategy[] getStrategies() {
