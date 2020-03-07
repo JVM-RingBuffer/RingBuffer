@@ -11,7 +11,7 @@ public class Profiler {
         this.divideBy = divideBy;
     }
 
-    Profiler(Object instance, int divideBy) {
+    public Profiler(Object instance, int divideBy) {
         prefix = instance.getClass().getSimpleName() + ": ";
         this.divideBy = divideBy;
     }
@@ -33,7 +33,7 @@ public class Profiler {
         executionTime = Math.round((end - start) / divideBy);
     }
 
-    void report() {
+    public void report() {
         final long end = System.nanoTime();
         System.out.println(formatExecutionTime(end - start));
     }

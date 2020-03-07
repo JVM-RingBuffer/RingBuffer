@@ -1,7 +1,6 @@
 package perftest.wait;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder;
 
 public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
@@ -11,11 +10,6 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     @Override
     BusyWaitStrategy getStrategy() {
         return new ManualMultiStepBusyWaitStrategy();
-    }
-
-    @Override
-    MultiStepBusyWaitStrategyBuilder getStrategyBuilder() {
-        throw new AssertionError();
     }
 
     private static class ManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {

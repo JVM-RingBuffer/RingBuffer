@@ -1,21 +1,23 @@
 package eu.menzani.ringbuffer.wait;
 
+import eu.menzani.ringbuffer.java.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static perftest.wait.MultiStepBusyWaitStrategyTest.*;
 
 abstract class MultiStepBusyWaitStrategyTest {
-    private final perftest.wait.MultiStepBusyWaitStrategyTest test;
-    private final List<TestBusyWaitStrategy.Event> events = new ArrayList<>();
+    private final perftest.wait.MultiStepBusyWaitStrategyTest performanceTest;
     private Iterator<TestBusyWaitStrategy.Event> eventIterator;
+    private final List<TestBusyWaitStrategy.Event> events = new ArrayList<>();
 
-    MultiStepBusyWaitStrategyTest(perftest.wait.MultiStepBusyWaitStrategyTest test) {
-        this.test = test;
+    MultiStepBusyWaitStrategyTest(perftest.wait.MultiStepBusyWaitStrategyTest performanceTest) {
+        this.performanceTest = performanceTest;
     }
 
     @Test
@@ -26,38 +28,38 @@ abstract class MultiStepBusyWaitStrategyTest {
         FOURTH = new TestBusyWaitStrategy("fourth");
         FIFTH = new TestBusyWaitStrategy("fifth");
         SIXTH = new TestBusyWaitStrategy("sixth");
+        BusyWaitStrategy[] steps = {FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH};
 
         final int numIterations = 2;
-        test.test(numIterations, 1);
+        int numSteps = performanceTest.getNumSteps();
+        Assert.notGreater(numSteps, steps.length);
+        performanceTest.run(numIterations, 1);
         eventIterator = events.iterator();
 
-        assertEquals((STEP_TICKS * 7 + 6) * numIterations, events.size(), events::toString);
+        int numStepsMinusOne = numSteps - 1;
         for (int i = 0; i < numIterations; i++) {
-            expectReset(FIRST, i, STEP_TICKS);
-            expectTick(STEP_TICKS, FIRST);
-            expectReset(SECOND, i, STEP_TICKS);
-            expectTick(STEP_TICKS, SECOND);
-            expectReset(THIRD, i, STEP_TICKS);
-            expectTick(STEP_TICKS, THIRD);
-            expectReset(FOURTH, i, STEP_TICKS);
-            expectTick(STEP_TICKS, FOURTH);
-            expectReset(FIFTH, i, STEP_TICKS);
-            expectTick(STEP_TICKS, FIFTH);
-            expectReset(SIXTH, i, STEP_TICKS + STEP_TICKS);
-            expectTick(STEP_TICKS + STEP_TICKS, SIXTH);
+            for (int j = 0; j < numStepsMinusOne; j++) {
+                TestBusyWaitStrategy step = (TestBusyWaitStrategy) steps[j];
+                expectReset(step, i, STEP_TICKS);
+                expectTick(STEP_TICKS, step);
+            }
+            TestBusyWaitStrategy step = (TestBusyWaitStrategy) steps[numStepsMinusOne];
+            int lastStepTickTimes = NUM_TICKS - STEP_TICKS * numStepsMinusOne;
+            expectReset(step, i, lastStepTickTimes);
+            expectTick(lastStepTickTimes, step);
         }
+        assertEquals((NUM_TICKS + numSteps) * numIterations, events.size(), events::toString);
+        assertThrows(NoSuchElementException.class, () -> eventIterator.next(), events::toString);
     }
 
-    private void expectTick(int times, BusyWaitStrategy strategy) {
-        TestBusyWaitStrategy testStrategy = (TestBusyWaitStrategy) strategy;
+    private void expectTick(int times, TestBusyWaitStrategy step) {
         for (int i = 1; i <= times; i++) {
-            assertEquals(testStrategy.new Event(false, i), eventIterator.next(), events::toString);
+            assertEquals(step.new Event(false, i), eventIterator.next(), events::toString);
         }
     }
 
-    private void expectReset(BusyWaitStrategy strategy, int numIteration, int tickTimes) {
-        TestBusyWaitStrategy testStrategy = (TestBusyWaitStrategy) strategy;
-        assertEquals(testStrategy.new Event(true, numIteration == 0 ? 0 : tickTimes + 1), eventIterator.next(), events::toString);
+    private void expectReset(TestBusyWaitStrategy step, int numIteration, int tickTimes) {
+        assertEquals(step.new Event(true, numIteration == 0 ? 0 : tickTimes + 1), eventIterator.next(), events::toString);
     }
 
     public class TestBusyWaitStrategy implements BusyWaitStrategy {
