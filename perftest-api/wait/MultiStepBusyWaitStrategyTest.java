@@ -48,7 +48,7 @@ public abstract class MultiStepBusyWaitStrategyTest {
     }
 
     public void run(int numIterations, int repeatTimes) {
-        Profiler profiler = new Profiler(numIterations);
+        Profiler profiler = new Profiler(this, numIterations);
         BusyWaitStrategy strategy = getStrategy();
         for (int i = 0; i < repeatTimes; i++) {
             profiler.start();

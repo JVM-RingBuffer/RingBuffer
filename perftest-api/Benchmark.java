@@ -46,10 +46,20 @@ public class Benchmark {
         }
 
         void report() {
-            String minimum = Profiler.formatExecutionTime(this.minimum);
-            String average = Profiler.formatExecutionTime(Math.round(sum / count));
-            String maximum = Profiler.formatExecutionTime(this.maximum);
+            String minimum = formatExecutionTime(this.minimum);
+            String average = formatExecutionTime(Math.round(sum / count));
+            String maximum = formatExecutionTime(this.maximum);
             System.out.println(prefix + minimum + " min, " + average + " avg, " + maximum + " max");
+        }
+
+        private static String formatExecutionTime(long value) {
+            if (value < 2_000L) {
+                return value + "ns";
+            }
+            if (value < 2_000_000L) {
+                return (value / 1_000L) + "us";
+            }
+            return (value / 1_000_000L) + "ms";
         }
     }
 }

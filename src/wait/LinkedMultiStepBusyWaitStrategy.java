@@ -87,7 +87,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         public BusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {
-                throw new IllegalStateException("No steps added.");
+                MultiStepBusyWaitStrategyBuilder.throwNoIntermediateStepsAdded();
             }
             for (int i = 0; i < strategiesTicks.size() - 1; i++) {
                 strategiesTicks.set(i, strategiesTicks.get(i) - 1);

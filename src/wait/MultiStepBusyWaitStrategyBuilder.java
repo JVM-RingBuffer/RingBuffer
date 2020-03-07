@@ -6,4 +6,8 @@ public interface MultiStepBusyWaitStrategyBuilder {
     MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks);
 
     BusyWaitStrategy build();
+
+    static void throwNoIntermediateStepsAdded() {
+        throw new IllegalStateException("No intermediate steps were added.");
+    }
 }
