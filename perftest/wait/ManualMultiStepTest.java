@@ -15,48 +15,55 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
 
     private static class ManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         private int counter;
+        private int step;
 
         @Override
         public void reset() {
-            FIRST.reset();
-            counter = STEP_TICKS * 5;
+            counter = STEP_TICKS - 1;
+            step = 5;
         }
 
         @Override
         public void tick() {
-            if (counter == -1) {
-                SIXTH.tick();
-            } else {
-                switch (counter) {
-                    case STEP_TICKS * 4:
-                        SECOND.reset();
-                        break;
-                    case STEP_TICKS * 3:
-                        THIRD.reset();
-                        break;
-                    case STEP_TICKS * 2:
-                        FOURTH.reset();
-                        break;
-                    case STEP_TICKS:
-                        FIFTH.reset();
-                        break;
-                    case 0:
-                        SIXTH.reset();
-                        SIXTH.tick();
-                        counter--;
-                        return;
-                }
-                if (--counter < STEP_TICKS) {
+            switch (step) {
+                case 0:
+                    countDown(SIXTH);
+                case -1:
+                    SIXTH.tick();
+                    break;
+                case 1:
+                    countDown(FIFTH);
                     FIFTH.tick();
-                } else if (counter < STEP_TICKS * 2) {
+                    break;
+                case 2:
+                    countDown(FOURTH);
                     FOURTH.tick();
-                } else if (counter < STEP_TICKS * 3) {
+                    break;
+                case 3:
+                    countDown(THIRD);
                     THIRD.tick();
-                } else if (counter < STEP_TICKS * 4) {
+                    break;
+                case 4:
+                    countDown(SECOND);
                     SECOND.tick();
-                } else {
+                    break;
+                case 5:
+                    countDown(FIRST);
                     FIRST.tick();
-                }
+                    break;
+            }
+        }
+
+        private void countDown(BusyWaitStrategy currentStrategy) {
+            switch (counter) {
+                case 0:
+                    step--;
+                    counter = STEP_TICKS - 1;
+                    break;
+                case STEP_TICKS - 1:
+                    currentStrategy.reset();
+                default:
+                    counter--;
             }
         }
     }
