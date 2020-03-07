@@ -5,7 +5,7 @@ import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-interface Test {
+interface RingBufferTest {
     int NUM_ITERATIONS = 1_000_000;
     int CONCURRENCY = 5;
     int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;

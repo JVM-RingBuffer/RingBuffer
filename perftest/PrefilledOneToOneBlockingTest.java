@@ -2,7 +2,7 @@ package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
 
-public class PrefilledOneToOneBlockingTest implements Test {
+public class PrefilledOneToOneBlockingTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
             RingBuffer.prefilled(BLOCKING_SIZE, FILLER)
                     .oneReader()

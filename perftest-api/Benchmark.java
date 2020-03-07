@@ -3,19 +3,19 @@ package perftest;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class Benchmark {
+public class Benchmark {
     private static final Map<String, Result> results = new LinkedHashMap<>();
 
-    static void add(Profiler profiler) {
+    public static void add(Profiler profiler) {
         results.computeIfAbsent(profiler.getPrefix(), Result::new)
                 .update(profiler.getExecutionTime());
     }
 
-    static void begin() {
+    public static void begin() {
         results.clear();
     }
 
-    static void report() {
+    public static void report() {
         for (Result result : results.values()) {
             result.report();
         }
@@ -33,7 +33,7 @@ class Benchmark {
         }
 
         void update(long value) {
-            if (value != 0L) {
+            if (value > 1L) {
                 sum += value;
                 count++;
                 if (value < minimum) {

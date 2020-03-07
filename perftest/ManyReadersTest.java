@@ -2,7 +2,7 @@ package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
 
-public class ManyReadersTest implements Test {
+public class ManyReadersTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
             RingBuffer.<Event>empty(MANY_READERS_OR_WRITERS_SIZE)
                     .manyReaders()

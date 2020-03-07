@@ -7,8 +7,8 @@ class TestThreadGroup {
     private final Set<TestThread> testThreads = new HashSet<>();
 
     TestThreadGroup(TestThread.Factory testThreadFactory) {
-        for (int i = 0; i < Test.CONCURRENCY; i++) {
-            testThreads.add(testThreadFactory.newInstance(Test.NUM_ITERATIONS));
+        for (int i = 0; i < RingBufferTest.CONCURRENCY; i++) {
+            testThreads.add(testThreadFactory.newInstance(RingBufferTest.NUM_ITERATIONS));
         }
     }
 

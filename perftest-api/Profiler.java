@@ -1,12 +1,12 @@
 package perftest;
 
-class Profiler {
+public class Profiler {
     private final String prefix;
     private final double divideBy;
     private long start;
     private long executionTime;
 
-    Profiler(int divideBy) {
+    public Profiler(int divideBy) {
         prefix = "";
         this.divideBy = divideBy;
     }
@@ -24,11 +24,11 @@ class Profiler {
         return executionTime;
     }
 
-    void start() {
+    public void start() {
         start = System.nanoTime();
     }
 
-    void stop() {
+    public void stop() {
         final long end = System.nanoTime();
         executionTime = Math.round((end - start) / divideBy);
     }

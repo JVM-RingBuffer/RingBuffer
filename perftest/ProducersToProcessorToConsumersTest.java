@@ -3,7 +3,7 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
-public class ProducersToProcessorToConsumersTest implements Test {
+public class ProducersToProcessorToConsumersTest implements RingBufferTest {
     public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
             .manyWriters()
             .oneReader()
