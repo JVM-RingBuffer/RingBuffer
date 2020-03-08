@@ -26,30 +26,26 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         @Override
         public void tick() {
             switch (step) {
-                case 1:
-                    countDown(SIXTH);
                 case 0:
                     SIXTH.tick();
                     break;
+                case 1:
+                    countDown(SIXTH);
+                    break;
                 case 2:
                     countDown(FIFTH);
-                    FIFTH.tick();
                     break;
                 case 3:
                     countDown(FOURTH);
-                    FOURTH.tick();
                     break;
                 case 4:
                     countDown(THIRD);
-                    THIRD.tick();
                     break;
                 case 5:
                     countDown(SECOND);
-                    SECOND.tick();
                     break;
                 case 6:
                     countDown(FIRST);
-                    FIRST.tick();
             }
         }
 
@@ -64,6 +60,7 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
                 default:
                     counter--;
             }
+            currentStrategy.tick();
         }
     }
 }

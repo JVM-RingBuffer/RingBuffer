@@ -13,6 +13,12 @@ public class Assume {
         }
     }
 
+    public static void notNegative(long value, String variableName) {
+        if (value < 0L) {
+            throw new IllegalArgumentException(variableName + " must not be negative, but is " + value);
+        }
+    }
+
     public static void notGreater(int value, int cap, String valueVariableName, String capVariableName) {
         if (value > cap) {
             throw new IllegalArgumentException(valueVariableName + " must not be greater than " + capVariableName + " (" + value + " > " + cap + ')');

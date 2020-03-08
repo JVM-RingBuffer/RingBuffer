@@ -1,5 +1,6 @@
 package eu.menzani.ringbuffer.system;
 
+import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Immutable;
 
 import java.io.Serializable;
@@ -35,9 +36,7 @@ public final class MemorySize implements Comparable<MemorySize>, Serializable {
     }
 
     private MemorySize(long bytes) {
-        if (bytes < 0L) {
-            throw new IllegalArgumentException("Size of memory cannot be a negative value: " + bytes);
-        }
+        Assume.notNegative(bytes, "Memory size");
         this.bytes = bytes;
     }
 
