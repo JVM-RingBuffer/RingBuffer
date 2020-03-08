@@ -39,8 +39,8 @@ public abstract class MultiStepBusyWaitStrategyTest {
     void runBenchmark() {
         FIRST = SECOND = THIRD = FOURTH = FIFTH = SIXTH = new NoopBusyWaitStrategy();
 
-        final int numIterations = 10_000;
-        final int repeatTimes = 1_000;
+        final int numIterations = 300_000;
+        final int repeatTimes = 50;
         run(numIterations, repeatTimes);
         Benchmark.begin();
         run(numIterations, repeatTimes);

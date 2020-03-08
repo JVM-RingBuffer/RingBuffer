@@ -3,6 +3,10 @@ package perftest.wait;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 public class TwoStepManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
+    public static void main(String[] args) {
+        new TwoStepManualMultiStepTest().runBenchmark();
+    }
+
     @Override
     BusyWaitStrategy getStrategy() {
         return new TwoStepManualMultiStepBusyWaitStrategy();

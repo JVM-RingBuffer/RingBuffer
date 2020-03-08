@@ -1,7 +1,6 @@
 package eu.menzani.ringbuffer.wait;
 
 import eu.menzani.ringbuffer.java.Assert;
-import eu.menzani.ringbuffer.java.Assume;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +57,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
 
         @Override
         public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
-            Assume.notLesser(strategyTicks, 1, "strategyTicks");
+            MultiStepBusyWaitStrategyBuilder.validateStrategyTicks(strategyTicks);
             strategiesTicks.add(strategyTicks - 1);
             if (strategy instanceof MultiStepBusyWaitStrategy) {
                 MultiStepBusyWaitStrategy multiStepStrategy = (MultiStepBusyWaitStrategy) strategy;

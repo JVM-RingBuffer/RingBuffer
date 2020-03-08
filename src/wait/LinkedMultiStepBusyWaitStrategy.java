@@ -1,7 +1,6 @@
 package eu.menzani.ringbuffer.wait;
 
 import eu.menzani.ringbuffer.java.Assert;
-import eu.menzani.ringbuffer.java.Assume;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -9,6 +8,9 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Might be slightly faster than {@link MultiStepBusyWaitStrategy} for two total steps, and slower otherwise.
+ */
 public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
     private final Node initialStrategy;
     private Node currentStrategy;
@@ -54,7 +56,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
 
         @Override
         public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
-            Assume.notLesser(strategyTicks, 1, "strategyTicks");
+            MultiStepBusyWaitStrategyBuilder.validateStrategyTicks(strategyTicks);
             if (strategy instanceof LinkedMultiStepBusyWaitStrategy) {
                 Node node = ((LinkedMultiStepBusyWaitStrategy) strategy).initialStrategy.next;
                 Deque<BusyWaitStrategy> strategies = new ArrayDeque<>();
