@@ -15,14 +15,12 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     private static final Class<? extends Object[]> elementsArrayClass = Object[].class;
     private static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(elementsArrayClass);
     private static final VarHandle ITERATOR;
+    private static final VarHandle VIEW;
 
     static {
-        MethodHandles.Lookup lookup = MethodHandles.lookup().in(Array.class);
-        try {
-            ITERATOR = lookup.findVarHandle(Array.class, "iterator", Array.Iterator.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        VarHandleLookup lookup = new VarHandleLookup(MethodHandles.lookup(), Array.class);
+        ITERATOR = lookup.getVarHandle(Array.Iterator.class, "iterator");
+        VIEW = lookup.getVarHandle(ArrayView.class, "view");
     }
 
     public static Array<?> empty() {
@@ -83,7 +81,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     private final Object[] elements;
-    private volatile Iterator iterator;
+    private Iterator iterator;
+    private ArrayView<T> view;
 
     public Array(int capacity) {
         elements = new Object[capacity];
@@ -313,19 +312,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         return iterator;
     }
 
-    private Iterator getIterator() {
-        Iterator previous = iterator;
-        Iterator next = null;
-        boolean haveNext = false;
-        while (true) {
-            if (!haveNext && previous == null) {
-                next = new Iterator();
-            }
-            if (ITERATOR.weakCompareAndSet(iterator, previous, next)) {
-                return previous;
-            }
-            haveNext = (previous == (previous = iterator));
-        }
+    Iterator getIterator() {
+        return LazyInit.get(ITERATOR, this, Iterator::new);
     }
 
     @Override
@@ -396,7 +384,11 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     @Override
     public AbstractArray<T> unmodifiableView() {
-        return new ArrayView<>(this);
+        return getView();
+    }
+
+    private ArrayView<T> getView() {
+        return LazyInit.get(VIEW, this, () -> new ArrayView<>(this));
     }
 
     @Override
@@ -902,12 +894,12 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public AbstractArray<T> unmodifiableView() {
-            return new ArrayView.SubArrayView<>(this);
+            return getView().new SubArrayView(this);
         }
 
         @Override
         public AbstractArray<T> immutableSnapshot() {
-            return new ArrayView.SubArrayView<>(clone());
+            return getView().new SubArrayView(clone());
         }
 
         @Override

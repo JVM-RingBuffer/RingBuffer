@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer.java;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Spliterator;
@@ -11,8 +13,10 @@ import java.util.stream.Stream;
 
 class ArrayView<T> implements AbstractArray<T> {
     private static final String readOnlyMessage = "This instance does not permit write access.";
-    
+    private static final VarHandle ITERATOR = new VarHandleLookup(MethodHandles.lookup(), ArrayView.class).getVarHandle(IteratorView.class, "iterator");
+
     private final Array<T> delegate;
+    private IteratorView<T> iterator;
 
     ArrayView(Array<T> delegate) {
         this.delegate = delegate;
@@ -170,12 +174,17 @@ class ArrayView<T> implements AbstractArray<T> {
 
     @Override
     public ArrayIterator<T> listIterator(int index) {
-        return new IteratorView<>(delegate.listIterator(index));
+        delegate.listIterator(index);
+        return getIterator();
+    }
+
+    private IteratorView<T> getIterator() {
+        return LazyInit.get(ITERATOR, this, () -> new IteratorView<>(delegate.getIterator()));
     }
 
     @Override
     public AbstractArray<T> subList(int fromIndex, int toIndex) {
-        return new SubArrayView<>(delegate.subList(fromIndex, toIndex));
+        return new SubArrayView(delegate.subList(fromIndex, toIndex));
     }
 
     @Override
@@ -471,7 +480,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
     }
 
-    static class SubArrayView<T> implements AbstractArray<T> {
+    class SubArrayView implements AbstractArray<T> {
         private final AbstractArray<T> delegate;
 
         SubArrayView(AbstractArray<T> delegate) {
@@ -490,12 +499,13 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public ArrayIterator<T> listIterator(int index) {
-            return new IteratorView<>(delegate.listIterator(index));
+            delegate.listIterator(index);
+            return getIterator();
         }
 
         @Override
         public AbstractArray<T> subList(int fromIndex, int toIndex) {
-            return new SubArrayView<>(delegate.subList(fromIndex, toIndex));
+            return new SubArrayView(delegate.subList(fromIndex, toIndex));
         }
 
         @Override
