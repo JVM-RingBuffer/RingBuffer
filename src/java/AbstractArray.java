@@ -52,7 +52,9 @@ public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
 
     T getAndSetRelease(int index, T element);
 
-    Array<T> getMainArray();
+    AbstractArray<T> unmodifiableView();
+
+    AbstractArray<T> immutableSnapshot();
 
     Array<T> clone();
 }

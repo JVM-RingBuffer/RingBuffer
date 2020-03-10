@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * This collection, its subsets and iterators do not check bounds.
+ */
 public class Array<T> implements AbstractArray<T>, Serializable {
     private static final Array<?> empty = new Array<>(0);
     private static final Class<? extends Object[]> elementsArrayClass = Object[].class;
@@ -18,7 +21,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     /**
      * This method is equivalent to the constructor {@link Array#Array(int)}.
-     * Use this method when the returned array will not be populated.
+     * Use this method to declare intent. Use the constructor when creating an array that will be populated.
      */
     public static <T> Array<T> empty(int capacity) {
         return new Array<>(capacity);
@@ -366,8 +369,13 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     @Override
-    public Array<T> getMainArray() {
-        return this;
+    public AbstractArray<T> unmodifiableView() {
+        return new ArrayView<>(this);
+    }
+
+    @Override
+    public AbstractArray<T> immutableSnapshot() {
+        return new ArrayView<>(clone());
     }
 
     @Override
@@ -515,7 +523,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public void add(T element) {
-            throw new UnsupportedOperationException();
+            set(element);
         }
 
         @Override
@@ -866,8 +874,13 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
-        public Array<T> getMainArray() {
-            return Array.this;
+        public AbstractArray<T> unmodifiableView() {
+            return new ArrayView.SubArrayView<>(this);
+        }
+
+        @Override
+        public AbstractArray<T> immutableSnapshot() {
+            return new ArrayView.SubArrayView<>(clone());
         }
 
         @Override
