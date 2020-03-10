@@ -14,6 +14,16 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     private static final Array<?> empty = new Array<>(0);
     private static final Class<? extends Object[]> elementsArrayClass = Object[].class;
     private static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(elementsArrayClass);
+    private static final VarHandle ITERATOR;
+
+    static {
+        MethodHandles.Lookup lookup = MethodHandles.lookup().in(Array.class);
+        try {
+            ITERATOR = lookup.findVarHandle(Array.class, "iterator", Array.Iterator.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     public static Array<?> empty() {
         return empty;
@@ -73,7 +83,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     private final Object[] elements;
-    private final Iterator iterator = new Iterator();
+    private volatile Iterator iterator;
 
     public Array(int capacity) {
         elements = new Object[capacity];
@@ -298,8 +308,24 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     @Override
     public ArrayIterator<T> listIterator(int index) {
+        Iterator iterator = getIterator();
         iterator.initialize(0, getCapacity(), index);
         return iterator;
+    }
+
+    private Iterator getIterator() {
+        Iterator previous = iterator;
+        Iterator next = null;
+        boolean haveNext = false;
+        while (true) {
+            if (!haveNext && previous == null) {
+                next = new Iterator();
+            }
+            if (ITERATOR.weakCompareAndSet(iterator, previous, next)) {
+                return previous;
+            }
+            haveNext = (previous == (previous = iterator));
+        }
     }
 
     @Override
@@ -809,6 +835,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public ArrayIterator<T> listIterator(int index) {
+            Iterator iterator = getIterator();
             iterator.initialize(beginIndex, endIndex, beginIndex + index);
             return iterator;
         }
