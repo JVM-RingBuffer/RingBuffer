@@ -19,6 +19,12 @@ abstract class AbstractArrayTest {
     private static final String TWO_2 = "22";
     static final String[] ELEMENTS = {ZERO, ONE, null, TWO, ONE, THREE, null, null, FOUR};
 
+    private final boolean isSubArray;
+
+    AbstractArrayTest(boolean isSubArray) {
+        this.isSubArray = isSubArray;
+    }
+
     private final AbstractArray<String> array = getArray();
     private final AbstractArray<String> arrayFromCollection = getArrayFromCollection();
     private final AbstractArray<String> arrayWithRepeatedElements = getArrayWithRepeatedElements();
@@ -89,7 +95,11 @@ abstract class AbstractArrayTest {
         assertTrue(iterator.hasNext());
         assertEquals(FOUR, iterator.next());
         assertFalse(iterator.hasNext());
-        assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
+        if (isSubArray) {
+            assertEquals(FIVE, iterator.next());
+        } else {
+            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
+        }
     }
 
     @Test
@@ -223,8 +233,13 @@ abstract class AbstractArrayTest {
         assertTrue(iterator.hasPrevious());
         assertEquals(array.getCapacity(), iterator.nextIndex());
         assertEquals(4, iterator.previousIndex());
-        assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
-        assertThrows(ArrayIndexOutOfBoundsException.class, iterator::previous);
+        if (isSubArray) {
+            assertEquals(FIVE, iterator.next());
+            assertEquals(FIVE, iterator.previous());
+        } else {
+            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
+            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::previous);
+        }
 
         assertEquals(FOUR, iterator.previous());
         assertTrue(iterator.hasNext());

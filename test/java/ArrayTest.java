@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 class ArrayTest extends AbstractArrayTest {
+    ArrayTest() {
+        super(false);
+    }
+
     @Override
     AbstractArray<String> getArray() {
         return Array.of(null, ONE, TWO, THREE, FOUR);

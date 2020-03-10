@@ -6,6 +6,10 @@ import java.util.Collections;
 import java.util.List;
 
 class SubArrayTest extends AbstractArrayTest {
+    SubArrayTest() {
+        super(true);
+    }
+
     @Override
     AbstractArray<String> getArray() {
         return Array.of(null, ONE, TWO, THREE, FOUR, FIVE, null).subList(0, 5);

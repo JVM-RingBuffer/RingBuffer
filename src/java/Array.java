@@ -470,22 +470,22 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public int nextIndex() {
-            return index;
+            return beginIndex + index;
         }
 
         @Override
         public int previousIndex() {
-            return index - 1;
+            return beginIndex + index - 1;
         }
 
         @Override
         public int nextAbsoluteIndex() {
-            return nextIndex() - beginIndex;
+            return index;
         }
 
         @Override
         public int previousAbsoluteIndex() {
-            return previousIndex() - beginIndex;
+            return index - 1;
         }
 
         @Override
@@ -638,7 +638,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
                     Object[] result = Arrays.copyOf(elements, endIndex, array.getClass());
                     return (U[]) result;
                 }
-                Object[] result = new Object[capacity];
+                Object result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), capacity);
                 System.arraycopy(elements, beginIndex, result, 0, capacity);
                 return (U[]) result;
             }
@@ -778,7 +778,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         public int indexOf(Object element) {
             for (int i = beginIndex; i < endIndex; i++) {
                 if (Objects.equals(element, elements[i])) {
-                    return i;
+                    return i - beginIndex;
                 }
             }
             return -1;
@@ -788,7 +788,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         public int lastIndexOf(Object element) {
             for (int i = endIndex - 1; i >= beginIndex; i--) {
                 if (Objects.equals(element, elements[i])) {
-                    return i;
+                    return i - beginIndex;
                 }
             }
             return -1;
@@ -801,7 +801,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public ArrayIterator<T> listIterator(int index) {
-            iterator.initialize(beginIndex, endIndex, index);
+            iterator.initialize(beginIndex, endIndex, beginIndex + index);
             return iterator;
         }
 
