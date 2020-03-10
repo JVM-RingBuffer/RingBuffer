@@ -3,10 +3,16 @@ package eu.menzani.ringbuffer.java;
 import java.util.List;
 import java.util.RandomAccess;
 
-public interface AbstractArray<T> extends List<T>, RandomAccess {
-    int getCapacity();
+public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
+    ArrayIterator<T> iterator();
 
-    boolean retainAll(Object... elements);
+    ArrayIterator<T> listIterator();
+
+    ArrayIterator<T> listIterator(int index);
+
+    AbstractArray<T> subList(int fromIndex, int toIndex);
+
+    int getCapacity();
 
     T getOpaque(int index);
 
@@ -45,4 +51,8 @@ public interface AbstractArray<T> extends List<T>, RandomAccess {
     T getAndSetAcquire(int index, T element);
 
     T getAndSetRelease(int index, T element);
+
+    Array<T> getMainArray();
+
+    Array<T> clone();
 }

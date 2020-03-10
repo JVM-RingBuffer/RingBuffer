@@ -5,16 +5,21 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.Consumer;
 
-public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
+public class Array<T> implements AbstractArray<T>, Serializable {
+    private static final Array<?> empty = new Array<>(0);
     private static final Class<? extends Object[]> elementsArrayClass = Object[].class;
     private static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(elementsArrayClass);
 
+    public static Array<?> empty() {
+        return empty;
+    }
+
+    /**
+     * This method is equivalent to the constructor {@link Array#Array(int)}.
+     * Use this method when the returned array will not be populated.
+     */
     public static <T> Array<T> empty(int capacity) {
         return new Array<>(capacity);
     }
@@ -65,7 +70,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     }
 
     private final Object[] elements;
-    private RecycledIterator iterator;
+    private final Iterator iterator = new Iterator();
 
     public Array(int capacity) {
         elements = new Object[capacity];
@@ -77,10 +82,6 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
 
     public Array(T[] array) {
         elements = Arrays.copyOf(array, array.length, elementsArrayClass);
-    }
-
-    public void recycleIterator() {
-        iterator = new RecycledIterator();
     }
 
     @Override
@@ -115,7 +116,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     }
 
     @Override
-    public java.util.Iterator<T> iterator() {
+    public ArrayIterator<T> iterator() {
         return listIterator();
     }
 
@@ -197,18 +198,6 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     }
 
     @Override
-    public boolean retainAll(Object... elements) {
-        boolean changed = false;
-        for (int i = 0; i < getCapacity(); i++) {
-            if (arrayDoesNotContain(elements, this.elements[i])) {
-                this.elements[i] = null;
-                changed = true;
-            }
-        }
-        return changed;
-    }
-
-    @Override
     public void clear() {
         Arrays.fill(elements, null);
     }
@@ -266,7 +255,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
 
     @Override
     public void add(int index, T element) {
-        set(index, element);
+        setPlain(index, element);
     }
 
     @Override
@@ -282,7 +271,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     @Override
     public int indexOf(Object element) {
         for (int i = 0; i < getCapacity(); i++) {
-            if (element.equals(elements[i])) {
+            if (Objects.equals(element, elements[i])) {
                 return i;
             }
         }
@@ -292,7 +281,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     @Override
     public int lastIndexOf(Object element) {
         for (int i = getCapacity() - 1; i >= 0; i--) {
-            if (element.equals(elements[i])) {
+            if (Objects.equals(element, elements[i])) {
                 return i;
             }
         }
@@ -300,25 +289,18 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     }
 
     @Override
-    public ListIterator<T> listIterator() {
+    public ArrayIterator<T> listIterator() {
         return listIterator(0);
     }
 
     @Override
-    public ListIterator<T> listIterator(int index) {
-        return getIterator(0, getCapacity(), index);
-    }
-
-    private ListIterator<T> getIterator(int beginIndex, int endIndex, int index) {
-        if (iterator == null) {
-            return new ConcurrentIterator(beginIndex, endIndex, index);
-        }
-        iterator.recycle(beginIndex, endIndex, index);
+    public ArrayIterator<T> listIterator(int index) {
+        iterator.initialize(0, getCapacity(), index);
         return iterator;
     }
 
     @Override
-    public List<T> subList(int fromIndex, int toIndex) {
+    public AbstractArray<T> subList(int fromIndex, int toIndex) {
         return new SubArray(fromIndex, toIndex);
     }
 
@@ -384,6 +366,11 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
     }
 
     @Override
+    public Array<T> getMainArray() {
+        return this;
+    }
+
+    @Override
     public Array<T> clone() {
         return new Array<>(this);
     }
@@ -393,11 +380,21 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         if (this == object) {
             return true;
         }
-        if (object == null || getClass() != object.getClass()) {
+        if (!(object instanceof AbstractArray)) {
             return false;
         }
-        Array<?> that = (Array<?>) object;
-        return Arrays.equals(elements, that.elements);
+        AbstractArray<?> that = (AbstractArray<?>) object;
+        if (getCapacity() != that.getCapacity()) {
+            return false;
+        }
+        ArrayIterator<?> iterator = iterator();
+        ArrayIterator<?> thatIterator = that.iterator();
+        while (iterator.hasNext() && thatIterator.hasNext()) {
+            if (!Objects.equals(iterator.next(), thatIterator.next())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -410,58 +407,12 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         return Arrays.toString(elements);
     }
 
-    public interface Iterator<T> extends ListIterator<T> {
-        T nextOpaque();
-
-        T nextAcquire();
-
-        T nextVolatile();
-
-        T previousOpaque();
-
-        T previousAcquire();
-
-        T previousVolatile();
-
-        int nextAbsoluteIndex();
-
-        int previousAbsoluteIndex();
-
-        void setOpaque(T element);
-
-        void setRelease(T element);
-
-        void setVolatile(T element);
-
-        boolean compareAndSet(T expectedElement, T newElement);
-
-        T compareAndExchange(T expectedElement, T newElement);
-
-        T compareAndExchangeAcquire(T expectedElement, T newElement);
-
-        T compareAndExchangeRelease(T expectedElement, T newElement);
-
-        boolean weakCompareAndSetPlain(T expectedElement, T newElement);
-
-        boolean weakCompareAndSet(T expectedElement, T newElement);
-
-        boolean weakCompareAndSetAcquire(T expectedElement, T newElement);
-
-        boolean weakCompareAndSetRelease(T expectedElement, T newElement);
-
-        T getAndSet(T element);
-
-        T getAndSetAcquire(T element);
-
-        T getAndSetRelease(T element);
-    }
-
-    private class RecycledIterator implements Iterator<T> {
+    private class Iterator implements ArrayIterator<T> {
         private int beginIndex;
         private int endIndex;
         private int index;
 
-        void recycle(int beginIndex, int endIndex, int index) {
+        void initialize(int beginIndex, int endIndex, int index) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
             this.index = index;
@@ -474,10 +425,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
 
         @Override
         public T next() {
-            if (hasNext()) {
-                return get(index++);
-            }
-            throw new NoSuchElementException();
+            return get(index++);
         }
 
         @Override
@@ -502,10 +450,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
 
         @Override
         public T previous() {
-            if (hasPrevious()) {
-                return get(--index);
-            }
-            throw new NoSuchElementException();
+            return get(--index);
         }
 
         @Override
@@ -629,174 +574,6 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         }
     }
 
-    private class ConcurrentIterator implements Iterator<T> {
-        private final RecycledIterator delegate = new RecycledIterator();
-
-        ConcurrentIterator(int beginIndex, int endIndex, int index) {
-            delegate.recycle(beginIndex, endIndex, index);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegate.hasNext();
-        }
-
-        @Override
-        public T next() {
-            return delegate.next();
-        }
-
-        @Override
-        public T nextOpaque() {
-            return delegate.nextOpaque();
-        }
-
-        @Override
-        public T nextAcquire() {
-            return delegate.nextAcquire();
-        }
-
-        @Override
-        public T nextVolatile() {
-            return delegate.nextVolatile();
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return delegate.hasPrevious();
-        }
-
-        @Override
-        public T previous() {
-            return delegate.previous();
-        }
-
-        @Override
-        public T previousOpaque() {
-            return delegate.previousOpaque();
-        }
-
-        @Override
-        public T previousAcquire() {
-            return delegate.previousAcquire();
-        }
-
-        @Override
-        public T previousVolatile() {
-            return delegate.previousVolatile();
-        }
-
-        @Override
-        public int nextIndex() {
-            return delegate.nextIndex();
-        }
-
-        @Override
-        public int previousIndex() {
-            return delegate.previousIndex();
-        }
-
-        @Override
-        public int nextAbsoluteIndex() {
-            return delegate.nextAbsoluteIndex();
-        }
-
-        @Override
-        public int previousAbsoluteIndex() {
-            return delegate.previousAbsoluteIndex();
-        }
-
-        @Override
-        public void remove() {
-            delegate.remove();
-        }
-
-        @Override
-        public void set(T element) {
-            delegate.set(element);
-        }
-
-        @Override
-        public void setOpaque(T element) {
-            delegate.setOpaque(element);
-        }
-
-        @Override
-        public void setRelease(T element) {
-            delegate.setRelease(element);
-        }
-
-        @Override
-        public void setVolatile(T element) {
-            delegate.setVolatile(element);
-        }
-
-        @Override
-        public void add(T element) {
-            delegate.add(element);
-        }
-
-        @Override
-        public boolean compareAndSet(T expectedElement, T newElement) {
-            return delegate.compareAndSet(expectedElement, newElement);
-        }
-
-        @Override
-        public T compareAndExchange(T expectedElement, T newElement) {
-            return delegate.compareAndExchange(expectedElement, newElement);
-        }
-
-        @Override
-        public T compareAndExchangeAcquire(T expectedElement, T newElement) {
-            return delegate.compareAndExchangeAcquire(expectedElement, newElement);
-        }
-
-        @Override
-        public T compareAndExchangeRelease(T expectedElement, T newElement) {
-            return delegate.compareAndExchangeRelease(expectedElement, newElement);
-        }
-
-        @Override
-        public boolean weakCompareAndSetPlain(T expectedElement, T newElement) {
-            return delegate.weakCompareAndSetPlain(expectedElement, newElement);
-        }
-
-        @Override
-        public boolean weakCompareAndSet(T expectedElement, T newElement) {
-            return delegate.weakCompareAndSet(expectedElement, newElement);
-        }
-
-        @Override
-        public boolean weakCompareAndSetAcquire(T expectedElement, T newElement) {
-            return delegate.weakCompareAndSetAcquire(expectedElement, newElement);
-        }
-
-        @Override
-        public boolean weakCompareAndSetRelease(T expectedElement, T newElement) {
-            return delegate.weakCompareAndSetRelease(expectedElement, newElement);
-        }
-
-        @Override
-        public T getAndSet(T element) {
-            return delegate.getAndSet(element);
-        }
-
-        @Override
-        public T getAndSetAcquire(T element) {
-            return delegate.getAndSetAcquire(element);
-        }
-
-        @Override
-        public T getAndSetRelease(T element) {
-            return delegate.getAndSetRelease(element);
-        }
-
-        @Override
-        public void forEachRemaining(Consumer<? super T> action) {
-            delegate.forEachRemaining(action);
-        }
-    }
-
     private class SubArray implements AbstractArray<T> {
         private final int beginIndex;
         private final int endIndex;
@@ -838,7 +615,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         }
 
         @Override
-        public java.util.Iterator<T> iterator() {
+        public ArrayIterator<T> iterator() {
             return listIterator();
         }
 
@@ -931,18 +708,6 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         }
 
         @Override
-        public boolean retainAll(Object... elements) {
-            boolean changed = false;
-            for (int i = beginIndex; i < endIndex; i++) {
-                if (arrayDoesNotContain(elements, Array.this.elements[i])) {
-                    Array.this.elements[i] = null;
-                    changed = true;
-                }
-            }
-            return changed;
-        }
-
-        @Override
         public void clear() {
             for (int i = beginIndex; i < endIndex; i++) {
                 elements[i] = null;
@@ -996,23 +761,23 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
 
         @Override
         public void add(int index, T element) {
-            set(beginIndex + index, element);
+            setPlain(index, element);
         }
 
         @Override
         public T remove(int index) {
-            return set(beginIndex + index, null);
+            return set(index, null);
         }
 
         @Override
         public void removePlain(int index) {
-            setPlain(beginIndex + index, null);
+            setPlain(index, null);
         }
 
         @Override
         public int indexOf(Object element) {
             for (int i = beginIndex; i < endIndex; i++) {
-                if (element.equals(elements[i])) {
+                if (Objects.equals(element, elements[i])) {
                     return i;
                 }
             }
@@ -1022,7 +787,7 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         @Override
         public int lastIndexOf(Object element) {
             for (int i = endIndex - 1; i >= beginIndex; i--) {
-                if (element.equals(elements[i])) {
+                if (Objects.equals(element, elements[i])) {
                     return i;
                 }
             }
@@ -1030,17 +795,18 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         }
 
         @Override
-        public ListIterator<T> listIterator() {
+        public ArrayIterator<T> listIterator() {
             return listIterator(0);
         }
 
         @Override
-        public ListIterator<T> listIterator(int index) {
-            return getIterator(beginIndex, endIndex, index);
+        public ArrayIterator<T> listIterator(int index) {
+            iterator.initialize(beginIndex, endIndex, index);
+            return iterator;
         }
 
         @Override
-        public List<T> subList(int fromIndex, int toIndex) {
+        public AbstractArray<T> subList(int fromIndex, int toIndex) {
             return new SubArray(beginIndex + fromIndex, beginIndex + toIndex);
         }
 
@@ -1100,27 +866,35 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
         }
 
         @Override
+        public Array<T> getMainArray() {
+            return Array.this;
+        }
+
+        @Override
+        public Array<T> clone() {
+            return new Array<>(this);
+        }
+
+        @Override
         public boolean equals(Object object) {
             if (this == object) {
                 return true;
             }
-            if (object == null || getClass() != object.getClass()) {
+            if (!(object instanceof AbstractArray)) {
                 return false;
             }
-            Array<?> thatArray = ((SubArray) object).getMainArray();
-            if (Array.this.getCapacity() != thatArray.getCapacity()) {
+            AbstractArray<?> that = (AbstractArray<?>) object;
+            if (getCapacity() != that.getCapacity()) {
                 return false;
             }
-            for (int i = beginIndex; i < endIndex; i++) {
-                if (!Objects.equals(elements[i], thatArray.elements[i])) {
+            ArrayIterator<?> iterator = iterator();
+            ArrayIterator<?> thatIterator = that.iterator();
+            while (iterator.hasNext() && thatIterator.hasNext()) {
+                if (!Objects.equals(iterator.next(), thatIterator.next())) {
                     return false;
                 }
             }
             return true;
-        }
-
-        private Array<?> getMainArray() {
-            return Array.this;
         }
 
         @Override
@@ -1148,14 +922,5 @@ public class Array<T> implements AbstractArray<T>, Cloneable, Serializable {
                 builder.append(", ");
             }
         }
-    }
-
-    private static boolean arrayDoesNotContain(Object[] array, Object element) {
-        for (Object arrayElement : array) {
-            if (arrayElement.equals(element)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
