@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * This collection, its subsets and iterators do not check bounds.
+ * This collection, its sub-collections and iterators do not check bounds.
  */
 public class Array<T> implements AbstractArray<T>, Serializable {
     private static final Array<?> empty = new Array<>(0);
