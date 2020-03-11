@@ -3,6 +3,10 @@ package eu.menzani.ringbuffer.java;
 import java.util.ListIterator;
 
 public interface ArrayIterator<T> extends ListIterator<T> {
+    void back();
+
+    void forward();
+
     T nextOpaque();
 
     T nextAcquire();
@@ -46,4 +50,36 @@ public interface ArrayIterator<T> extends ListIterator<T> {
     T getAndSetAcquire(T element);
 
     T getAndSetRelease(T element);
+
+    void previousRemove();
+
+    void previousSet(T element);
+
+    void previousSetOpaque(T element);
+
+    void previousSetRelease(T element);
+
+    void previousSetVolatile(T element);
+
+    boolean previousCompareAndSet(T expectedElement, T newElement);
+
+    T previousCompareAndExchange(T expectedElement, T newElement);
+
+    T previousCompareAndExchangeAcquire(T expectedElement, T newElement);
+
+    T previousCompareAndExchangeRelease(T expectedElement, T newElement);
+
+    boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement);
+
+    boolean previousWeakCompareAndSet(T expectedElement, T newElement);
+
+    boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement);
+
+    boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement);
+
+    T previousGetAndSet(T element);
+
+    T previousGetAndSetAcquire(T element);
+
+    T previousGetAndSetRelease(T element);
 }

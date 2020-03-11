@@ -330,6 +330,16 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
+        public void back() {
+            delegate.back();
+        }
+
+        @Override
+        public void forward() {
+            delegate.forward();
+        }
+
+        @Override
         public T nextOpaque() {
             return delegate.nextOpaque();
         }
@@ -436,6 +446,86 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public T getAndSetRelease(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public void previousRemove() {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public void previousSet(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public void previousSetOpaque(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public void previousSetRelease(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public void previousSetVolatile(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public boolean previousCompareAndSet(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousCompareAndExchange(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousCompareAndExchangeAcquire(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousCompareAndExchangeRelease(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSet(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousGetAndSet(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousGetAndSetAcquire(T element) {
+            throw new UnsupportedOperationException(readOnlyMessage);
+        }
+
+        @Override
+        public T previousGetAndSetRelease(T element) {
             throw new UnsupportedOperationException(readOnlyMessage);
         }
 

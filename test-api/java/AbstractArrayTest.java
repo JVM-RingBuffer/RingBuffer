@@ -96,4 +96,19 @@ abstract class AbstractArrayTest extends AbstractArrayViewTest {
         array.removePlain(3);
         assertNull(array.get(3));
     }
+
+    @Test
+    void listIterator() {
+        super.listIterator();
+
+        ArrayIterator<String> iterator = array.listIterator();
+        iterator.next();
+        iterator.set(ZERO);
+        assertEquals(ZERO, iterator.previous());
+        assertEquals(ZERO, iterator.next());
+        iterator.next();
+        iterator.previous();
+        iterator.previousRemove();
+        assertNull(iterator.next());
+    }
 }

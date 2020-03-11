@@ -465,6 +465,16 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
+        public void back() {
+            index--;
+        }
+
+        @Override
+        public void forward() {
+            index++;
+        }
+
+        @Override
         public boolean hasNext() {
             return index < endIndex;
         }
@@ -541,17 +551,17 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public void set(T element) {
-            setPlain(index, element);
+            setPlain(index - 1, element);
         }
 
         @Override
         public void setOpaque(T element) {
-            Array.this.setOpaque(index, element);
+            Array.this.setOpaque(index - 1, element);
         }
 
         @Override
         public void setRelease(T element) {
-            Array.this.setRelease(index, element);
+            Array.this.setRelease(index - 1, element);
         }
 
         @Override
@@ -566,56 +576,136 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public boolean compareAndSet(T expectedElement, T newElement) {
-            return Array.this.compareAndSet(index, expectedElement, newElement);
+            return Array.this.compareAndSet(index - 1, expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchange(T expectedElement, T newElement) {
-            return Array.this.compareAndExchange(index, expectedElement, newElement);
+            return Array.this.compareAndExchange(index - 1, expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchangeAcquire(T expectedElement, T newElement) {
-            return Array.this.compareAndExchangeAcquire(index, expectedElement, newElement);
+            return Array.this.compareAndExchangeAcquire(index - 1, expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchangeRelease(T expectedElement, T newElement) {
-            return Array.this.compareAndExchangeRelease(index, expectedElement, newElement);
+            return Array.this.compareAndExchangeRelease(index - 1, expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetPlain(T expectedElement, T newElement) {
-            return Array.this.weakCompareAndSetPlain(index, expectedElement, newElement);
+            return Array.this.weakCompareAndSetPlain(index - 1, expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSet(T expectedElement, T newElement) {
-            return Array.this.weakCompareAndSet(index, expectedElement, newElement);
+            return Array.this.weakCompareAndSet(index - 1, expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetAcquire(T expectedElement, T newElement) {
-            return Array.this.weakCompareAndSetAcquire(index, expectedElement, newElement);
+            return Array.this.weakCompareAndSetAcquire(index - 1, expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetRelease(T expectedElement, T newElement) {
-            return Array.this.weakCompareAndSetRelease(index, expectedElement, newElement);
+            return Array.this.weakCompareAndSetRelease(index - 1, expectedElement, newElement);
         }
 
         @Override
         public T getAndSet(T element) {
-            return Array.this.getAndSet(index, element);
+            return Array.this.getAndSet(index - 1, element);
         }
 
         @Override
         public T getAndSetAcquire(T element) {
-            return Array.this.getAndSetAcquire(index, element);
+            return Array.this.getAndSetAcquire(index - 1, element);
         }
 
         @Override
         public T getAndSetRelease(T element) {
+            return Array.this.getAndSetRelease(index - 1, element);
+        }
+
+        @Override
+        public void previousRemove() {
+            previousSet(null);
+        }
+
+        @Override
+        public void previousSet(T element) {
+            setPlain(index, element);
+        }
+
+        @Override
+        public void previousSetOpaque(T element) {
+            Array.this.setOpaque(index, element);
+        }
+
+        @Override
+        public void previousSetRelease(T element) {
+            Array.this.setRelease(index, element);
+        }
+
+        @Override
+        public void previousSetVolatile(T element) {
+            Array.this.setVolatile(index, element);
+        }
+
+        @Override
+        public boolean previousCompareAndSet(T expectedElement, T newElement) {
+            return Array.this.compareAndSet(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchange(T expectedElement, T newElement) {
+            return Array.this.compareAndExchange(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchangeAcquire(T expectedElement, T newElement) {
+            return Array.this.compareAndExchangeAcquire(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchangeRelease(T expectedElement, T newElement) {
+            return Array.this.compareAndExchangeRelease(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement) {
+            return Array.this.weakCompareAndSetPlain(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSet(T expectedElement, T newElement) {
+            return Array.this.weakCompareAndSet(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement) {
+            return Array.this.weakCompareAndSetAcquire(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement) {
+            return Array.this.weakCompareAndSetRelease(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousGetAndSet(T element) {
+            return Array.this.getAndSet(index, element);
+        }
+
+        @Override
+        public T previousGetAndSetAcquire(T element) {
+            return Array.this.getAndSetAcquire(index, element);
+        }
+
+        @Override
+        public T previousGetAndSetRelease(T element) {
             return Array.this.getAndSetRelease(index, element);
         }
     }
