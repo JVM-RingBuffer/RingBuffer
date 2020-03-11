@@ -179,7 +179,17 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     private IteratorView<T> getIterator() {
-        return LazyInit.get(ITERATOR, this, () -> new IteratorView<>(delegate.getIterator()));
+        IteratorView<T> value = (IteratorView<T>) ITERATOR.getAcquire(this);
+        if (value == null) {
+            synchronized (this) {
+                value = (IteratorView<T>) ITERATOR.getAcquire(this);
+                if (value == null) {
+                    value = new IteratorView<>(delegate.getIterator());
+                    ITERATOR.setRelease(this, value);
+                }
+            }
+        }
+        return value;
     }
 
     @Override
