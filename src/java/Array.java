@@ -313,15 +313,9 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     Iterator getIterator() {
-        Iterator value = (Iterator) ITERATOR.getAcquire(this);
+        Iterator value = LazyInit.get(ITERATOR, this);
         if (value == null) {
-            synchronized (this) {
-                value = (Iterator) ITERATOR.getAcquire(this);
-                if (value == null) {
-                    value = new Iterator();
-                    ITERATOR.setRelease(this, value);
-                }
-            }
+            return LazyInit.initialize(ITERATOR, this, new Iterator());
         }
         return value;
     }
@@ -398,15 +392,9 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     private ArrayView<T> getView() {
-        ArrayView<T> value = (ArrayView<T>) VIEW.getAcquire(this);
+        ArrayView<T> value = LazyInit.get(VIEW, this);
         if (value == null) {
-            synchronized (this) {
-                value = (ArrayView<T>) VIEW.getAcquire(this);
-                if (value == null) {
-                    value = new ArrayView<>(this);
-                    VIEW.setRelease(this, value);
-                }
-            }
+            return LazyInit.initialize(VIEW, this, new ArrayView<>(this));
         }
         return value;
     }
