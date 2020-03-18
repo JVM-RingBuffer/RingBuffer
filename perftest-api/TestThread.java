@@ -39,7 +39,7 @@ abstract class TestThread extends Thread {
 
     void reportPerformance() {
         waitForCompletion();
-        Benchmark.add(profiler);
+        RingBufferTest.BENCHMARK.add(profiler);
     }
 
     interface Factory {

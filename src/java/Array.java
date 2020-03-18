@@ -37,41 +37,41 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     public static <T> Array<T> of(T element) {
         Array<T> result = new Array<>(1);
-        result.setPlain(0, element);
+        result.setElement(0, element);
         return result;
     }
 
     public static <T> Array<T> of(T first, T second) {
         Array<T> result = new Array<>(2);
-        result.setPlain(0, first);
-        result.setPlain(1, second);
+        result.setElement(0, first);
+        result.setElement(1, second);
         return result;
     }
 
     public static <T> Array<T> of(T first, T second, T third) {
         Array<T> result = new Array<>(3);
-        result.setPlain(0, first);
-        result.setPlain(1, second);
-        result.setPlain(2, third);
+        result.setElement(0, first);
+        result.setElement(1, second);
+        result.setElement(2, third);
         return result;
     }
 
     public static <T> Array<T> of(T first, T second, T third, T fourth) {
         Array<T> result = new Array<>(4);
-        result.setPlain(0, first);
-        result.setPlain(1, second);
-        result.setPlain(2, third);
-        result.setPlain(3, fourth);
+        result.setElement(0, first);
+        result.setElement(1, second);
+        result.setElement(2, third);
+        result.setElement(3, fourth);
         return result;
     }
 
     public static <T> Array<T> of(T first, T second, T third, T fourth, T fifth) {
         Array<T> result = new Array<>(5);
-        result.setPlain(0, first);
-        result.setPlain(1, second);
-        result.setPlain(2, third);
-        result.setPlain(3, fourth);
-        result.setPlain(4, fifth);
+        result.setElement(0, first);
+        result.setElement(1, second);
+        result.setElement(2, third);
+        result.setElement(3, fourth);
+        result.setElement(4, fifth);
         return result;
     }
 
@@ -246,7 +246,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     @Override
-    public void setPlain(int index, T element) {
+    public void setElement(int index, T element) {
         elements[index] = element;
     }
 
@@ -267,7 +267,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     @Override
     public void add(int index, T element) {
-        setPlain(index, element);
+        setElement(index, element);
     }
 
     @Override
@@ -276,8 +276,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     @Override
-    public void removePlain(int index) {
-        setPlain(index, null);
+    public void removeElement(int index) {
+        setElement(index, null);
     }
 
     @Override
@@ -534,7 +534,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public void set(T element) {
-            setPlain(index - 1, element);
+            setElement(index - 1, element);
         }
 
         @Override
@@ -619,7 +619,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public void previousSet(T element) {
-            setPlain(index, element);
+            setElement(index, element);
         }
 
         @Override
@@ -859,8 +859,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
-        public void setPlain(int index, T element) {
-            Array.this.setPlain(beginIndex + index, element);
+        public void setElement(int index, T element) {
+            Array.this.setElement(beginIndex + index, element);
         }
 
         @Override
@@ -880,7 +880,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public void add(int index, T element) {
-            setPlain(index, element);
+            setElement(index, element);
         }
 
         @Override
@@ -889,8 +889,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
-        public void removePlain(int index) {
-            setPlain(index, null);
+        public void removeElement(int index) {
+            setElement(index, null);
         }
 
         @Override

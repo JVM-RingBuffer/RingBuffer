@@ -123,7 +123,7 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     @Override
-    public void setPlain(int index, T element) {
+    public void setElement(int index, T element) {
         throw new UnsupportedOperationException(readOnlyMessage);
     }
 
@@ -153,7 +153,7 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     @Override
-    public void removePlain(int index) {
+    public void removeElement(int index) {
         throw new UnsupportedOperationException(readOnlyMessage);
     }
 
@@ -623,7 +623,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
-        public void setPlain(int index, T element) {
+        public void setElement(int index, T element) {
             throw new UnsupportedOperationException(readOnlyMessage);
         }
 
@@ -643,7 +643,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
-        public void removePlain(int index) {
+        public void removeElement(int index) {
             throw new UnsupportedOperationException(readOnlyMessage);
         }
 

@@ -15,7 +15,7 @@ class TestThreadGroup {
     void reportPerformance() {
         for (TestThread testThread : testThreads) {
             testThread.waitForCompletion();
-            Benchmark.add(testThread.getProfiler());
+            RingBufferTest.BENCHMARK.add(testThread.getProfiler());
         }
     }
 

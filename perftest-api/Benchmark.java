@@ -4,18 +4,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Benchmark {
-    private static final Map<String, Result> results = new LinkedHashMap<>();
+    private final Map<String, Result> results = new LinkedHashMap<>();
 
-    public static void add(Profiler profiler) {
+    public void add(Profiler profiler) {
         results.computeIfAbsent(profiler.getPrefix(), Result::new)
                 .update(profiler.getExecutionTime());
     }
 
-    public static void begin() {
+    public void begin() {
         results.clear();
     }
 
-    public static void report() {
+    public void report() {
         for (Result result : results.values()) {
             result.report();
         }

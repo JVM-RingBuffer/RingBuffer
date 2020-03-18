@@ -17,20 +17,7 @@ public abstract class MultiStepBusyWaitStrategyTest {
     public static BusyWaitStrategy FIFTH;
     public static BusyWaitStrategy SIXTH;
 
-    BusyWaitStrategy getStrategy() {
-        return getStrategyBuilder().endWith(SIXTH)
-                .after(FIFTH, STEP_TICKS)
-                .after(FOURTH, STEP_TICKS)
-                .after(getStrategyBuilder().endWith(THIRD)
-                        .after(SECOND, STEP_TICKS)
-                        .after(FIRST, STEP_TICKS)
-                        .build(), STEP_TICKS)
-                .build();
-    }
-
-    MultiStepBusyWaitStrategyBuilder getStrategyBuilder() {
-        throw new AssertionError();
-    }
+    private final Benchmark benchmark = new Benchmark();
 
     public int getNumSteps() {
         return 6;
@@ -42,9 +29,9 @@ public abstract class MultiStepBusyWaitStrategyTest {
         final int numIterations = 300_000;
         final int repeatTimes = 50;
         run(numIterations, repeatTimes);
-        Benchmark.begin();
+        benchmark.begin();
         run(numIterations, repeatTimes);
-        Benchmark.report();
+        benchmark.report();
     }
 
     public void run(int numIterations, int repeatTimes) {
@@ -59,7 +46,22 @@ public abstract class MultiStepBusyWaitStrategyTest {
                 }
             }
             profiler.stop();
-            Benchmark.add(profiler);
+            benchmark.add(profiler);
         }
+    }
+
+    BusyWaitStrategy getStrategy() {
+        return getStrategyBuilder().endWith(SIXTH)
+                .after(FIFTH, STEP_TICKS)
+                .after(FOURTH, STEP_TICKS)
+                .after(getStrategyBuilder().endWith(THIRD)
+                        .after(SECOND, STEP_TICKS)
+                        .after(FIRST, STEP_TICKS)
+                        .build(), STEP_TICKS)
+                .build();
+    }
+
+    MultiStepBusyWaitStrategyBuilder getStrategyBuilder() {
+        throw new AssertionError();
     }
 }

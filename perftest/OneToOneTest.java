@@ -25,8 +25,8 @@ public class OneToOneTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Reader reader = Reader.newReader(NUM_ITERATIONS, RING_BUFFER);
-        Writer writer = Writer.newWriter(NUM_ITERATIONS, RING_BUFFER);
+        Reader reader = new Reader(NUM_ITERATIONS, RING_BUFFER);
+        Writer writer = new Writer(NUM_ITERATIONS, RING_BUFFER);
         reader.reportPerformance();
         writer.reportPerformance();
         return reader.getSum();

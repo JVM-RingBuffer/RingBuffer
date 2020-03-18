@@ -20,7 +20,7 @@ public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
 
     T getVolatile(int index);
 
-    void setPlain(int index, T element);
+    void setElement(int index, T element);
 
     void setOpaque(int index, T element);
 
@@ -28,7 +28,7 @@ public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
 
     void setVolatile(int index, T element);
 
-    void removePlain(int index);
+    void removeElement(int index);
 
     boolean compareAndSet(int index, T expectedElement, T newElement);
 

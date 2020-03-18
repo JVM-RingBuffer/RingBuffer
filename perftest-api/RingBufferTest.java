@@ -17,7 +17,9 @@ interface RingBufferTest {
     int BLOCKING_SIZE = 5;
     int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
     int MANY_READERS_OR_WRITERS_SIZE = TOTAL_ELEMENTS + 1;
+
     Supplier<Event> FILLER = () -> new Event(0);
+    Benchmark BENCHMARK = new Benchmark();
 
     int getBenchmarkRepeatTimes();
 
@@ -27,9 +29,9 @@ interface RingBufferTest {
 
     default void runTest() {
         test();
-        Benchmark.begin();
+        BENCHMARK.begin();
         test();
-        Benchmark.report();
+        BENCHMARK.report();
     }
 
     private void test() {

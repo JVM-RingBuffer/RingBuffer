@@ -81,7 +81,7 @@ abstract class AbstractArrayTest extends AbstractArrayViewTest {
 
     @Test
     void setPlain_get() {
-        array.setPlain(2, TWO_2);
+        array.setElement(2, TWO_2);
         assertEquals(TWO_2, array.get(2));
     }
 
@@ -93,7 +93,7 @@ abstract class AbstractArrayTest extends AbstractArrayViewTest {
 
     @Test
     void removePlain() {
-        array.removePlain(3);
+        array.removeElement(3);
         assertNull(array.get(3));
     }
 

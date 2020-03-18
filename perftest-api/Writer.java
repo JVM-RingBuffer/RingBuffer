@@ -7,11 +7,7 @@ class Writer extends TestThread {
         return new TestThreadGroup((numIterations) -> new Writer(numIterations, ringBuffer));
     }
 
-    static Writer newWriter(int numIterations, RingBuffer<Event> ringBuffer) {
-        return new Writer(numIterations, ringBuffer);
-    }
-
-    private Writer(int numIterations, RingBuffer<Event> ringBuffer) {
+    Writer(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 

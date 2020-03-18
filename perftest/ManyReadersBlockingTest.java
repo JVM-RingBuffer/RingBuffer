@@ -28,7 +28,7 @@ public class ManyReadersBlockingTest implements RingBufferTest {
     @Override
     public long run() {
         TestThreadGroup readerGroup = Reader.newGroup(RING_BUFFER);
-        Writer writer = Writer.newWriter(TOTAL_ELEMENTS, RING_BUFFER);
+        Writer writer = new Writer(TOTAL_ELEMENTS, RING_BUFFER);
         readerGroup.reportPerformance();
         writer.reportPerformance();
         return readerGroup.getReaderSum();

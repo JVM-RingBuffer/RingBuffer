@@ -26,7 +26,7 @@ public class PrefilledOneToOneBlockingTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Reader reader = Reader.newReader(NUM_ITERATIONS, RING_BUFFER);
+        Reader reader = new Reader(NUM_ITERATIONS, RING_BUFFER);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, RING_BUFFER);
         reader.reportPerformance();
         writer.reportPerformance();
