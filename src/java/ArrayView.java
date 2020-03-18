@@ -179,11 +179,7 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     private IteratorView<T> getIterator() {
-        IteratorView<T> value = LazyInit.get(ITERATOR, this);
-        if (value == null) {
-            return LazyInit.initialize(ITERATOR, this, new IteratorView<>(delegate.getIterator()));
-        }
-        return value;
+        return LazyInit.get(ITERATOR, this, view -> new IteratorView<>(view.delegate.getIterator()));
     }
 
     @Override
@@ -317,9 +313,9 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     private static class IteratorView<T> implements ArrayIterator<T> {
-        private final ArrayIterator<T> delegate;
+        private final Array<T>.Iterator delegate;
 
-        IteratorView(ArrayIterator<T> delegate) {
+        IteratorView(Array<T>.Iterator delegate) {
             this.delegate = delegate;
         }
 
@@ -575,9 +571,13 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     class SubArrayView implements AbstractArray<T> {
-        private final AbstractArray<T> delegate;
+        private final Array<T>.SubArray delegate;
 
-        SubArrayView(AbstractArray<T> delegate) {
+        private SubArrayView(AbstractArray<T> delegate) {
+            this((Array<T>.SubArray) delegate);
+        }
+
+        SubArrayView(Array<T>.SubArray delegate) {
             this.delegate = delegate;
         }
 

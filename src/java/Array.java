@@ -313,11 +313,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     Iterator getIterator() {
-        Iterator value = LazyInit.get(ITERATOR, this);
-        if (value == null) {
-            return LazyInit.initialize(ITERATOR, this, new Iterator());
-        }
-        return value;
+        return LazyInit.get(ITERATOR, this, array -> array.new Iterator());
     }
 
     @Override
@@ -392,11 +388,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     private ArrayView<T> getView() {
-        ArrayView<T> value = LazyInit.get(VIEW, this);
-        if (value == null) {
-            return LazyInit.initialize(VIEW, this, new ArrayView<>(this));
-        }
-        return value;
+        return LazyInit.get(VIEW, this, ArrayView::new);
     }
 
     @Override
@@ -441,11 +433,14 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         return Arrays.toString(elements);
     }
 
-    private class Iterator implements ArrayIterator<T> {
+    class Iterator implements ArrayIterator<T> {
         private int beginIndex;
         private int endIndex;
         private int index;
 
+        private Iterator() {}
+
+        @VisibleForPerformance
         void initialize(int beginIndex, int endIndex, int index) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
@@ -698,11 +693,11 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
     }
 
-    private class SubArray implements AbstractArray<T> {
+    class SubArray implements AbstractArray<T> {
         private final int beginIndex;
         private final int endIndex;
 
-        SubArray(int beginIndex, int endIndex) {
+        private SubArray(int beginIndex, int endIndex) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
         }
@@ -997,7 +992,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
         @Override
         public AbstractArray<T> immutableSnapshot() {
-            return getView().new SubArrayView(clone());
+            return new ArrayView<>(clone());
         }
 
         @Override
