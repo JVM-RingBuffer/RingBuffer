@@ -2,7 +2,7 @@
   <configuration default="false" name="ProducersToProcessorToConsumersTest" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="perftest.ProducersToProcessorToConsumersTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms108m -Xmx108m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms1888m -Xmx1888m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

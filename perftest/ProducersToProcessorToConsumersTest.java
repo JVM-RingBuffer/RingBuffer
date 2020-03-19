@@ -4,16 +4,16 @@ import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
 public class ProducersToProcessorToConsumersTest implements RingBufferTest {
-    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
+    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(BLOCKING_SIZE)
             .manyWriters()
             .oneReader()
+            .blocking()
+            .withGC()
             .build();
-    public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.<Event>empty(BLOCKING_SIZE)
+    public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
             .oneWriter()
             .manyReaders()
-            .blocking()
             .waitingWith(YieldBusyWaitStrategy.getDefault())
-            .withGC()
             .build();
 
     public static void main(String[] args) {
@@ -32,8 +32,8 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
 
     @Override
     public long run() {
-        TestThreadGroup readerGroup = Reader.newGroup(CONSUMERS_RING_BUFFER);
-        TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(PRODUCERS_RING_BUFFER);
+        TestThreadGroup readerGroup = BatchReader.newGroup(CONSUMERS_RING_BUFFER);
+        TestThreadGroup writerGroup = Writer.newGroup(PRODUCERS_RING_BUFFER);
         Processor processor = new Processor(TOTAL_ELEMENTS);
         readerGroup.reportPerformance();
         writerGroup.reportPerformance();
@@ -49,8 +49,8 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
         @Override
         void loop() {
             int numIterations = getNumIterations();
-            RingBuffer<Event> consumersRingBuffer = ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER;
-            RingBuffer<Event> producersRingBuffer = ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER;
+            RingBuffer<Event> consumersRingBuffer = CONSUMERS_RING_BUFFER;
+            RingBuffer<Event> producersRingBuffer = PRODUCERS_RING_BUFFER;
             for (int i = 0; i < numIterations; i++) {
                 consumersRingBuffer.put(producersRingBuffer.take());
             }

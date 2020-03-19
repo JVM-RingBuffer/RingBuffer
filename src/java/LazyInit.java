@@ -10,14 +10,19 @@ public class LazyInit {
     public static <T, U> T get(VarHandle varHandle, U reference, Function<U, ?> initializer) {
         Object value = varHandle.getAcquire(reference);
         if (value == null) {
-            synchronized (reference) {
-                value = varHandle.getAcquire(reference);
-                if (value == null) {
-                    value = initializer.apply(reference);
-                    varHandle.setRelease(reference, value);
-                }
-            }
+            value = checkAgain(varHandle, reference, initializer);
         }
         return (T) value;
+    }
+
+    private static <T> Object checkAgain(VarHandle varHandle, T reference, Function<T, ?> initializer) {
+        synchronized (reference) {
+            Object value = varHandle.getAcquire(reference);
+            if (value == null) {
+                value = initializer.apply(reference);
+                varHandle.setRelease(reference, value);
+            }
+            return value;
+        }
     }
 }

@@ -14,9 +14,11 @@ interface RingBufferTest {
     long MANY_READERS_SUM = LongStream.range(0L, TOTAL_ELEMENTS).sum();
     long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * CONCURRENCY;
 
-    int BLOCKING_SIZE = 5;
+    int BLOCKING_SIZE = 10;
     int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
     int MANY_READERS_OR_WRITERS_SIZE = TOTAL_ELEMENTS + 1;
+
+    int READ_BUFFER_SIZE = 5;
 
     Supplier<Event> FILLER = () -> new Event(0);
     Benchmark BENCHMARK = new Benchmark();

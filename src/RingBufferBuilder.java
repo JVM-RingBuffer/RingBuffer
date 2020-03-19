@@ -91,11 +91,14 @@ public class RingBufferBuilder<T> {
             throw new IllegalArgumentException("A ring buffer does not support many readers and writers. Consider using a concurrent queue instead.");
         }
         if (oneReader) {
-            if (!oneWriter && !isPrefilled()) {
+            if (!oneWriter && (!isPrefilled() || type == RingBufferType.BLOCKING)) {
                 switch (type) {
                     case OVERWRITING:
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
+                        if (isPrefilled()) {
+                            return new DisposableAtomicWriteBlockingPrefilledRingBuffer<>(this);
+                        }
                         return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
                     case DISCARDING:
                         return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
@@ -105,6 +108,9 @@ public class RingBufferBuilder<T> {
                 case OVERWRITING:
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
+                    if (isPrefilled()) {
+                        return new DisposableVolatileBlockingPrefilledRingBuffer<>(this);
+                    }
                     return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
                     return new VolatileBlockingOrDiscardingRingBuffer<>(this, true);
@@ -115,7 +121,7 @@ public class RingBufferBuilder<T> {
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
                 if (isPrefilled()) {
-                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
+                    return new DisposableAtomicReadBlockingPrefilledRingBuffer<>(this);
                 }
                 return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:

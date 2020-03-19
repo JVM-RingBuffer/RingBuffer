@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Array;
+
 import java.util.StringJoiner;
 
 class LocalRingBuffer<T> implements RingBuffer<T> {
@@ -35,9 +37,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void put() {}
-
-    @Override
     public void put(T element) {
         buffer[writePosition] = element;
         if (writePosition == capacityMinusOne) {
@@ -49,9 +48,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        if (writePosition == readPosition) {
-            return null;
-        }
         Object element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
@@ -62,6 +58,40 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
             readPosition++;
         }
         return (T) element;
+    }
+
+    @Override
+    public void take(Array<T> buffer) {
+        int bufferSize = buffer.getCapacity();
+        if (readPosition < capacity - bufferSize) {
+            int i = readPosition;
+            readPosition += bufferSize;
+            for (int j = 0; i < readPosition; i++) {
+                buffer.setElement(j++, (T) this.buffer[i]);
+                if (gcEnabled) {
+                    this.buffer[i] = null;
+                }
+            }
+        } else {
+            splitTake(buffer, bufferSize);
+        }
+    }
+
+    private void splitTake(Array<T> buffer, int bufferSize) {
+        int j = 0;
+        for (int i = readPosition; i < capacity; i++) {
+            buffer.setElement(j++, (T) this.buffer[i]);
+            if (gcEnabled) {
+                this.buffer[i] = null;
+            }
+        }
+        readPosition += bufferSize - capacity;
+        for (int i = 0; i < readPosition; i++) {
+            buffer.setElement(j++, (T) this.buffer[i]);
+            if (gcEnabled) {
+                this.buffer[i] = null;
+            }
+        }
     }
 
     @Override

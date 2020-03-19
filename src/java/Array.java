@@ -19,8 +19,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     static {
         VarHandleLookup lookup = new VarHandleLookup(MethodHandles.lookup(), Array.class);
-        ITERATOR = lookup.getVarHandle(Array.Iterator.class, "iterator");
-        VIEW = lookup.getVarHandle(ArrayView.class, "view");
+        ITERATOR = lookup.getVarHandle("iterator", Array.Iterator.class);
+        VIEW = lookup.getVarHandle("view", ArrayView.class);
     }
 
     public static Array<?> empty() {
@@ -35,43 +35,9 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         return new Array<>(capacity);
     }
 
-    public static <T> Array<T> of(T element) {
-        Array<T> result = new Array<>(1);
-        result.setElement(0, element);
-        return result;
-    }
-
-    public static <T> Array<T> of(T first, T second) {
-        Array<T> result = new Array<>(2);
-        result.setElement(0, first);
-        result.setElement(1, second);
-        return result;
-    }
-
-    public static <T> Array<T> of(T first, T second, T third) {
-        Array<T> result = new Array<>(3);
-        result.setElement(0, first);
-        result.setElement(1, second);
-        result.setElement(2, third);
-        return result;
-    }
-
-    public static <T> Array<T> of(T first, T second, T third, T fourth) {
-        Array<T> result = new Array<>(4);
-        result.setElement(0, first);
-        result.setElement(1, second);
-        result.setElement(2, third);
-        result.setElement(3, fourth);
-        return result;
-    }
-
-    public static <T> Array<T> of(T first, T second, T third, T fourth, T fifth) {
-        Array<T> result = new Array<>(5);
-        result.setElement(0, first);
-        result.setElement(1, second);
-        result.setElement(2, third);
-        result.setElement(3, fourth);
-        result.setElement(4, fifth);
+    public static <T> Array<T> copyOf(T[] array) {
+        Array<T> result = new Array<>(array.length);
+        System.arraycopy(array, 0, result.elements, 0, array.length);
         return result;
     }
 
@@ -92,8 +58,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         elements = collection.toArray();
     }
 
-    public Array(T[] array) {
-        elements = Arrays.copyOf(array, array.length, elementsArrayClass);
+    public Array(T[] elements) {
+        this.elements = elements;
     }
 
     @Override

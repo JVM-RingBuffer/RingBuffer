@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Array;
+
 import java.util.function.Supplier;
 
 public interface RingBuffer<T> {
@@ -8,7 +10,7 @@ public interface RingBuffer<T> {
     /**
      * If the ring buffer is not local, then after the returned object has been populated,
      * <code>put()</code> must be called.
-     * <br>
+     * <p>
      * Moreover, if the ring buffer supports multiple writers, then external synchronization
      * must be performed between the two method invocations:
      *
@@ -20,7 +22,7 @@ public interface RingBuffer<T> {
      */
     T next();
 
-    void put();
+    default void put() {}
 
     void put(T element);
 
@@ -34,6 +36,23 @@ public interface RingBuffer<T> {
      * } }</pre>
      */
     T take();
+
+    /**
+     * If the ring buffer is blocking and pre-filled, then after the buffer has been read,
+     * <code>dispose()</code> must be called.
+     *
+     * Moreover, if the ring buffer supports multiple readers, then external synchronization
+     * must be performed while reading elements taken out:
+     *
+     * <pre>{@code synchronized (ringBuffer) {
+     *     ringBuffer.take(buffer);
+     *     // Read buffer
+     *     ringBuffer.dispose();
+     * } }</pre>
+     */
+    void take(Array<T> buffer);
+
+    default void dispose() {}
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,

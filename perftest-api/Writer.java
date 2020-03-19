@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 class Writer extends TestThread {
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup((numIterations) -> new Writer(numIterations, ringBuffer));
+        return new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
     }
 
     Writer(int numIterations, RingBuffer<Event> ringBuffer) {

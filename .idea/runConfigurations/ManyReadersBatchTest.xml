@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ManyReadersTest" type="Application" factoryName="Application" folderName="Many Readers">
-    <option name="MAIN_CLASS_NAME" value="perftest.ManyReadersTest" />
+  <configuration default="false" name="ManyReadersBatchTest" type="Application" factoryName="Application" folderName="Many Readers">
+    <option name="MAIN_CLASS_NAME" value="perftest.ManyReadersBatchTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms6656m -Xmx6656m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

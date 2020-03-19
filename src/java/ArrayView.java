@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 class ArrayView<T> implements AbstractArray<T> {
     private static final String readOnlyMessage = "This instance does not permit write access.";
-    private static final VarHandle ITERATOR = new VarHandleLookup(MethodHandles.lookup(), ArrayView.class).getVarHandle(IteratorView.class, "iterator");
+    private static final VarHandle ITERATOR = new VarHandleLookup(MethodHandles.lookup(), ArrayView.class).getVarHandle("iterator", IteratorView.class);
 
     private final Array<T> delegate;
     private IteratorView<T> iterator;

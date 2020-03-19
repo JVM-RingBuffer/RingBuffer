@@ -12,7 +12,7 @@ public class VarHandleLookup {
         this.clazz = clazz;
     }
 
-    public VarHandle getVarHandle(Class<?> fieldType, String fieldName) {
+    public VarHandle getVarHandle(String fieldName, Class<?> fieldType) {
         try {
             return lookup.findVarHandle(clazz, fieldName, fieldType);
         } catch (NoSuchFieldException | IllegalAccessException e) {

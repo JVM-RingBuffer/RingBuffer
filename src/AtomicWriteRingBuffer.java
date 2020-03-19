@@ -1,5 +1,6 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.StringJoiner;
@@ -73,6 +74,44 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
             buffer[readPosition] = null;
         }
         return (T) element;
+    }
+
+    @Override
+    public void take(Array<T> buffer) {
+        int bufferSize = buffer.getCapacity();
+        readBusyWaitStrategy.reset();
+        while (size() < bufferSize) {
+            readBusyWaitStrategy.tick();
+        }
+        if (readPosition < capacity - bufferSize) {
+            int i = readPosition;
+            readPosition += bufferSize;
+            for (int j = 0; i < readPosition; i++) {
+                buffer.setElement(j++, (T) this.buffer[i]);
+                if (gcEnabled) {
+                    this.buffer[i] = null;
+                }
+            }
+        } else {
+            splitTake(buffer, bufferSize);
+        }
+    }
+
+    private void splitTake(Array<T> buffer, int bufferSize) {
+        int j = 0;
+        for (int i = readPosition; i < capacity; i++) {
+            buffer.setElement(j++, (T) this.buffer[i]);
+            if (gcEnabled) {
+                this.buffer[i] = null;
+            }
+        }
+        readPosition += bufferSize - capacity;
+        for (int i = 0; i < readPosition; i++) {
+            buffer.setElement(j++, (T) this.buffer[i]);
+            if (gcEnabled) {
+                this.buffer[i] = null;
+            }
+        }
     }
 
     @Override

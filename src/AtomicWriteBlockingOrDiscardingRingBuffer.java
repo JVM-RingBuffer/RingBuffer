@@ -1,5 +1,6 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.StringJoiner;
@@ -104,6 +105,54 @@ class AtomicWriteBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void take(Array<T> buffer) {
+        int readPosition = this.readPosition.getPlain();
+        int bufferSize = buffer.getCapacity();
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < bufferSize) {
+            readBusyWaitStrategy.tick();
+        }
+        if (readPosition < capacity - bufferSize) {
+            int newReadPosition = readPosition + bufferSize;
+            for (int j = 0; readPosition < newReadPosition; readPosition++) {
+                buffer.setElement(j++, (T) this.buffer[readPosition]);
+                if (gcEnabled) {
+                    this.buffer[readPosition] = null;
+                }
+            }
+            this.readPosition.set(newReadPosition);
+        } else {
+            splitTake(readPosition, buffer, bufferSize);
+        }
+    }
+
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    private void splitTake(int readPosition, Array<T> buffer, int bufferSize) {
+        int j = 0;
+        int newReadPosition = readPosition + bufferSize - capacity;
+        for (; readPosition < capacity; readPosition++) {
+            buffer.setElement(j++, (T) this.buffer[readPosition]);
+            if (gcEnabled) {
+                this.buffer[readPosition] = null;
+            }
+        }
+        for (readPosition = 0; readPosition < newReadPosition; readPosition++) {
+            buffer.setElement(j++, (T) this.buffer[readPosition]);
+            if (gcEnabled) {
+                this.buffer[readPosition] = null;
+            }
+        }
+        this.readPosition.set(newReadPosition);
+    }
+
+    @Override
     public boolean contains(T element) {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
@@ -125,12 +174,7 @@ class AtomicWriteBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        int readPosition = this.readPosition.get();
-        int writePosition = this.writePosition.get();
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
-        }
-        return capacity - (readPosition - writePosition);
+        return size(readPosition.get());
     }
 
     @Override
