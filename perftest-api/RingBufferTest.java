@@ -18,7 +18,8 @@ interface RingBufferTest {
     int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
     int MANY_READERS_OR_WRITERS_SIZE = TOTAL_ELEMENTS + 1;
 
-    int READ_BUFFER_SIZE = 4;
+    int READ_BUFFER_SIZE = 20;
+    int READ_BUFFER_BLOCKING_SIZE = 4;
 
     Supplier<Event> FILLER = () -> new Event(0);
     Benchmark BENCHMARK = new Benchmark();

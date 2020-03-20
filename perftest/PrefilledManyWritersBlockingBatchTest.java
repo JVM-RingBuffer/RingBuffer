@@ -7,7 +7,7 @@ class PrefilledManyWritersBlockingBatchTest extends PrefilledManyWritersBlocking
 
     @Override
     public long run() {
-        AdvancingBatchReader reader = AdvancingBatchReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        AdvancingBatchReader reader = AdvancingBatchReader.runAsync(TOTAL_ELEMENTS, READ_BUFFER_BLOCKING_SIZE, RING_BUFFER);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.runGroupAsync(RING_BUFFER);
         reader.reportPerformance();
         writerGroup.reportPerformance();

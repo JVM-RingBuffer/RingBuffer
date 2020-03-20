@@ -7,7 +7,7 @@ class PrefilledOneToOneBlockingBatchTest extends PrefilledOneToOneBlockingTest {
 
     @Override
     public long run() {
-        AdvancingBatchReader reader = AdvancingBatchReader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        AdvancingBatchReader reader = AdvancingBatchReader.runAsync(NUM_ITERATIONS, READ_BUFFER_BLOCKING_SIZE, RING_BUFFER);
         PrefilledWriter writer = PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
         reader.reportPerformance();
         writer.reportPerformance();

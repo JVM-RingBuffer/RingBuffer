@@ -7,7 +7,7 @@ class PrefilledManyReadersBatchTest extends PrefilledManyReadersTest {
 
     @Override
     public long run() {
-        TestThreadGroup readerGroup = BatchReader.runGroupAsync(RING_BUFFER);
+        TestThreadGroup readerGroup = BatchReader.runGroupAsync(READ_BUFFER_SIZE, RING_BUFFER);
         PrefilledWriter writer = PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         readerGroup.reportPerformance();
         writer.reportPerformance();

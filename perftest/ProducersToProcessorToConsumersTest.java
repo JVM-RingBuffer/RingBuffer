@@ -32,7 +32,7 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
 
     @Override
     public long run() {
-        TestThreadGroup readerGroup = BatchReader.runGroupAsync(CONSUMERS_RING_BUFFER);
+        TestThreadGroup readerGroup = BatchReader.runGroupAsync(READ_BUFFER_SIZE, CONSUMERS_RING_BUFFER);
         TestThreadGroup writerGroup = Writer.runGroupAsync(PRODUCERS_RING_BUFFER);
         Processor processor = Processor.runAsync(TOTAL_ELEMENTS);
         readerGroup.reportPerformance();

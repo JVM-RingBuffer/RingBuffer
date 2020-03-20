@@ -7,7 +7,7 @@ class ManyReadersBlockingBatchTest extends ManyReadersBlockingTest {
 
     @Override
     public long run() {
-        TestThreadGroup readerGroup = BatchReader.runGroupAsync(RING_BUFFER);
+        TestThreadGroup readerGroup = BatchReader.runGroupAsync(READ_BUFFER_BLOCKING_SIZE, RING_BUFFER);
         Writer writer = Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         readerGroup.reportPerformance();
         writer.reportPerformance();
