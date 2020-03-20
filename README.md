@@ -28,7 +28,7 @@ Runnable processor = () -> {
 Runnable consumer = () -> {
     Array<Event> buffer = new Array<>(5);
     for (int i = 0; i < 100 / 5; i++) {
-        processorToConsumers.take(buffer);
+        processorToConsumers.fill(buffer);
         for (Event event : buffer) {
             System.out.println(event.getData());
         }

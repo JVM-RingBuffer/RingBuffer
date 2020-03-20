@@ -20,7 +20,7 @@ class PrefilledOneToOneBlockingBatchTest implements RingBufferTest {
     @Override
     public long run() {
         final RingBuffer<Event> ringBuffer = PrefilledOneToOneBlockingTest.RING_BUFFER;
-        DisposingBatchReader reader = new DisposingBatchReader(NUM_ITERATIONS, ringBuffer);
+        AdvancingBatchReader reader = new AdvancingBatchReader(NUM_ITERATIONS, ringBuffer);
         PrefilledWriter writer = new PrefilledWriter(NUM_ITERATIONS, ringBuffer);
         reader.reportPerformance();
         writer.reportPerformance();

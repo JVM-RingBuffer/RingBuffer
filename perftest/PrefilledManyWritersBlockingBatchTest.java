@@ -20,7 +20,7 @@ class PrefilledManyWritersBlockingBatchTest implements RingBufferTest {
     @Override
     public long run() {
         final RingBuffer<Event> ringBuffer = PrefilledManyWritersBlockingTest.RING_BUFFER;
-        DisposingBatchReader reader = new DisposingBatchReader(TOTAL_ELEMENTS, ringBuffer);
+        AdvancingBatchReader reader = new AdvancingBatchReader(TOTAL_ELEMENTS, ringBuffer);
         TestThreadGroup writerGroup = PrefilledSynchronizedWriter.newGroup(ringBuffer);
         reader.reportPerformance();
         writerGroup.reportPerformance();

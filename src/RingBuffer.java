@@ -39,20 +39,20 @@ public interface RingBuffer<T> {
 
     /**
      * If the ring buffer is blocking and pre-filled, then after the buffer has been read,
-     * <code>dispose()</code> must be called.
+     * <code>advance()</code> must be called.
      *
      * Moreover, if the ring buffer supports multiple readers, then external synchronization
      * must be performed while reading elements taken out:
      *
      * <pre>{@code synchronized (ringBuffer) {
-     *     ringBuffer.take(buffer);
+     *     ringBuffer.fill(buffer);
      *     // Read buffer
-     *     ringBuffer.dispose();
+     *     ringBuffer.advance();
      * } }</pre>
      */
-    void take(Array<T> buffer);
+    void fill(Array<T> buffer);
 
-    default void dispose() {}
+    default void advance() {}
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,

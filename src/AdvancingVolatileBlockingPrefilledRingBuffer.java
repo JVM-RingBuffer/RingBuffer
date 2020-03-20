@@ -5,7 +5,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.StringJoiner;
 
-class DisposableAtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
+class AdvancingVolatileBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final Object[] buffer;
@@ -18,7 +18,7 @@ class DisposableAtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     private int newWritePosition;
     private int newReadPosition;
 
-    DisposableAtomicReadBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
+    AdvancingVolatileBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.newBuffer();
@@ -84,7 +84,7 @@ class DisposableAtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     @Override
-    public void take(Array<T> buffer) {
+    public void fill(Array<T> buffer) {
         int readPosition = this.readPosition.getPlain();
         int bufferSize = buffer.getCapacity();
         readBusyWaitStrategy.reset();
@@ -121,7 +121,7 @@ class DisposableAtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     @Override
-    public void dispose() {
+    public void advance() {
         readPosition.set(newReadPosition);
     }
 

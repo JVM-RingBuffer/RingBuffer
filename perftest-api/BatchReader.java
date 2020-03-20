@@ -23,7 +23,7 @@ class BatchReader extends Reader {
         RingBuffer<Event> ringBuffer = getRingBuffer();
         Array<Event> buffer = newReadBuffer();
         for (int i = 0; i < numIterations; i++) {
-            ringBuffer.take(buffer);
+            ringBuffer.fill(buffer);
             for (Event event : buffer) {
                 sum.add(event.getData());
             }

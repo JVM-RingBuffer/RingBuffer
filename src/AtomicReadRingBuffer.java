@@ -80,7 +80,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void take(Array<T> buffer) {
+    public void fill(Array<T> buffer) {
         int readPosition;
         int bufferSize = buffer.getCapacity();
         boolean notSplit;

@@ -69,7 +69,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void take(Array<T> buffer) {
+    public void fill(Array<T> buffer) {
         int bufferSize = buffer.getCapacity();
         if (readPosition < capacity - bufferSize) {
             int i = readPosition;

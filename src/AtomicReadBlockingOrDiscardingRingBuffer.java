@@ -105,7 +105,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized void take(Array<T> buffer) {
+    public synchronized void fill(Array<T> buffer) {
         int readPosition = this.readPosition.getPlain();
         int bufferSize = buffer.getCapacity();
         readBusyWaitStrategy.reset();

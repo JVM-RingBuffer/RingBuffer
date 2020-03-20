@@ -77,7 +77,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void take(Array<T> buffer) {
+    public void fill(Array<T> buffer) {
         int bufferSize = buffer.getCapacity();
         readBusyWaitStrategy.reset();
         while (size() < bufferSize) {

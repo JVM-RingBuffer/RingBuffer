@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 public class RingBufferBuilder<T> {
     private final int capacity;
     private final Supplier<? extends T> filler;
+    private final boolean isPrefilled;
     private final T dummyElement;
     private Boolean oneWriter;
     private Boolean oneReader;
@@ -21,6 +22,7 @@ public class RingBufferBuilder<T> {
         Assume.notLesser(capacity, 2, "capacity");
         this.capacity = capacity;
         this.filler = filler;
+        isPrefilled = filler != null;
         this.dummyElement = dummyElement;
     }
 
@@ -91,16 +93,22 @@ public class RingBufferBuilder<T> {
             throw new IllegalArgumentException("A ring buffer does not support many readers and writers. Consider using a concurrent queue instead.");
         }
         if (oneReader) {
-            if (!oneWriter && (!isPrefilled() || type == RingBufferType.BLOCKING)) {
+            if (!oneWriter) {
                 switch (type) {
                     case OVERWRITING:
+                        if (isPrefilled) {
+                            break;
+                        }
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
-                        if (isPrefilled()) {
-                            return new DisposableAtomicWriteBlockingPrefilledRingBuffer<>(this);
+                        if (isPrefilled) {
+                            return new AdvancingAtomicWriteBlockingPrefilledRingBuffer<>(this);
                         }
                         return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
                     case DISCARDING:
+                        if (isPrefilled) {
+                            break;
+                        }
                         return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
                 }
             }
@@ -108,8 +116,8 @@ public class RingBufferBuilder<T> {
                 case OVERWRITING:
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
-                    if (isPrefilled()) {
-                        return new DisposableVolatileBlockingPrefilledRingBuffer<>(this);
+                    if (isPrefilled) {
+                        return new AdvancingVolatileBlockingPrefilledRingBuffer<>(this);
                     }
                     return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
@@ -120,8 +128,8 @@ public class RingBufferBuilder<T> {
             case OVERWRITING:
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
-                if (isPrefilled()) {
-                    return new DisposableAtomicReadBlockingPrefilledRingBuffer<>(this);
+                if (isPrefilled) {
+                    return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
                 }
                 return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
             case DISCARDING:
@@ -140,7 +148,7 @@ public class RingBufferBuilder<T> {
 
     Object[] newBuffer() {
         Object[] buffer = new Object[capacity];
-        if (isPrefilled()) {
+        if (isPrefilled) {
             for (int i = 0; i < capacity; i++) {
                 buffer[i] = filler.get();
             }
@@ -149,7 +157,7 @@ public class RingBufferBuilder<T> {
     }
 
     boolean isGCEnabled() {
-        if (!isPrefilled()) {
+        if (!isPrefilled) {
             return gcEnabled;
         }
         if (gcEnabled) {
@@ -170,14 +178,10 @@ public class RingBufferBuilder<T> {
     }
 
     T getDummyElement() {
-        if (isPrefilled()) {
+        if (isPrefilled) {
             return filler.get();
         }
         return dummyElement;
-    }
-
-    private boolean isPrefilled() {
-        return filler != null;
     }
 
     private enum RingBufferType {
