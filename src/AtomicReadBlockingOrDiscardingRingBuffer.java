@@ -122,7 +122,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
             }
             this.readPosition.set(newReadPosition);
         } else {
-            splitTake(readPosition, buffer, bufferSize);
+            splitFill(readPosition, buffer, bufferSize);
         }
     }
 
@@ -134,7 +134,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
-    private void splitTake(int readPosition, Array<T> buffer, int bufferSize) {
+    private void splitFill(int readPosition, Array<T> buffer, int bufferSize) {
         int j = 0;
         int newReadPosition = readPosition + bufferSize - capacity;
         for (; readPosition < capacity; readPosition++) {

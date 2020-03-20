@@ -81,11 +81,11 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
                 }
             }
         } else {
-            splitTake(buffer, bufferSize);
+            splitFill(buffer, bufferSize);
         }
     }
 
-    private void splitTake(Array<T> buffer, int bufferSize) {
+    private void splitFill(Array<T> buffer, int bufferSize) {
         int j = 0;
         for (int i = readPosition; i < capacity; i++) {
             buffer.setElement(j++, (T) this.buffer[i]);

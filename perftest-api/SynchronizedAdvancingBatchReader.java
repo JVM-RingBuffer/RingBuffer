@@ -5,6 +5,8 @@ import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class SynchronizedAdvancingBatchReader extends BatchReader {
+    private static final Array<Event> readBuffer = newReadBuffer();
+
     static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
         return new TestThreadGroup(numIterations -> new SynchronizedAdvancingBatchReader(numIterations, ringBuffer));
     }
@@ -12,8 +14,6 @@ class SynchronizedAdvancingBatchReader extends BatchReader {
     private SynchronizedAdvancingBatchReader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
-
-    private static final Array<Event> readBuffer = newReadBuffer();
 
     @Override
     void collect(MutableLong sum) {

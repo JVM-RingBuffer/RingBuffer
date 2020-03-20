@@ -14,10 +14,6 @@ class BatchReader extends Reader {
         super(MutableInt.ceilDiv(numIterations, RingBufferTest.READ_BUFFER_SIZE), ringBuffer);
     }
 
-    static Array<Event> newReadBuffer() {
-        return new Array<>(RingBufferTest.READ_BUFFER_SIZE);
-    }
-
     @Override
     void collect(MutableLong sum) {
         int numIterations = getNumIterations();
@@ -29,5 +25,9 @@ class BatchReader extends Reader {
                 sum.add(event.getData());
             }
         }
+    }
+
+    static Array<Event> newReadBuffer() {
+        return new Array<>(RingBufferTest.READ_BUFFER_SIZE);
     }
 }
