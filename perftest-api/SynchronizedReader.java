@@ -4,8 +4,14 @@ import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class SynchronizedReader extends Reader {
-    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> new SynchronizedReader(numIterations, ringBuffer));
+    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(numIterations -> runThreadAsync(numIterations, ringBuffer));
+    }
+
+    private static SynchronizedReader runThreadAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        SynchronizedReader thread = new SynchronizedReader(numIterations, ringBuffer);
+        thread.start();
+        return thread;
     }
 
     private SynchronizedReader(int numIterations, RingBuffer<Event> ringBuffer) {

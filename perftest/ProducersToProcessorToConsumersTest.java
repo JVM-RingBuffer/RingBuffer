@@ -32,9 +32,9 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
 
     @Override
     public long run() {
-        TestThreadGroup readerGroup = BatchReader.newGroup(CONSUMERS_RING_BUFFER);
-        TestThreadGroup writerGroup = Writer.newGroup(PRODUCERS_RING_BUFFER);
-        Processor processor = new Processor(TOTAL_ELEMENTS);
+        TestThreadGroup readerGroup = BatchReader.runGroupAsync(CONSUMERS_RING_BUFFER);
+        TestThreadGroup writerGroup = Writer.runGroupAsync(PRODUCERS_RING_BUFFER);
+        Processor processor = Processor.runAsync(TOTAL_ELEMENTS);
         readerGroup.reportPerformance();
         writerGroup.reportPerformance();
         processor.reportPerformance();
@@ -42,6 +42,12 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
     }
 
     private static class Processor extends TestThread {
+        static Processor runAsync(int numIterations) {
+            Processor thread = new Processor(numIterations);
+            thread.start();
+            return thread;
+        }
+
         Processor(int numIterations) {
             super(numIterations, null);
         }

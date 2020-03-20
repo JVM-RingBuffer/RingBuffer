@@ -4,11 +4,23 @@ import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class Reader extends TestThread {
-    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
+    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer));
     }
 
-    private MutableLong sum;
+    static Reader runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Reader thread = new Reader(numIterations, ringBuffer);
+        thread.start();
+        return thread;
+    }
+
+    static Reader runSync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Reader thread = new Reader(numIterations, ringBuffer);
+        thread.run();
+        return thread;
+    }
+
+    private final MutableLong sum = new MutableLong();
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
@@ -20,7 +32,6 @@ class Reader extends TestThread {
 
     @Override
     void loop() {
-        sum = new MutableLong();
         collect(sum);
     }
 

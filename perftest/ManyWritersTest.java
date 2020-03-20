@@ -25,8 +25,8 @@ public class ManyWritersTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Reader reader = new Reader(TOTAL_ELEMENTS, RING_BUFFER);
-        TestThreadGroup writerGroup = Writer.newGroup(RING_BUFFER);
+        Reader reader = Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        TestThreadGroup writerGroup = Writer.runGroupAsync(RING_BUFFER);
         reader.reportPerformance();
         writerGroup.reportPerformance();
         return reader.getSum();

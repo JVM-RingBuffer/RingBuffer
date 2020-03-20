@@ -6,8 +6,20 @@ import eu.menzani.ringbuffer.java.MutableInt;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class BatchReader extends Reader {
-    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> new BatchReader(numIterations, ringBuffer));
+    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
+        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer));
+    }
+
+    static BatchReader runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        BatchReader thread = new BatchReader(numIterations, ringBuffer);
+        thread.start();
+        return thread;
+    }
+
+    static BatchReader runSync(int numIterations, RingBuffer<Event> ringBuffer) {
+        BatchReader thread = new BatchReader(numIterations, ringBuffer);
+        thread.run();
+        return thread;
     }
 
     BatchReader(int numIterations, RingBuffer<Event> ringBuffer) {

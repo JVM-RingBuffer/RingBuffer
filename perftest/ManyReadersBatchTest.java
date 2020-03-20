@@ -1,27 +1,14 @@
 package perftest;
 
-import eu.menzani.ringbuffer.RingBuffer;
-
-class ManyReadersBatchTest implements RingBufferTest {
+class ManyReadersBatchTest extends ManyReadersTest {
     public static void main(String[] args) {
         new ManyReadersBatchTest().runTest();
     }
 
     @Override
-    public int getBenchmarkRepeatTimes() {
-        return 40;
-    }
-
-    @Override
-    public long getSum() {
-        return MANY_READERS_SUM;
-    }
-
-    @Override
     public long run() {
-        final RingBuffer<Event> ringBuffer = ManyReadersTest.RING_BUFFER;
-        TestThreadGroup readerGroup = BatchReader.newGroup(ringBuffer);
-        Writer writer = new Writer(TOTAL_ELEMENTS, ringBuffer);
+        TestThreadGroup readerGroup = BatchReader.runGroupAsync(RING_BUFFER);
+        Writer writer = Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         readerGroup.reportPerformance();
         writer.reportPerformance();
         return readerGroup.getReaderSum();

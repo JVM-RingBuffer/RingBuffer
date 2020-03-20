@@ -5,7 +5,13 @@ import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class AdvancingBatchReader extends BatchReader {
-    AdvancingBatchReader(int numIterations, RingBuffer<Event> ringBuffer) {
+    static AdvancingBatchReader runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        AdvancingBatchReader thread = new AdvancingBatchReader(numIterations, ringBuffer);
+        thread.start();
+        return thread;
+    }
+
+    private AdvancingBatchReader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 

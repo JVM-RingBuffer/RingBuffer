@@ -2,15 +2,13 @@ package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
 
-public class PrefilledOneToOneTest implements RingBufferTest {
+public class LocalRingBufferTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.prefilled(ONE_TO_ONE_SIZE, FILLER)
-                    .oneReader()
-                    .oneWriter()
+            RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledOneToOneTest().runTest();
+        new LocalRingBufferTest().runTest();
     }
 
     @Override
@@ -25,8 +23,8 @@ public class PrefilledOneToOneTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Reader reader = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        PrefilledWriter writer = PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        Writer writer = Writer.runSync(NUM_ITERATIONS, RING_BUFFER);
+        Reader reader = Reader.runSync(NUM_ITERATIONS, RING_BUFFER);
         reader.reportPerformance();
         writer.reportPerformance();
         return reader.getSum();

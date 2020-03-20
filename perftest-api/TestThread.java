@@ -11,7 +11,6 @@ abstract class TestThread extends Thread {
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
-        start();
     }
 
     int getNumIterations() {

@@ -5,14 +5,22 @@ import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class SynchronizedAdvancingBatchReader extends BatchReader {
-    private static final Array<Event> readBuffer = newReadBuffer();
-
-    static TestThreadGroup newGroup(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> new SynchronizedAdvancingBatchReader(numIterations, ringBuffer));
+    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
+        Array<Event> readBuffer = newReadBuffer();
+        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer, readBuffer));
     }
 
-    private SynchronizedAdvancingBatchReader(int numIterations, RingBuffer<Event> ringBuffer) {
+    private static SynchronizedAdvancingBatchReader runAsync(int numIterations, RingBuffer<Event> ringBuffer, Array<Event> readBuffer) {
+        SynchronizedAdvancingBatchReader thread = new SynchronizedAdvancingBatchReader(numIterations, ringBuffer, readBuffer);
+        thread.start();
+        return thread;
+    }
+
+    private final Array<Event> readBuffer;
+
+    private SynchronizedAdvancingBatchReader(int numIterations, RingBuffer<Event> ringBuffer, Array<Event> readBuffer) {
         super(numIterations, ringBuffer);
+        this.readBuffer = readBuffer;
     }
 
     @Override
