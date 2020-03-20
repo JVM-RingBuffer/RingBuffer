@@ -105,12 +105,12 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     @Override
     public <U> U[] toArray(U[] array) {
-        int size = getCapacity();
-        if (array.length < size) {
-            Object[] result = Arrays.copyOf(elements, size, array.getClass());
+        int capacity = getCapacity();
+        if (array.length < capacity) {
+            Object[] result = Arrays.copyOf(elements, capacity, array.getClass());
             return (U[]) result;
         }
-        System.arraycopy(elements, 0, array, 0, size);
+        System.arraycopy(elements, 0, array, 0, capacity);
         return array;
     }
 

@@ -2,6 +2,7 @@ package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Array;
+import eu.menzani.ringbuffer.java.MutableInt;
 import eu.menzani.ringbuffer.java.MutableLong;
 
 class BatchReader extends Reader {
@@ -10,7 +11,7 @@ class BatchReader extends Reader {
     }
 
     BatchReader(int numIterations, RingBuffer<Event> ringBuffer) {
-        super(numIterations / RingBufferTest.READ_BUFFER_SIZE, ringBuffer);
+        super(MutableInt.ceilDiv(numIterations, RingBufferTest.READ_BUFFER_SIZE), ringBuffer);
     }
 
     static Array<Event> newReadBuffer() {

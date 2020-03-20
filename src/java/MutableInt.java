@@ -1,25 +1,17 @@
 package eu.menzani.ringbuffer.java;
 
-public class MutableLong extends Number {
-    private long value;
+public class MutableInt extends Number {
+    private int value;
 
     public void increment() {
         value++;
     }
 
-    public int incrementAndGetInt() {
-        return (int) ++value;
-    }
-
-    public long incrementAndGet() {
+    public int incrementAndGet() {
         return ++value;
     }
 
-    public int getIntAndIncrement() {
-        return (int) value++;
-    }
-
-    public long getAndIncrement() {
+    public int getAndIncrement() {
         return value++;
     }
 
@@ -27,81 +19,80 @@ public class MutableLong extends Number {
         value--;
     }
 
-    public int decrementAndGetInt() {
-        return (int) --value;
-    }
-
-    public long decrementAndGet() {
+    public int decrementAndGet() {
         return --value;
     }
 
-    public int getIntAndDecrement() {
-        return (int) value--;
-    }
-
-    public long getAndDecrement() {
+    public int getAndDecrement() {
         return value--;
     }
 
-    public void add(long value) {
+    public void add(int value) {
         this.value += value;
     }
 
-    public void subtract(long value) {
+    public void subtract(int value) {
         this.value -= value;
     }
 
-    public void multiply(long value) {
+    public void multiply(int value) {
         this.value *= value;
     }
 
-    public void divide(long value) {
+    public void divide(int value) {
         this.value /= value;
     }
 
-    public void modulus(long value) {
+    /**
+     * Both numbers must not be negative.
+     */
+    public void ceilDiv(int value) {
+        this.value = ceilDiv(this.value, value);
+    }
+
+    public void modulus(int value) {
         this.value %= value;
     }
 
-    public void set(long value) {
+    public void set(int value) {
         this.value = value;
     }
 
     public void set(float value) {
-        this.value = (long) value;
+        this.value = (int) value;
     }
 
     public void set(double value) {
-        this.value = (long) value;
+        this.value = (int) value;
     }
 
-    public long get() {
+    public int get() {
         return value;
     }
 
     public boolean isPositive() {
-        return value > 0L;
+        return value > 0;
     }
 
     public boolean isNonNegative() {
-        return value >= 0L;
+        return value >= 0;
     }
 
     public boolean isNegative() {
-        return value < 0L;
+        return value < 0;
     }
 
     public boolean isNonPositive() {
-        return value <= 0L;
+        return value <= 0;
     }
 
     public boolean isZero() {
-        return value == 0L;
+        return value == 0;
     }
 
     @Override
     public int intValue() {
-        return (int) value;
+        return value;
     }
 
     @Override
@@ -127,16 +118,23 @@ public class MutableLong extends Number {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        return value == ((MutableLong) object).value;
+        return value == ((MutableInt) object).value;
     }
 
     @Override
     public int hashCode() {
-        return (int) (value ^ (value >>> 32));
+        return value;
     }
 
     @Override
     public String toString() {
-        return Long.toString(value);
+        return Integer.toString(value);
+    }
+
+    /**
+     * Both numbers must not be negative.
+     */
+    public static int ceilDiv(int dividend, int divisor) {
+        return (dividend - 1) / divisor + 1;
     }
 }
