@@ -26,7 +26,7 @@ public class Benchmark {
         private long sum;
         private double count;
         private long minimum = Long.MAX_VALUE;
-        private long maximum = Long.MIN_VALUE;
+        private long maximum = 0L;
 
         Result(String prefix) {
             this.prefix = prefix;
@@ -53,6 +53,9 @@ public class Benchmark {
         }
 
         private static String formatExecutionTime(long value) {
+            if (value == Long.MAX_VALUE) {
+                return "0ns";
+            }
             if (value < 2_000L) {
                 return value + "ns";
             }

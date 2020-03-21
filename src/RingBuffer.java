@@ -14,11 +14,13 @@ public interface RingBuffer<T> {
      * Moreover, if the ring buffer supports multiple writers, then external synchronization
      * must be performed between the two method invocations:
      *
-     * <pre>{@code synchronized (ringBuffer) {
-     *     T element = ringBuffer.next();
-     *     // Populate element
-     *     ringBuffer.put();
-     * } }</pre>
+     * <pre>{@code
+     * synchronized (ringBuffer) {
+     *    T element = ringBuffer.next();
+     *    // Populate element
+     *    ringBuffer.put();
+     * }
+     * }</pre>
      */
     T next();
 
@@ -30,10 +32,12 @@ public interface RingBuffer<T> {
      * If the ring buffer supports multiple readers and is blocking and pre-filled,
      * then external synchronization must be performed while reading elements taken out:
      *
-     * <pre>{@code synchronized (ringBuffer) {
-     *     T element = ringBuffer.take();
-     *     // Read element
-     * } }</pre>
+     * <pre>{@code
+     * synchronized (ringBuffer) {
+     *    T element = ringBuffer.take();
+     *    // Read element
+     * }
+     * }</pre>
      */
     T take();
 
@@ -44,12 +48,14 @@ public interface RingBuffer<T> {
      * Moreover, if the ring buffer supports multiple readers, then external synchronization
      * must be performed while reading elements taken out:
      *
-     * <pre>{@code synchronized (ringBuffer) {
-     *     ringBuffer.fill(buffer);
-     *     // Read buffer
-     *     ringBuffer.advance();
-     * } }</pre>
-     *
+     * <pre>{@code
+     * synchronized (ringBuffer) {
+     *    ringBuffer.fill(buffer);
+     *    // Read buffer
+     *    ringBuffer.advance();
+     * }
+     * }</pre>
+     * <p>
      * If external synchronization is not performed, then the buffer cannot be shared by multiple threads.
      */
     void fill(Array<T> buffer);
