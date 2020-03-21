@@ -1,19 +1,30 @@
 package eu.menzani.ringbuffer;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 
 class LazyVolatileInteger {
-    private final AtomicInteger value = new AtomicInteger();
+    private static final VarHandle VALUE;
+
+    static {
+        try {
+            VALUE = MethodHandles.lookup().findVarHandle(LazyVolatileInteger.class, "value", int.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private int value;
 
     void set(int value) {
-        this.value.setRelease(value);
+        VALUE.setRelease(this, value);
     }
 
     int get() {
-        return value.getAcquire();
+        return (int) VALUE.getAcquire(this);
     }
 
     int getPlain() {
-        return value.getPlain();
+        return value;
     }
 }

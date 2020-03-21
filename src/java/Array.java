@@ -19,9 +19,14 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     private static final VarHandle VIEW;
 
     static {
-        VarHandleLookup lookup = new VarHandleLookup(MethodHandles.lookup(), Array.class);
-        ITERATOR = lookup.getVarHandle("iterator", Array.Iterator.class);
-        VIEW = lookup.getVarHandle("view", ArrayView.class);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        final Class<?> clazz = Array.class;
+        try {
+            ITERATOR = lookup.findVarHandle(clazz, "iterator", Array.Iterator.class);
+            VIEW = lookup.findVarHandle(clazz, "view", ArrayView.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     public static Array<?> empty() {

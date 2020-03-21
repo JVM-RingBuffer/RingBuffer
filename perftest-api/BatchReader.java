@@ -2,8 +2,6 @@ package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Array;
-import eu.menzani.ringbuffer.java.MutableInt;
-import eu.menzani.ringbuffer.java.MutableLong;
 
 class BatchReader extends Reader {
     static TestThreadGroup runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
@@ -29,8 +27,12 @@ class BatchReader extends Reader {
     }
 
     BatchReader(int numIterations, Array<Event> readBuffer, RingBuffer<Event> ringBuffer) {
-        super(MutableInt.ceilDiv(numIterations, readBuffer.getCapacity()), ringBuffer);
+        super(ceilDiv(numIterations, readBuffer.getCapacity()), ringBuffer);
         this.readBuffer = readBuffer;
+    }
+
+    private static int ceilDiv(int dividend, int divisor) {
+        return (dividend - 1) / divisor + 1;
     }
 
     Array<Event> getReadBuffer() {
@@ -38,15 +40,17 @@ class BatchReader extends Reader {
     }
 
     @Override
-    void collect(MutableLong sum) {
+    long collect() {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         Array<Event> buffer = readBuffer;
+        long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             ringBuffer.fill(buffer);
             for (Event event : buffer) {
-                sum.add(event.getData());
+                sum += event.getData();
             }
         }
+        return sum;
     }
 }

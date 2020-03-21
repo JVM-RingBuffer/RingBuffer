@@ -1,7 +1,6 @@
 package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.java.MutableLong;
 
 class Reader extends TestThread {
     static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
@@ -20,27 +19,29 @@ class Reader extends TestThread {
         return thread;
     }
 
-    private final MutableLong sum = new MutableLong();
+    private long sum;
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     long getSum() {
-        return sum.get();
+        return sum;
     }
 
     @Override
     void loop() {
-        collect(sum);
+        sum = collect();
     }
 
-    void collect(MutableLong sum) {
+    long collect() {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
+        long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
-            sum.add(ringBuffer.take().getData());
+            sum += ringBuffer.take().getData();
         }
+        return sum;
     }
 
     @Override

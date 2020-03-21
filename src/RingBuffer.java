@@ -40,7 +40,7 @@ public interface RingBuffer<T> {
     /**
      * If the ring buffer is blocking and pre-filled, then after the buffer has been read,
      * <code>advance()</code> must be called.
-     *
+     * <p>
      * Moreover, if the ring buffer supports multiple readers, then external synchronization
      * must be performed while reading elements taken out:
      *
@@ -49,6 +49,8 @@ public interface RingBuffer<T> {
      *     // Read buffer
      *     ringBuffer.advance();
      * } }</pre>
+     *
+     * If external synchronization is not performed, then the buffer cannot be shared by multiple threads.
      */
     void fill(Array<T> buffer);
 

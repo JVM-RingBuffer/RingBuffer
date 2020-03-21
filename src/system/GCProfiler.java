@@ -21,10 +21,11 @@ public class GCProfiler implements NotificationListener {
         if (!started.compareAndSet(false, true)) {
             throw new IllegalStateException("The profiler has already been started.");
         }
+        MBeanServer platformServer = ManagementFactory.getPlatformMBeanServer();
+        NotificationListener listener = new GCProfiler();
         try {
-            MBeanServer platformServer = ManagementFactory.getPlatformMBeanServer();
             for (GarbageCollectorMXBean garbageCollectorMX : ManagementFactory.getGarbageCollectorMXBeans()) {
-                platformServer.addNotificationListener(garbageCollectorMX.getObjectName(), new GCProfiler(), null, null);
+                platformServer.addNotificationListener(garbageCollectorMX.getObjectName(), listener, null, null);
             }
         } catch (InstanceNotFoundException e) {
             e.printStackTrace();
