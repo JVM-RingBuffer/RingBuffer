@@ -36,9 +36,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     public static <T> Array<T> copyOf(T[] array) {
-        Array<T> result = new Array<>(array.length);
-        System.arraycopy(array, 0, result.elements, 0, array.length);
-        return result;
+        return new Array<>(Arrays.copyOf(array, array.length, elementsArrayClass));
     }
 
     @SafeVarargs
@@ -58,7 +56,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         elements = collection.toArray();
     }
 
-    public Array(T[] elements) {
+    private Array(Object[] elements) {
         this.elements = elements;
     }
 
