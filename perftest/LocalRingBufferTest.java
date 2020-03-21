@@ -5,6 +5,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 public class LocalRingBufferTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
             RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
+                    .withGC()
                     .build();
 
     public static void main(String[] args) {

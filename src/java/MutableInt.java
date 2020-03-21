@@ -1,7 +1,15 @@
 package eu.menzani.ringbuffer.java;
 
-public class MutableInt extends Number {
+public class MutableInt extends Number implements Cloneable {
+    private static final long serialVersionUID = 0L;
+
     private int value;
+
+    public MutableInt() {}
+
+    public MutableInt(int value) {
+        this.value = value;
+    }
 
     public void increment() {
         value++;
@@ -74,7 +82,7 @@ public class MutableInt extends Number {
         return value > 0;
     }
 
-    public boolean isNonNegative() {
+    public boolean isNotNegative() {
         return value >= 0;
     }
 
@@ -82,7 +90,7 @@ public class MutableInt extends Number {
         return value < 0;
     }
 
-    public boolean isNonPositive() {
+    public boolean isNotPositive() {
         return value <= 0;
     }
 
@@ -108,6 +116,25 @@ public class MutableInt extends Number {
     @Override
     public double doubleValue() {
         return value;
+    }
+
+    @Override
+    public byte byteValue() {
+        return (byte) value;
+    }
+
+    @Override
+    public short shortValue() {
+        return (short) value;
+    }
+
+    @Override
+    public MutableInt clone() {
+        try {
+            return (MutableInt) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     @Override

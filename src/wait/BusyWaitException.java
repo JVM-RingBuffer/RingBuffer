@@ -1,6 +1,8 @@
 package eu.menzani.ringbuffer.wait;
 
 public class BusyWaitException extends RuntimeException {
+    private static final long serialVersionUID = 0L;
+
     private final boolean wasReading;
 
     public static BusyWaitException whileReading(String message) {

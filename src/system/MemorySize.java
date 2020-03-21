@@ -8,6 +8,7 @@ import java.io.Serializable;
 @Immutable
 public final class MemorySize implements Comparable<MemorySize>, Serializable {
     public static final MemorySize ZERO = new MemorySize(0L);
+    private static final long serialVersionUID = 0L;
 
     private final long bytes;
 

@@ -11,6 +11,7 @@ import java.util.Objects;
  * This collection, its sub-collections and iterators do not check bounds.
  */
 public class Array<T> implements AbstractArray<T>, Serializable {
+    private static final long serialVersionUID = 0L;
     private static final Array<?> empty = new Array<>(0);
     private static final Class<? extends Object[]> elementsArrayClass = Object[].class;
     private static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(elementsArrayClass);
@@ -45,8 +46,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     private final Object[] elements;
-    private Iterator iterator;
-    private ArrayView<T> view;
+    private transient Iterator iterator;
+    private transient ArrayView<T> view;
 
     public Array(int capacity) {
         elements = new Object[capacity];

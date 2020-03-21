@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer.system;
 import java.util.OptionalInt;
 
 public class ThreadBindException extends RuntimeException {
+    private static final long serialVersionUID = 0L;
+
     private final int errorCode;
 
     ThreadBindException(Throwable cause) {
