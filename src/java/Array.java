@@ -8,8 +8,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
 
 /**
- * Bounds are not checked.
- * <p>
  * Concurrent iteration is not supported nor detected.
  */
 public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, Cloneable {
@@ -50,7 +48,7 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
 
     SubArray<T> subList(int fromIndex, int toIndex);
 
-    T[] getElements();
+    T[] getBackingArray();
 
     int getCapacity();
 

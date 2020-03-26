@@ -14,11 +14,13 @@ import java.util.stream.Stream;
 
 class ArrayView<T> implements Array<T> {
     private static final VarHandle ITERATOR;
+    private static final VarHandle SUB_ARRAY_ITERATOR;
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         try {
             ITERATOR = lookup.findVarHandle(ArrayView.class, "iterator", IteratorView.class);
+            SUB_ARRAY_ITERATOR = lookup.findVarHandle(ArrayView.SubArrayView.class, "iterator", SubArrayIteratorView.class);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -36,8 +38,8 @@ class ArrayView<T> implements Array<T> {
     }
 
     @Override
-    public T[] getElements() {
-        return delegate.getElements();
+    public T[] getBackingArray() {
+        return delegate.getBackingArray();
     }
 
     @Override
@@ -193,11 +195,6 @@ class ArrayView<T> implements Array<T> {
     @Override
     public ArrayIterator<T> listIterator(int index) {
         delegate.listIterator(index);
-        return getIterator();
-    }
-
-    @VisibleForPerformance
-    IteratorView<T> getIterator() {
         return LazyInit.get(ITERATOR, this, view -> new IteratorView<>(view.delegate.getIterator()));
     }
 
@@ -403,13 +400,13 @@ class ArrayView<T> implements Array<T> {
         }
 
         @Override
-        public void back() {
-            delegate.back();
+        public int back() {
+            return delegate.back();
         }
 
         @Override
-        public void forward() {
-            delegate.forward();
+        public int forward() {
+            return delegate.forward();
         }
 
         @Override
@@ -440,16 +437,6 @@ class ArrayView<T> implements Array<T> {
         @Override
         public T previousVolatile() {
             return delegate.previousVolatile();
-        }
-
-        @Override
-        public int nextAbsoluteIndex() {
-            return delegate.nextAbsoluteIndex();
-        }
-
-        @Override
-        public int previousAbsoluteIndex() {
-            return delegate.previousAbsoluteIndex();
         }
 
         @Override
@@ -655,6 +642,7 @@ class ArrayView<T> implements Array<T> {
 
     class SubArrayView implements SubArray<T> {
         private final MutableArray<T>.MutableSubArray delegate;
+        private SubArrayIteratorView<T> iterator;
 
         @VisibleForPerformance
         SubArrayView(SubArray<T> delegate) {
@@ -676,8 +664,8 @@ class ArrayView<T> implements Array<T> {
         }
 
         @Override
-        public T[] getElements() {
-            return delegate.getElements();
+        public T[] getBackingArray() {
+            return delegate.getBackingArray();
         }
 
         @Override
@@ -693,7 +681,7 @@ class ArrayView<T> implements Array<T> {
         @Override
         public ArrayIterator<T> listIterator(int index) {
             delegate.listIterator(index);
-            return getIterator();
+            return LazyInit.get(SUB_ARRAY_ITERATOR, this, view -> new SubArrayIteratorView<>(view.delegate.getIterator()));
         }
 
         @Override
@@ -1024,6 +1012,264 @@ class ArrayView<T> implements Array<T> {
         @Override
         public void forEach(Consumer<? super T> action) {
             delegate.forEach(action);
+        }
+    }
+
+    private static class SubArrayIteratorView<T> implements SubArrayIterator<T> {
+        private final MutableArray<T>.MutableSubArrayIterator delegate;
+
+        SubArrayIteratorView(MutableArray<T>.MutableSubArrayIterator delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public int back() {
+            return delegate.back();
+        }
+
+        @Override
+        public int forward() {
+            return delegate.forward();
+        }
+
+        @Override
+        public T nextOpaque() {
+            return delegate.nextOpaque();
+        }
+
+        @Override
+        public T nextAcquire() {
+            return delegate.nextAcquire();
+        }
+
+        @Override
+        public T nextVolatile() {
+            return delegate.nextVolatile();
+        }
+
+        @Override
+        public T previousOpaque() {
+            return delegate.previousOpaque();
+        }
+
+        @Override
+        public T previousAcquire() {
+            return delegate.previousAcquire();
+        }
+
+        @Override
+        public T previousVolatile() {
+            return delegate.previousVolatile();
+        }
+
+        @Override
+        public void setOpaque(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void setRelease(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void setVolatile(T element) {
+            unsupported();
+        }
+
+        @Override
+        public boolean compareAndSet(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T compareAndExchange(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T compareAndExchangeAcquire(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T compareAndExchangeRelease(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean weakCompareAndSetPlain(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean weakCompareAndSet(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean weakCompareAndSetAcquire(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean weakCompareAndSetRelease(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T getAndSet(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public T getAndSetAcquire(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public T getAndSetRelease(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public void previousRemove() {
+            unsupported();
+        }
+
+        @Override
+        public void previousSet(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void previousSetOpaque(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void previousSetRelease(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void previousSetVolatile(T element) {
+            unsupported();
+        }
+
+        @Override
+        public boolean previousCompareAndSet(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousCompareAndExchange(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousCompareAndExchangeAcquire(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousCompareAndExchangeRelease(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSet(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousGetAndSet(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousGetAndSetAcquire(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public T previousGetAndSetRelease(T element) {
+            return unsupported();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return delegate.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return delegate.next();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return delegate.hasPrevious();
+        }
+
+        @Override
+        public T previous() {
+            return delegate.previous();
+        }
+
+        @Override
+        public int nextIndex() {
+            return delegate.nextIndex();
+        }
+
+        @Override
+        public int previousIndex() {
+            return delegate.previousIndex();
+        }
+
+        @Override
+        public int nextAbsoluteIndex() {
+            return delegate.nextAbsoluteIndex();
+        }
+
+        @Override
+        public int previousAbsoluteIndex() {
+            return delegate.previousAbsoluteIndex();
+        }
+
+        @Override
+        public void remove() {
+            unsupported();
+        }
+
+        @Override
+        public void set(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void add(T element) {
+            unsupported();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super T> action) {
+            delegate.forEachRemaining(action);
         }
     }
 }

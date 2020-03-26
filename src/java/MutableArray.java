@@ -6,6 +6,7 @@ import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
@@ -20,6 +21,7 @@ class MutableArray<T> implements Array<T>, Serializable {
     private static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(elementsArrayClass);
     private static final VarHandle ITERATOR;
     private static final VarHandle VIEW;
+    private static final VarHandle SUB_ARRAY_ITERATOR;
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -27,6 +29,7 @@ class MutableArray<T> implements Array<T>, Serializable {
         try {
             ITERATOR = lookup.findVarHandle(clazz, "iterator", MutableArray.Iterator.class);
             VIEW = lookup.findVarHandle(clazz, "view", ArrayView.class);
+            SUB_ARRAY_ITERATOR = lookup.findVarHandle(MutableArray.MutableSubArray.class, "iterator", MutableArray.MutableSubArrayIterator.class);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -55,7 +58,7 @@ class MutableArray<T> implements Array<T>, Serializable {
     }
 
     @Override
-    public T[] getElements() {
+    public T[] getBackingArray() {
         return (T[]) elements;
     }
 
@@ -271,7 +274,7 @@ class MutableArray<T> implements Array<T>, Serializable {
     @Override
     public ArrayIterator<T> listIterator(int index) {
         Iterator iterator = getIterator();
-        iterator.initialize(0, getCapacity(), index);
+        iterator.initialize(getCapacity(), index);
         return iterator;
     }
 
@@ -409,17 +412,17 @@ class MutableArray<T> implements Array<T>, Serializable {
     public int compareTo(Array<T> array) {
         if (array instanceof SubArray<?>) {
             SubArray<T> subArray = (SubArray<T>) array;
-            return Arrays.compare((Comparable[]) elements, 0, getCapacity(), (Comparable[]) array.getElements(), subArray.getBeginIndex(), subArray.getEndIndex());
+            return Arrays.compare((Comparable[]) elements, 0, getCapacity(), (Comparable[]) array.getBackingArray(), subArray.getBeginIndex(), subArray.getEndIndex());
         }
-        return Arrays.compare((Comparable[]) elements, (Comparable[]) array.getElements());
+        return Arrays.compare((Comparable[]) elements, (Comparable[]) array.getBackingArray());
     }
 
     public int mismatch(Array<T> array) {
         if (array instanceof SubArray<?>) {
             SubArray<T> subArray = (SubArray<T>) array;
-            return Arrays.mismatch(elements, 0, getCapacity(), array.getElements(), subArray.getBeginIndex(), subArray.getEndIndex());
+            return Arrays.mismatch(elements, 0, getCapacity(), array.getBackingArray(), subArray.getBeginIndex(), subArray.getEndIndex());
         }
-        return Arrays.mismatch(elements, array.getElements());
+        return Arrays.mismatch(elements, array.getBackingArray());
     }
 
     public int mismatch(Array<T> array, Comparator<? super T> comparator) {
@@ -433,7 +436,7 @@ class MutableArray<T> implements Array<T>, Serializable {
             bFromIndex = 0;
             bToIndex = array.getCapacity();
         }
-        return Arrays.mismatch((T[]) elements, 0, getCapacity(), array.getElements(), bFromIndex, bToIndex, comparator);
+        return Arrays.mismatch((T[]) elements, 0, getCapacity(), array.getBackingArray(), bFromIndex, bToIndex, comparator);
     }
 
     @Override
@@ -489,28 +492,25 @@ class MutableArray<T> implements Array<T>, Serializable {
     }
 
     class Iterator implements ArrayIterator<T> {
-        private int beginIndex;
         private int endIndex;
         private int index;
 
-        @VisibleForPerformance
-        Iterator() {}
+        private Iterator() {}
 
         @VisibleForPerformance
-        void initialize(int beginIndex, int endIndex, int index) {
-            this.beginIndex = beginIndex;
+        void initialize(int endIndex, int index) {
             this.endIndex = endIndex;
             this.index = index;
         }
 
         @Override
-        public void back() {
-            index--;
+        public int back() {
+            return --index;
         }
 
         @Override
-        public void forward() {
-            index++;
+        public int forward() {
+            return index++;
         }
 
         @Override
@@ -540,7 +540,7 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public boolean hasPrevious() {
-            return index > beginIndex;
+            return index > 0;
         }
 
         @Override
@@ -565,21 +565,11 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public int nextIndex() {
-            return beginIndex + index;
-        }
-
-        @Override
-        public int previousIndex() {
-            return beginIndex + index - 1;
-        }
-
-        @Override
-        public int nextAbsoluteIndex() {
             return index;
         }
 
         @Override
-        public int previousAbsoluteIndex() {
+        public int previousIndex() {
             return index - 1;
         }
 
@@ -605,7 +595,7 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public void setVolatile(T element) {
-            MutableArray.this.setVolatile(index, element);
+            MutableArray.this.setVolatile(index - 1, element);
         }
 
         @Override
@@ -752,6 +742,7 @@ class MutableArray<T> implements Array<T>, Serializable {
     class MutableSubArray implements SubArray<T> {
         private final int beginIndex;
         private final int endIndex;
+        private MutableSubArrayIterator iterator;
 
         @VisibleForPerformance
         MutableSubArray(int beginIndex, int endIndex) {
@@ -770,8 +761,8 @@ class MutableArray<T> implements Array<T>, Serializable {
         }
 
         @Override
-        public T[] getElements() {
-            return MutableArray.this.getElements();
+        public T[] getBackingArray() {
+            return MutableArray.this.getBackingArray();
         }
 
         @Override
@@ -865,8 +856,16 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public boolean addAll(int index, Collection<? extends T> elements) {
+            if (index < 0) {
+                throw new ArrayIndexOutOfBoundsException(index);
+            }
+            if (index + elements.size() > getCapacity()) {
+                throw new ArrayIndexOutOfBoundsException(index);
+            }
+
+            index += beginIndex;
             for (Object element : elements) {
-                MutableArray.this.elements[beginIndex + index++] = element;
+                MutableArray.this.elements[index++] = element;
             }
             return !elements.isEmpty();
         }
@@ -903,47 +902,47 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public T get(int index) {
-            return MutableArray.this.get(beginIndex + index);
+            return MutableArray.this.get(toSubIndex(index));
         }
 
         @Override
         public T getOpaque(int index) {
-            return MutableArray.this.getOpaque(beginIndex + index);
+            return MutableArray.this.getOpaque(toSubIndex(index));
         }
 
         @Override
         public T getAcquire(int index) {
-            return MutableArray.this.getAcquire(beginIndex + index);
+            return MutableArray.this.getAcquire(toSubIndex(index));
         }
 
         @Override
         public T getVolatile(int index) {
-            return MutableArray.this.getVolatile(beginIndex + index);
+            return MutableArray.this.getVolatile(toSubIndex(index));
         }
 
         @Override
         public T set(int index, T element) {
-            return MutableArray.this.set(beginIndex + index, element);
+            return MutableArray.this.set(toSubIndex(index), element);
         }
 
         @Override
         public void setElement(int index, T element) {
-            MutableArray.this.setElement(beginIndex + index, element);
+            MutableArray.this.setElement(toSubIndex(index), element);
         }
 
         @Override
         public void setOpaque(int index, T element) {
-            MutableArray.this.setOpaque(beginIndex + index, element);
+            MutableArray.this.setOpaque(toSubIndex(index), element);
         }
 
         @Override
         public void setRelease(int index, T element) {
-            MutableArray.this.setRelease(beginIndex + index, element);
+            MutableArray.this.setRelease(toSubIndex(index), element);
         }
 
         @Override
         public void setVolatile(int index, T element) {
-            MutableArray.this.setVolatile(beginIndex + index, element);
+            MutableArray.this.setVolatile(toSubIndex(index), element);
         }
 
         @Override
@@ -988,69 +987,77 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public ArrayIterator<T> listIterator(int index) {
-            Iterator iterator = getIterator();
-            iterator.initialize(beginIndex, endIndex, beginIndex + index);
+            MutableSubArrayIterator iterator = getIterator();
+            iterator.initialize(beginIndex, endIndex, toSubIndex(index));
             return iterator;
+        }
+
+        MutableSubArrayIterator getIterator() {
+            return LazyInit.get(SUB_ARRAY_ITERATOR, this, MutableSubArray::newIterator);
+        }
+
+        private MutableSubArrayIterator newIterator() {
+            return new MutableSubArrayIterator();
         }
 
         @Override
         public SubArray<T> subList(int fromIndex, int toIndex) {
-            return new MutableSubArray(beginIndex + fromIndex, beginIndex + toIndex);
+            return new MutableSubArray(toSubIndex(fromIndex), toSubIndex(toIndex));
         }
 
         @Override
         public boolean compareAndSet(int index, T expectedElement, T newElement) {
-            return MutableArray.this.compareAndSet(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.compareAndSet(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchange(int index, T expectedElement, T newElement) {
-            return MutableArray.this.compareAndExchange(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.compareAndExchange(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchangeAcquire(int index, T expectedElement, T newElement) {
-            return MutableArray.this.compareAndExchangeAcquire(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.compareAndExchangeAcquire(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public T compareAndExchangeRelease(int index, T expectedElement, T newElement) {
-            return MutableArray.this.compareAndExchangeRelease(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.compareAndExchangeRelease(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetPlain(int index, T expectedElement, T newElement) {
-            return MutableArray.this.weakCompareAndSetPlain(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.weakCompareAndSetPlain(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSet(int index, T expectedElement, T newElement) {
-            return MutableArray.this.weakCompareAndSet(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.weakCompareAndSet(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetAcquire(int index, T expectedElement, T newElement) {
-            return MutableArray.this.weakCompareAndSetAcquire(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.weakCompareAndSetAcquire(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public boolean weakCompareAndSetRelease(int index, T expectedElement, T newElement) {
-            return MutableArray.this.weakCompareAndSetRelease(beginIndex + index, expectedElement, newElement);
+            return MutableArray.this.weakCompareAndSetRelease(toSubIndex(index), expectedElement, newElement);
         }
 
         @Override
         public T getAndSet(int index, T element) {
-            return MutableArray.this.getAndSet(beginIndex + index, element);
+            return MutableArray.this.getAndSet(toSubIndex(index), element);
         }
 
         @Override
         public T getAndSetAcquire(int index, T element) {
-            return MutableArray.this.getAndSetAcquire(beginIndex + index, element);
+            return MutableArray.this.getAndSetAcquire(toSubIndex(index), element);
         }
 
         @Override
         public T getAndSetRelease(int index, T element) {
-            return MutableArray.this.getAndSetRelease(beginIndex + index, element);
+            return MutableArray.this.getAndSetRelease(toSubIndex(index), element);
         }
 
         @Override
@@ -1129,7 +1136,7 @@ class MutableArray<T> implements Array<T>, Serializable {
                 bFromIndex = 0;
                 bToIndex = array.getCapacity();
             }
-            return Arrays.compare((Comparable[]) elements, beginIndex, endIndex, (Comparable[]) array.getElements(), bFromIndex, bToIndex);
+            return Arrays.compare((Comparable[]) elements, beginIndex, endIndex, (Comparable[]) array.getBackingArray(), bFromIndex, bToIndex);
         }
 
         public int mismatch(Array<T> array) {
@@ -1143,7 +1150,7 @@ class MutableArray<T> implements Array<T>, Serializable {
                 bFromIndex = 0;
                 bToIndex = array.getCapacity();
             }
-            return Arrays.mismatch(elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex);
+            return Arrays.mismatch(elements, beginIndex, endIndex, array.getBackingArray(), bFromIndex, bToIndex);
         }
 
         public int mismatch(Array<T> array, Comparator<? super T> comparator) {
@@ -1157,7 +1164,7 @@ class MutableArray<T> implements Array<T>, Serializable {
                 bFromIndex = 0;
                 bToIndex = array.getCapacity();
             }
-            return Arrays.mismatch((T[]) elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex, comparator);
+            return Arrays.mismatch((T[]) elements, beginIndex, endIndex, array.getBackingArray(), bFromIndex, bToIndex, comparator);
         }
 
         @Override
@@ -1221,6 +1228,283 @@ class MutableArray<T> implements Array<T>, Serializable {
                 }
                 builder.append(", ");
             }
+        }
+
+        private int toSubIndex(int index) {
+            if (index < 0) {
+                throw new ArrayIndexOutOfBoundsException(index);
+            }
+            int result = beginIndex + index;
+            if (result >= endIndex) {
+                throw new ArrayIndexOutOfBoundsException(index);
+            }
+            return result;
+        }
+    }
+
+    class MutableSubArrayIterator implements SubArrayIterator<T> {
+        private int beginIndex;
+        private int endIndex;
+        private int index;
+
+        private MutableSubArrayIterator() {}
+
+        @VisibleForPerformance
+        void initialize(int beginIndex, int endIndex, int index) {
+            this.beginIndex = beginIndex;
+            this.endIndex = endIndex;
+            this.index = index;
+        }
+
+        @Override
+        public int back() {
+            if (hasPrevious()) {
+                return --index;
+            }
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public int forward() {
+            if (hasNext()) {
+                return index++;
+            }
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < endIndex;
+        }
+
+        @Override
+        public T next() {
+            return get(forward());
+        }
+
+        @Override
+        public T nextOpaque() {
+            return getOpaque(forward());
+        }
+
+        @Override
+        public T nextAcquire() {
+            return getAcquire(forward());
+        }
+
+        @Override
+        public T nextVolatile() {
+            return getVolatile(forward());
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return index > beginIndex;
+        }
+
+        @Override
+        public T previous() {
+            return get(back());
+        }
+
+        @Override
+        public T previousOpaque() {
+            return getOpaque(back());
+        }
+
+        @Override
+        public T previousAcquire() {
+            return getAcquire(back());
+        }
+
+        @Override
+        public T previousVolatile() {
+            return getVolatile(back());
+        }
+
+        @Override
+        public int nextIndex() {
+            return index - beginIndex;
+        }
+
+        @Override
+        public int previousIndex() {
+            return index - beginIndex - 1;
+        }
+
+        @Override
+        public int nextAbsoluteIndex() {
+            return index;
+        }
+
+        @Override
+        public int previousAbsoluteIndex() {
+            return index - 1;
+        }
+
+        @Override
+        public void remove() {
+            set(null);
+        }
+
+        @Override
+        public void set(T element) {
+            setElement(index - 1, element);
+        }
+
+        @Override
+        public void setOpaque(T element) {
+            MutableArray.this.setOpaque(index - 1, element);
+        }
+
+        @Override
+        public void setRelease(T element) {
+            MutableArray.this.setRelease(index - 1, element);
+        }
+
+        @Override
+        public void setVolatile(T element) {
+            MutableArray.this.setVolatile(index - 1, element);
+        }
+
+        @Override
+        public void add(T element) {
+            set(element);
+        }
+
+        @Override
+        public boolean compareAndSet(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndSet(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public T compareAndExchange(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchange(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public T compareAndExchangeAcquire(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchangeAcquire(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public T compareAndExchangeRelease(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchangeRelease(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean weakCompareAndSetPlain(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetPlain(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean weakCompareAndSet(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSet(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean weakCompareAndSetAcquire(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetAcquire(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean weakCompareAndSetRelease(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetRelease(index - 1, expectedElement, newElement);
+        }
+
+        @Override
+        public T getAndSet(T element) {
+            return MutableArray.this.getAndSet(index - 1, element);
+        }
+
+        @Override
+        public T getAndSetAcquire(T element) {
+            return MutableArray.this.getAndSetAcquire(index - 1, element);
+        }
+
+        @Override
+        public T getAndSetRelease(T element) {
+            return MutableArray.this.getAndSetRelease(index - 1, element);
+        }
+
+        @Override
+        public void previousRemove() {
+            previousSet(null);
+        }
+
+        @Override
+        public void previousSet(T element) {
+            setElement(index, element);
+        }
+
+        @Override
+        public void previousSetOpaque(T element) {
+            MutableArray.this.setOpaque(index, element);
+        }
+
+        @Override
+        public void previousSetRelease(T element) {
+            MutableArray.this.setRelease(index, element);
+        }
+
+        @Override
+        public void previousSetVolatile(T element) {
+            MutableArray.this.setVolatile(index, element);
+        }
+
+        @Override
+        public boolean previousCompareAndSet(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndSet(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchange(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchange(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchangeAcquire(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchangeAcquire(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousCompareAndExchangeRelease(T expectedElement, T newElement) {
+            return MutableArray.this.compareAndExchangeRelease(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetPlain(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSet(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSet(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetAcquire(index, expectedElement, newElement);
+        }
+
+        @Override
+        public boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement) {
+            return MutableArray.this.weakCompareAndSetRelease(index, expectedElement, newElement);
+        }
+
+        @Override
+        public T previousGetAndSet(T element) {
+            return MutableArray.this.getAndSet(index, element);
+        }
+
+        @Override
+        public T previousGetAndSetAcquire(T element) {
+            return MutableArray.this.getAndSetAcquire(index, element);
+        }
+
+        @Override
+        public T previousGetAndSetRelease(T element) {
+            return MutableArray.this.getAndSetRelease(index, element);
         }
     }
 }

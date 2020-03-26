@@ -3,9 +3,9 @@ package eu.menzani.ringbuffer.java;
 import java.util.ListIterator;
 
 public interface ArrayIterator<T> extends ListIterator<T> {
-    void back();
+    int back();
 
-    void forward();
+    int forward();
 
     T nextOpaque();
 
@@ -18,10 +18,6 @@ public interface ArrayIterator<T> extends ListIterator<T> {
     T previousAcquire();
 
     T previousVolatile();
-
-    int nextAbsoluteIndex();
-
-    int previousAbsoluteIndex();
 
     void setOpaque(T element);
 

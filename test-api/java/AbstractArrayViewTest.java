@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +21,7 @@ abstract class AbstractArrayViewTest {
 
     private final AbstractMutableArrayTest arrayTest;
     final boolean isSubArray;
+    private final Class<? extends Throwable> iteratorExceptionClass;
 
     final Array<String> array;
     private final Array<String> arrayFromCollection;
@@ -38,6 +40,8 @@ abstract class AbstractArrayViewTest {
     private AbstractArrayViewTest(AbstractMutableArrayTest arrayTest, boolean isSubArray) {
         this.arrayTest = arrayTest;
         this.isSubArray = isSubArray;
+        iteratorExceptionClass = isSubArray ? NoSuchElementException.class : ArrayIndexOutOfBoundsException.class;
+
         array = getArray();
         arrayFromCollection = getArrayFromCollection();
         arrayWithRepeatedElements = getArrayWithRepeatedElements();
@@ -96,11 +100,7 @@ abstract class AbstractArrayViewTest {
         assertTrue(iterator.hasNext());
         assertEquals(FOUR, iterator.next());
         assertFalse(iterator.hasNext());
-        if (isSubArray) {
-            assertEquals(FIVE, iterator.next());
-        } else {
-            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
-        }
+        assertThrows(iteratorExceptionClass, iterator::next);
     }
 
     @Test
@@ -149,8 +149,10 @@ abstract class AbstractArrayViewTest {
         assertFalse(iterator.hasPrevious());
         assertEquals(0, iterator.nextIndex());
         assertEquals(-1, iterator.previousIndex());
-        assertThrows(ArrayIndexOutOfBoundsException.class, iterator::previous);
-        assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
+        assertThrows(iteratorExceptionClass, iterator::previous);
+        if (!isSubArray) {
+            assertThrows(iteratorExceptionClass, iterator::next);
+        }
         assertNull(iterator.next());
 
         assertTrue(iterator.hasNext());
@@ -178,12 +180,9 @@ abstract class AbstractArrayViewTest {
         assertTrue(iterator.hasPrevious());
         assertEquals(array.getCapacity(), iterator.nextIndex());
         assertEquals(4, iterator.previousIndex());
-        if (isSubArray) {
-            assertEquals(FIVE, iterator.next());
-            assertEquals(FIVE, iterator.previous());
-        } else {
-            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::next);
-            assertThrows(ArrayIndexOutOfBoundsException.class, iterator::previous);
+        assertThrows(iteratorExceptionClass, iterator::next);
+        if (!isSubArray) {
+            assertThrows(iteratorExceptionClass, iterator::previous);
         }
 
         assertEquals(FOUR, iterator.previous());
