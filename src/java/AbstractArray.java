@@ -1,16 +1,21 @@
 package eu.menzani.ringbuffer.java;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
+import java.util.function.BinaryOperator;
+import java.util.function.IntFunction;
 
-public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
+public interface AbstractArray<T> extends List<T>, RandomAccess, Comparable<AbstractArray<T>>, Cloneable {
     ArrayIterator<T> iterator();
 
     ArrayIterator<T> listIterator();
 
     ArrayIterator<T> listIterator(int index);
 
-    AbstractArray<T> subList(int fromIndex, int toIndex);
+    AbstractSubArray<T> subList(int fromIndex, int toIndex);
+
+    T[] getElements();
 
     int getCapacity();
 
@@ -51,6 +56,28 @@ public interface AbstractArray<T> extends List<T>, RandomAccess, Cloneable {
     T getAndSetAcquire(int index, T element);
 
     T getAndSetRelease(int index, T element);
+
+    void fill(T value);
+
+    void sort();
+
+    void parallelSort();
+
+    void parallelSort(Comparator<? super T> comparator);
+
+    int binarySearch(T element);
+
+    int binarySearch(T element, Comparator<? super T> comparator);
+
+    void parallelPrefix(BinaryOperator<T> operator);
+
+    void setAll(IntFunction<? extends T> generator);
+
+    void parallelSetAll(IntFunction<? extends T> generator);
+
+    int mismatch(AbstractArray<T> array);
+
+    int mismatch(AbstractArray<T> array, Comparator<? super T> comparator);
 
     AbstractArray<T> unmodifiableView();
 

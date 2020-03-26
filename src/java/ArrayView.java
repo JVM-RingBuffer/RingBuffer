@@ -5,6 +5,7 @@ import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Spliterator;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -12,7 +13,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 class ArrayView<T> implements AbstractArray<T> {
-    private static final String readOnlyMessage = "This instance does not permit write access.";
     private static final VarHandle ITERATOR;
 
     static {
@@ -29,6 +29,11 @@ class ArrayView<T> implements AbstractArray<T> {
 
     ArrayView(Array<T> delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public T[] getElements() {
+        return delegate.getElements();
     }
 
     @Override
@@ -68,12 +73,12 @@ class ArrayView<T> implements AbstractArray<T> {
 
     @Override
     public boolean add(T element) {
-        throw new UnsupportedOperationException();
+        return delegate.add(element);
     }
 
     @Override
     public boolean remove(Object element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
@@ -83,27 +88,27 @@ class ArrayView<T> implements AbstractArray<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> elements) {
-        throw new UnsupportedOperationException();
+        return delegate.addAll(elements);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> elements) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean removeAll(Collection<?> elements) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean retainAll(Collection<?> elements) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
@@ -128,42 +133,42 @@ class ArrayView<T> implements AbstractArray<T> {
 
     @Override
     public T set(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public void setElement(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public void setOpaque(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public void setRelease(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public void setVolatile(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public void add(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public T remove(int index) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public void removeElement(int index) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
@@ -187,68 +192,139 @@ class ArrayView<T> implements AbstractArray<T> {
         return getIterator();
     }
 
-    private IteratorView<T> getIterator() {
+    @VisibleForPerformance
+    IteratorView<T> getIterator() {
         return LazyInit.get(ITERATOR, this, view -> new IteratorView<>(view.delegate.getIterator()));
     }
 
     @Override
-    public AbstractArray<T> subList(int fromIndex, int toIndex) {
+    public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
         return new SubArrayView(delegate.subList(fromIndex, toIndex));
     }
 
     @Override
     public boolean compareAndSet(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T compareAndExchange(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T compareAndExchangeAcquire(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T compareAndExchangeRelease(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean weakCompareAndSetPlain(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean weakCompareAndSet(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean weakCompareAndSetAcquire(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public boolean weakCompareAndSetRelease(int index, T expectedElement, T newElement) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T getAndSet(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T getAndSetAcquire(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
     public T getAndSetRelease(int index, T element) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
+    }
+
+    @Override
+    public void fill(T value) {
+        unsupported();
+    }
+
+    @Override
+    public void sort() {
+        unsupported();
+    }
+
+    @Override
+    public void parallelSort() {
+        unsupported();
+    }
+
+    @Override
+    public void parallelSort(Comparator<? super T> comparator) {
+        unsupported();
+    }
+
+    @Override
+    public int binarySearch(T element) {
+        return delegate.binarySearch(element);
+    }
+
+    @Override
+    public int binarySearch(T element, Comparator<? super T> comparator) {
+        return delegate.binarySearch(element, comparator);
+    }
+
+    @Override
+    public void parallelPrefix(BinaryOperator<T> operator) {
+        unsupported();
+    }
+
+    @Override
+    public void setAll(IntFunction<? extends T> generator) {
+        unsupported();
+    }
+
+    @Override
+    public void parallelSetAll(IntFunction<? extends T> generator) {
+        unsupported();
+    }
+
+    @Override
+    public int compareTo(AbstractArray<T> array) {
+        return delegate.compareTo(array);
+    }
+
+    @Override
+    public int mismatch(AbstractArray<T> array) {
+        return delegate.mismatch(array);
+    }
+
+    @Override
+    public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+        return delegate.mismatch(array, comparator);
+    }
+
+    @Override
+    public AbstractArray<T> unmodifiableView() {
+        return this;
+    }
+
+    @Override
+    public AbstractArray<T> immutableSnapshot() {
+        return delegate.immutableSnapshot();
     }
 
     @Override
@@ -272,23 +348,13 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     @Override
-    public AbstractArray<T> unmodifiableView() {
-        return this;
-    }
-
-    @Override
-    public AbstractArray<T> immutableSnapshot() {
-        return delegate.immutableSnapshot();
-    }
-
-    @Override
     public void replaceAll(UnaryOperator<T> operator) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
     public void sort(Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        unsupported();
     }
 
     @Override
@@ -303,7 +369,7 @@ class ArrayView<T> implements AbstractArray<T> {
 
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
-        throw new UnsupportedOperationException(readOnlyMessage);
+        return unsupported();
     }
 
     @Override
@@ -319,6 +385,10 @@ class ArrayView<T> implements AbstractArray<T> {
     @Override
     public void forEach(Consumer<? super T> action) {
         delegate.forEach(action);
+    }
+
+    private static <T> T unsupported() {
+        throw new UnsupportedOperationException("This instance does not permit write access.");
     }
 
     private static class IteratorView<T> implements ArrayIterator<T> {
@@ -380,152 +450,152 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public void setOpaque(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void setRelease(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void setVolatile(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public boolean compareAndSet(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchange(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchangeAcquire(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchangeRelease(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetPlain(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSet(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetAcquire(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetRelease(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSet(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSetAcquire(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSetRelease(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public void previousRemove() {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void previousSet(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void previousSetOpaque(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void previousSetRelease(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void previousSetVolatile(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public boolean previousCompareAndSet(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousCompareAndExchange(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousCompareAndExchangeAcquire(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousCompareAndExchangeRelease(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean previousWeakCompareAndSetPlain(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean previousWeakCompareAndSet(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean previousWeakCompareAndSetAcquire(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean previousWeakCompareAndSetRelease(T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousGetAndSet(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousGetAndSetAcquire(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T previousGetAndSetRelease(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
@@ -560,17 +630,17 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void set(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void add(T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
@@ -579,7 +649,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
     }
 
-    class SubArrayView implements AbstractArray<T> {
+    class SubArrayView implements AbstractSubArray<T> {
         private final Array<T>.SubArray delegate;
 
         private SubArrayView(AbstractArray<T> delegate) {
@@ -588,6 +658,21 @@ class ArrayView<T> implements AbstractArray<T> {
 
         SubArrayView(Array<T>.SubArray delegate) {
             this.delegate = delegate;
+        }
+
+        @Override
+        public int getBeginIndex() {
+            return delegate.getBeginIndex();
+        }
+
+        @Override
+        public int getEndIndex() {
+            return delegate.getEndIndex();
+        }
+
+        @Override
+        public T[] getElements() {
+            return delegate.getElements();
         }
 
         @Override
@@ -607,7 +692,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
-        public AbstractArray<T> subList(int fromIndex, int toIndex) {
+        public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
             return new SubArrayView(delegate.subList(fromIndex, toIndex));
         }
 
@@ -633,86 +718,146 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public void setElement(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void setOpaque(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void setRelease(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void setVolatile(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void removeElement(int index) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public boolean compareAndSet(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchange(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchangeAcquire(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T compareAndExchangeRelease(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetPlain(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSet(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetAcquire(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean weakCompareAndSetRelease(int index, T expectedElement, T newElement) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSet(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSetAcquire(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public T getAndSetRelease(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
-        public AbstractArray<T> unmodifiableView() {
+        public void fill(T value) {
+            unsupported();
+        }
+
+        @Override
+        public void sort() {
+            unsupported();
+        }
+
+        @Override
+        public void parallelSort() {
+            unsupported();
+        }
+
+        @Override
+        public void parallelSort(Comparator<? super T> comparator) {
+            unsupported();
+        }
+
+        @Override
+        public int binarySearch(T element) {
+            return delegate.binarySearch(element);
+        }
+
+        @Override
+        public int binarySearch(T element, Comparator<? super T> comparator) {
+            return delegate.binarySearch(element, comparator);
+        }
+
+        @Override
+        public void parallelPrefix(BinaryOperator<T> operator) {
+            unsupported();
+        }
+
+        @Override
+        public void setAll(IntFunction<? extends T> generator) {
+            unsupported();
+        }
+
+        @Override
+        public void parallelSetAll(IntFunction<? extends T> generator) {
+            unsupported();
+        }
+
+        @Override
+        public int compareTo(AbstractArray<T> array) {
+            return delegate.compareTo(array);
+        }
+
+        @Override
+        public int mismatch(AbstractArray<T> array) {
+            return delegate.mismatch(array);
+        }
+
+        @Override
+        public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+            return delegate.mismatch(array, comparator);
+        }
+
+        @Override
+        public AbstractSubArray<T> unmodifiableView() {
             return this;
         }
 
@@ -753,12 +898,12 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public boolean add(T element) {
-            throw new UnsupportedOperationException();
+            return delegate.add(element);
         }
 
         @Override
         public boolean remove(Object element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
@@ -768,37 +913,37 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public boolean addAll(Collection<? extends T> elements) {
-            throw new UnsupportedOperationException();
+            return delegate.addAll(elements);
         }
 
         @Override
         public boolean addAll(int index, Collection<? extends T> elements) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean removeAll(Collection<?> elements) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public boolean retainAll(Collection<?> elements) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public void replaceAll(UnaryOperator<T> operator) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void sort(Comparator<? super T> comparator) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public void clear() {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
@@ -823,17 +968,17 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public T set(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
         public void add(int index, T element) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            unsupported();
         }
 
         @Override
         public T remove(int index) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override
@@ -858,7 +1003,7 @@ class ArrayView<T> implements AbstractArray<T> {
 
         @Override
         public boolean removeIf(Predicate<? super T> filter) {
-            throw new UnsupportedOperationException(readOnlyMessage);
+            return unsupported();
         }
 
         @Override

@@ -5,7 +5,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * This collection, its sub-collections and iterators do not check bounds.
@@ -50,7 +55,8 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         return new Array<>(elements);
     }
 
-    private final Object[] elements;
+    @VisibleForPerformance
+    final Object[] elements;
     private transient Iterator iterator;
     private transient ArrayView<T> view;
 
@@ -64,6 +70,11 @@ public class Array<T> implements AbstractArray<T>, Serializable {
 
     private Array(Object[] elements) {
         this.elements = elements;
+    }
+
+    @Override
+    public T[] getElements() {
+        return (T[]) elements;
     }
 
     @Override
@@ -287,7 +298,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     }
 
     @Override
-    public AbstractArray<T> subList(int fromIndex, int toIndex) {
+    public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
         return new SubArray(fromIndex, toIndex);
     }
 
@@ -350,6 +361,97 @@ public class Array<T> implements AbstractArray<T>, Serializable {
     public T getAndSetRelease(int index, T element) {
         Object oldElement = ELEMENTS.getAndSetRelease(elements, index, element);
         return (T) oldElement;
+    }
+
+    @Override
+    public void fill(T value) {
+        Arrays.fill(elements, value);
+    }
+
+    @Override
+    public void sort() {
+        Arrays.sort(elements);
+    }
+
+    @Override
+    public void sort(Comparator<? super T> comparator) {
+        Arrays.sort((T[]) elements, comparator);
+    }
+
+    @Override
+    public void parallelSort() {
+        Arrays.parallelSort((Comparable[]) elements);
+    }
+
+    @Override
+    public void parallelSort(Comparator<? super T> comparator) {
+        Arrays.parallelSort((T[]) elements, comparator);
+    }
+
+    @Override
+    public Stream<T> stream() {
+        return Arrays.stream((T[]) elements);
+    }
+
+    @Override
+    public Stream<T> parallelStream() {
+        return stream().parallel();
+    }
+
+    @Override
+    public int binarySearch(T element) {
+        return Arrays.binarySearch(elements, element);
+    }
+
+    @Override
+    public int binarySearch(T element, Comparator<? super T> comparator) {
+        return Arrays.binarySearch((T[]) elements, element, comparator);
+    }
+
+    @Override
+    public void parallelPrefix(BinaryOperator<T> operator) {
+        Arrays.parallelPrefix((T[]) elements, operator);
+    }
+
+    @Override
+    public void setAll(IntFunction<? extends T> generator) {
+        Arrays.setAll(elements, generator);
+    }
+
+    @Override
+    public void parallelSetAll(IntFunction<? extends T> generator) {
+        Arrays.parallelSetAll(elements, generator);
+    }
+
+    @Override
+    public int compareTo(AbstractArray<T> array) {
+        if (array instanceof AbstractSubArray<?>) {
+            AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+            return Arrays.compare((Comparable[]) elements, 0, getCapacity(), (Comparable[]) array.getElements(), subArray.getBeginIndex(), subArray.getEndIndex());
+        }
+        return Arrays.compare((Comparable[]) elements, (Comparable[]) array.getElements());
+    }
+
+    public int mismatch(AbstractArray<T> array) {
+        if (array instanceof AbstractSubArray<?>) {
+            AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+            return Arrays.mismatch(elements, 0, getCapacity(), array.getElements(), subArray.getBeginIndex(), subArray.getEndIndex());
+        }
+        return Arrays.mismatch(elements, array.getElements());
+    }
+
+    public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+        int bFromIndex;
+        int bToIndex;
+        if (array instanceof AbstractSubArray<?>) {
+            AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+            bFromIndex = subArray.getBeginIndex();
+            bToIndex = subArray.getEndIndex();
+        } else {
+            bFromIndex = 0;
+            bToIndex = array.getCapacity();
+        }
+        return Arrays.mismatch((T[]) elements, 0, getCapacity(), array.getElements(), bFromIndex, bToIndex, comparator);
     }
 
     @Override
@@ -663,13 +765,28 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
     }
 
-    class SubArray implements AbstractArray<T> {
+    class SubArray implements AbstractSubArray<T> {
         private final int beginIndex;
         private final int endIndex;
 
         private SubArray(int beginIndex, int endIndex) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
+        }
+
+        @Override
+        public int getBeginIndex() {
+            return beginIndex;
+        }
+
+        @Override
+        public int getEndIndex() {
+            return endIndex;
+        }
+
+        @Override
+        public T[] getElements() {
+            return Array.this.getElements();
         }
 
         @Override
@@ -713,10 +830,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
             if (beginIndex == 0) {
                 return Arrays.copyOf(elements, endIndex, elementsArrayClass);
             }
-            int capacity = getCapacity();
-            Object[] result = new Object[capacity];
-            System.arraycopy(elements, beginIndex, result, 0, capacity);
-            return result;
+            return Arrays.copyOfRange(elements, beginIndex, endIndex, elementsArrayClass);
         }
 
         @Override
@@ -724,12 +838,9 @@ public class Array<T> implements AbstractArray<T>, Serializable {
             int capacity = getCapacity();
             if (array.length < capacity) {
                 if (beginIndex == 0) {
-                    Object[] result = Arrays.copyOf(elements, endIndex, array.getClass());
-                    return (U[]) result;
+                    return (U[]) Arrays.copyOf(elements, endIndex, array.getClass());
                 }
-                Object result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), capacity);
-                System.arraycopy(elements, beginIndex, result, 0, capacity);
-                return (U[]) result;
+                return (U[]) Arrays.copyOfRange(elements, beginIndex, endIndex, array.getClass());
             }
             System.arraycopy(elements, beginIndex, array, 0, capacity);
             return array;
@@ -896,7 +1007,7 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
-        public AbstractArray<T> subList(int fromIndex, int toIndex) {
+        public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
             return new SubArray(beginIndex + fromIndex, beginIndex + toIndex);
         }
 
@@ -956,7 +1067,114 @@ public class Array<T> implements AbstractArray<T>, Serializable {
         }
 
         @Override
-        public AbstractArray<T> unmodifiableView() {
+        public void fill(T value) {
+            Arrays.fill(elements, beginIndex, endIndex, value);
+        }
+
+        @Override
+        public void sort() {
+            Arrays.sort(elements, beginIndex, endIndex);
+        }
+
+        @Override
+        public void sort(Comparator<? super T> comparator) {
+            Arrays.sort((T[]) elements, beginIndex, endIndex, comparator);
+        }
+
+        @Override
+        public void parallelSort() {
+            Arrays.parallelSort((Comparable[]) elements, beginIndex, endIndex);
+        }
+
+        @Override
+        public void parallelSort(Comparator<? super T> comparator) {
+            Arrays.parallelSort((T[]) elements, beginIndex, endIndex, comparator);
+        }
+
+        @Override
+        public Stream<T> stream() {
+            return Arrays.stream((T[]) elements, beginIndex, endIndex);
+        }
+
+        @Override
+        public Stream<T> parallelStream() {
+            return stream().parallel();
+        }
+
+        @Override
+        public int binarySearch(T element) {
+            return Arrays.binarySearch(elements, beginIndex, endIndex, element);
+        }
+
+        @Override
+        public int binarySearch(T element, Comparator<? super T> comparator) {
+            return Arrays.binarySearch((T[]) elements, beginIndex, endIndex, element, comparator);
+        }
+
+        @Override
+        public void parallelPrefix(BinaryOperator<T> operator) {
+            Arrays.parallelPrefix((T[]) elements, beginIndex, endIndex, operator);
+        }
+
+        @Override
+        public void setAll(IntFunction<? extends T> generator) {
+            for (int i = beginIndex; i < endIndex; i++) {
+                elements[i] = generator.apply(i);
+            }
+        }
+
+        @Override
+        public void parallelSetAll(IntFunction<? extends T> generator) {
+            IntStream.range(beginIndex, endIndex)
+                    .parallel()
+                    .forEach(i -> elements[i] = generator.apply(i));
+        }
+
+        @Override
+        public int compareTo(AbstractArray<T> array) {
+            int bFromIndex;
+            int bToIndex;
+            if (array instanceof AbstractSubArray<?>) {
+                AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+                bFromIndex = subArray.getBeginIndex();
+                bToIndex = subArray.getEndIndex();
+            } else {
+                bFromIndex = 0;
+                bToIndex = array.getCapacity();
+            }
+            return Arrays.compare((Comparable[]) elements, beginIndex, endIndex, (Comparable[]) array.getElements(), bFromIndex, bToIndex);
+        }
+
+        public int mismatch(AbstractArray<T> array) {
+            int bFromIndex;
+            int bToIndex;
+            if (array instanceof AbstractSubArray<?>) {
+                AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+                bFromIndex = subArray.getBeginIndex();
+                bToIndex = subArray.getEndIndex();
+            } else {
+                bFromIndex = 0;
+                bToIndex = array.getCapacity();
+            }
+            return Arrays.mismatch(elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex);
+        }
+
+        public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+            int bFromIndex;
+            int bToIndex;
+            if (array instanceof AbstractSubArray<?>) {
+                AbstractSubArray<T> subArray = (AbstractSubArray<T>) array;
+                bFromIndex = subArray.getBeginIndex();
+                bToIndex = subArray.getEndIndex();
+            } else {
+                bFromIndex = 0;
+                bToIndex = array.getCapacity();
+            }
+            return Arrays.mismatch((T[]) elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex, comparator);
+        }
+
+        @Override
+        public AbstractSubArray<T> unmodifiableView() {
             return getView().new SubArrayView(this);
         }
 
