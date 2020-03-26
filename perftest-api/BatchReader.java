@@ -23,7 +23,7 @@ class BatchReader extends Reader {
     private final Array<Event> readBuffer;
 
     BatchReader(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
-        this(numIterations, new Array<>(readBufferSize), ringBuffer);
+        this(numIterations, Array.allocate(readBufferSize), ringBuffer);
     }
 
     BatchReader(int numIterations, Array<Event> readBuffer, RingBuffer<Event> ringBuffer) {

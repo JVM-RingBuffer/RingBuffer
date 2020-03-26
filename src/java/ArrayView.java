@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-class ArrayView<T> implements AbstractArray<T> {
+class ArrayView<T> implements Array<T> {
     private static final VarHandle ITERATOR;
 
     static {
@@ -24,10 +24,14 @@ class ArrayView<T> implements AbstractArray<T> {
         }
     }
 
-    private final Array<T> delegate;
+    private final MutableArray<T> delegate;
     private IteratorView<T> iterator;
 
     ArrayView(Array<T> delegate) {
+        this((MutableArray<T>) delegate);
+    }
+
+    ArrayView(MutableArray<T> delegate) {
         this.delegate = delegate;
     }
 
@@ -198,7 +202,7 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     @Override
-    public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
+    public SubArray<T> subList(int fromIndex, int toIndex) {
         return new SubArrayView(delegate.subList(fromIndex, toIndex));
     }
 
@@ -303,27 +307,27 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     @Override
-    public int compareTo(AbstractArray<T> array) {
+    public int compareTo(Array<T> array) {
         return delegate.compareTo(array);
     }
 
     @Override
-    public int mismatch(AbstractArray<T> array) {
+    public int mismatch(Array<T> array) {
         return delegate.mismatch(array);
     }
 
     @Override
-    public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+    public int mismatch(Array<T> array, Comparator<? super T> comparator) {
         return delegate.mismatch(array, comparator);
     }
 
     @Override
-    public AbstractArray<T> unmodifiableView() {
+    public Array<T> unmodifiableView() {
         return this;
     }
 
     @Override
-    public AbstractArray<T> immutableSnapshot() {
+    public Array<T> immutableSnapshot() {
         return delegate.immutableSnapshot();
     }
 
@@ -392,9 +396,9 @@ class ArrayView<T> implements AbstractArray<T> {
     }
 
     private static class IteratorView<T> implements ArrayIterator<T> {
-        private final Array<T>.Iterator delegate;
+        private final MutableArray<T>.Iterator delegate;
 
-        IteratorView(Array<T>.Iterator delegate) {
+        IteratorView(MutableArray<T>.Iterator delegate) {
             this.delegate = delegate;
         }
 
@@ -649,14 +653,15 @@ class ArrayView<T> implements AbstractArray<T> {
         }
     }
 
-    class SubArrayView implements AbstractSubArray<T> {
-        private final Array<T>.SubArray delegate;
+    class SubArrayView implements SubArray<T> {
+        private final MutableArray<T>.MutableSubArray delegate;
 
-        private SubArrayView(AbstractArray<T> delegate) {
-            this((Array<T>.SubArray) delegate);
+        @VisibleForPerformance
+        SubArrayView(SubArray<T> delegate) {
+            this((MutableArray<T>.MutableSubArray) delegate);
         }
 
-        SubArrayView(Array<T>.SubArray delegate) {
+        SubArrayView(MutableArray<T>.MutableSubArray delegate) {
             this.delegate = delegate;
         }
 
@@ -692,7 +697,7 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
-        public AbstractSubArray<T> subList(int fromIndex, int toIndex) {
+        public SubArray<T> subList(int fromIndex, int toIndex) {
             return new SubArrayView(delegate.subList(fromIndex, toIndex));
         }
 
@@ -842,27 +847,27 @@ class ArrayView<T> implements AbstractArray<T> {
         }
 
         @Override
-        public int compareTo(AbstractArray<T> array) {
+        public int compareTo(Array<T> array) {
             return delegate.compareTo(array);
         }
 
         @Override
-        public int mismatch(AbstractArray<T> array) {
+        public int mismatch(Array<T> array) {
             return delegate.mismatch(array);
         }
 
         @Override
-        public int mismatch(AbstractArray<T> array, Comparator<? super T> comparator) {
+        public int mismatch(Array<T> array, Comparator<? super T> comparator) {
             return delegate.mismatch(array, comparator);
         }
 
         @Override
-        public AbstractSubArray<T> unmodifiableView() {
+        public SubArray<T> unmodifiableView() {
             return this;
         }
 
         @Override
-        public AbstractArray<T> immutableSnapshot() {
+        public Array<T> immutableSnapshot() {
             return delegate.immutableSnapshot();
         }
 

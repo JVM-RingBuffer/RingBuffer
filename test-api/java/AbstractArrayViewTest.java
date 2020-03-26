@@ -18,24 +18,24 @@ abstract class AbstractArrayViewTest {
     static final String FIVE = "5";
     static final String[] ELEMENTS = {ZERO, ONE, null, TWO, ONE, THREE, null, null, FOUR};
 
-    private final AbstractArrayTest arrayTest;
+    private final AbstractMutableArrayTest arrayTest;
     final boolean isSubArray;
 
-    final AbstractArray<String> array;
-    private final AbstractArray<String> arrayFromCollection;
-    private final AbstractArray<String> arrayWithRepeatedElements;
-    private final AbstractArray<String> emptyArray;
-    private final AbstractArray<String> emptyArrayFromCollection;
+    final Array<String> array;
+    private final Array<String> arrayFromCollection;
+    private final Array<String> arrayWithRepeatedElements;
+    private final Array<String> emptyArray;
+    private final Array<String> emptyArrayFromCollection;
 
     AbstractArrayViewTest(boolean isSubArray) {
         this(null, isSubArray);
     }
 
-    AbstractArrayViewTest(AbstractArrayTest arrayTest) {
+    AbstractArrayViewTest(AbstractMutableArrayTest arrayTest) {
         this(arrayTest, arrayTest.isSubArray);
     }
 
-    private AbstractArrayViewTest(AbstractArrayTest arrayTest, boolean isSubArray) {
+    private AbstractArrayViewTest(AbstractMutableArrayTest arrayTest, boolean isSubArray) {
         this.arrayTest = arrayTest;
         this.isSubArray = isSubArray;
         array = getArray();
@@ -45,23 +45,23 @@ abstract class AbstractArrayViewTest {
         emptyArrayFromCollection = getEmptyArrayFromCollection();
     }
 
-    AbstractArray<String> getArray() {
+    Array<String> getArray() {
         return arrayTest.getArray().unmodifiableView();
     }
 
-    AbstractArray<String> getArrayFromCollection() {
+    Array<String> getArrayFromCollection() {
         return arrayTest.getArrayFromCollection().unmodifiableView();
     }
 
-    AbstractArray<String> getArrayWithRepeatedElements() {
+    Array<String> getArrayWithRepeatedElements() {
         return arrayTest.getArrayWithRepeatedElements().unmodifiableView();
     }
 
-    AbstractArray<String> getEmptyArray() {
+    Array<String> getEmptyArray() {
         return arrayTest.getEmptyArray().unmodifiableView();
     }
 
-    AbstractArray<String> getEmptyArrayFromCollection() {
+    Array<String> getEmptyArrayFromCollection() {
         return arrayTest.getEmptyArrayFromCollection().unmodifiableView();
     }
 

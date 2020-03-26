@@ -7,10 +7,10 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class AbstractArrayTest extends AbstractArrayViewTest {
+abstract class AbstractMutableArrayTest extends AbstractArrayViewTest {
     private static final String TWO_2 = "22";
 
-    AbstractArrayTest(boolean isSubArray) {
+    AbstractMutableArrayTest(boolean isSubArray) {
         super(isSubArray);
     }
 

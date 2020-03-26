@@ -5,7 +5,7 @@ import eu.menzani.ringbuffer.java.Array;
 
 class SynchronizedAdvancingBatchReader extends BatchReader {
     static TestThreadGroup runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
-        Array<Event> readBuffer = new Array<>(readBufferSize);
+        Array<Event> readBuffer = Array.allocate(readBufferSize);
         return new TestThreadGroup(numIterations -> runAsync(numIterations, readBuffer, ringBuffer));
     }
 

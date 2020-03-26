@@ -5,23 +5,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-class SubArrayTest extends AbstractArrayTest {
-    SubArrayTest() {
+class MutableSubArrayTest extends AbstractMutableArrayTest {
+    MutableSubArrayTest() {
         super(true);
     }
 
     @Override
-    AbstractArray<String> getArray() {
+    Array<String> getArray() {
         return Array.of(null, ONE, TWO, THREE, FOUR, FIVE, null).subList(0, 5);
     }
 
     @Override
-    AbstractArray<String> getArrayFromCollection() {
-        return new Array<>(Arrays.asList("-2", "-1", null, ONE, TWO, THREE, FOUR, FIVE, "6")).subList(2, 7);
+    Array<String> getArrayFromCollection() {
+        return Array.fromCollection(Arrays.asList("-2", "-1", null, ONE, TWO, THREE, FOUR, FIVE, "6")).subList(2, 7);
     }
 
     @Override
-    AbstractArray<String> getArrayWithRepeatedElements() {
+    Array<String> getArrayWithRepeatedElements() {
         List<String> elements = new ArrayList<>();
         elements.add("-2");
         elements.add("-1");
@@ -30,12 +30,12 @@ class SubArrayTest extends AbstractArrayTest {
     }
 
     @Override
-    AbstractArray<String> getEmptyArray() {
+    Array<String> getEmptyArray() {
         return Array.<String>empty(9).subList(3, 8);
     }
 
     @Override
-    AbstractArray<String> getEmptyArrayFromCollection() {
-        return new Array<String>(Collections.nCopies(5, null)).subList(0, 5);
+    Array<String> getEmptyArrayFromCollection() {
+        return Array.<String>fromCollection(Collections.nCopies(5, null)).subList(0, 5);
     }
 }
