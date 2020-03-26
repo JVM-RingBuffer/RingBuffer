@@ -115,11 +115,6 @@ class MutableArray<T> implements Array<T>, Serializable {
     }
 
     @Override
-    public boolean add(T element) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean remove(Object element) {
         int i = indexOf(element);
         if (i == -1) {
@@ -267,11 +262,6 @@ class MutableArray<T> implements Array<T>, Serializable {
     }
 
     @Override
-    public ArrayIterator<T> listIterator() {
-        return listIterator(0);
-    }
-
-    @Override
     public ArrayIterator<T> listIterator(int index) {
         Iterator iterator = getIterator();
         iterator.initialize(getCapacity(), index);
@@ -346,6 +336,11 @@ class MutableArray<T> implements Array<T>, Serializable {
     public T getAndSetRelease(int index, T element) {
         Object oldElement = ELEMENTS.getAndSetRelease(elements, index, element);
         return (T) oldElement;
+    }
+
+    @Override
+    public ArrayIterator<T> concurrentIterator(int index) {
+        return new Iterator(getCapacity(), index);
     }
 
     @Override
@@ -496,6 +491,12 @@ class MutableArray<T> implements Array<T>, Serializable {
         private int index;
 
         private Iterator() {}
+
+        @VisibleForPerformance
+        Iterator(int endIndex, int index) {
+            this.endIndex = endIndex;
+            this.index = index;
+        }
 
         @VisibleForPerformance
         void initialize(int endIndex, int index) {
@@ -825,11 +826,6 @@ class MutableArray<T> implements Array<T>, Serializable {
         }
 
         @Override
-        public boolean add(T element) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public boolean remove(Object element) {
             int i = indexOf(element);
             if (i == -1) {
@@ -981,11 +977,6 @@ class MutableArray<T> implements Array<T>, Serializable {
         }
 
         @Override
-        public ArrayIterator<T> listIterator() {
-            return listIterator(0);
-        }
-
-        @Override
         public ArrayIterator<T> listIterator(int index) {
             MutableSubArrayIterator iterator = getIterator();
             iterator.initialize(beginIndex, endIndex, toSubIndex(index));
@@ -1058,6 +1049,11 @@ class MutableArray<T> implements Array<T>, Serializable {
         @Override
         public T getAndSetRelease(int index, T element) {
             return MutableArray.this.getAndSetRelease(toSubIndex(index), element);
+        }
+
+        @Override
+        public ArrayIterator<T> concurrentIterator(int index) {
+            return new MutableSubArrayIterator(beginIndex, endIndex, toSubIndex(index));
         }
 
         @Override
@@ -1248,6 +1244,13 @@ class MutableArray<T> implements Array<T>, Serializable {
         private int index;
 
         private MutableSubArrayIterator() {}
+
+        @VisibleForPerformance
+        MutableSubArrayIterator(int beginIndex, int endIndex, int index) {
+            this.beginIndex = beginIndex;
+            this.endIndex = endIndex;
+            this.index = index;
+        }
 
         @VisibleForPerformance
         void initialize(int beginIndex, int endIndex, int index) {

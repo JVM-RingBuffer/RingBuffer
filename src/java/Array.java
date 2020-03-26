@@ -7,9 +7,6 @@ import java.util.RandomAccess;
 import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
 
-/**
- * Concurrent iteration is not supported nor detected.
- */
 public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, Cloneable {
     static Array<?> empty() {
         return MutableArray.EMPTY;
@@ -40,9 +37,21 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
         return new MutableArray<>(elements);
     }
 
+    @Override
+    default boolean add(T element) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    default boolean addAll(Collection<? extends T> elements) {
+        throw new UnsupportedOperationException();
+    }
+
     ArrayIterator<T> iterator();
 
-    ArrayIterator<T> listIterator();
+    default ArrayIterator<T> listIterator() {
+        return listIterator(0);
+    }
 
     ArrayIterator<T> listIterator(int index);
 
@@ -89,6 +98,18 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
     T getAndSetAcquire(int index, T element);
 
     T getAndSetRelease(int index, T element);
+
+    /**
+     * The iterator itself is not thread safe: one instance must be constructed per thread.
+     */
+    default ArrayIterator<T> concurrentIterator() {
+        return concurrentIterator(0);
+    }
+
+    /**
+     * The iterator itself is not thread safe: one instance must be constructed per thread.
+     */
+    ArrayIterator<T> concurrentIterator(int index);
 
     void fill(T value);
 

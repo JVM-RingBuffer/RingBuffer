@@ -78,11 +78,6 @@ class ArrayView<T> implements Array<T> {
     }
 
     @Override
-    public boolean add(T element) {
-        return delegate.add(element);
-    }
-
-    @Override
     public boolean remove(Object element) {
         return unsupported();
     }
@@ -188,11 +183,6 @@ class ArrayView<T> implements Array<T> {
     }
 
     @Override
-    public ArrayIterator<T> listIterator() {
-        return listIterator(0);
-    }
-
-    @Override
     public ArrayIterator<T> listIterator(int index) {
         delegate.listIterator(index);
         return LazyInit.get(ITERATOR, this, view -> new IteratorView<>(view.delegate.getIterator()));
@@ -256,6 +246,11 @@ class ArrayView<T> implements Array<T> {
     @Override
     public T getAndSetRelease(int index, T element) {
         return unsupported();
+    }
+
+    @Override
+    public ArrayIterator<T> concurrentIterator(int index) {
+        return delegate.concurrentIterator(index);
     }
 
     @Override
@@ -674,11 +669,6 @@ class ArrayView<T> implements Array<T> {
         }
 
         @Override
-        public ArrayIterator<T> listIterator() {
-            return listIterator(0);
-        }
-
-        @Override
         public ArrayIterator<T> listIterator(int index) {
             delegate.listIterator(index);
             return LazyInit.get(SUB_ARRAY_ITERATOR, this, view -> new SubArrayIteratorView<>(view.delegate.getIterator()));
@@ -790,6 +780,11 @@ class ArrayView<T> implements Array<T> {
         }
 
         @Override
+        public ArrayIterator<T> concurrentIterator(int index) {
+            return delegate.concurrentIterator(index);
+        }
+
+        @Override
         public void fill(T value) {
             unsupported();
         }
@@ -887,11 +882,6 @@ class ArrayView<T> implements Array<T> {
         @Override
         public <U> U[] toArray(U[] array) {
             return delegate.toArray(array);
-        }
-
-        @Override
-        public boolean add(T element) {
-            return delegate.add(element);
         }
 
         @Override
