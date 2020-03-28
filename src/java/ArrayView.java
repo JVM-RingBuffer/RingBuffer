@@ -38,8 +38,8 @@ class ArrayView<T> implements Array<T> {
     }
 
     @Override
-    public T[] getBackingArray() {
-        return delegate.getBackingArray();
+    public T[] getElements() {
+        return delegate.getElements();
     }
 
     @Override
@@ -60,11 +60,6 @@ class ArrayView<T> implements Array<T> {
     @Override
     public boolean contains(Object element) {
         return delegate.contains(element);
-    }
-
-    @Override
-    public ArrayIterator<T> iterator() {
-        return listIterator();
     }
 
     @Override
@@ -246,6 +241,11 @@ class ArrayView<T> implements Array<T> {
     @Override
     public T getAndSetRelease(int index, T element) {
         return unsupported();
+    }
+
+    @Override
+    public ArrayIterator<T> parallelIterator(int index) {
+        return delegate.parallelIterator(index);
     }
 
     @Override
@@ -659,13 +659,8 @@ class ArrayView<T> implements Array<T> {
         }
 
         @Override
-        public T[] getBackingArray() {
-            return delegate.getBackingArray();
-        }
-
-        @Override
-        public ArrayIterator<T> iterator() {
-            return listIterator();
+        public T[] getElements() {
+            return delegate.getElements();
         }
 
         @Override
@@ -777,6 +772,11 @@ class ArrayView<T> implements Array<T> {
         @Override
         public T getAndSetRelease(int index, T element) {
             return unsupported();
+        }
+
+        @Override
+        public ArrayIterator<T> parallelIterator(int index) {
+            return delegate.parallelIterator(index);
         }
 
         @Override

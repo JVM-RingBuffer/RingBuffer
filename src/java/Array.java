@@ -47,17 +47,31 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
         throw new UnsupportedOperationException();
     }
 
-    ArrayIterator<T> iterator();
+    /**
+     * The iterator is a reused object: it can be used by at most one thread at a time.
+     * Concurrent iteration is not detected.
+     */
+    default ArrayIterator<T> iterator() {
+        return listIterator();
+    }
 
+    /**
+     * The iterator is a reused object: it can be used by at most one thread at a time.
+     * Concurrent iteration is not detected.
+     */
     default ArrayIterator<T> listIterator() {
         return listIterator(0);
     }
 
+    /**
+     * The iterator is a reused object: it can be used by at most one thread at a time.
+     * Concurrent iteration is not detected.
+     */
     ArrayIterator<T> listIterator(int index);
 
     SubArray<T> subList(int fromIndex, int toIndex);
 
-    T[] getBackingArray();
+    T[] getElements();
 
     int getCapacity();
 
@@ -100,15 +114,21 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
     T getAndSetRelease(int index, T element);
 
     /**
-     * The iterator itself is not thread safe: one instance must be constructed per thread.
+     * The iterator itself is not thread-safe: one instance must be constructed per thread.
      */
+    default ArrayIterator<T> parallelIterator() {
+        return parallelIterator(0);
+    }
+
+    /**
+     * The iterator itself is not thread-safe: one instance must be constructed per thread.
+     */
+    ArrayIterator<T> parallelIterator(int index);
+
     default ArrayIterator<T> concurrentIterator() {
         return concurrentIterator(0);
     }
 
-    /**
-     * The iterator itself is not thread safe: one instance must be constructed per thread.
-     */
     ArrayIterator<T> concurrentIterator(int index);
 
     void fill(T value);
