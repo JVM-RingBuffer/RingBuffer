@@ -123,11 +123,20 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
                     return true;
                 }
             }
-        } else {
-            for (int i = writePosition; i < readPosition; i++) {
-                if (buffer[i].equals(element)) {
-                    return true;
-                }
+            return false;
+        }
+        return splitContains(element, writePosition);
+    }
+
+    private boolean splitContains(T element, int writePosition) {
+        for (int i = readPosition; i < capacity; i++) {
+            if (buffer[i].equals(element)) {
+                return true;
+            }
+        }
+        for (int i = 0; i < writePosition; i++) {
+            if (buffer[i].equals(element)) {
+                return true;
             }
         }
         return false;
