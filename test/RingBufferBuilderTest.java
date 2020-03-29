@@ -23,7 +23,7 @@ class RingBufferBuilderTest {
         assertEquals(AdvancingAtomicWriteBlockingPrefilledRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER.getClass());
         assertEquals(VolatileRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER.getClass());
 
-        assertEquals(AdvancingVolatileBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER.getClass());
+        assertEquals(AdvancingAtomicReadBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER.getClass());
         assertEquals(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER.getClass());
 
         assertEquals(LocalRingBuffer.class, LocalRingBufferTest.RING_BUFFER.getClass());

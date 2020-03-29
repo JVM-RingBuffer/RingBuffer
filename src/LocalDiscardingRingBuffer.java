@@ -30,10 +30,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public T next() {
         int oldWritePosition = writePosition;
-        if (writePosition == capacityMinusOne) {
-            writePosition = 0;
+        if (writePosition == 0) {
+            writePosition = capacityMinusOne;
         } else {
-            writePosition++;
+            writePosition--;
         }
         if (readPosition == writePosition) {
             return dummyElement;
@@ -44,10 +44,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void put(T element) {
         int oldWritePosition = writePosition;
-        if (writePosition == capacityMinusOne) {
-            writePosition = 0;
+        if (writePosition == 0) {
+            writePosition = capacityMinusOne;
         } else {
-            writePosition++;
+            writePosition--;
         }
         if (readPosition != writePosition) {
             buffer[oldWritePosition] = element;
@@ -60,10 +60,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         if (gcEnabled) {
             buffer[readPosition] = null;
         }
-        if (readPosition == capacityMinusOne) {
-            readPosition = 0;
+        if (readPosition == 0) {
+            readPosition = capacityMinusOne;
         } else {
-            readPosition++;
+            readPosition--;
         }
         return element;
     }
@@ -71,10 +71,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void fill(Array<T> buffer) {
         int bufferSize = buffer.getCapacity();
-        if (readPosition < capacity - bufferSize) {
+        if (readPosition >= bufferSize) {
             int i = readPosition;
-            readPosition += bufferSize;
-            for (int j = 0; i < readPosition; i++) {
+            readPosition -= bufferSize;
+            for (int j = 0; i > readPosition; i--) {
                 buffer.setElement(j++, this.buffer[i]);
                 if (gcEnabled) {
                     this.buffer[i] = null;
@@ -87,14 +87,14 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     private void fillSplit(Array<T> buffer, int bufferSize) {
         int j = 0;
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
-        readPosition += bufferSize - capacity;
-        for (int i = 0; i < readPosition; i++) {
+        readPosition += capacity - bufferSize;
+        for (int i = capacityMinusOne; i > readPosition; i--) {
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
@@ -104,8 +104,8 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
-        if (writePosition >= readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
@@ -114,18 +114,18 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void forEachSplit(Consumer<T> action) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             action.accept(buffer[i]);
         }
     }
 
     @Override
     public boolean contains(T element) {
-        if (writePosition >= readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 if (buffer[i].equals(element)) {
                     return true;
                 }
@@ -136,12 +136,12 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private boolean containsSplit(T element) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
             }
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             if (buffer[i].equals(element)) {
                 return true;
             }
@@ -151,10 +151,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
+        if (writePosition <= readPosition) {
+            return readPosition - writePosition;
         }
-        return capacity - (readPosition - writePosition);
+        return capacity - (writePosition - readPosition);
     }
 
     @Override
@@ -169,8 +169,8 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         }
         StringBuilder builder = new StringBuilder(16);
         builder.append('[');
-        if (writePosition > readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition < readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 builder.append(buffer[i].toString());
                 builder.append(", ");
             }
@@ -182,11 +182,11 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void toStringSplit(StringBuilder builder) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");
         }

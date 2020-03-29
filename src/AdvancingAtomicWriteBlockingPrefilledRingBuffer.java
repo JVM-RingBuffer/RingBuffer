@@ -12,8 +12,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final LazyVolatileInteger readPosition = new LazyVolatileInteger();
-    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
+    private final LazyVolatileInteger readPosition;
+    private final LazyVolatileInteger writePosition;
 
     private int newWritePosition;
     private int newReadPosition;
@@ -24,6 +24,9 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         buffer = builder.newBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
+
+        readPosition = new LazyVolatileInteger(capacityMinusOne);
+        writePosition = new LazyVolatileInteger(capacityMinusOne);
     }
 
     @Override
@@ -34,10 +37,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     @Override
     public T next() {
         int writePosition = this.writePosition.getPlain();
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
+        if (writePosition == 0) {
+            newWritePosition = capacityMinusOne;
         } else {
-            newWritePosition = writePosition + 1;
+            newWritePosition = writePosition - 1;
         }
         writeBusyWaitStrategy.reset();
         while (readPosition.get() == newWritePosition) {
@@ -55,10 +58,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     public synchronized void put(T element) {
         int writePosition = this.writePosition.getPlain();
         int newWritePosition;
-        if (writePosition == capacityMinusOne) {
-            newWritePosition = 0;
+        if (writePosition == 0) {
+            newWritePosition = capacityMinusOne;
         } else {
-            newWritePosition = writePosition + 1;
+            newWritePosition = writePosition - 1;
         }
         writeBusyWaitStrategy.reset();
         while (readPosition.get() == newWritePosition) {
@@ -75,10 +78,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
-        if (readPosition == capacityMinusOne) {
-            this.readPosition.set(0);
+        if (readPosition == 0) {
+            this.readPosition.set(capacityMinusOne);
         } else {
-            this.readPosition.set(readPosition + 1);
+            this.readPosition.set(readPosition - 1);
         }
         return buffer[readPosition];
     }
@@ -91,9 +94,9 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         while (size(readPosition) < bufferSize) {
             readBusyWaitStrategy.tick();
         }
-        if (readPosition < capacity - bufferSize) {
-            newReadPosition = readPosition + bufferSize;
-            for (int j = 0; readPosition < newReadPosition; readPosition++) {
+        if (readPosition >= bufferSize) {
+            newReadPosition = readPosition - bufferSize;
+            for (int j = 0; readPosition > newReadPosition; readPosition--) {
                 buffer.setElement(j++, this.buffer[readPosition]);
             }
         } else {
@@ -103,19 +106,19 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
 
     private int size(int readPosition) {
         int writePosition = this.writePosition.get();
-        if (writePosition >= readPosition) {
-            return writePosition - readPosition;
+        if (writePosition <= readPosition) {
+            return readPosition - writePosition;
         }
-        return capacity - (readPosition - writePosition);
+        return capacity - (writePosition - readPosition);
     }
 
     private void fillSplit(int readPosition, Array<T> buffer, int bufferSize) {
         int j = 0;
-        newReadPosition = readPosition + bufferSize - capacity;
-        for (; readPosition < capacity; readPosition++) {
+        newReadPosition = readPosition + capacity - bufferSize;
+        for (; readPosition >= 0; readPosition--) {
             buffer.setElement(j++, this.buffer[readPosition]);
         }
-        for (readPosition = 0; readPosition < newReadPosition; readPosition++) {
+        for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer.setElement(j++, this.buffer[readPosition]);
         }
     }
@@ -129,8 +132,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     public void forEach(Consumer<T> action) {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
-        if (writePosition >= readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
@@ -139,10 +142,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             action.accept(buffer[i]);
         }
     }
@@ -151,8 +154,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     public boolean contains(T element) {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
-        if (writePosition >= readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 if (buffer[i].equals(element)) {
                     return true;
                 }
@@ -163,12 +166,12 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     private boolean containsSplit(T element, int readPosition, int writePosition) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
             }
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             if (buffer[i].equals(element)) {
                 return true;
             }
@@ -195,8 +198,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         }
         StringBuilder builder = new StringBuilder(16);
         builder.append('[');
-        if (writePosition > readPosition) {
-            for (int i = readPosition; i < writePosition; i++) {
+        if (writePosition < readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
                 builder.append(buffer[i].toString());
                 builder.append(", ");
             }
@@ -208,11 +211,11 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
-        for (int i = readPosition; i < capacity; i++) {
+        for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");
         }
-        for (int i = 0; i < writePosition; i++) {
+        for (int i = capacityMinusOne; i > writePosition; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");
         }

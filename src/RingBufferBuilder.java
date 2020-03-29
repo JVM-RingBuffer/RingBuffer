@@ -117,7 +117,7 @@ public class RingBufferBuilder<T> {
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
                     if (isPrefilled) {
-                        return new AdvancingVolatileBlockingPrefilledRingBuffer<>(this);
+                        return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
                     }
                     return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
                 case DISCARDING:
