@@ -3,7 +3,6 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 class VolatileRingBuffer<T> implements RingBuffer<T> {
@@ -141,7 +140,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         int writePosition = this.writePosition.get();
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                if (Objects.equals(buffer[i], element)) {
+                if (buffer[i].equals(element)) {
                     return true;
                 }
             }
@@ -152,12 +151,12 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i < capacity; i++) {
-            if (Objects.equals(buffer[i], element)) {
+            if (buffer[i].equals(element)) {
                 return true;
             }
         }
         for (int i = 0; i < writePosition; i++) {
-            if (Objects.equals(buffer[i], element)) {
+            if (buffer[i].equals(element)) {
                 return true;
             }
         }
@@ -188,7 +187,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         builder.append('[');
         if (writePosition > readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                builder.append(buffer[i]);
+                builder.append(buffer[i].toString());
                 builder.append(", ");
             }
         } else {
@@ -200,11 +199,11 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i < capacity; i++) {
-            builder.append(buffer[i]);
+            builder.append(buffer[i].toString());
             builder.append(", ");
         }
         for (int i = 0; i < writePosition; i++) {
-            builder.append(buffer[i]);
+            builder.append(buffer[i].toString());
             builder.append(", ");
         }
     }

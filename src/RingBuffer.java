@@ -5,6 +5,9 @@ import eu.menzani.ringbuffer.java.Array;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * The <code>null</code> element may be used if the {@link #contains(T)} and {@link #toString()} methods are never called.
+ */
 public interface RingBuffer<T> {
     int getCapacity();
 

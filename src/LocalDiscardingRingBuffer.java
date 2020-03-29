@@ -2,7 +2,6 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Array;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
@@ -127,7 +126,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     public boolean contains(T element) {
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                if (Objects.equals(buffer[i], element)) {
+                if (buffer[i].equals(element)) {
                     return true;
                 }
             }
@@ -138,12 +137,12 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     private boolean containsSplit(T element) {
         for (int i = readPosition; i < capacity; i++) {
-            if (Objects.equals(buffer[i], element)) {
+            if (buffer[i].equals(element)) {
                 return true;
             }
         }
         for (int i = 0; i < writePosition; i++) {
-            if (Objects.equals(buffer[i], element)) {
+            if (buffer[i].equals(element)) {
                 return true;
             }
         }
@@ -172,7 +171,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         builder.append('[');
         if (writePosition > readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                builder.append(buffer[i]);
+                builder.append(buffer[i].toString());
                 builder.append(", ");
             }
         } else {
@@ -184,11 +183,11 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     private void toStringSplit(StringBuilder builder) {
         for (int i = readPosition; i < capacity; i++) {
-            builder.append(buffer[i]);
+            builder.append(buffer[i].toString());
             builder.append(", ");
         }
         for (int i = 0; i < writePosition; i++) {
-            builder.append(buffer[i]);
+            builder.append(buffer[i].toString());
             builder.append(", ");
         }
     }
