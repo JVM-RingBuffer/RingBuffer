@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
-    private final Object[] buffer;
+    private final T[] buffer;
     private final boolean gcEnabled;
     private final T dummyElement;
 
@@ -38,7 +38,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         if (readPosition == writePosition) {
             return dummyElement;
         }
-        return (T) buffer[oldWritePosition];
+        return buffer[oldWritePosition];
     }
 
     @Override
@@ -56,7 +56,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        Object element = buffer[readPosition];
+        T element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
         }
@@ -65,7 +65,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         } else {
             readPosition++;
         }
-        return (T) element;
+        return element;
     }
 
     @Override
@@ -75,7 +75,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
             int i = readPosition;
             readPosition += bufferSize;
             for (int j = 0; i < readPosition; i++) {
-                buffer.setElement(j++, (T) this.buffer[i]);
+                buffer.setElement(j++, this.buffer[i]);
                 if (gcEnabled) {
                     this.buffer[i] = null;
                 }
@@ -88,14 +88,14 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     private void splitFill(Array<T> buffer, int bufferSize) {
         int j = 0;
         for (int i = readPosition; i < capacity; i++) {
-            buffer.setElement(j++, (T) this.buffer[i]);
+            buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
         readPosition += bufferSize - capacity;
         for (int i = 0; i < readPosition; i++) {
-            buffer.setElement(j++, (T) this.buffer[i]);
+            buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }

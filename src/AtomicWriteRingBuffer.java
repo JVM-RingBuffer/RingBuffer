@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
-    private final Object[] buffer;
+    private final T[] buffer;
     private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
@@ -17,7 +17,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     private int newWritePosition;
 
-    AtomicWriteRingBuffer(RingBufferBuilder<?> builder) {
+    AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.newBuffer();
@@ -38,7 +38,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             newWritePosition = writePosition + 1;
         }
-        return (T) buffer[writePosition];
+        return buffer[writePosition];
     }
 
     @Override
@@ -69,11 +69,11 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition++;
         }
-        Object element = buffer[readPosition];
+        T element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
         }
-        return (T) element;
+        return element;
     }
 
     @Override
@@ -87,7 +87,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
             int i = readPosition;
             readPosition += bufferSize;
             for (int j = 0; i < readPosition; i++) {
-                buffer.setElement(j++, (T) this.buffer[i]);
+                buffer.setElement(j++, this.buffer[i]);
                 if (gcEnabled) {
                     this.buffer[i] = null;
                 }
@@ -100,14 +100,14 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private void splitFill(Array<T> buffer, int bufferSize) {
         int j = 0;
         for (int i = readPosition; i < capacity; i++) {
-            buffer.setElement(j++, (T) this.buffer[i]);
+            buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
         readPosition += bufferSize - capacity;
         for (int i = 0; i < readPosition; i++) {
-            buffer.setElement(j++, (T) this.buffer[i]);
+            buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }

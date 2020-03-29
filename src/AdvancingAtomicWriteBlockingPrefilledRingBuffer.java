@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
-    private final Object[] buffer;
+    private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -43,7 +43,7 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         while (readPosition.get() == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
-        return (T) buffer[writePosition];
+        return buffer[writePosition];
     }
 
     @Override
@@ -80,7 +80,7 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         } else {
             this.readPosition.set(readPosition + 1);
         }
-        return (T) buffer[readPosition];
+        return buffer[readPosition];
     }
 
     @Override
@@ -94,7 +94,7 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         if (readPosition < capacity - bufferSize) {
             newReadPosition = readPosition + bufferSize;
             for (int j = 0; readPosition < newReadPosition; readPosition++) {
-                buffer.setElement(j++, (T) this.buffer[readPosition]);
+                buffer.setElement(j++, this.buffer[readPosition]);
             }
         } else {
             splitFill(readPosition, buffer, bufferSize);
@@ -113,10 +113,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         int j = 0;
         newReadPosition = readPosition + bufferSize - capacity;
         for (; readPosition < capacity; readPosition++) {
-            buffer.setElement(j++, (T) this.buffer[readPosition]);
+            buffer.setElement(j++, this.buffer[readPosition]);
         }
         for (readPosition = 0; readPosition < newReadPosition; readPosition++) {
-            buffer.setElement(j++, (T) this.buffer[readPosition]);
+            buffer.setElement(j++, this.buffer[readPosition]);
         }
     }
 

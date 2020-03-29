@@ -146,8 +146,8 @@ public class RingBufferBuilder<T> {
         return capacity - 1;
     }
 
-    Object[] newBuffer() {
-        Object[] buffer = new Object[capacity];
+    T[] newBuffer() {
+        T[] buffer = (T[]) new Object[capacity];
         if (isPrefilled) {
             for (int i = 0; i < capacity; i++) {
                 buffer[i] = filler.get();
