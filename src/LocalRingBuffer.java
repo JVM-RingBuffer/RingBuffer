@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Array;
 
-import java.util.StringJoiner;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 class LocalRingBuffer<T> implements RingBuffer<T> {
@@ -119,7 +119,7 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     public boolean contains(T element) {
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                if (buffer[i].equals(element)) {
+                if (Objects.equals(buffer[i], element)) {
                     return true;
                 }
             }
@@ -130,12 +130,12 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
 
     private boolean containsSplit(T element) {
         for (int i = readPosition; i < capacity; i++) {
-            if (buffer[i].equals(element)) {
+            if (Objects.equals(buffer[i], element)) {
                 return true;
             }
         }
         for (int i = 0; i < writePosition; i++) {
-            if (buffer[i].equals(element)) {
+            if (Objects.equals(buffer[i], element)) {
                 return true;
             }
         }
@@ -157,16 +157,31 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(", ", "[", "]");
-        if (writePosition >= readPosition) {
+        if (writePosition == readPosition) {
+            return "[]";
+        }
+        StringBuilder builder = new StringBuilder(16);
+        builder.append('[');
+        if (writePosition > readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
-                joiner.add(buffer[i].toString());
+                builder.append(buffer[i]);
+                builder.append(", ");
             }
         } else {
-            for (int i = writePosition; i < readPosition; i++) {
-                joiner.add(buffer[i].toString());
-            }
+            toStringSplit(builder);
         }
-        return joiner.toString();
+        builder.setLength(builder.length() - 2);
+        return builder.toString();
+    }
+
+    private void toStringSplit(StringBuilder builder) {
+        for (int i = readPosition; i < capacity; i++) {
+            builder.append(buffer[i]);
+            builder.append(", ");
+        }
+        for (int i = 0; i < writePosition; i++) {
+            builder.append(buffer[i]);
+            builder.append(", ");
+        }
     }
 }
