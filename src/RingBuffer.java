@@ -2,6 +2,7 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Array;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface RingBuffer<T> {
@@ -61,6 +62,12 @@ public interface RingBuffer<T> {
     void fill(Array<T> buffer);
 
     default void advance() {}
+
+    /**
+     * If the ring buffer supports a single reader and is not blocking nor discarding,
+     * then this method can only be called from the reader thread.
+     */
+    void forEach(Consumer<T> action);
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,

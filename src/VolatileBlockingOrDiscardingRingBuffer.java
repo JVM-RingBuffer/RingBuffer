@@ -4,6 +4,7 @@ import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
@@ -122,7 +123,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
             }
             this.readPosition.set(newReadPosition);
         } else {
-            splitFill(readPosition, buffer, bufferSize);
+            fillSplit(readPosition, buffer, bufferSize);
         }
     }
 
@@ -134,7 +135,7 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
         return capacity - (readPosition - writePosition);
     }
 
-    private void splitFill(int readPosition, Array<T> buffer, int bufferSize) {
+    private void fillSplit(int readPosition, Array<T> buffer, int bufferSize) {
         int j = 0;
         int newReadPosition = readPosition + bufferSize - capacity;
         for (; readPosition < capacity; readPosition++) {
@@ -153,6 +154,28 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void forEach(Consumer<T> action) {
+        int readPosition = this.readPosition.get();
+        int writePosition = this.writePosition.get();
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                action.accept(buffer[i]);
+            }
+        } else {
+            forEachSplit(action, readPosition, writePosition);
+        }
+    }
+
+    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
+        for (int i = readPosition; i < capacity; i++) {
+            action.accept(buffer[i]);
+        }
+        for (int i = 0; i < writePosition; i++) {
+            action.accept(buffer[i]);
+        }
+    }
+
+    @Override
     public boolean contains(T element) {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
@@ -164,10 +187,10 @@ class VolatileBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
             }
             return false;
         }
-        return splitContains(element, readPosition, writePosition);
+        return containsSplit(element, readPosition, writePosition);
     }
 
-    private boolean splitContains(T element, int readPosition, int writePosition) {
+    private boolean containsSplit(T element, int readPosition, int writePosition) {
         for (int i = readPosition; i < capacity; i++) {
             if (buffer[i].equals(element)) {
                 return true;

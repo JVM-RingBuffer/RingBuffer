@@ -3,6 +3,7 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.java.Array;
 
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
@@ -81,11 +82,11 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
                 }
             }
         } else {
-            splitFill(buffer, bufferSize);
+            fillSplit(buffer, bufferSize);
         }
     }
 
-    private void splitFill(Array<T> buffer, int bufferSize) {
+    private void fillSplit(Array<T> buffer, int bufferSize) {
         int j = 0;
         for (int i = readPosition; i < capacity; i++) {
             buffer.setElement(j++, this.buffer[i]);
@@ -103,6 +104,26 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void forEach(Consumer<T> action) {
+        if (writePosition >= readPosition) {
+            for (int i = readPosition; i < writePosition; i++) {
+                action.accept(buffer[i]);
+            }
+        } else {
+            forEachSplit(action);
+        }
+    }
+
+    private void forEachSplit(Consumer<T> action) {
+        for (int i = readPosition; i < capacity; i++) {
+            action.accept(buffer[i]);
+        }
+        for (int i = 0; i < writePosition; i++) {
+            action.accept(buffer[i]);
+        }
+    }
+
+    @Override
     public boolean contains(T element) {
         if (writePosition >= readPosition) {
             for (int i = readPosition; i < writePosition; i++) {
@@ -112,10 +133,10 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
             }
             return false;
         }
-        return splitContains(element);
+        return containsSplit(element);
     }
 
-    private boolean splitContains(T element) {
+    private boolean containsSplit(T element) {
         for (int i = readPosition; i < capacity; i++) {
             if (buffer[i].equals(element)) {
                 return true;
