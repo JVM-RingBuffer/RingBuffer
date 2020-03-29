@@ -12,8 +12,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final LazyVolatileInteger readPosition;
-    private final LazyVolatileInteger writePosition;
+    private final LazyVolatileInteger readPosition = new LazyVolatileInteger();
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
 
     private int newWritePosition;
     private int newReadPosition;
@@ -24,9 +24,6 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
         buffer = builder.newBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-
-        readPosition = new LazyVolatileInteger(capacityMinusOne);
-        writePosition = new LazyVolatileInteger(capacityMinusOne);
     }
 
     @Override

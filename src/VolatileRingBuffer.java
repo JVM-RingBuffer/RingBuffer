@@ -13,7 +13,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
-    private final LazyVolatileInteger writePosition;
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
 
     private int newWritePosition;
 
@@ -23,8 +23,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         buffer = builder.newBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-
-        writePosition = new LazyVolatileInteger(capacityMinusOne);
     }
 
     @Override

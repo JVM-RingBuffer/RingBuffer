@@ -13,8 +13,8 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
-    private final LazyVolatileInteger readPosition;
-    private final LazyVolatileInteger writePosition;
+    private final LazyVolatileInteger readPosition = new LazyVolatileInteger();
+    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
 
     private int newWritePosition;
 
@@ -25,9 +25,6 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         dummyElement = builder.getDummyElement();
-
-        readPosition = new LazyVolatileInteger(capacityMinusOne);
-        writePosition = new LazyVolatileInteger(capacityMinusOne);
     }
 
     @Override
