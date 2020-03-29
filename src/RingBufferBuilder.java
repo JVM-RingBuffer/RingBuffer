@@ -104,12 +104,12 @@ public class RingBufferBuilder<T> {
                         if (isPrefilled) {
                             return new AdvancingAtomicWriteBlockingPrefilledRingBuffer<>(this);
                         }
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, false);
+                        return new AtomicWriteBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (isPrefilled) {
                             break;
                         }
-                        return new AtomicWriteBlockingOrDiscardingRingBuffer<>(this, true);
+                        return new AtomicWriteDiscardingRingBuffer<>(this);
                 }
             }
             switch (type) {
@@ -119,9 +119,9 @@ public class RingBufferBuilder<T> {
                     if (isPrefilled) {
                         return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
                     }
-                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, false);
+                    return new VolatileBlockingRingBuffer<>(this);
                 case DISCARDING:
-                    return new VolatileBlockingOrDiscardingRingBuffer<>(this, true);
+                    return new VolatileDiscardingRingBuffer<>(this);
             }
         }
         switch (type) {
@@ -131,9 +131,9 @@ public class RingBufferBuilder<T> {
                 if (isPrefilled) {
                     return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
                 }
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, false);
+                return new AtomicReadBlockingRingBuffer<>(this);
             case DISCARDING:
-                return new AtomicReadBlockingOrDiscardingRingBuffer<>(this, true);
+                return new AtomicReadDiscardingRingBuffer<>(this);
         }
         throw new AssertionError();
     }

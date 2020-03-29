@@ -5,14 +5,12 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
+class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
     private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final boolean discarding;
-    private final BusyWaitStrategy writeBusyWaitStrategy;
     private final T dummyElement;
 
     private final LazyVolatileInteger readPosition;
@@ -20,19 +18,13 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     private int newWritePosition;
 
-    AtomicReadBlockingOrDiscardingRingBuffer(RingBufferBuilder<T> builder, boolean discarding) {
+    VolatileDiscardingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.newBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        this.discarding = discarding;
-        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        if (discarding) {
-            dummyElement = builder.getDummyElement();
-        } else {
-            dummyElement = null;
-        }
+        dummyElement = builder.getDummyElement();
 
         readPosition = new LazyVolatileInteger(capacityMinusOne);
         writePosition = new LazyVolatileInteger(capacityMinusOne);
@@ -51,10 +43,11 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
         } else {
             newWritePosition = writePosition - 1;
         }
-        if (isBufferNotFull(newWritePosition)) {
-            return buffer[writePosition];
+        if (readPosition.get() == newWritePosition) {
+            newWritePosition = writePosition;
+            return dummyElement;
         }
-        return dummyElement;
+        return buffer[writePosition];
     }
 
     @Override
@@ -71,25 +64,14 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
         } else {
             newWritePosition = writePosition - 1;
         }
-        if (isBufferNotFull(newWritePosition)) {
+        if (readPosition.get() != newWritePosition) {
             buffer[writePosition] = element;
             this.writePosition.set(newWritePosition);
         }
     }
 
-    private boolean isBufferNotFull(int newWritePosition) {
-        if (discarding) {
-            return readPosition.get() != newWritePosition;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return true;
-    }
-
     @Override
-    public synchronized T take() {
+    public T take() {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
@@ -108,7 +90,7 @@ class AtomicReadBlockingOrDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized void fill(Array<T> buffer) {
+    public void fill(Array<T> buffer) {
         int readPosition = this.readPosition.getPlain();
         int bufferSize = buffer.getCapacity();
         readBusyWaitStrategy.reset();

@@ -30,12 +30,13 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public T next() {
         int oldWritePosition = writePosition;
-        if (writePosition == 0) {
+        if (oldWritePosition == 0) {
             writePosition = capacityMinusOne;
         } else {
             writePosition--;
         }
         if (readPosition == writePosition) {
+            writePosition = oldWritePosition;
             return dummyElement;
         }
         return buffer[oldWritePosition];
@@ -43,14 +44,15 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        int oldWritePosition = writePosition;
+        int newWritePosition;
         if (writePosition == 0) {
-            writePosition = capacityMinusOne;
+            newWritePosition = capacityMinusOne;
         } else {
-            writePosition--;
+            newWritePosition = writePosition - 1;
         }
-        if (readPosition != writePosition) {
-            buffer[oldWritePosition] = element;
+        if (readPosition != newWritePosition) {
+            buffer[writePosition] = element;
+            writePosition = newWritePosition;
         }
     }
 
