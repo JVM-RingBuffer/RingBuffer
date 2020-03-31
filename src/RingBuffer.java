@@ -12,11 +12,11 @@ public interface RingBuffer<T> {
     int getCapacity();
 
     /**
-     * If the ring buffer is not local, then after the returned object has been populated,
-     * <code>put()</code> must be called.
+     * If the ring buffer supports at least one reader and writer, then after the returned object has been populated,
+     * {@link #put()} must be called.
      * <p>
-     * Moreover, if the ring buffer supports multiple writers, then external synchronization
-     * must be performed between the two method invocations:
+     * Moreover, if the ring buffer supports multiple writers and is blocking or discarding, then external
+     * synchronization must be performed between the two method invocations:
      *
      * <pre>{@code
      * synchronized (ringBuffer) {
@@ -25,10 +25,42 @@ public interface RingBuffer<T> {
      *    ringBuffer.put();
      * }
      * }</pre>
+     * <p>
+     * If the ring buffer is not blocking nor discarding, then {@link #next(int)} must be used instead.
      */
-    T next();
+    default T next() {
+        return keyRequired();
+    }
 
-    default void put() {}
+    default void put() {
+        keyRequired();
+    }
+
+    private static <T> T keyRequired() {
+        throw new UnsupportedOperationException("Use nextKey(), next(key) and put(key) instead.");
+    }
+
+    default int nextKey() {
+        return 0;
+    }
+
+    /**
+     * To be used if the ring buffer supports multiple writers and is not blocking nor discarding.
+     *
+     * <pre>{@code
+     * int key = ringBuffer.nextKey();
+     * T element = ringBuffer.next(key);
+     * // Populate element
+     * ringBuffer.put(key);
+     * }</pre>
+     */
+    default T next(int key) {
+        return next();
+    }
+
+    default void put(int key) {
+        put();
+    }
 
     void put(T element);
 

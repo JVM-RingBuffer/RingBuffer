@@ -16,4 +16,8 @@ class LazyVolatileInteger {
     int getPlain() {
         return value.getPlain();
     }
+
+    int getAndDecrement() {
+        return value.getAndDecrement();
+    }
 }

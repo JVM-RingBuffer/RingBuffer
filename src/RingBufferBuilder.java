@@ -1,13 +1,14 @@
 package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Assume;
+import eu.menzani.ringbuffer.java.Int;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.util.function.Supplier;
 
 public class RingBufferBuilder<T> {
-    private final int capacity;
+    private int capacity;
     private final Supplier<? extends T> filler;
     private final boolean isPrefilled;
     private final T dummyElement;
@@ -31,6 +32,9 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
+    /**
+     * If the ring buffer is not blocking nor discarding, the capacity will be rounded to the next power of 2.
+     */
     public RingBufferBuilder<T> manyWriters() {
         oneWriter = false;
         return this;
@@ -90,15 +94,13 @@ public class RingBufferBuilder<T> {
             throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
         }
         if (!oneReader && !oneWriter) {
-            throw new IllegalArgumentException("A ring buffer does not support many readers and writers. Consider using a concurrent queue instead.");
+            throw new IllegalArgumentException("Multiple readers and writers are not supported. Consider using a concurrent queue instead.");
         }
         if (oneReader) {
             if (!oneWriter) {
                 switch (type) {
                     case OVERWRITING:
-                        if (isPrefilled) {
-                            break;
-                        }
+                        capacity = Int.getNextPowerOfTwo(capacity);
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
                         if (isPrefilled) {
@@ -182,6 +184,10 @@ public class RingBufferBuilder<T> {
             return filler.get();
         }
         return dummyElement;
+    }
+
+    LazyVolatileBooleanArray newFlagArray() {
+        return new LazyVolatileBooleanArray(capacity);
     }
 
     private enum RingBufferType {
