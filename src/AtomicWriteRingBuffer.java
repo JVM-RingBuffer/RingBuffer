@@ -1,6 +1,8 @@
 package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Array;
+import eu.menzani.ringbuffer.memory.BooleanArray;
+import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
@@ -13,9 +15,9 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
-    private final LazyVolatileInteger writePosition = new LazyVolatileInteger();
+    private final Integer writePosition;
 
-    private final LazyVolatileBooleanArray flags;
+    private final BooleanArray flags;
 
     AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -23,6 +25,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         buffer = builder.newBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        writePosition = builder.newCursor();
         flags = builder.newFlagArray();
     }
 

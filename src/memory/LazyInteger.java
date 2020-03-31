@@ -1,23 +1,27 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.memory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-class LazyVolatileInteger {
+public class LazyInteger implements Integer {
     private final AtomicInteger value = new AtomicInteger();
 
-    void set(int value) {
+    @Override
+    public void set(int value) {
         this.value.setRelease(value);
     }
 
-    int get() {
+    @Override
+    public int get() {
         return value.getAcquire();
     }
 
-    int getPlain() {
+    @Override
+    public int getPlain() {
         return value.getPlain();
     }
 
-    int getAndDecrement() {
+    @Override
+    public int getAndDecrement() {
         return value.getAndDecrement();
     }
 }

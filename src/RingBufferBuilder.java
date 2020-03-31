@@ -2,6 +2,9 @@ package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Int;
+import eu.menzani.ringbuffer.memory.BooleanArray;
+import eu.menzani.ringbuffer.memory.Integer;
+import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -18,6 +21,7 @@ public class RingBufferBuilder<T> {
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
     private boolean gcEnabled;
+    private MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
     RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
         Assume.notLesser(capacity, 2, "capacity");
@@ -73,6 +77,11 @@ public class RingBufferBuilder<T> {
 
     public RingBufferBuilder<T> withGC() {
         gcEnabled = true;
+        return this;
+    }
+
+    public RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
+        this.memoryOrder = memoryOrder;
         return this;
     }
 
@@ -186,8 +195,12 @@ public class RingBufferBuilder<T> {
         return dummyElement;
     }
 
-    LazyVolatileBooleanArray newFlagArray() {
-        return new LazyVolatileBooleanArray(capacity);
+    Integer newCursor() {
+        return memoryOrder.newInteger();
+    }
+
+    BooleanArray newFlagArray() {
+        return memoryOrder.newBooleanArray(capacity);
     }
 
     private enum RingBufferType {
