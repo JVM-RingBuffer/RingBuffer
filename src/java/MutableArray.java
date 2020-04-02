@@ -38,30 +38,30 @@ class MutableArray<T> implements Array<T>, Serializable {
     }
 
     static <T> MutableArray<T> fromArray(T[] array) {
-        return new MutableArray<>(Arrays.copyOf(array, array.length, elementsArrayClass));
+        return new MutableArray<>((T[]) Arrays.copyOf(array, array.length, elementsArrayClass));
     }
 
     @VisibleForPerformance
-    final Object[] elements;
+    final T[] elements;
 
     private transient Iterator iterator;
     private transient ArrayView<T> view;
 
     MutableArray(int capacity) {
-        elements = new Object[capacity];
+        elements = (T[]) new Object[capacity];
     }
 
     MutableArray(Collection<T> collection) {
-        elements = collection.toArray();
+        elements = (T[]) collection.toArray();
     }
 
-    MutableArray(Object[] elements) {
+    MutableArray(T[] elements) {
         this.elements = elements;
     }
 
     @Override
     public T[] getElements() {
-        return (T[]) elements;
+        return elements;
     }
 
     @Override
@@ -104,8 +104,7 @@ class MutableArray<T> implements Array<T>, Serializable {
     public <U> U[] toArray(U[] array) {
         int capacity = getCapacity();
         if (array.length < capacity) {
-            Object[] result = Arrays.copyOf(elements, capacity, array.getClass());
-            return (U[]) result;
+            return Arrays.copyOf(elements, capacity, (Class<? extends U[]>) array.getClass());
         }
         System.arraycopy(elements, 0, array, 0, capacity);
         return array;
@@ -138,7 +137,7 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public boolean addAll(int index, Collection<? extends T> elements) {
-        for (Object element : elements) {
+        for (T element : elements) {
             this.elements[index++] = element;
         }
         return !elements.isEmpty();
@@ -174,33 +173,29 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public T get(int index) {
-        Object element = elements[index];
-        return (T) element;
+        return elements[index];
     }
 
     @Override
     public T getOpaque(int index) {
-        Object element = ELEMENTS.getOpaque(elements, index);
-        return (T) element;
+        return (T) ELEMENTS.getOpaque(elements, index);
     }
 
     @Override
     public T getAcquire(int index) {
-        Object element = ELEMENTS.getAcquire(elements, index);
-        return (T) element;
+        return (T) ELEMENTS.getAcquire(elements, index);
     }
 
     @Override
     public T getVolatile(int index) {
-        Object element = ELEMENTS.getVolatile(elements, index);
-        return (T) element;
+        return (T) ELEMENTS.getVolatile(elements, index);
     }
 
     @Override
     public T set(int index, T element) {
-        Object oldElement = elements[index];
+        T oldElement = elements[index];
         elements[index] = element;
-        return (T) oldElement;
+        return oldElement;
     }
 
     @Override
@@ -281,20 +276,17 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public T compareAndExchange(int index, T expectedElement, T newElement) {
-        Object oldElement = ELEMENTS.compareAndExchange(elements, index, expectedElement, newElement);
-        return (T) oldElement;
+        return (T) ELEMENTS.compareAndExchange(elements, index, expectedElement, newElement);
     }
 
     @Override
     public T compareAndExchangeAcquire(int index, T expectedElement, T newElement) {
-        Object oldElement = ELEMENTS.compareAndExchangeAcquire(elements, index, expectedElement, newElement);
-        return (T) oldElement;
+        return (T) ELEMENTS.compareAndExchangeAcquire(elements, index, expectedElement, newElement);
     }
 
     @Override
     public T compareAndExchangeRelease(int index, T expectedElement, T newElement) {
-        Object oldElement = ELEMENTS.compareAndExchangeRelease(elements, index, expectedElement, newElement);
-        return (T) oldElement;
+        return (T) ELEMENTS.compareAndExchangeRelease(elements, index, expectedElement, newElement);
     }
 
     @Override
@@ -319,20 +311,17 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public T getAndSet(int index, T element) {
-        Object oldElement = ELEMENTS.getAndSet(elements, index, element);
-        return (T) oldElement;
+        return (T) ELEMENTS.getAndSet(elements, index, element);
     }
 
     @Override
     public T getAndSetAcquire(int index, T element) {
-        Object oldElement = ELEMENTS.getAndSetAcquire(elements, index, element);
-        return (T) oldElement;
+        return (T) ELEMENTS.getAndSetAcquire(elements, index, element);
     }
 
     @Override
     public T getAndSetRelease(int index, T element) {
-        Object oldElement = ELEMENTS.getAndSetRelease(elements, index, element);
-        return (T) oldElement;
+        return (T) ELEMENTS.getAndSetRelease(elements, index, element);
     }
 
     @Override
@@ -357,7 +346,7 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public void sort(Comparator<? super T> comparator) {
-        Arrays.sort((T[]) elements, comparator);
+        Arrays.sort(elements, comparator);
     }
 
     @Override
@@ -367,12 +356,12 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public void parallelSort(Comparator<? super T> comparator) {
-        Arrays.parallelSort((T[]) elements, comparator);
+        Arrays.parallelSort(elements, comparator);
     }
 
     @Override
     public Stream<T> stream() {
-        return Arrays.stream((T[]) elements);
+        return Arrays.stream(elements);
     }
 
     @Override
@@ -387,12 +376,12 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     @Override
     public int binarySearch(T element, Comparator<? super T> comparator) {
-        return Arrays.binarySearch((T[]) elements, element, comparator);
+        return Arrays.binarySearch(elements, element, comparator);
     }
 
     @Override
     public void parallelPrefix(BinaryOperator<T> operator) {
-        Arrays.parallelPrefix((T[]) elements, operator);
+        Arrays.parallelPrefix(elements, operator);
     }
 
     @Override
@@ -433,7 +422,7 @@ class MutableArray<T> implements Array<T>, Serializable {
             bFromIndex = 0;
             bToIndex = array.getCapacity();
         }
-        return Arrays.mismatch((T[]) elements, 0, getCapacity(), array.getElements(), bFromIndex, bToIndex, comparator);
+        return Arrays.mismatch(elements, 0, getCapacity(), array.getElements(), bFromIndex, bToIndex, comparator);
     }
 
     @Override
@@ -742,12 +731,11 @@ class MutableArray<T> implements Array<T>, Serializable {
         }
     }
 
-    class ConcurrentIterator implements ArrayIterator<T> {
+    private class ConcurrentIterator implements ArrayIterator<T> {
         private final int endIndex;
         private volatile int index;
         private final Lock lock = new ReentrantLock();
 
-        @VisibleForPerformance
         ConcurrentIterator(int endIndex, int index) {
             this.endIndex = endIndex;
             this.index = index;
@@ -1083,11 +1071,9 @@ class MutableArray<T> implements Array<T>, Serializable {
             int capacity = getCapacity();
             if (array.length < capacity) {
                 if (beginIndex == 0) {
-                    Object[] result = Arrays.copyOf(elements, endIndex, array.getClass());
-                    return (U[]) result;
+                    return Arrays.copyOf(elements, endIndex, (Class<? extends U[]>) array.getClass());
                 }
-                Object[] result = Arrays.copyOfRange(elements, beginIndex, endIndex, array.getClass());
-                return (U[]) result;
+                return Arrays.copyOfRange(elements, beginIndex, endIndex, (Class<? extends U[]>) array.getClass());
             }
             System.arraycopy(elements, beginIndex, array, 0, capacity);
             return array;
@@ -1128,7 +1114,7 @@ class MutableArray<T> implements Array<T>, Serializable {
             }
 
             index += beginIndex;
-            for (Object element : elements) {
+            for (T element : elements) {
                 MutableArray.this.elements[index++] = element;
             }
             return !elements.isEmpty();
@@ -1341,7 +1327,7 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public void sort(Comparator<? super T> comparator) {
-            Arrays.sort((T[]) elements, beginIndex, endIndex, comparator);
+            Arrays.sort(elements, beginIndex, endIndex, comparator);
         }
 
         @Override
@@ -1351,12 +1337,12 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public void parallelSort(Comparator<? super T> comparator) {
-            Arrays.parallelSort((T[]) elements, beginIndex, endIndex, comparator);
+            Arrays.parallelSort(elements, beginIndex, endIndex, comparator);
         }
 
         @Override
         public Stream<T> stream() {
-            return Arrays.stream((T[]) elements, beginIndex, endIndex);
+            return Arrays.stream(elements, beginIndex, endIndex);
         }
 
         @Override
@@ -1371,12 +1357,12 @@ class MutableArray<T> implements Array<T>, Serializable {
 
         @Override
         public int binarySearch(T element, Comparator<? super T> comparator) {
-            return Arrays.binarySearch((T[]) elements, beginIndex, endIndex, element, comparator);
+            return Arrays.binarySearch(elements, beginIndex, endIndex, element, comparator);
         }
 
         @Override
         public void parallelPrefix(BinaryOperator<T> operator) {
-            Arrays.parallelPrefix((T[]) elements, beginIndex, endIndex, operator);
+            Arrays.parallelPrefix(elements, beginIndex, endIndex, operator);
         }
 
         @Override
@@ -1433,7 +1419,7 @@ class MutableArray<T> implements Array<T>, Serializable {
                 bFromIndex = 0;
                 bToIndex = array.getCapacity();
             }
-            return Arrays.mismatch((T[]) elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex, comparator);
+            return Arrays.mismatch(elements, beginIndex, endIndex, array.getElements(), bFromIndex, bToIndex, comparator);
         }
 
         @Override
@@ -1784,13 +1770,12 @@ class MutableArray<T> implements Array<T>, Serializable {
         }
     }
 
-    class MutableSubArrayConcurrentIterator implements SubArrayIterator<T> {
+    private class MutableSubArrayConcurrentIterator implements SubArrayIterator<T> {
         private final int beginIndex;
         private final int endIndex;
         private volatile int index;
         private final Lock lock = new ReentrantLock();
 
-        @VisibleForPerformance
         MutableSubArrayConcurrentIterator(int beginIndex, int endIndex, int index) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
