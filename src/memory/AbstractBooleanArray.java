@@ -4,9 +4,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
 public abstract class AbstractBooleanArray implements BooleanArray {
-    protected static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(byte[].class);
-    protected static final byte TRUE = 1;
-    protected static final byte FALSE = 0;
+    public static final VarHandle ELEMENTS = MethodHandles.arrayElementVarHandle(byte[].class);
+    public static final byte TRUE = 1;
+    public static final byte FALSE = 0;
 
     protected final byte[] elements;
 

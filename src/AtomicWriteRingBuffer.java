@@ -185,13 +185,17 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == readPosition;
+        return isEmpty(writePosition.get() & capacityMinusOne);
+    }
+
+    private boolean isEmpty(int writePosition) {
+        return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
         int writePosition = this.writePosition.get() & capacityMinusOne;
-        if (writePosition == readPosition) {
+        if (isEmpty(writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);

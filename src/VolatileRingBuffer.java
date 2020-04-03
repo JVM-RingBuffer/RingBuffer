@@ -177,13 +177,17 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return writePosition.get() == readPosition;
+        return isEmpty(writePosition.get());
+    }
+
+    private boolean isEmpty(int writePosition) {
+        return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
         int writePosition = this.writePosition.get();
-        if (writePosition == readPosition) {
+        if (isEmpty(writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);

@@ -44,7 +44,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         currentStrategy.tick();
     }
 
-    public static class Builder implements MultiStepBusyWaitStrategyBuilder {
+    public static class Builder extends AbstractMultiStepBusyWaitStrategyBuilder {
         private final List<BusyWaitStrategy> strategies = new ArrayList<>();
         private final List<Integer> strategiesTicks = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
 
         @Override
         public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
-            MultiStepBusyWaitStrategyBuilder.validateStrategyTicks(strategyTicks);
+            validateStrategyTicks(strategyTicks);
             strategiesTicks.add(strategyTicks - 1);
             if (strategy instanceof MultiStepBusyWaitStrategy) {
                 MultiStepBusyWaitStrategy multiStepStrategy = (MultiStepBusyWaitStrategy) strategy;
@@ -75,7 +75,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         public BusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.size() == 1) {
-                MultiStepBusyWaitStrategyBuilder.throwNoIntermediateStepsAdded();
+                throwNoIntermediateStepsAdded();
             }
             return new MultiStepBusyWaitStrategy(this);
         }

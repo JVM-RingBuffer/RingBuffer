@@ -167,7 +167,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public String toString() {
-        if (writePosition == readPosition) {
+        if (isEmpty()) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);

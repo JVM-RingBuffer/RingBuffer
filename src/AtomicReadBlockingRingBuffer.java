@@ -113,14 +113,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         }
     }
 
-    private int size(int readPosition) {
-        int writePosition = this.writePosition.get();
-        if (writePosition <= readPosition) {
-            return readPosition - writePosition;
-        }
-        return capacity - (writePosition - readPosition);
-    }
-
     private void fillSplit(int readPosition, Array<T> buffer, int bufferSize) {
         int j = 0;
         int newReadPosition = readPosition + capacity - bufferSize;
@@ -195,16 +187,28 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         return size(readPosition.get());
     }
 
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get();
+        if (writePosition <= readPosition) {
+            return readPosition - writePosition;
+        }
+        return capacity - (writePosition - readPosition);
+    }
+
     @Override
     public boolean isEmpty() {
-        return writePosition.get() == readPosition.get();
+        return isEmpty(readPosition.get(), writePosition.get());
+    }
+
+    private boolean isEmpty(int readPosition, int writePosition) {
+        return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
-        if (writePosition == readPosition) {
+        if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);
