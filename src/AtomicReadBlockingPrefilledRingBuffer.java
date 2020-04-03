@@ -6,7 +6,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
+class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -19,10 +19,10 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     private int newWritePosition;
     private int newReadPosition;
 
-    AdvancingAtomicWriteBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.newBuffer();
+        buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPosition = builder.newCursor();
@@ -55,20 +55,8 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
     }
 
     @Override
-    public synchronized void put(T element) {
-        int writePosition = this.writePosition.getPlain();
-        int newWritePosition;
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        buffer[writePosition] = element;
-        this.writePosition.set(newWritePosition);
+    public void put(T element) {
+        throw new AssertionError("This should not have been an advancing-supporting implementation.");
     }
 
     @Override
@@ -207,6 +195,7 @@ class AdvancingAtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T
             toStringSplit(builder, readPosition, writePosition);
         }
         builder.setLength(builder.length() - 2);
+        builder.append(']');
         return builder.toString();
     }
 

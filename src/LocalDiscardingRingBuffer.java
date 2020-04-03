@@ -17,7 +17,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     LocalDiscardingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.newBuffer();
+        buffer = builder.getBuffer();
         gcEnabled = builder.isGCEnabled();
         dummyElement = builder.getDummyElement();
     }
@@ -88,15 +88,16 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void fillSplit(Array<T> buffer, int bufferSize) {
+        int i = readPosition;
         int j = 0;
-        for (int i = readPosition; i >= 0; i--) {
+        for (; i >= 0; i--) {
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
         readPosition += capacity - bufferSize;
-        for (int i = capacityMinusOne; i > readPosition; i--) {
+        for (i = capacityMinusOne; i > readPosition; i--) {
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
@@ -180,6 +181,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
             toStringSplit(builder);
         }
         builder.setLength(builder.length() - 2);
+        builder.append(']');
         return builder.toString();
     }
 

@@ -1,7 +1,7 @@
 package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
+import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 public class ProducersToProcessorToConsumersTest implements RingBufferTest {
     public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(BLOCKING_SIZE)
@@ -13,7 +13,7 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
     public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
             .oneWriter()
             .manyReaders()
-            .waitingWith(YieldBusyWaitStrategy.getDefault())
+            .waitingWith(BusyWaitStrategy.YIELD)
             .build();
 
     public static void main(String[] args) {

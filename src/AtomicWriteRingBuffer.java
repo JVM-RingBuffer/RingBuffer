@@ -17,16 +17,16 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    private final BooleanArray flags;
+    private final BooleanArray writtenPositions;
 
     AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.newBuffer();
+        buffer = builder.getBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
-        flags = builder.newFlagArray();
+        writtenPositions = builder.newFlagArray();
     }
 
     @Override
@@ -46,23 +46,23 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(int key) {
-        flags.setTrue(key);
+        writtenPositions.setTrue(key);
     }
 
     @Override
     public void put(T element) {
         int writePosition = this.writePosition.getAndDecrement() & capacityMinusOne;
         buffer[writePosition] = element;
-        flags.setTrue(writePosition);
+        writtenPositions.setTrue(writePosition);
     }
 
     @Override
     public T take() {
         readBusyWaitStrategy.reset();
-        while (flags.isFalse(readPosition)) {
+        while (writtenPositions.isFalse(readPosition)) {
             readBusyWaitStrategy.tick();
         }
-        flags.setFalsePlain(readPosition);
+        writtenPositions.setFalsePlain(readPosition);
         T element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
@@ -78,19 +78,15 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void fill(Array<T> buffer) {
         int bufferSize = buffer.getCapacity();
-        readBusyWaitStrategy.reset();
-        while (size() < bufferSize) {
-            readBusyWaitStrategy.tick();
-        }
         if (readPosition >= bufferSize) {
             int i = readPosition;
             readPosition -= bufferSize;
             for (int j = 0; i > readPosition; i--) {
                 readBusyWaitStrategy.reset();
-                while (flags.isFalse(i)) {
+                while (writtenPositions.isFalse(i)) {
                     readBusyWaitStrategy.tick();
                 }
-                flags.setFalsePlain(i);
+                writtenPositions.setFalsePlain(i);
                 buffer.setElement(j++, this.buffer[i]);
                 if (gcEnabled) {
                     this.buffer[i] = null;
@@ -102,25 +98,26 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void fillSplit(Array<T> buffer, int bufferSize) {
+        int i = readPosition;
         int j = 0;
-        for (int i = readPosition; i >= 0; i--) {
+        for (; i >= 0; i--) {
             readBusyWaitStrategy.reset();
-            while (flags.isFalse(i)) {
+            while (writtenPositions.isFalse(i)) {
                 readBusyWaitStrategy.tick();
             }
-            flags.setFalsePlain(i);
+            writtenPositions.setFalsePlain(i);
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
         readPosition += capacity - bufferSize;
-        for (int i = capacityMinusOne; i > readPosition; i--) {
+        for (i = capacityMinusOne; i > readPosition; i--) {
             readBusyWaitStrategy.reset();
-            while (flags.isFalse(i)) {
+            while (writtenPositions.isFalse(i)) {
                 readBusyWaitStrategy.tick();
             }
-            flags.setFalsePlain(i);
+            writtenPositions.setFalsePlain(i);
             buffer.setElement(j++, this.buffer[i]);
             if (gcEnabled) {
                 this.buffer[i] = null;
@@ -208,6 +205,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
             toStringSplit(builder, writePosition);
         }
         builder.setLength(builder.length() - 2);
+        builder.append(']');
         return builder.toString();
     }
 

@@ -22,7 +22,7 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
     VolatileDiscardingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.newBuffer();
+        buffer = builder.getBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         dummyElement = builder.getDummyElement();
@@ -216,6 +216,7 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
             toStringSplit(builder, readPosition, writePosition);
         }
         builder.setLength(builder.length() - 2);
+        builder.append(']');
         return builder.toString();
     }
 

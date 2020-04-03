@@ -7,25 +7,25 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
+class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy[] writeBusyWaitStrategyArray;
 
     private int readPosition;
     private final Integer writePosition;
 
+    private int newReadPosition;
+
     private final BooleanArray writtenPositions;
     private final BooleanArray usedPositions;
 
-    AtomicWriteBlockingRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicWriteBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategyArray = builder.getWriteBusyWaitStrategyArray();
         writePosition = builder.newCursor();
@@ -40,33 +40,27 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int nextKey() {
-        return unsupported();
+        return writePosition.getAndDecrement() & capacityMinusOne;
     }
 
     @Override
     public T next(int key) {
-        return unsupported();
+        BusyWaitStrategy busyWaitStrategy = writeBusyWaitStrategyArray[key];
+        busyWaitStrategy.reset();
+        while (!usedPositions.weakCompareFalseAndSetTrue(key)) {
+            busyWaitStrategy.tick();
+        }
+        return buffer[key];
     }
 
     @Override
     public void put(int key) {
-        unsupported();
-    }
-
-    private static <T> T unsupported() {
-        throw new AssertionError("This should have been an advancing-supporting implementation.");
+        writtenPositions.setTrue(key);
     }
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition.getAndDecrement() & capacityMinusOne;
-        BusyWaitStrategy busyWaitStrategy = writeBusyWaitStrategyArray[writePosition];
-        busyWaitStrategy.reset();
-        while (!usedPositions.weakCompareFalseAndSetTrue(writePosition)) {
-            busyWaitStrategy.tick();
-        }
-        buffer[writePosition] = element;
-        writtenPositions.setTrue(writePosition);
+        throw new AssertionError("This should not have been an advancing-supporting implementation.");
     }
 
     @Override
@@ -76,17 +70,12 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
             readBusyWaitStrategy.tick();
         }
         writtenPositions.setFalsePlain(readPosition);
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
-        usedPositions.setFalse(readPosition);
         if (readPosition == 0) {
-            readPosition = capacityMinusOne;
+            newReadPosition = capacityMinusOne;
         } else {
-            readPosition--;
+            newReadPosition = readPosition - 1;
         }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -94,18 +83,14 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
         int bufferSize = buffer.getCapacity();
         if (readPosition >= bufferSize) {
             int i = readPosition;
-            readPosition -= bufferSize;
-            for (int j = 0; i > readPosition; i--) {
+            newReadPosition = i - bufferSize;
+            for (int j = 0; i > newReadPosition; i--) {
                 readBusyWaitStrategy.reset();
                 while (writtenPositions.isFalse(i)) {
                     readBusyWaitStrategy.tick();
                 }
                 writtenPositions.setFalsePlain(i);
                 buffer.setElement(j++, this.buffer[i]);
-                if (gcEnabled) {
-                    this.buffer[i] = null;
-                }
-                usedPositions.setFalse(i);
             }
         } else {
             fillSplit(buffer, bufferSize);
@@ -114,6 +99,7 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     private void fillSplit(Array<T> buffer, int bufferSize) {
         int i = readPosition;
+        newReadPosition = i + capacity - bufferSize;
         int j = 0;
         for (; i >= 0; i--) {
             readBusyWaitStrategy.reset();
@@ -122,24 +108,40 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
             }
             writtenPositions.setFalsePlain(i);
             buffer.setElement(j++, this.buffer[i]);
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
-            usedPositions.setFalse(i);
         }
-        readPosition += capacity - bufferSize;
-        for (i = capacityMinusOne; i > readPosition; i--) {
+        for (i = capacityMinusOne; i > newReadPosition; i--) {
             readBusyWaitStrategy.reset();
             while (writtenPositions.isFalse(i)) {
                 readBusyWaitStrategy.tick();
             }
             writtenPositions.setFalsePlain(i);
             buffer.setElement(j++, this.buffer[i]);
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
-            usedPositions.setFalse(i);
         }
+    }
+
+    @Override
+    public void advance() {
+        usedPositions.setFalse(readPosition);
+        readPosition = newReadPosition;
+    }
+
+    @Override
+    public void advanceBatch() {
+        if (newReadPosition < readPosition) {
+            for (int i = newReadPosition + 1; i < readPosition; i++) {
+                usedPositions.setFalsePlain(i);
+            }
+        } else {
+            int i = newReadPosition + 1;
+            for (; i < capacity; i++) {
+                usedPositions.setFalsePlain(i);
+            }
+            for (i = 0; i < readPosition; i++) {
+                usedPositions.setFalsePlain(i);
+            }
+        }
+        usedPositions.setFalse(readPosition);
+        readPosition = newReadPosition;
     }
 
     @Override

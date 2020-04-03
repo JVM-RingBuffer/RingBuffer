@@ -6,17 +6,13 @@ import java.util.concurrent.locks.LockSupport;
  * Requires Linux.
  */
 public class SleepBusyWaitStrategy implements BusyWaitStrategy {
+    public static final SleepBusyWaitStrategy DEFAULT_INSTANCE = new SleepBusyWaitStrategy(1L);
+
     public static BusyWaitStrategy getDefault() {
-        return MultiStepBusyWaitStrategy.endWith(new SleepBusyWaitStrategy())
-                .after(YieldBusyWaitStrategy.getDefault(), 100)
-                .build();
+        return BusyWaitStrategy.SLEEP.newInstanceOrReusedIfThreadSafe();
     }
 
     private final long sleepTime;
-
-    public SleepBusyWaitStrategy() {
-        this(1L);
-    }
 
     /**
      * @param sleepTime In nanoseconds.
@@ -28,5 +24,14 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     @Override
     public void tick() {
         LockSupport.parkNanos(sleepTime);
+    }
+
+    static class Factory implements BusyWaitStrategy.Factory {
+        @Override
+        public BusyWaitStrategy newInstanceOrReusedIfThreadSafe() {
+            return MultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
+                    .after(YieldBusyWaitStrategy.getDefault(), 100)
+                    .build();
+        }
     }
 }

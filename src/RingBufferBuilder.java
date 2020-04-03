@@ -6,7 +6,6 @@ import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.util.function.Supplier;
 
@@ -18,8 +17,8 @@ public class RingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
     private RingBufferType type = RingBufferType.OVERWRITING;
-    private BusyWaitStrategy writeBusyWaitStrategy;
-    private BusyWaitStrategy readBusyWaitStrategy;
+    private BusyWaitStrategy.Factory writeBusyWaitStrategyFactory;
+    private BusyWaitStrategy.Factory readBusyWaitStrategyFactory = BusyWaitStrategy.HINT;
     private boolean gcEnabled;
     private MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
@@ -37,7 +36,7 @@ public class RingBufferBuilder<T> {
     }
 
     /**
-     * If the ring buffer is not blocking nor discarding, the capacity will be rounded to the next power of 2.
+     * If the ring buffer is not discarding, the capacity will be rounded to the next power of 2.
      */
     public RingBufferBuilder<T> manyWriters() {
         oneWriter = false;
@@ -55,13 +54,13 @@ public class RingBufferBuilder<T> {
     }
 
     public RingBufferBuilder<T> blocking() {
-        blocking(HintBusyWaitStrategy.getDefault());
+        blocking(BusyWaitStrategy.HINT);
         return this;
     }
 
-    public RingBufferBuilder<T> blocking(BusyWaitStrategy strategy) {
+    public RingBufferBuilder<T> blocking(BusyWaitStrategy.Factory busyWaitStrategyFactory) {
         type = RingBufferType.BLOCKING;
-        writeBusyWaitStrategy = strategy;
+        writeBusyWaitStrategyFactory = busyWaitStrategyFactory;
         return this;
     }
 
@@ -70,8 +69,8 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
-    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy strategy) {
-        readBusyWaitStrategy = strategy;
+    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy.Factory busyWaitStrategyFactory) {
+        readBusyWaitStrategyFactory = busyWaitStrategyFactory;
         return this;
     }
 
@@ -109,11 +108,12 @@ public class RingBufferBuilder<T> {
             if (!oneWriter) {
                 switch (type) {
                     case OVERWRITING:
-                        capacity = Int.getNextPowerOfTwo(capacity);
+                        roundCapacityToNextPowerOfTwo();
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
+                        roundCapacityToNextPowerOfTwo();
                         if (isPrefilled) {
-                            return new AdvancingAtomicWriteBlockingPrefilledRingBuffer<>(this);
+                            return new AtomicWriteBlockingPrefilledRingBuffer<>(this);
                         }
                         return new AtomicWriteBlockingRingBuffer<>(this);
                     case DISCARDING:
@@ -128,7 +128,7 @@ public class RingBufferBuilder<T> {
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
                     if (isPrefilled) {
-                        return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
+                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
                     }
                     return new VolatileBlockingRingBuffer<>(this);
                 case DISCARDING:
@@ -140,13 +140,17 @@ public class RingBufferBuilder<T> {
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
                 if (isPrefilled) {
-                    return new AdvancingAtomicReadBlockingPrefilledRingBuffer<>(this);
+                    return new AtomicReadBlockingPrefilledRingBuffer<>(this);
                 }
                 return new AtomicReadBlockingRingBuffer<>(this);
             case DISCARDING:
                 return new AtomicReadDiscardingRingBuffer<>(this);
         }
         throw new AssertionError();
+    }
+
+    private void roundCapacityToNextPowerOfTwo() {
+        capacity = Int.getNextPowerOfTwo(capacity);
     }
 
     int getCapacity() {
@@ -157,7 +161,7 @@ public class RingBufferBuilder<T> {
         return capacity - 1;
     }
 
-    T[] newBuffer() {
+    T[] getBuffer() {
         T[] buffer = (T[]) new Object[capacity];
         if (isPrefilled) {
             for (int i = 0; i < capacity; i++) {
@@ -178,14 +182,19 @@ public class RingBufferBuilder<T> {
     }
 
     BusyWaitStrategy getWriteBusyWaitStrategy() {
-        return writeBusyWaitStrategy;
+        return writeBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
     }
 
     BusyWaitStrategy getReadBusyWaitStrategy() {
-        if (readBusyWaitStrategy == null) {
-            return HintBusyWaitStrategy.getDefault();
+        return readBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
+    }
+
+    BusyWaitStrategy[] getWriteBusyWaitStrategyArray() {
+        BusyWaitStrategy[] strategies = new BusyWaitStrategy[capacity];
+        for (int i = 0; i < capacity; i++) {
+            strategies[i] = writeBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
         }
-        return readBusyWaitStrategy;
+        return strategies;
     }
 
     T getDummyElement() {

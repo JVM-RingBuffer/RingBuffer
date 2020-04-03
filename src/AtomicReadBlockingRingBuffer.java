@@ -22,7 +22,7 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     AtomicReadBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.newBuffer();
+        buffer = builder.getBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
@@ -218,6 +218,7 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
             toStringSplit(builder, readPosition, writePosition);
         }
         builder.setLength(builder.length() - 2);
+        builder.append(']');
         return builder.toString();
     }
 
