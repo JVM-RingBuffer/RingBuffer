@@ -16,25 +16,30 @@ public interface Array<T> extends List<T>, RandomAccess, Comparable<Array<T>>, C
      * This method is equivalent to {@link Array#allocate(int)}.
      * Use this method to declare intent. Use the other one when creating an array that will be populated.
      */
+    @NeedsPublication
     static <T> Array<T> empty(int capacity) {
-        return new MutableArray<>(capacity);
+        return MutableArray.allocate(capacity);
     }
 
+    @NeedsPublication
     static <T> Array<T> allocate(int capacity) {
-        return new MutableArray<>(capacity);
+        return MutableArray.allocate(capacity);
     }
 
+    @NeedsPublication
     static <T> Array<T> fromCollection(Collection<T> collection) {
-        return new MutableArray<>(collection);
+        return MutableArray.fromCollection(collection);
     }
 
+    @NeedsPublication
     static <T> Array<T> copyOf(T[] array) {
-        return MutableArray.fromArray(array);
+        return MutableArray.copyOf(array);
     }
 
     @SafeVarargs
+    @NeedsPublication
     static <T> Array<T> of(T... elements) {
-        return new MutableArray<>(elements);
+        return MutableArray.of(elements);
     }
 
     @Override

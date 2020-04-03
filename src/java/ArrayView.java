@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer.java;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Spliterator;
@@ -13,21 +11,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 class ArrayView<T> implements Array<T> {
-    private static final VarHandle ITERATOR;
-    private static final VarHandle SUB_ARRAY_ITERATOR;
-
-    static {
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        try {
-            ITERATOR = lookup.findVarHandle(ArrayView.class, "iterator", IteratorView.class);
-            SUB_ARRAY_ITERATOR = lookup.findVarHandle(ArrayView.SubArrayView.class, "iterator", SubArrayIteratorView.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
     private final MutableArray<T> delegate;
-    private IteratorView<T> iterator;
+    private final IteratorView<T> iterator;
 
     ArrayView(Array<T> delegate) {
         this((MutableArray<T>) delegate);
@@ -35,6 +20,7 @@ class ArrayView<T> implements Array<T> {
 
     ArrayView(MutableArray<T> delegate) {
         this.delegate = delegate;
+        iterator = new IteratorView<>(delegate.getIterator());
     }
 
     @Override
@@ -180,7 +166,7 @@ class ArrayView<T> implements Array<T> {
     @Override
     public ArrayIterator<T> listIterator(int index) {
         delegate.listIterator(index);
-        return LazyInit.get(ITERATOR, this, view -> new IteratorView<>(view.delegate.getIterator()));
+        return iterator;
     }
 
     @Override
@@ -637,7 +623,7 @@ class ArrayView<T> implements Array<T> {
 
     class SubArrayView implements SubArray<T> {
         private final MutableArray<T>.MutableSubArray delegate;
-        private SubArrayIteratorView<T> iterator;
+        private final SubArrayIteratorView<T> iterator;
 
         @VisibleForPerformance
         SubArrayView(SubArray<T> delegate) {
@@ -646,6 +632,7 @@ class ArrayView<T> implements Array<T> {
 
         SubArrayView(MutableArray<T>.MutableSubArray delegate) {
             this.delegate = delegate;
+            iterator = new SubArrayIteratorView<>(delegate.getIterator());
         }
 
         @Override
@@ -666,7 +653,7 @@ class ArrayView<T> implements Array<T> {
         @Override
         public ArrayIterator<T> listIterator(int index) {
             delegate.listIterator(index);
-            return LazyInit.get(SUB_ARRAY_ITERATOR, this, view -> new SubArrayIteratorView<>(view.delegate.getIterator()));
+            return iterator;
         }
 
         @Override
