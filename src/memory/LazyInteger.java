@@ -1,27 +1,48 @@
 package eu.menzani.ringbuffer.memory;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 
 public class LazyInteger implements Integer {
-    private final AtomicInteger value = new AtomicInteger();
+    private static final VarHandle VALUE;
+
+    static {
+        try {
+            VALUE = MethodHandles.lookup().findVarHandle(LazyInteger.class, "value", int.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private int value;
 
     @Override
     public void set(int value) {
-        this.value.setRelease(value);
-    }
-
-    @Override
-    public int get() {
-        return value.getAcquire();
-    }
-
-    @Override
-    public int getPlain() {
-        return value.getPlain();
+        VALUE.setRelease(this, value);
     }
 
     @Override
     public int getAndDecrement() {
-        return value.getAndDecrement();
+        return (int) VALUE.getAndAdd(this, -1);
+    }
+
+    @Override
+    public int decrementAndGetPlain() {
+        return (int) VALUE.getAndAddRelease(this, -1) - 1;
+    }
+
+    @Override
+    public int getPlainAndIncrement() {
+        return (int) VALUE.getAndAddRelease(this, 1);
+    }
+
+    @Override
+    public int get() {
+        return (int) VALUE.getAcquire(this);
+    }
+
+    @Override
+    public int getPlain() {
+        return value;
     }
 }

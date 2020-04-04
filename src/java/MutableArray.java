@@ -1,5 +1,8 @@
 package eu.menzani.ringbuffer.java;
 
+import eu.menzani.ringbuffer.memory.LazyInteger;
+import eu.menzani.ringbuffer.memory.Integer;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamException;
@@ -33,25 +36,25 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     static <T> MutableArray<T> allocate(int capacity) {
         MutableArray<T> result = new MutableArray<>(capacity);
-        result.initializeComponents();
+        result.initializeIteratorAndView();
         return result;
     }
 
     static <T> MutableArray<T> fromCollection(Collection<T> collection) {
         MutableArray<T> result = new MutableArray<>(collection);
-        result.initializeComponents();
+        result.initializeIteratorAndView();
         return result;
     }
 
     static <T> MutableArray<T> of(T[] elements) {
         MutableArray<T> result = new MutableArray<>(elements);
-        result.initializeComponents();
+        result.initializeIteratorAndView();
         return result;
     }
 
     static <T> MutableArray<T> copyOf(T[] array) {
         MutableArray<T> result = new MutableArray<>((T[]) Arrays.copyOf(array, array.length, elementsArrayClass));
-        result.initializeComponents();
+        result.initializeIteratorAndView();
         return result;
     }
 
@@ -67,18 +70,18 @@ class MutableArray<T> implements Array<T>, Serializable {
         this.elements = elements;
     }
 
-    private void initializeComponents() {
+    private void initializeIteratorAndView() {
         iterator = new Iterator();
         view = new ArrayView<>(this);
     }
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        initializeComponents();
+        initializeIteratorAndView();
     }
 
     private void readObjectNoData() throws ObjectStreamException {
-        initializeComponents();
+        initializeIteratorAndView();
     }
 
     Iterator getIterator() {
@@ -750,13 +753,15 @@ class MutableArray<T> implements Array<T>, Serializable {
 
     private class ConcurrentIterator implements ArrayIterator<T> {
         private final int endIndex;
-        private final LazyVolatileInteger index;
+        private final Integer index = new LazyInteger();
 
         private final Lock lock = new ReentrantLock();
 
         ConcurrentIterator(int endIndex, int index) {
             this.endIndex = endIndex;
-            this.index = new LazyVolatileInteger(index);
+            lock.lock();
+            this.index.set(index);
+            lock.unlock();
         }
 
         @Override
@@ -1787,14 +1792,16 @@ class MutableArray<T> implements Array<T>, Serializable {
     private class MutableSubArrayConcurrentIterator implements SubArrayIterator<T> {
         private final int beginIndex;
         private final int endIndex;
-        private final LazyVolatileInteger index;
+        private final Integer index = new LazyInteger();
 
         private final Lock lock = new ReentrantLock();
 
         MutableSubArrayConcurrentIterator(int beginIndex, int endIndex, int index) {
             this.beginIndex = beginIndex;
             this.endIndex = endIndex;
-            this.index = new LazyVolatileInteger(index);
+            lock.lock();
+            this.index.set(index);
+            lock.unlock();
         }
 
         @Override

@@ -11,6 +11,21 @@ public class VolatileInteger implements Integer {
     }
 
     @Override
+    public int getAndDecrement() {
+        return value.getAndDecrement();
+    }
+
+    @Override
+    public int decrementAndGetPlain() {
+        return value.decrementAndGet();
+    }
+
+    @Override
+    public int getPlainAndIncrement() {
+        return value.getAndIncrement();
+    }
+
+    @Override
     public int get() {
         return value.get();
     }
@@ -18,10 +33,5 @@ public class VolatileInteger implements Integer {
     @Override
     public int getPlain() {
         return value.getPlain();
-    }
-
-    @Override
-    public int getAndDecrement() {
-        return value.getAndDecrement();
     }
 }
