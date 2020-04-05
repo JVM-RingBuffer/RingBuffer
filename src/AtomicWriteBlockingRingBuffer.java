@@ -144,18 +144,32 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
-        for (int i = 0; i < capacity; i++) {
-            if (writtenPositions.isTrue(i)) {
-                action.accept(buffer[i]);
+        for (int i = readPosition; writtenPositions.isTrue(i); ) {
+            action.accept(buffer[i]);
+            if (i == 0) {
+                i = capacityMinusOne;
+            } else {
+                i--;
+            }
+            if (i == readPosition) {
+                break;
             }
         }
     }
 
     @Override
     public boolean contains(T element) {
-        for (int i = 0; i < capacity; i++) {
-            if (writtenPositions.isTrue(i) && buffer[i].equals(element)) {
+        for (int i = readPosition; writtenPositions.isTrue(i); ) {
+            if (buffer[i].equals(element)) {
                 return true;
+            }
+            if (i == 0) {
+                i = capacityMinusOne;
+            } else {
+                i--;
+            }
+            if (i == readPosition) {
+                break;
             }
         }
         return false;
@@ -164,9 +178,15 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int size() {
         int usedCount = 0;
-        for (int i = 0; i < capacity; i++) {
-            if (usedPositions.isTrue(i)) {
-                usedCount++;
+        for (int i = readPosition; usedPositions.isTrue(i); ) {
+            usedCount++;
+            if (i == 0) {
+                i = capacityMinusOne;
+            } else {
+                i--;
+            }
+            if (i == readPosition) {
+                break;
             }
         }
         return usedCount;
@@ -181,10 +201,16 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     public String toString() {
         StringBuilder builder = new StringBuilder(16);
         builder.append('[');
-        for (int i = 0; i < capacity; i++) {
-            if (writtenPositions.isTrue(i)) {
-                builder.append(buffer[i].toString());
-                builder.append(", ");
+        for (int i = readPosition; writtenPositions.isTrue(i); ) {
+            builder.append(buffer[i].toString());
+            builder.append(", ");
+            if (i == 0) {
+                i = capacityMinusOne;
+            } else {
+                i--;
+            }
+            if (i == readPosition) {
+                break;
             }
         }
         int length = builder.length();
