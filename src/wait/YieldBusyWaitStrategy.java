@@ -15,7 +15,7 @@ public class YieldBusyWaitStrategy implements BusyWaitStrategy {
     static class Factory implements BusyWaitStrategy.Factory {
         @Override
         public BusyWaitStrategy newInstanceOrReusedIfThreadSafe() {
-            return MultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
+            return LinkedMultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
                     .after(HintBusyWaitStrategy.getDefault(), 100)
                     .build();
         }

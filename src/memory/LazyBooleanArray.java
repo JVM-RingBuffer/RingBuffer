@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.memory;
 
-public class LazyBooleanArray extends AbstractBooleanArray {
+public class LazyBooleanArray extends ByteBasedBooleanArray {
     public LazyBooleanArray(int capacity) {
         super(capacity);
     }

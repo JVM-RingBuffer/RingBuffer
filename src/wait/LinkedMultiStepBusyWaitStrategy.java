@@ -8,6 +8,8 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
+import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder.*;
+
 /**
  * Might be slightly faster than {@link MultiStepBusyWaitStrategy} for two total steps, and slower otherwise.
  */
@@ -27,6 +29,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
     @Override
     public void reset() {
         currentStrategy = initialStrategy;
+        counter = 0;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         currentStrategy.strategy.tick();
     }
 
-    public static class Builder extends AbstractMultiStepBusyWaitStrategyBuilder {
+    public static class Builder implements MultiStepBusyWaitStrategyBuilder {
         private BusyWaitStrategy finalStrategy;
         private final List<BusyWaitStrategy> strategies = new ArrayList<>();
         private final List<Integer> strategiesTicks = new ArrayList<>();

@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.memory;
 
-public class VolatileBooleanArray extends AbstractBooleanArray {
+public class VolatileBooleanArray extends ByteBasedBooleanArray {
     public VolatileBooleanArray(int capacity) {
         super(capacity);
     }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder.*;
+
 public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
     private final int initialStrategyIndex;
     private final BusyWaitStrategy[] strategies;
@@ -28,6 +30,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
     @Override
     public void reset() {
         currentStrategyIndex = initialStrategyIndex;
+        counter = 0;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
         currentStrategy.tick();
     }
 
-    public static class Builder extends AbstractMultiStepBusyWaitStrategyBuilder {
+    public static class Builder implements MultiStepBusyWaitStrategyBuilder {
         private final List<BusyWaitStrategy> strategies = new ArrayList<>();
         private final List<Integer> strategiesTicks = new ArrayList<>();
 
