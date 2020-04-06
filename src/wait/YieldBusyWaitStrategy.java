@@ -4,20 +4,13 @@ public class YieldBusyWaitStrategy implements BusyWaitStrategy {
     public static final YieldBusyWaitStrategy DEFAULT_INSTANCE = new YieldBusyWaitStrategy();
 
     public static BusyWaitStrategy getDefault() {
-        return BusyWaitStrategy.YIELD.newInstanceOrReusedIfThreadSafe();
+        return MultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
+                .after(HintBusyWaitStrategy.getDefault(), 100)
+                .build();
     }
 
     @Override
     public void tick() {
         Thread.yield();
-    }
-
-    static class Factory implements BusyWaitStrategy.Factory {
-        @Override
-        public BusyWaitStrategy newInstanceOrReusedIfThreadSafe() {
-            return LinkedMultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
-                    .after(HintBusyWaitStrategy.getDefault(), 100)
-                    .build();
-        }
     }
 }

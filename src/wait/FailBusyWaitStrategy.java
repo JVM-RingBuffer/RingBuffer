@@ -9,11 +9,11 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
             new FailBusyWaitStrategy(() -> BusyWaitException.whileReading("The writing side is slower than expected."));
 
     public static BusyWaitStrategy readingTooSlow() {
-        return BusyWaitStrategy.FAIL_READING_TOO_SLOW.newInstanceOrReusedIfThreadSafe();
+        return READING_TOO_SLOW;
     }
 
     public static BusyWaitStrategy writingTooSlow() {
-        return BusyWaitStrategy.FAIL_WRITING_TOO_SLOW.newInstanceOrReusedIfThreadSafe();
+        return WRITING_TOO_SLOW;
     }
 
     private final Supplier<? extends BusyWaitException> exceptionSupplier;
@@ -25,19 +25,5 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
     @Override
     public void tick() {
         throw exceptionSupplier.get();
-    }
-
-    static class ReadingTooSlowFactory implements Factory {
-        @Override
-        public BusyWaitStrategy newInstanceOrReusedIfThreadSafe() {
-            return READING_TOO_SLOW;
-        }
-    }
-
-    static class WritingTooSlowFactory implements Factory {
-        @Override
-        public BusyWaitStrategy newInstanceOrReusedIfThreadSafe() {
-            return WRITING_TOO_SLOW;
-        }
     }
 }

@@ -5,12 +5,12 @@ public interface BusyWaitStrategy {
 
     void tick();
 
-    Factory NOOP = new NoopBusyWaitStrategy.Factory();
-    Factory HINT = new HintBusyWaitStrategy.Factory();
-    Factory YIELD = new YieldBusyWaitStrategy.Factory();
-    Factory SLEEP = new SleepBusyWaitStrategy.Factory();
-    Factory FAIL_READING_TOO_SLOW = new FailBusyWaitStrategy.ReadingTooSlowFactory();
-    Factory FAIL_WRITING_TOO_SLOW = new FailBusyWaitStrategy.WritingTooSlowFactory();
+    Factory NOOP = NoopBusyWaitStrategy::getDefault;
+    Factory HINT = HintBusyWaitStrategy::getDefault;
+    Factory YIELD = YieldBusyWaitStrategy::getDefault;
+    Factory SLEEP = SleepBusyWaitStrategy::getDefault;
+    Factory FAIL_READING_TOO_SLOW = FailBusyWaitStrategy::readingTooSlow;
+    Factory FAIL_WRITING_TOO_SLOW = FailBusyWaitStrategy::writingTooSlow;
 
     interface Factory {
         BusyWaitStrategy newInstanceOrReusedIfThreadSafe();
