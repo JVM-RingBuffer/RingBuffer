@@ -1,27 +1,27 @@
 package eu.menzani.ringbuffer.java;
 
 public class Assume {
-    public static void notLesser(int value, int cap, String variableName) {
+    public static void notLesser(int value, int cap) {
         if (value < cap) {
-            throw new IllegalArgumentException(variableName + " must be at least " + cap + ", but is " + value);
+            throw new IllegalArgumentException(value + " < " + cap);
         }
     }
 
-    public static void notNegative(int value, String variableName) {
+    public static void notNegative(int value) {
         if (value < 0) {
-            throw new IllegalArgumentException(variableName + " must not be negative, but is " + value);
+            throw new IllegalArgumentException(value + " < 0");
         }
     }
 
-    public static void notNegative(long value, String variableName) {
+    public static void notNegative(long value) {
         if (value < 0L) {
-            throw new IllegalArgumentException(variableName + " must not be negative, but is " + value);
+            throw new IllegalArgumentException(value + " < 0");
         }
     }
 
-    public static void notGreater(int value, int cap, String valueVariableName, String capVariableName) {
+    public static void notGreater(int value, int cap) {
         if (value > cap) {
-            throw new IllegalArgumentException(valueVariableName + " must not be greater than " + capVariableName + " (" + value + " > " + cap + ')');
+            throw new IllegalArgumentException(value + " > " + cap);
         }
     }
 }

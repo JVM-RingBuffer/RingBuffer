@@ -37,7 +37,7 @@ public final class MemorySize implements Comparable<MemorySize>, Serializable {
     }
 
     private MemorySize(long bytes) {
-        Assume.notNegative(bytes, "Memory size");
+        Assume.notNegative(bytes);
         this.bytes = bytes;
     }
 

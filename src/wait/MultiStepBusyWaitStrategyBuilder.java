@@ -14,6 +14,6 @@ public interface MultiStepBusyWaitStrategyBuilder {
     }
 
     static void validateStrategyTicks(int strategyTicks) {
-        Assume.notLesser(strategyTicks, 1, "strategyTicks");
+        Assume.notLesser(strategyTicks, 1);
     }
 }

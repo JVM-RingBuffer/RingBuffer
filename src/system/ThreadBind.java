@@ -110,15 +110,15 @@ public class ThreadBind {
             private boolean cycle;
 
             private Builder(int firstCPU, int increment) {
-                Assume.notNegative(firstCPU, "firstCPU");
-                Assume.notLesser(increment, 1, "increment");
+                Assume.notNegative(firstCPU);
+                Assume.notLesser(increment, 1);
                 this.firstCPU = firstCPU;
                 this.increment = increment;
             }
 
             public Builder lastCPU(int lastCPU) {
-                Assume.notNegative(lastCPU, "lastCPU");
-                Assume.notGreater(firstCPU, lastCPU, "firstCPU", "lastCPU");
+                Assume.notNegative(lastCPU);
+                Assume.notGreater(firstCPU, lastCPU);
                 this.lastCPU = lastCPU;
                 return this;
             }

@@ -10,9 +10,9 @@ class AssumeInliningTest {
         int greaterCap = Integer.parseInt(Integer.toString(numIterations - 1));
 
         for (int i = 0; i < numIterations; i++) {
-            Assume.notLesser(i, lesserCap, "value");
-            Assume.notGreater(i, greaterCap, "value", "cap");
-            Assume.notNegative(i, "value");
+            Assume.notLesser(i, lesserCap);
+            Assume.notGreater(i, greaterCap);
+            Assume.notNegative(i);
         }
     }
 }

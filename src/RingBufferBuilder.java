@@ -23,7 +23,7 @@ public class RingBufferBuilder<T> {
     private MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
     RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
-        Assume.notLesser(capacity, 2, "capacity");
+        Assume.notLesser(capacity, 2);
         this.capacity = capacity;
         this.filler = filler;
         isPrefilled = filler != null;
