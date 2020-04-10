@@ -6,6 +6,8 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
 class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -56,7 +58,7 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        throw new AssertionError("This should not have been an advancing-supporting implementation.");
+        shouldNotBeAdvancing();
     }
 
     @Override

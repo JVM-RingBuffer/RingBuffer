@@ -43,6 +43,9 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void put() {}
+
+    @Override
     public void put(T element) {
         int newWritePosition;
         if (writePosition == 0) {

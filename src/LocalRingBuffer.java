@@ -37,6 +37,9 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void put() {}
+
+    @Override
     public void put(T element) {
         buffer[writePosition] = element;
         if (writePosition == 0) {

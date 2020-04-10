@@ -7,6 +7,8 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
 class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -39,6 +41,16 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public T next() {
+        return keyRequired();
+    }
+
+    @Override
+    public void put() {
+        keyRequired();
+    }
+
+    @Override
     public int nextKey() {
         return writePosition.getAndDecrement() & capacityMinusOne;
     }
@@ -60,7 +72,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        throw new AssertionError("This should not have been an advancing-supporting implementation.");
+        shouldNotBeAdvancing();
     }
 
     @Override
@@ -132,16 +144,20 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
                 usedPositions.setFalsePlain(i);
             }
         } else {
-            int i = newReadPosition + 1;
-            for (; i < capacity; i++) {
-                usedPositions.setFalsePlain(i);
-            }
-            for (i = 0; i < readPosition; i++) {
-                usedPositions.setFalsePlain(i);
-            }
+            advanceBatchSplit();
         }
         usedPositions.setFalse(readPosition);
         readPosition = newReadPosition;
+    }
+
+    private void advanceBatchSplit() {
+        int i = newReadPosition + 1;
+        for (; i < capacity; i++) {
+            usedPositions.setFalsePlain(i);
+        }
+        for (i = 0; i < readPosition; i++) {
+            usedPositions.setFalsePlain(i);
+        }
     }
 
     @Override

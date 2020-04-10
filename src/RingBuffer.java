@@ -28,17 +28,9 @@ public interface RingBuffer<T> {
      * <p>
      * If the ring buffer is not discarding, then {@link #next(int)} must be used instead.
      */
-    default T next() {
-        return keyRequired();
-    }
+    T next();
 
-    default void put() {
-        keyRequired();
-    }
-
-    private static <T> T keyRequired() {
-        throw new UnsupportedOperationException("Use nextKey(), next(key) and put(key) instead.");
-    }
+    void put();
 
     default int nextKey() {
         return 0;
@@ -91,7 +83,7 @@ public interface RingBuffer<T> {
      * synchronized (ringBuffer) {
      *    ringBuffer.fill(buffer);
      *    // Read buffer
-     *    ringBuffer.advance();
+     *    ringBuffer.advanceBatch();
      * }
      * }</pre>
      * <p>

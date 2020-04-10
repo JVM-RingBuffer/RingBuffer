@@ -6,6 +6,8 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
 class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -16,8 +18,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
 
     private final Integer readPosition;
     private final Integer writePosition;
-
-    private int newWritePosition;
 
     AtomicReadBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -36,23 +36,18 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public int nextKey() {
+        return shouldBeAdvancing();
+    }
+
+    @Override
     public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+        return shouldBeAdvancing();
     }
 
     @Override
     public void put() {
-        writePosition.set(newWritePosition);
+        shouldBeAdvancing();
     }
 
     @Override

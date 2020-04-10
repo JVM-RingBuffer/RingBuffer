@@ -7,6 +7,8 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
 class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -40,21 +42,17 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int nextKey() {
-        return unsupported();
+        return shouldBeAdvancing();
     }
 
     @Override
-    public T next(int key) {
-        return unsupported();
+    public T next() {
+        return shouldBeAdvancing();
     }
 
     @Override
-    public void put(int key) {
-        unsupported();
-    }
-
-    private static <T> T unsupported() {
-        throw new AssertionError("This should have been an advancing-supporting implementation.");
+    public void put() {
+        shouldBeAdvancing();
     }
 
     @Override

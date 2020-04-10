@@ -7,6 +7,8 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
 class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -32,6 +34,16 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
+    }
+
+    @Override
+    public T next() {
+        return keyRequired();
+    }
+
+    @Override
+    public void put() {
+        keyRequired();
     }
 
     @Override
