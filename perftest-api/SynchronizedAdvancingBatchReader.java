@@ -3,15 +3,12 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class SynchronizedAdvancingBatchReader extends BatchReader {
-    static TestThreadGroup runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
+    static long runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
         Event[] readBuffer = new Event[readBufferSize];
-        return new TestThreadGroup(numIterations -> runAsync(numIterations, readBuffer, ringBuffer));
-    }
-
-    private static SynchronizedAdvancingBatchReader runAsync(int numIterations, Event[] readBuffer, RingBuffer<Event> ringBuffer) {
-        SynchronizedAdvancingBatchReader thread = new SynchronizedAdvancingBatchReader(numIterations, readBuffer, ringBuffer);
-        thread.start();
-        return thread;
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new SynchronizedAdvancingBatchReader(numIterations, readBuffer, ringBuffer));
+        group.start();
+        group.reportPerformance();
+        return group.getReaderSum();
     }
 
     private SynchronizedAdvancingBatchReader(int numIterations, Event[] readBuffer, RingBuffer<Event> ringBuffer) {

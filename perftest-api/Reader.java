@@ -3,20 +3,25 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class Reader extends TestThread {
-    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer));
+    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
+        group.start();
+        group.reportPerformance();
+        return group.getReaderSum();
     }
 
-    static Reader runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Reader thread = new Reader(numIterations, ringBuffer);
-        thread.start();
-        return thread;
+    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Reader reader = new Reader(numIterations, ringBuffer);
+        reader.start();
+        reader.reportPerformance();
+        return reader.getSum();
     }
 
-    static Reader runSync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Reader thread = new Reader(numIterations, ringBuffer);
-        thread.run();
-        return thread;
+    static long runSync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Reader reader = new Reader(numIterations, ringBuffer);
+        reader.run();
+        reader.reportPerformance();
+        return reader.getSum();
     }
 
     private long sum;
@@ -42,14 +47,5 @@ class Reader extends TestThread {
             sum += ringBuffer.take().getData();
         }
         return sum;
-    }
-
-    @Override
-    void waitForCompletion() {
-        try {
-            join();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
     }
 }

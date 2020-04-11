@@ -3,10 +3,11 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class AdvancingReader extends Reader {
-    static AdvancingReader runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        AdvancingReader thread = new AdvancingReader(numIterations, ringBuffer);
-        thread.start();
-        return thread;
+    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        AdvancingReader reader = new AdvancingReader(numIterations, ringBuffer);
+        reader.start();
+        reader.reportPerformance();
+        return reader.getSum();
     }
 
     private AdvancingReader(int numIterations, RingBuffer<Event> ringBuffer) {

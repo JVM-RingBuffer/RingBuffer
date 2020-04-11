@@ -14,5 +14,8 @@ class AssumeInliningTest {
             Assume.notGreater(i, greaterCap);
             Assume.notNegative(i);
         }
+        for (long i = 0; i < numIterations; i++) {
+            Assume.notNegative(i);
+        }
     }
 }

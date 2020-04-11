@@ -4,20 +4,25 @@ import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Int;
 
 class BatchReader extends Reader {
-    static TestThreadGroup runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> runAsync(numIterations, readBufferSize, ringBuffer));
+    static long runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new BatchReader(numIterations, readBufferSize, ringBuffer));
+        group.start();
+        group.reportPerformance();
+        return group.getReaderSum();
     }
 
-    static BatchReader runAsync(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
-        BatchReader thread = new BatchReader(numIterations, readBufferSize, ringBuffer);
-        thread.start();
-        return thread;
+    static long runAsync(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
+        BatchReader reader = new BatchReader(numIterations, readBufferSize, ringBuffer);
+        reader.start();
+        reader.reportPerformance();
+        return reader.getSum();
     }
 
-    static BatchReader runSync(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
-        BatchReader thread = new BatchReader(numIterations, readBufferSize, ringBuffer);
-        thread.run();
-        return thread;
+    static long runSync(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
+        BatchReader reader = new BatchReader(numIterations, readBufferSize, ringBuffer);
+        reader.run();
+        reader.reportPerformance();
+        return reader.getSum();
     }
 
     private final Event[] readBuffer;

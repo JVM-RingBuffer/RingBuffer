@@ -4,13 +4,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 class PrefilledKeyedWriter extends TestThread {
     static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer));
-    }
-
-    private static PrefilledKeyedWriter runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        PrefilledKeyedWriter thread = new PrefilledKeyedWriter(numIterations, ringBuffer);
-        thread.start();
-        return thread;
+        return new TestThreadGroup(numIterations -> new PrefilledKeyedWriter(numIterations, ringBuffer));
     }
 
     private PrefilledKeyedWriter(int numIterations, RingBuffer<Event> ringBuffer) {

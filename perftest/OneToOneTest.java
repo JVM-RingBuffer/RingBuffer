@@ -25,10 +25,7 @@ public class OneToOneTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Reader reader = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        Writer writer = Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        reader.reportPerformance();
-        writer.reportPerformance();
-        return reader.getSum();
+        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

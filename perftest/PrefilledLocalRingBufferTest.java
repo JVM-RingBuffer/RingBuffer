@@ -23,10 +23,7 @@ public class PrefilledLocalRingBufferTest implements RingBufferTest {
 
     @Override
     public long run() {
-        PrefilledWriter writer = PrefilledWriter.runSync(NUM_ITERATIONS, RING_BUFFER);
-        Reader reader = Reader.runSync(NUM_ITERATIONS, RING_BUFFER);
-        reader.reportPerformance();
-        writer.reportPerformance();
-        return reader.getSum();
+        PrefilledWriter.runSync(NUM_ITERATIONS, RING_BUFFER);
+        return Reader.runSync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

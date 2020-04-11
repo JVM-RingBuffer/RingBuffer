@@ -3,14 +3,11 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class SynchronizedReader extends Reader {
-    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> runThreadAsync(numIterations, ringBuffer));
-    }
-
-    private static SynchronizedReader runThreadAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        SynchronizedReader thread = new SynchronizedReader(numIterations, ringBuffer);
-        thread.start();
-        return thread;
+    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new SynchronizedReader(numIterations, ringBuffer));
+        group.start();
+        group.reportPerformance();
+        return group.getReaderSum();
     }
 
     private SynchronizedReader(int numIterations, RingBuffer<Event> ringBuffer) {

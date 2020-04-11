@@ -3,20 +3,22 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class Writer extends TestThread {
-    static TestThreadGroup runGroupAsync(RingBuffer<Event> ringBuffer) {
-        return new TestThreadGroup(numIterations -> runAsync(numIterations, ringBuffer));
+    static void runGroupAsync(RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
+        group.start();
+        group.reportPerformance();
     }
 
-    static Writer runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Writer thread = new Writer(numIterations, ringBuffer);
-        thread.start();
-        return thread;
+    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Writer writer = new Writer(numIterations, ringBuffer);
+        writer.start();
+        writer.reportPerformance();
     }
 
-    static Writer runSync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Writer thread = new Writer(numIterations, ringBuffer);
-        thread.run();
-        return thread;
+    static void runSync(int numIterations, RingBuffer<Event> ringBuffer) {
+        Writer writer = new Writer(numIterations, ringBuffer);
+        writer.run();
+        writer.reportPerformance();
     }
 
     private Writer(int numIterations, RingBuffer<Event> ringBuffer) {

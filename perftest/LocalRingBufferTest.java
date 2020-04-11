@@ -24,10 +24,7 @@ public class LocalRingBufferTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Writer writer = Writer.runSync(NUM_ITERATIONS, RING_BUFFER);
-        Reader reader = Reader.runSync(NUM_ITERATIONS, RING_BUFFER);
-        reader.reportPerformance();
-        writer.reportPerformance();
-        return reader.getSum();
+        Writer.runSync(NUM_ITERATIONS, RING_BUFFER);
+        return Reader.runSync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

@@ -17,10 +17,6 @@ abstract class TestThread extends Thread {
         return numIterations;
     }
 
-    Profiler getProfiler() {
-        return profiler;
-    }
-
     RingBuffer<Event> getRingBuffer() {
         return ringBuffer;
     }
@@ -34,10 +30,12 @@ abstract class TestThread extends Thread {
 
     abstract void loop();
 
-    void waitForCompletion() {}
-
     void reportPerformance() {
-        waitForCompletion();
+        try {
+            join();
+        } catch (InterruptedException e) {
+            throw new AssertionError();
+        }
         RingBufferTest.BENCHMARK.add(profiler);
     }
 

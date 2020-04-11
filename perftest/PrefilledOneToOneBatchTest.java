@@ -7,10 +7,7 @@ class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
 
     @Override
     public long run() {
-        BatchReader reader = BatchReader.runAsync(NUM_ITERATIONS, READ_BUFFER_SIZE, RING_BUFFER);
-        PrefilledWriter writer = PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        reader.reportPerformance();
-        writer.reportPerformance();
-        return reader.getSum();
+        PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        return BatchReader.runAsync(NUM_ITERATIONS, READ_BUFFER_SIZE, RING_BUFFER);
     }
 }
