@@ -8,7 +8,7 @@ RingBuffer<Integer> producersToProcessor = RingBuffer.<Integer>empty(5)
 RingBuffer<Event> processorToConsumers = RingBuffer.prefilled(301, Event::new)
         .oneWriter()
         .manyReaders()
-        .waitingWith(YieldBusyWaitStrategy.getDefault())
+        .waitingWith(BusyWaitStrategy.YIELD)
         .build();
 ThreadBind.loadNativeLibrary();
 
@@ -26,7 +26,7 @@ Runnable processor = () -> {
     }
 };
 Runnable consumer = () -> {
-    Array<Event> buffer = new Array<>(5);
+    Event[] buffer = new Event[5];
     for (int i = 0; i < 100 / 5; i++) {
         processorToConsumers.fill(buffer);
         for (Event event : buffer) {
