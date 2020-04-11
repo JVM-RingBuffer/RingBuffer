@@ -8,28 +8,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class RingBufferBuilderTest {
     @Test
     void testClasses() {
-        assertEquals(AtomicReadBlockingRingBuffer.class, ManyReadersBlockingTest.RING_BUFFER.getClass());
-        assertEquals(AtomicReadRingBuffer.class, ManyReadersTest.RING_BUFFER.getClass());
+        expectClass(AtomicReadBlockingRingBuffer.class, ManyReadersBlockingTest.RING_BUFFER, ManyReadersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicReadRingBuffer.class, ManyReadersTest.RING_BUFFER);
 
-        assertEquals(AtomicWriteBlockingRingBuffer.class, ManyWritersBlockingTest.RING_BUFFER.getClass());
-        assertEquals(AtomicWriteRingBuffer.class, ManyWritersTest.RING_BUFFER.getClass());
+        expectClass(AtomicWriteBlockingRingBuffer.class, ManyWritersBlockingTest.RING_BUFFER, ManyWritersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicWriteRingBuffer.class, ManyWritersTest.RING_BUFFER);
 
-        assertEquals(VolatileBlockingRingBuffer.class, OneToOneBlockingTest.RING_BUFFER.getClass());
-        assertEquals(VolatileRingBuffer.class, OneToOneTest.RING_BUFFER.getClass());
+        expectClass(VolatileBlockingRingBuffer.class, OneToOneBlockingTest.RING_BUFFER, OneToOneBlockingPerfTest.RING_BUFFER);
+        expectClass(VolatileRingBuffer.class, OneToOneTest.RING_BUFFER);
 
-        assertEquals(AtomicReadBlockingPrefilledRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER.getClass());
-        assertEquals(AtomicReadRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER.getClass());
+        expectClass(AtomicReadBlockingPrefilledRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER, PrefilledManyReadersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicReadRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER);
 
-        assertEquals(AtomicWriteBlockingPrefilledRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER.getClass());
-        assertEquals(AtomicWriteRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER.getClass());
+        expectClass(AtomicWriteBlockingPrefilledRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER, PrefilledManyWritersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicWriteRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER);
 
-        assertEquals(AtomicReadBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER.getClass());
-        assertEquals(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER.getClass());
+        expectClass(AtomicReadBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
+        expectClass(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
 
-        assertEquals(LocalRingBuffer.class, LocalRingBufferTest.RING_BUFFER.getClass());
-        assertEquals(LocalRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER.getClass());
+        expectClass(LocalRingBuffer.class, LocalRingBufferTest.RING_BUFFER);
+        expectClass(LocalRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER);
 
-        assertEquals(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER.getClass());
-        assertEquals(AtomicReadRingBuffer.class, ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER.getClass());
+        expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER, ProducersToProcessorToConsumersPerfTest.PRODUCERS_RING_BUFFER);
+        expectClass(AtomicReadRingBuffer.class, ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER);
+    }
+
+    private static void expectClass(Class<?> clazz, RingBuffer<?>... ringBuffers) {
+        for (RingBuffer<?> ringBuffer : ringBuffers) {
+            assertEquals(clazz, ringBuffer.getClass());
+        }
     }
 }
