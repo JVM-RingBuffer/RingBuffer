@@ -3,10 +3,14 @@ package perftest;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class PrefilledWriter extends TestThread {
-    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static PrefilledWriter startAsync(int numIterations, RingBuffer<Event> ringBuffer) {
         PrefilledWriter writer = new PrefilledWriter(numIterations, ringBuffer);
         writer.start();
-        writer.reportPerformance();
+        return writer;
+    }
+
+    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+        startAsync(numIterations, ringBuffer).reportPerformance();
     }
 
     static void runSync(int numIterations, RingBuffer<Event> ringBuffer) {

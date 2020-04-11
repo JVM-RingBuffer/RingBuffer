@@ -27,7 +27,9 @@ public class OneToOneBlockingTest implements RingBufferTest {
 
     @Override
     public long run() {
-        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        Writer writer = Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        long sum = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        writer.reportPerformance();
+        return sum;
     }
 }

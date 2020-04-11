@@ -7,7 +7,9 @@ class PrefilledOneToOneBlockingBatchTest extends PrefilledOneToOneBlockingTest {
 
     @Override
     public long run() {
-        PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        return AdvancingBatchReader.runAsync(NUM_ITERATIONS, READ_BUFFER_BLOCKING_SIZE, RING_BUFFER);
+        PrefilledWriter writer = PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        long sum = AdvancingBatchReader.runAsync(NUM_ITERATIONS, READ_BUFFER_BLOCKING_SIZE, RING_BUFFER);
+        writer.reportPerformance();
+        return sum;
     }
 }
