@@ -5,8 +5,9 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="directory" />
+    <option name="VM_PARAMETERS" value="-ea -Xms1g -Xmx1g -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <option name="PARAMETERS" value="" />
-    <dir value="$PROJECT_DIR$/test" />
+    <dir value="$PROJECT_DIR$/unit-test" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

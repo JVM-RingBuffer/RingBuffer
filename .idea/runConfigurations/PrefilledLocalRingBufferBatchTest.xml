@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PrefilledLocalRingBufferBatchTest" type="Application" factoryName="Application" folderName="Local" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="perftest.PrefilledLocalRingBufferBatchTest" />
+    <option name="MAIN_CLASS_NAME" value="test.PrefilledLocalRingBufferBatchTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms26m -Xmx26m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

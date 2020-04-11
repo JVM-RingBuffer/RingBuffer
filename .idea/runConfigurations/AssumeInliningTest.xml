@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AssumeInliningTest" type="Application" factoryName="Application" folderName="java" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="perftest.AssumeInliningTest" />
+    <option name="MAIN_CLASS_NAME" value="test.AssumeInliningTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining" />
     <method v="2">

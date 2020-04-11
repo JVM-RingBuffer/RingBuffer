@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ManyWritersTest" type="Application" factoryName="Application" folderName="Many Writers">
-    <option name="MAIN_CLASS_NAME" value="perftest.ManyWritersTest" />
+    <option name="MAIN_CLASS_NAME" value="test.ManyWritersTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms2176m -Xmx2176m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
