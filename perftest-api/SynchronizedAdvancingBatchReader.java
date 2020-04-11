@@ -1,21 +1,20 @@
 package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.java.Array;
 
 class SynchronizedAdvancingBatchReader extends BatchReader {
     static TestThreadGroup runGroupAsync(int readBufferSize, RingBuffer<Event> ringBuffer) {
-        Array<Event> readBuffer = Array.allocate(readBufferSize);
+        Event[] readBuffer = new Event[readBufferSize];
         return new TestThreadGroup(numIterations -> runAsync(numIterations, readBuffer, ringBuffer));
     }
 
-    private static SynchronizedAdvancingBatchReader runAsync(int numIterations, Array<Event> readBuffer, RingBuffer<Event> ringBuffer) {
+    private static SynchronizedAdvancingBatchReader runAsync(int numIterations, Event[] readBuffer, RingBuffer<Event> ringBuffer) {
         SynchronizedAdvancingBatchReader thread = new SynchronizedAdvancingBatchReader(numIterations, readBuffer, ringBuffer);
         thread.start();
         return thread;
     }
 
-    private SynchronizedAdvancingBatchReader(int numIterations, Array<Event> readBuffer, RingBuffer<Event> ringBuffer) {
+    private SynchronizedAdvancingBatchReader(int numIterations, Event[] readBuffer, RingBuffer<Event> ringBuffer) {
         super(numIterations, readBuffer, ringBuffer);
     }
 
@@ -23,7 +22,7 @@ class SynchronizedAdvancingBatchReader extends BatchReader {
     long collect() {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
-        Array<Event> buffer = getReadBuffer();
+        Event[] buffer = getReadBuffer();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             synchronized (ringBuffer) {

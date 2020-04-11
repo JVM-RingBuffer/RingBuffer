@@ -1,6 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
@@ -88,28 +87,27 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(Array<T> buffer) {
-        int bufferSize = buffer.getCapacity();
-        if (readPosition >= bufferSize) {
+    public void fill(T[] buffer) {
+        if (readPosition >= buffer.length) {
             int i = readPosition;
-            readPosition -= bufferSize;
+            readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
                 readBusyWaitStrategy.reset();
                 while (writtenPositions.isFalse(i)) {
                     readBusyWaitStrategy.tick();
                 }
                 writtenPositions.setFalsePlain(i);
-                buffer.setElement(j++, this.buffer[i]);
+                buffer[j++] = this.buffer[i];
                 if (gcEnabled) {
                     this.buffer[i] = null;
                 }
             }
         } else {
-            fillSplit(buffer, bufferSize);
+            fillSplit(buffer);
         }
     }
 
-    private void fillSplit(Array<T> buffer, int bufferSize) {
+    private void fillSplit(T[] buffer) {
         int i = readPosition;
         int j = 0;
         for (; i >= 0; i--) {
@@ -118,19 +116,19 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
                 readBusyWaitStrategy.tick();
             }
             writtenPositions.setFalsePlain(i);
-            buffer.setElement(j++, this.buffer[i]);
+            buffer[j++] = this.buffer[i];
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
-        readPosition += capacity - bufferSize;
+        readPosition += capacity - buffer.length;
         for (i = capacityMinusOne; i > readPosition; i--) {
             readBusyWaitStrategy.reset();
             while (writtenPositions.isFalse(i)) {
                 readBusyWaitStrategy.tick();
             }
             writtenPositions.setFalsePlain(i);
-            buffer.setElement(j++, this.buffer[i]);
+            buffer[j++] = this.buffer[i];
             if (gcEnabled) {
                 this.buffer[i] = null;
             }

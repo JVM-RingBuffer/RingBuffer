@@ -1,6 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
@@ -90,38 +89,37 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized void fill(Array<T> buffer) {
+    public synchronized void fill(T[] buffer) {
         int readPosition = this.readPosition.getPlain();
-        int bufferSize = buffer.getCapacity();
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < bufferSize) {
+        while (size(readPosition) < buffer.length) {
             readBusyWaitStrategy.tick();
         }
-        if (readPosition >= bufferSize) {
-            int newReadPosition = readPosition - bufferSize;
+        if (readPosition >= buffer.length) {
+            int newReadPosition = readPosition - buffer.length;
             for (int j = 0; readPosition > newReadPosition; readPosition--) {
-                buffer.setElement(j++, this.buffer[readPosition]);
+                buffer[j++] = this.buffer[readPosition];
                 if (gcEnabled) {
                     this.buffer[readPosition] = null;
                 }
             }
             this.readPosition.set(newReadPosition);
         } else {
-            fillSplit(readPosition, buffer, bufferSize);
+            fillSplit(readPosition, buffer);
         }
     }
 
-    private void fillSplit(int readPosition, Array<T> buffer, int bufferSize) {
+    private void fillSplit(int readPosition, T[] buffer) {
         int j = 0;
-        int newReadPosition = readPosition + capacity - bufferSize;
+        int newReadPosition = readPosition + capacity - buffer.length;
         for (; readPosition >= 0; readPosition--) {
-            buffer.setElement(j++, this.buffer[readPosition]);
+            buffer[j++] = this.buffer[readPosition];
             if (gcEnabled) {
                 this.buffer[readPosition] = null;
             }
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
-            buffer.setElement(j++, this.buffer[readPosition]);
+            buffer[j++] = this.buffer[readPosition];
             if (gcEnabled) {
                 this.buffer[readPosition] = null;
             }

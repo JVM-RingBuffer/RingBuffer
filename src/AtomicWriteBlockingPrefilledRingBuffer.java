@@ -1,6 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
@@ -91,27 +90,26 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(Array<T> buffer) {
-        int bufferSize = buffer.getCapacity();
-        if (readPosition >= bufferSize) {
+    public void fill(T[] buffer) {
+        if (readPosition >= buffer.length) {
             int i = readPosition;
-            newReadPosition = i - bufferSize;
+            newReadPosition = i - buffer.length;
             for (int j = 0; i > newReadPosition; i--) {
                 readBusyWaitStrategy.reset();
                 while (writtenPositions.isFalse(i)) {
                     readBusyWaitStrategy.tick();
                 }
                 writtenPositions.setFalsePlain(i);
-                buffer.setElement(j++, this.buffer[i]);
+                buffer[j++] = this.buffer[i];
             }
         } else {
-            fillSplit(buffer, bufferSize);
+            fillSplit(buffer);
         }
     }
 
-    private void fillSplit(Array<T> buffer, int bufferSize) {
+    private void fillSplit(T[] buffer) {
         int i = readPosition;
-        newReadPosition = i + capacity - bufferSize;
+        newReadPosition = i + capacity - buffer.length;
         int j = 0;
         for (; i >= 0; i--) {
             readBusyWaitStrategy.reset();
@@ -119,7 +117,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
                 readBusyWaitStrategy.tick();
             }
             writtenPositions.setFalsePlain(i);
-            buffer.setElement(j++, this.buffer[i]);
+            buffer[j++] = this.buffer[i];
         }
         for (i = capacityMinusOne; i > newReadPosition; i--) {
             readBusyWaitStrategy.reset();
@@ -127,7 +125,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
                 readBusyWaitStrategy.tick();
             }
             writtenPositions.setFalsePlain(i);
-            buffer.setElement(j++, this.buffer[i]);
+            buffer[j++] = this.buffer[i];
         }
     }
 

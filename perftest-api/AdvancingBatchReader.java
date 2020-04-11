@@ -1,7 +1,6 @@
 package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.java.Array;
 
 class AdvancingBatchReader extends BatchReader {
     static AdvancingBatchReader runAsync(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
@@ -18,7 +17,7 @@ class AdvancingBatchReader extends BatchReader {
     long collect() {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
-        Array<Event> buffer = getReadBuffer();
+        Event[] buffer = getReadBuffer();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             ringBuffer.fill(buffer);

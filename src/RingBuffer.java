@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.java.Array;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -89,13 +87,11 @@ public interface RingBuffer<T> {
      * <p>
      * If external synchronization is not performed, then the buffer cannot be shared by multiple threads.
      */
-    void fill(Array<T> buffer);
+    void fill(T[] buffer);
 
     default void advance() {}
 
-    default void advanceBatch() {
-        advance();
-    }
+    default void advanceBatch() {}
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,

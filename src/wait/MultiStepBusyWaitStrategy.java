@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder.*;
+import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
 
 public class MultiStepBusyWaitStrategy implements BusyWaitStrategy {
     private final int initialStrategyIndex;

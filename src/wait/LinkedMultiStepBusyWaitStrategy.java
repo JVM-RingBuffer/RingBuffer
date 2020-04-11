@@ -8,7 +8,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
-import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder.*;
+import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
 
 /**
  * Might be slightly faster than {@link MultiStepBusyWaitStrategy} for two total steps, and slower otherwise.

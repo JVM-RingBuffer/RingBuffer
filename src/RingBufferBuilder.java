@@ -162,13 +162,18 @@ public class RingBufferBuilder<T> {
     }
 
     T[] getBuffer() {
-        T[] buffer = (T[]) new Object[capacity];
+        T[] buffer = newBuffer();
         if (isPrefilled) {
             for (int i = 0; i < capacity; i++) {
                 buffer[i] = filler.get();
             }
         }
         return buffer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private T[] newBuffer() {
+        return (T[]) new Object[capacity];
     }
 
     boolean isGCEnabled() {

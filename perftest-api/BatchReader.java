@@ -1,7 +1,6 @@
 package perftest;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.java.Array;
 import eu.menzani.ringbuffer.java.Int;
 
 class BatchReader extends Reader {
@@ -21,18 +20,18 @@ class BatchReader extends Reader {
         return thread;
     }
 
-    private final Array<Event> readBuffer;
+    private final Event[] readBuffer;
 
     BatchReader(int numIterations, int readBufferSize, RingBuffer<Event> ringBuffer) {
-        this(numIterations, Array.allocate(readBufferSize), ringBuffer);
+        this(numIterations, new Event[readBufferSize], ringBuffer);
     }
 
-    BatchReader(int numIterations, Array<Event> readBuffer, RingBuffer<Event> ringBuffer) {
-        super(Int.ceilDiv(numIterations, readBuffer.getCapacity()), ringBuffer);
+    BatchReader(int numIterations, Event[] readBuffer, RingBuffer<Event> ringBuffer) {
+        super(Int.ceilDiv(numIterations, readBuffer.length), ringBuffer);
         this.readBuffer = readBuffer;
     }
 
-    Array<Event> getReadBuffer() {
+    Event[] getReadBuffer() {
         return readBuffer;
     }
 
@@ -40,7 +39,7 @@ class BatchReader extends Reader {
     long collect() {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
-        Array<Event> buffer = readBuffer;
+        Event[] buffer = readBuffer;
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             ringBuffer.fill(buffer);
