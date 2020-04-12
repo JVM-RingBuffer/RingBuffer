@@ -9,7 +9,7 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     public static final SleepBusyWaitStrategy DEFAULT_INSTANCE = new SleepBusyWaitStrategy(1L);
 
     public static BusyWaitStrategy getDefault() {
-        return MultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
+        return ArrayMultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
                 .after(YieldBusyWaitStrategy.getDefault(), 100)
                 .build();
     }

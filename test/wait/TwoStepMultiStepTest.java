@@ -1,7 +1,7 @@
 package test.wait;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategy;
+import eu.menzani.ringbuffer.wait.ArrayMultiStepBusyWaitStrategy;
 
 public class TwoStepMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
@@ -10,7 +10,7 @@ public class TwoStepMultiStepTest extends MultiStepBusyWaitStrategyTest {
 
     @Override
     BusyWaitStrategy getStrategy() {
-        return MultiStepBusyWaitStrategy.endWith(SECOND)
+        return ArrayMultiStepBusyWaitStrategy.endWith(SECOND)
                 .after(FIRST, STEP_TICKS)
                 .build();
     }

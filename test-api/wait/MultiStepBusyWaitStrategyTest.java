@@ -1,7 +1,7 @@
 package test.wait;
 
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilder;
+import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.NoopBusyWaitStrategy;
 import test.Benchmark;
 import test.Profiler;
@@ -61,7 +61,7 @@ public abstract class MultiStepBusyWaitStrategyTest {
                 .build();
     }
 
-    MultiStepBusyWaitStrategyBuilder getStrategyBuilder() {
+    MultiStepBusyWaitStrategy.Builder getStrategyBuilder() {
         throw new AssertionError();
     }
 }

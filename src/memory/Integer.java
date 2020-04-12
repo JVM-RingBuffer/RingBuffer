@@ -5,10 +5,6 @@ public interface Integer {
 
     int getAndDecrement();
 
-    int decrementAndGetPlain();
-
-    int getPlainAndIncrement();
-
     int get();
 
     int getPlain();

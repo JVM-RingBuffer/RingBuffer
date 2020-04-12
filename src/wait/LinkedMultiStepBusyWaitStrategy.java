@@ -2,23 +2,22 @@ package eu.menzani.ringbuffer.wait;
 
 import eu.menzani.ringbuffer.java.Assert;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
 
 /**
- * Might be slightly faster than {@link MultiStepBusyWaitStrategy} for two total steps, and slower otherwise.
+ * Might be slightly faster than {@link ArrayMultiStepBusyWaitStrategy} for two total steps, and slower otherwise.
  */
-public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
+public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy {
     private final Node initialStrategy;
     private Node currentStrategy;
     private int counter;
 
-    public static MultiStepBusyWaitStrategyBuilder endWith(BusyWaitStrategy finalStrategy) {
+    public static MultiStepBusyWaitStrategy.Builder endWith(BusyWaitStrategy finalStrategy) {
         return new Builder().endWith(finalStrategy);
     }
 
@@ -46,44 +45,66 @@ public class LinkedMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         currentStrategy.strategy.tick();
     }
 
-    public static class Builder implements MultiStepBusyWaitStrategyBuilder {
+    @Override
+    public List<BusyWaitStrategy> getStrategies() {
+        List<BusyWaitStrategy> strategies = new ArrayList<>(5);
+        Node node = initialStrategy.next;
+        do {
+            strategies.add(node.strategy);
+            node = node.next;
+        } while (node != null);
+        Collections.reverse(strategies);
+        return strategies;
+    }
+
+    @Override
+    public List<Integer> getStrategiesTicks() {
+        List<Integer> strategiesTicks = new ArrayList<>(5);
+        Node node = initialStrategy.next;
+        do {
+            strategiesTicks.add(node.strategyTicks);
+            node = node.next;
+        } while (node != null && node.strategyTicks != 0);
+        Collections.reverse(strategiesTicks);
+        return strategiesTicks;
+    }
+
+    public static class Builder implements MultiStepBusyWaitStrategy.Builder {
         private BusyWaitStrategy finalStrategy;
         private final List<BusyWaitStrategy> strategies = new ArrayList<>();
         private final List<Integer> strategiesTicks = new ArrayList<>();
 
         @Override
-        public MultiStepBusyWaitStrategyBuilder endWith(BusyWaitStrategy finalStrategy) {
-            this.finalStrategy = finalStrategy;
-            return this;
-        }
-
-        @Override
-        public MultiStepBusyWaitStrategyBuilder after(BusyWaitStrategy strategy, int strategyTicks) {
-            validateStrategyTicks(strategyTicks);
-            if (strategy instanceof LinkedMultiStepBusyWaitStrategy) {
-                Node node = ((LinkedMultiStepBusyWaitStrategy) strategy).initialStrategy.next;
-                Deque<BusyWaitStrategy> strategies = new ArrayDeque<>();
-                Deque<Integer> strategiesTicks = new ArrayDeque<>();
-                do {
-                    strategies.addFirst(node.strategy);
-                    if (node.strategyTicks == 0) {
-                        strategiesTicks.addFirst(strategyTicks - 1);
-                    } else {
-                        strategiesTicks.addFirst(node.strategyTicks);
-                    }
-                    node = node.next;
-                } while (node != null);
-                this.strategies.addAll(strategies);
-                this.strategiesTicks.addAll(strategiesTicks);
+        public MultiStepBusyWaitStrategy.Builder endWith(BusyWaitStrategy finalStrategy) {
+            if (finalStrategy instanceof MultiStepBusyWaitStrategy) {
+                MultiStepBusyWaitStrategy finalMultiStepStrategy = (MultiStepBusyWaitStrategy) finalStrategy;
+                List<BusyWaitStrategy> strategies = finalMultiStepStrategy.getStrategies();
+                int lastIndex = strategies.size() - 1;
+                this.strategies.addAll(strategies.subList(0, lastIndex));
+                this.finalStrategy = strategies.get(lastIndex);
+                strategiesTicks.addAll(finalMultiStepStrategy.getStrategiesTicks());
             } else {
-                strategies.add(strategy);
-                strategiesTicks.add(strategyTicks - 1);
+                this.finalStrategy = finalStrategy;
             }
             return this;
         }
 
         @Override
-        public BusyWaitStrategy build() {
+        public MultiStepBusyWaitStrategy.Builder after(BusyWaitStrategy strategy, int strategyTicks) {
+            validateStrategyTicks(strategyTicks);
+            if (strategy instanceof MultiStepBusyWaitStrategy) {
+                MultiStepBusyWaitStrategy multiStepStrategy = (MultiStepBusyWaitStrategy) strategy;
+                strategies.addAll(multiStepStrategy.getStrategies());
+                strategiesTicks.addAll(multiStepStrategy.getStrategiesTicks());
+            } else {
+                strategies.add(strategy);
+            }
+            strategiesTicks.add(strategyTicks - 1);
+            return this;
+        }
+
+        @Override
+        public MultiStepBusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {
                 throwNoIntermediateStepsAdded();

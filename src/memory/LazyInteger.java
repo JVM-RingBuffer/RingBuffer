@@ -27,16 +27,6 @@ public class LazyInteger implements Integer {
     }
 
     @Override
-    public int decrementAndGetPlain() {
-        return (int) VALUE.getAndAddRelease(this, -1) - 1;
-    }
-
-    @Override
-    public int getPlainAndIncrement() {
-        return (int) VALUE.getAndAddRelease(this, 1);
-    }
-
-    @Override
     public int get() {
         return (int) VALUE.getAcquire(this);
     }
