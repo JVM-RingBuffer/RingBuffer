@@ -33,15 +33,13 @@ public class Benchmark {
         }
 
         void update(long value) {
-            if (value > 1L) {
-                sum += value;
-                count++;
-                if (value < minimum) {
-                    minimum = value;
-                }
-                if (value > maximum) {
-                    maximum = value;
-                }
+            sum += value;
+            count++;
+            if (value < minimum) {
+                minimum = value;
+            }
+            if (value > maximum) {
+                maximum = value;
             }
         }
 

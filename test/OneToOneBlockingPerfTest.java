@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 public class OneToOneBlockingPerfTest extends OneToOneBlockingTest {
     public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>empty(MANY_READERS_OR_WRITERS_SIZE)
+            RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
                     .blocking()

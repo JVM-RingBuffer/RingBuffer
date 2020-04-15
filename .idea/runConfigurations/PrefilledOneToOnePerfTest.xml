@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PrefilledOneToOnePerfTest" type="Application" factoryName="Application" folderName="Volatile Prefilled">
+    <option name="MAIN_CLASS_NAME" value="test.PrefilledOneToOnePerfTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms26m -Xmx26m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
