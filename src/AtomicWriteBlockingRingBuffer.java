@@ -1,6 +1,5 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
@@ -14,13 +13,10 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     private final T[] buffer;
     private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final BusyWaitStrategy[] writeBusyWaitStrategyArray;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private int readPosition;
+    private final Integer readPosition;
     private final Integer writePosition;
-
-    private final BooleanArray writtenPositions;
-    private final BooleanArray usedPositions;
 
     AtomicWriteBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -28,20 +24,14 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
         buffer = builder.getBuffer();
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writeBusyWaitStrategyArray = builder.getWriteBusyWaitStrategyArray();
+        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
+        readPosition = builder.newCursor();
         writePosition = builder.newCursor();
-        writtenPositions = builder.newFlagArray();
-        usedPositions = builder.newFlagArray();
     }
 
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public int nextKey() {
-        return shouldBeAdvancing();
     }
 
     @Override
@@ -51,121 +41,130 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put() {
-        shouldBeAdvancing();
+       shouldBeAdvancing();
     }
 
     @Override
-    public void put(T element) {
-        int writePosition = this.writePosition.getAndDecrement() & capacityMinusOne;
-        BusyWaitStrategy busyWaitStrategy = writeBusyWaitStrategyArray[writePosition];
-        busyWaitStrategy.reset();
-        while (!usedPositions.weakCompareFalseAndSetTrue(writePosition)) {
-            busyWaitStrategy.tick();
+    public synchronized void put(T element) {
+        int writePosition = this.writePosition.getPlain();
+        int newWritePosition;
+        if (writePosition == 0) {
+            newWritePosition = capacityMinusOne;
+        } else {
+            newWritePosition = writePosition - 1;
+        }
+        writeBusyWaitStrategy.reset();
+        while (readPosition.get() == newWritePosition) {
+            writeBusyWaitStrategy.tick();
         }
         buffer[writePosition] = element;
-        writtenPositions.setTrue(writePosition);
+        this.writePosition.set(newWritePosition);
     }
 
     @Override
     public T take() {
+        int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (writtenPositions.isFalse(readPosition)) {
+        while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
-        writtenPositions.setFalsePlain(readPosition);
+        if (readPosition == 0) {
+            this.readPosition.set(capacityMinusOne);
+        } else {
+            this.readPosition.set(readPosition - 1);
+        }
         T element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
-        }
-        usedPositions.setFalse(readPosition);
-        if (readPosition == 0) {
-            readPosition = capacityMinusOne;
-        } else {
-            readPosition--;
         }
         return element;
     }
 
     @Override
     public void fill(T[] buffer) {
+        int readPosition = this.readPosition.getPlain();
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < buffer.length) {
+            readBusyWaitStrategy.tick();
+        }
         if (readPosition >= buffer.length) {
-            int i = readPosition;
-            readPosition -= buffer.length;
-            for (int j = 0; i > readPosition; i--) {
-                readBusyWaitStrategy.reset();
-                while (writtenPositions.isFalse(i)) {
-                    readBusyWaitStrategy.tick();
-                }
-                writtenPositions.setFalsePlain(i);
-                buffer[j++] = this.buffer[i];
+            int newReadPosition = readPosition - buffer.length;
+            for (int j = 0; readPosition > newReadPosition; readPosition--) {
+                buffer[j++] = this.buffer[readPosition];
                 if (gcEnabled) {
-                    this.buffer[i] = null;
+                    this.buffer[readPosition] = null;
                 }
-                usedPositions.setFalse(i);
             }
+            this.readPosition.set(newReadPosition);
         } else {
-            fillSplit(buffer);
+            fillSplit(readPosition, buffer);
         }
     }
 
-    private void fillSplit(T[] buffer) {
-        int i = readPosition;
+    private void fillSplit(int readPosition, T[] buffer) {
         int j = 0;
-        for (; i >= 0; i--) {
-            readBusyWaitStrategy.reset();
-            while (writtenPositions.isFalse(i)) {
-                readBusyWaitStrategy.tick();
-            }
-            writtenPositions.setFalsePlain(i);
-            buffer[j++] = this.buffer[i];
+        int newReadPosition = readPosition + capacity - buffer.length;
+        for (; readPosition >= 0; readPosition--) {
+            buffer[j++] = this.buffer[readPosition];
             if (gcEnabled) {
-                this.buffer[i] = null;
+                this.buffer[readPosition] = null;
             }
-            usedPositions.setFalse(i);
         }
-        readPosition += capacity - buffer.length;
-        for (i = capacityMinusOne; i > readPosition; i--) {
-            readBusyWaitStrategy.reset();
-            while (writtenPositions.isFalse(i)) {
-                readBusyWaitStrategy.tick();
-            }
-            writtenPositions.setFalsePlain(i);
-            buffer[j++] = this.buffer[i];
+        for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
+            buffer[j++] = this.buffer[readPosition];
             if (gcEnabled) {
-                this.buffer[i] = null;
+                this.buffer[readPosition] = null;
             }
-            usedPositions.setFalse(i);
         }
+        this.readPosition.set(newReadPosition);
     }
 
     @Override
     public void forEach(Consumer<T> action) {
-        for (int i = readPosition; writtenPositions.isTrue(i); ) {
+        int readPosition = this.readPosition.get();
+        int writePosition = this.writePosition.get();
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
+                action.accept(buffer[i]);
+            }
+        } else {
+            forEachSplit(action, readPosition, writePosition);
+        }
+    }
+
+    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
+        for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
-            if (i == 0) {
-                i = capacityMinusOne;
-            } else {
-                i--;
-            }
-            if (i == readPosition) {
-                break;
-            }
+        }
+        for (int i = capacityMinusOne; i > writePosition; i--) {
+            action.accept(buffer[i]);
         }
     }
 
     @Override
     public boolean contains(T element) {
-        for (int i = readPosition; writtenPositions.isTrue(i); ) {
+        int readPosition = this.readPosition.get();
+        int writePosition = this.writePosition.get();
+        if (writePosition <= readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
+                if (buffer[i].equals(element)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return containsSplit(element, readPosition, writePosition);
+    }
+
+    private boolean containsSplit(T element, int readPosition, int writePosition) {
+        for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
             }
-            if (i == 0) {
-                i = capacityMinusOne;
-            } else {
-                i--;
-            }
-            if (i == readPosition) {
-                break;
+        }
+        for (int i = capacityMinusOne; i > writePosition; i--) {
+            if (buffer[i].equals(element)) {
+                return true;
             }
         }
         return false;
@@ -173,47 +172,56 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        int usedCount = 0;
-        for (int i = readPosition; usedPositions.isTrue(i); ) {
-            usedCount++;
-            if (i == 0) {
-                i = capacityMinusOne;
-            } else {
-                i--;
-            }
-            if (i == readPosition) {
-                break;
-            }
+        return size(readPosition.get());
+    }
+
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get();
+        if (writePosition <= readPosition) {
+            return readPosition - writePosition;
         }
-        return usedCount;
+        return capacity - (writePosition - readPosition);
     }
 
     @Override
     public boolean isEmpty() {
-        return usedPositions.isFalse(readPosition);
+        return isEmpty(readPosition.get(), writePosition.get());
+    }
+
+    private boolean isEmpty(int readPosition, int writePosition) {
+        return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
+        int readPosition = this.readPosition.get();
+        int writePosition = this.writePosition.get();
+        if (isEmpty(readPosition, writePosition)) {
+            return "[]";
+        }
         StringBuilder builder = new StringBuilder(16);
         builder.append('[');
-        for (int i = readPosition; writtenPositions.isTrue(i); ) {
-            builder.append(buffer[i].toString());
-            builder.append(", ");
-            if (i == 0) {
-                i = capacityMinusOne;
-            } else {
-                i--;
+        if (writePosition < readPosition) {
+            for (int i = readPosition; i > writePosition; i--) {
+                builder.append(buffer[i].toString());
+                builder.append(", ");
             }
-            if (i == readPosition) {
-                break;
-            }
+        } else {
+            toStringSplit(builder, readPosition, writePosition);
         }
-        int length = builder.length();
-        if (length != 1) {
-            builder.setLength(length - 2);
-        }
+        builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
+    }
+
+    private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
+        for (int i = readPosition; i >= 0; i--) {
+            builder.append(buffer[i].toString());
+            builder.append(", ");
+        }
+        for (int i = capacityMinusOne; i > writePosition; i--) {
+            builder.append(buffer[i].toString());
+            builder.append(", ");
+        }
     }
 }

@@ -25,7 +25,7 @@ class AdvancingBatchReader extends BatchReader {
             for (Event event : buffer) {
                 sum += event.getData();
             }
-            ringBuffer.advanceBatch();
+            ringBuffer.advance();
         }
         return sum;
     }

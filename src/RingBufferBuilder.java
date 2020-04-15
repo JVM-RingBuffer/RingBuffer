@@ -1,24 +1,23 @@
 package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.java.Int;
-import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.util.function.Supplier;
 
 public class RingBufferBuilder<T> {
-    private int capacity;
+    private final int capacity;
     private final Supplier<? extends T> filler;
     private final boolean isPrefilled;
     private final T dummyElement;
     private Boolean oneWriter;
     private Boolean oneReader;
     private RingBufferType type = RingBufferType.OVERWRITING;
-    private BusyWaitStrategy.Factory writeBusyWaitStrategyFactory;
-    private BusyWaitStrategy.Factory readBusyWaitStrategyFactory = BusyWaitStrategy.HINT;
+    private BusyWaitStrategy writeBusyWaitStrategy;
+    private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
     private boolean gcEnabled;
     private MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
@@ -35,9 +34,6 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
-    /**
-     * If the ring buffer is not discarding, the capacity will be rounded to the next power of 2.
-     */
     public RingBufferBuilder<T> manyWriters() {
         oneWriter = false;
         return this;
@@ -54,13 +50,13 @@ public class RingBufferBuilder<T> {
     }
 
     public RingBufferBuilder<T> blocking() {
-        blocking(BusyWaitStrategy.HINT);
+        blocking(HintBusyWaitStrategy.getDefault());
         return this;
     }
 
-    public RingBufferBuilder<T> blocking(BusyWaitStrategy.Factory busyWaitStrategyFactory) {
+    public RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy) {
         type = RingBufferType.BLOCKING;
-        writeBusyWaitStrategyFactory = busyWaitStrategyFactory;
+        writeBusyWaitStrategy = busyWaitStrategy;
         return this;
     }
 
@@ -69,8 +65,8 @@ public class RingBufferBuilder<T> {
         return this;
     }
 
-    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy.Factory busyWaitStrategyFactory) {
-        readBusyWaitStrategyFactory = busyWaitStrategyFactory;
+    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
+        readBusyWaitStrategy = busyWaitStrategy;
         return this;
     }
 
@@ -108,10 +104,8 @@ public class RingBufferBuilder<T> {
             if (!oneWriter) {
                 switch (type) {
                     case OVERWRITING:
-                        roundCapacityToNextPowerOfTwo();
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
-                        roundCapacityToNextPowerOfTwo();
                         if (isPrefilled) {
                             return new AtomicWriteBlockingPrefilledRingBuffer<>(this);
                         }
@@ -149,10 +143,6 @@ public class RingBufferBuilder<T> {
         throw new AssertionError();
     }
 
-    private void roundCapacityToNextPowerOfTwo() {
-        capacity = Int.getNextPowerOfTwo(capacity);
-    }
-
     int getCapacity() {
         return capacity;
     }
@@ -187,19 +177,11 @@ public class RingBufferBuilder<T> {
     }
 
     BusyWaitStrategy getWriteBusyWaitStrategy() {
-        return writeBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
+        return writeBusyWaitStrategy;
     }
 
     BusyWaitStrategy getReadBusyWaitStrategy() {
-        return readBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
-    }
-
-    BusyWaitStrategy[] getWriteBusyWaitStrategyArray() {
-        BusyWaitStrategy[] strategies = new BusyWaitStrategy[capacity];
-        for (int i = 0; i < capacity; i++) {
-            strategies[i] = writeBusyWaitStrategyFactory.newInstanceOrReusedIfThreadSafe();
-        }
-        return strategies;
+        return readBusyWaitStrategy;
     }
 
     T getDummyElement() {
@@ -211,10 +193,6 @@ public class RingBufferBuilder<T> {
 
     Integer newCursor() {
         return memoryOrder.newInteger();
-    }
-
-    BooleanArray newFlagArray() {
-        return memoryOrder.newBooleanArray(capacity);
     }
 
     private enum RingBufferType {

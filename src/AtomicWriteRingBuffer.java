@@ -1,12 +1,9 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.memory.BooleanArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
-
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
 
 class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
@@ -18,7 +15,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    private final BooleanArray writtenPositions;
+    private int newWritePosition;
 
     AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -27,7 +24,6 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
-        writtenPositions = builder.newFlagArray();
     }
 
     @Override
@@ -37,66 +33,60 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        return keyRequired();
+        int writePosition = this.writePosition.getPlain();
+        if (writePosition == 0) {
+            newWritePosition = capacityMinusOne;
+        } else {
+            newWritePosition = writePosition - 1;
+        }
+        return buffer[writePosition];
     }
 
     @Override
     public void put() {
-        keyRequired();
+        writePosition.set(newWritePosition);
     }
 
     @Override
-    public int nextKey() {
-        return writePosition.getAndDecrement() & capacityMinusOne;
-    }
-
-    @Override
-    public T next(int key) {
-        return buffer[key];
-    }
-
-    @Override
-    public void put(int key) {
-        writtenPositions.setTrue(key);
-    }
-
-    @Override
-    public void put(T element) {
-        int writePosition = this.writePosition.getAndDecrement() & capacityMinusOne;
+    public synchronized void put(T element) {
+        int writePosition = this.writePosition.getPlain();
         buffer[writePosition] = element;
-        writtenPositions.setTrue(writePosition);
+        if (writePosition == 0) {
+            this.writePosition.set(capacityMinusOne);
+        } else {
+            this.writePosition.set(writePosition - 1);
+        }
     }
 
     @Override
     public T take() {
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (writtenPositions.isFalse(readPosition)) {
+        while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
-        writtenPositions.setFalsePlain(readPosition);
+        if (readPosition == 0) {
+            this.readPosition = capacityMinusOne;
+        } else {
+            this.readPosition--;
+        }
         T element = buffer[readPosition];
         if (gcEnabled) {
             buffer[readPosition] = null;
-        }
-        if (readPosition == 0) {
-            readPosition = capacityMinusOne;
-        } else {
-            readPosition--;
         }
         return element;
     }
 
     @Override
     public void fill(T[] buffer) {
+        readBusyWaitStrategy.reset();
+        while (size() < buffer.length) {
+            readBusyWaitStrategy.tick();
+        }
         if (readPosition >= buffer.length) {
             int i = readPosition;
             readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
-                readBusyWaitStrategy.reset();
-                while (writtenPositions.isFalse(i)) {
-                    readBusyWaitStrategy.tick();
-                }
-                writtenPositions.setFalsePlain(i);
                 buffer[j++] = this.buffer[i];
                 if (gcEnabled) {
                     this.buffer[i] = null;
@@ -108,26 +98,15 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void fillSplit(T[] buffer) {
-        int i = readPosition;
         int j = 0;
-        for (; i >= 0; i--) {
-            readBusyWaitStrategy.reset();
-            while (writtenPositions.isFalse(i)) {
-                readBusyWaitStrategy.tick();
-            }
-            writtenPositions.setFalsePlain(i);
+        for (int i = readPosition; i >= 0; i--) {
             buffer[j++] = this.buffer[i];
             if (gcEnabled) {
                 this.buffer[i] = null;
             }
         }
         readPosition += capacity - buffer.length;
-        for (i = capacityMinusOne; i > readPosition; i--) {
-            readBusyWaitStrategy.reset();
-            while (writtenPositions.isFalse(i)) {
-                readBusyWaitStrategy.tick();
-            }
-            writtenPositions.setFalsePlain(i);
+        for (int i = capacityMinusOne; i > readPosition; i--) {
             buffer[j++] = this.buffer[i];
             if (gcEnabled) {
                 this.buffer[i] = null;
@@ -137,7 +116,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+        int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
@@ -158,7 +137,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+        int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 if (buffer[i].equals(element)) {
@@ -186,7 +165,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+        int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }
@@ -195,7 +174,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(writePosition.get() & capacityMinusOne);
+        return isEmpty(writePosition.get());
     }
 
     private boolean isEmpty(int writePosition) {
@@ -204,7 +183,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public String toString() {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+        int writePosition = this.writePosition.get();
         if (isEmpty(writePosition)) {
             return "[]";
         }

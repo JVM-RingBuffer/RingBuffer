@@ -13,8 +13,8 @@ public interface RingBuffer<T> {
      * If the ring buffer supports at least one reader and writer, then after the returned object has been populated,
      * {@link #put()} must be called.
      * <p>
-     * Moreover, if the ring buffer supports multiple writers and is discarding, then external
-     * synchronization must be performed between the two method invocations:
+     * Moreover, if the ring buffer supports multiple writers, then external synchronization must be performed
+     * between the two method invocations:
      *
      * <pre>{@code
      * synchronized (ringBuffer) {
@@ -23,34 +23,10 @@ public interface RingBuffer<T> {
      *    ringBuffer.put();
      * }
      * }</pre>
-     * <p>
-     * If the ring buffer is not discarding, then {@link #next(int)} must be used instead.
      */
     T next();
 
     void put();
-
-    default int nextKey() {
-        return 0;
-    }
-
-    /**
-     * To be used if the ring buffer supports multiple writers and is not discarding.
-     *
-     * <pre>{@code
-     * int key = ringBuffer.nextKey();
-     * T element = ringBuffer.next(key);
-     * // Populate element
-     * ringBuffer.put(key);
-     * }</pre>
-     */
-    default T next(int key) {
-        return next();
-    }
-
-    default void put(int key) {
-        put();
-    }
 
     void put(T element);
 
@@ -64,15 +40,12 @@ public interface RingBuffer<T> {
      *    // Read element
      * }
      * }</pre>
-     * <p>
-     * If the ring buffer supports multiple writers and is blocking and pre-filled, then after the element
-     * has been read, {@link #advance()} must be called.
      */
     T take();
 
     /**
      * If the ring buffer is blocking and pre-filled, then after the buffer has been read,
-     * {@link #advanceBatch()} must be called.
+     * {@link #advance()} must be called.
      * <p>
      * Moreover, if the ring buffer supports multiple readers, then external synchronization
      * must be performed while reading elements taken out:
@@ -81,7 +54,7 @@ public interface RingBuffer<T> {
      * synchronized (ringBuffer) {
      *    ringBuffer.fill(buffer);
      *    // Read buffer
-     *    ringBuffer.advanceBatch();
+     *    ringBuffer.advance();
      * }
      * }</pre>
      * <p>
@@ -91,18 +64,14 @@ public interface RingBuffer<T> {
 
     default void advance() {}
 
-    default void advanceBatch() {}
-
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * or the ring buffer supports multiple writers and is blocking,
      * then this method can only be called from the reader thread.
      */
     void forEach(Consumer<T> action);
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * or the ring buffer supports multiple writers and is blocking,
      * then this method can only be called from the reader thread.
      */
     boolean contains(T element);
@@ -121,11 +90,7 @@ public interface RingBuffer<T> {
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * or the ring buffer supports multiple writers and is blocking,
      * then this method can only be called from the reader thread.
-     * <p>
-     * If the ring buffer supports multiple writers and is blocking, then the element display order is undefined,
-     * otherwise it is equal to the read order.
      */
     String toString();
 

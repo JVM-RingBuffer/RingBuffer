@@ -35,11 +35,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public int nextKey() {
-        return shouldBeAdvancing();
-    }
-
-    @Override
     public T next() {
         return shouldBeAdvancing();
     }

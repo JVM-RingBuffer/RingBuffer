@@ -8,7 +8,7 @@ RingBuffer<Integer> producersToProcessor = RingBuffer.<Integer>empty(5)
 RingBuffer<Event> processorToConsumers = RingBuffer.prefilled(301, Event::new)
         .oneWriter()
         .manyReaders()
-        .waitingWith(BusyWaitStrategy.YIELD)
+        .waitingWith(YieldBusyWaitStrategy.getDefault())
         .build();
 ThreadBind.loadNativeLibrary();
 

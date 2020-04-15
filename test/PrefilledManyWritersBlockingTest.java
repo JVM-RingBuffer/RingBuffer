@@ -26,8 +26,8 @@ public class PrefilledManyWritersBlockingTest implements RingBufferTest {
 
     @Override
     public long run() {
-        TestThreadGroup group = PrefilledKeyedWriter.startGroupAsync(RING_BUFFER);
-        long sum = AdvancingReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        TestThreadGroup group = PrefilledSynchronizedWriter.startGroupAsync(RING_BUFFER);
+        long sum = Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         group.reportPerformance();
         return sum;
     }

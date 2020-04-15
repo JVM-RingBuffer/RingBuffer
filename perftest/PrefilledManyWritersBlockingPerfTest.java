@@ -16,7 +16,7 @@ public class PrefilledManyWritersBlockingPerfTest extends PrefilledManyWritersBl
 
     @Override
     public long run() {
-        PrefilledKeyedWriter.runGroupAsync(RING_BUFFER);
-        return AdvancingReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        PrefilledSynchronizedWriter.runGroupAsync(RING_BUFFER);
+        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }
 }

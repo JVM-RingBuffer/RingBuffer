@@ -2,9 +2,9 @@ package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
 
-class PrefilledKeyedWriter extends TestThread {
+class PrefilledSynchronizedWriter extends TestThread {
     static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledKeyedWriter(numIterations, ringBuffer));
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledSynchronizedWriter(numIterations, ringBuffer));
         group.start();
         return group;
     }
@@ -13,7 +13,7 @@ class PrefilledKeyedWriter extends TestThread {
         startGroupAsync(ringBuffer).reportPerformance();
     }
 
-    private PrefilledKeyedWriter(int numIterations, RingBuffer<Event> ringBuffer) {
+    private PrefilledSynchronizedWriter(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -22,10 +22,11 @@ class PrefilledKeyedWriter extends TestThread {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
-            int key = ringBuffer.nextKey();
-            Event event = ringBuffer.next(key);
-            event.setData(i);
-            ringBuffer.put(key);
+            synchronized (ringBuffer) {
+                Event event = ringBuffer.next();
+                event.setData(i);
+                ringBuffer.put();
+            }
         }
     }
 }

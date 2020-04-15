@@ -109,11 +109,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advanceBatch() {
-        advance();
-    }
-
-    @Override
     public void forEach(Consumer<T> action) {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
