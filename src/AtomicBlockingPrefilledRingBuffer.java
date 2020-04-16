@@ -5,7 +5,9 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
+class AtomicBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -16,8 +18,9 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
     private final Integer writePosition;
 
     private int newWritePosition;
+    private int newReadPosition;
 
-    VolatileBlockingRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -54,19 +57,7 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition.getPlain();
-        int newWritePosition;
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        buffer[writePosition] = element;
-        this.writePosition.set(newWritePosition);
+        shouldNotBeAdvancing();
     }
 
     @Override
@@ -92,11 +83,10 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
             readBusyWaitStrategy.tick();
         }
         if (readPosition >= buffer.length) {
-            int newReadPosition = readPosition - buffer.length;
+            newReadPosition = readPosition - buffer.length;
             for (int j = 0; readPosition > newReadPosition; readPosition--) {
                 buffer[j++] = this.buffer[readPosition];
             }
-            this.readPosition.set(newReadPosition);
         } else {
             fillSplit(readPosition, buffer);
         }
@@ -104,14 +94,18 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     private void fillSplit(int readPosition, T[] buffer) {
         int j = 0;
-        int newReadPosition = readPosition + capacity - buffer.length;
+        newReadPosition = readPosition + capacity - buffer.length;
         for (; readPosition >= 0; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
         }
-        this.readPosition.set(newReadPosition);
+    }
+
+    @Override
+    public void advance() {
+        readPosition.set(newReadPosition);
     }
 
     @Override

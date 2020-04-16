@@ -11,7 +11,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -22,7 +21,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPosition = builder.newCursor();
@@ -73,11 +71,7 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition.set(readPosition - 1);
         }
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -91,9 +85,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
             int newReadPosition = readPosition - buffer.length;
             for (int j = 0; readPosition > newReadPosition; readPosition--) {
                 buffer[j++] = this.buffer[readPosition];
-                if (gcEnabled) {
-                    this.buffer[readPosition] = null;
-                }
             }
             this.readPosition.set(newReadPosition);
         } else {
@@ -106,15 +97,9 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         int newReadPosition = readPosition + capacity - buffer.length;
         for (; readPosition >= 0; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
-            if (gcEnabled) {
-                this.buffer[readPosition] = null;
-            }
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
-            if (gcEnabled) {
-                this.buffer[readPosition] = null;
-            }
         }
         this.readPosition.set(newReadPosition);
     }

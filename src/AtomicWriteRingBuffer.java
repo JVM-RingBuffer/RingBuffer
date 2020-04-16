@@ -9,7 +9,6 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -21,7 +20,6 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }
@@ -70,11 +68,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition--;
         }
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -88,9 +82,6 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
             readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
                 buffer[j++] = this.buffer[i];
-                if (gcEnabled) {
-                    this.buffer[i] = null;
-                }
             }
         } else {
             fillSplit(buffer);
@@ -98,19 +89,14 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void fillSplit(T[] buffer) {
+        int i = readPosition;
         int j = 0;
-        for (int i = readPosition; i >= 0; i--) {
+        for (; i >= 0; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
         readPosition += capacity - buffer.length;
-        for (int i = capacityMinusOne; i > readPosition; i--) {
+        for (i = capacityMinusOne; i > readPosition; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
     }
 

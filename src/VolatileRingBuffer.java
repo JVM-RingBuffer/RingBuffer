@@ -9,7 +9,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
@@ -21,7 +20,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }
@@ -70,11 +68,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition--;
         }
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -88,9 +82,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
             readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
                 buffer[j++] = this.buffer[i];
-                if (gcEnabled) {
-                    this.buffer[i] = null;
-                }
             }
         } else {
             fillSplit(buffer);
@@ -102,16 +93,10 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         int j = 0;
         for (; i >= 0; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
         readPosition += capacity - buffer.length;
         for (i = capacityMinusOne; i > readPosition; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
     }
 

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import static eu.menzani.ringbuffer.RingBufferHelper.*;
 
-class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
+class AtomicReadBlockingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -17,10 +17,7 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    private int newWritePosition;
-    private int newReadPosition;
-
-    AtomicReadBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -37,7 +34,18 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
+        return shouldBeAdvancing();
+    }
+
+    @Override
+    public void put() {
+        shouldBeAdvancing();
+    }
+
+    @Override
+    public void put(T element) {
         int writePosition = this.writePosition.getPlain();
+        int newWritePosition;
         if (writePosition == 0) {
             newWritePosition = capacityMinusOne;
         } else {
@@ -47,21 +55,12 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
         while (readPosition.get() == newWritePosition) {
             writeBusyWaitStrategy.tick();
         }
-        return buffer[writePosition];
+        buffer[writePosition] = element;
+        this.writePosition.set(newWritePosition);
     }
 
     @Override
-    public void put() {
-        writePosition.set(newWritePosition);
-    }
-
-    @Override
-    public void put(T element) {
-        shouldNotBeAdvancing();
-    }
-
-    @Override
-    public T take() {
+    public synchronized T take() {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
@@ -72,21 +71,25 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition.set(readPosition - 1);
         }
-        return buffer[readPosition];
+        T element = buffer[readPosition];
+        buffer[readPosition] = null;
+        return element;
     }
 
     @Override
-    public void fill(T[] buffer) {
+    public synchronized void fill(T[] buffer) {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (size(readPosition) < buffer.length) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition >= buffer.length) {
-            newReadPosition = readPosition - buffer.length;
+            int newReadPosition = readPosition - buffer.length;
             for (int j = 0; readPosition > newReadPosition; readPosition--) {
                 buffer[j++] = this.buffer[readPosition];
+                this.buffer[readPosition] = null;
             }
+            this.readPosition.set(newReadPosition);
         } else {
             fillSplit(readPosition, buffer);
         }
@@ -94,18 +97,16 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
 
     private void fillSplit(int readPosition, T[] buffer) {
         int j = 0;
-        newReadPosition = readPosition + capacity - buffer.length;
+        int newReadPosition = readPosition + capacity - buffer.length;
         for (; readPosition >= 0; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
+            this.buffer[readPosition] = null;
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
+            this.buffer[readPosition] = null;
         }
-    }
-
-    @Override
-    public void advance() {
-        readPosition.set(newReadPosition);
+        this.readPosition.set(newReadPosition);
     }
 
     @Override

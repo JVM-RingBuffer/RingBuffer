@@ -6,7 +6,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
 
     private int readPosition;
     private int writePosition;
@@ -15,7 +14,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
     }
 
     @Override
@@ -49,16 +47,13 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
+        int readPosition = this.readPosition;
         if (readPosition == 0) {
-            readPosition = capacityMinusOne;
+            this.readPosition = capacityMinusOne;
         } else {
-            readPosition--;
+            this.readPosition--;
         }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -68,9 +63,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
             readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
                 buffer[j++] = this.buffer[i];
-                if (gcEnabled) {
-                    this.buffer[i] = null;
-                }
             }
         } else {
             fillSplit(buffer);
@@ -82,16 +74,10 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
         int j = 0;
         for (; i >= 0; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
         readPosition += capacity - buffer.length;
         for (i = capacityMinusOne; i > readPosition; i--) {
             buffer[j++] = this.buffer[i];
-            if (gcEnabled) {
-                this.buffer[i] = null;
-            }
         }
     }
 

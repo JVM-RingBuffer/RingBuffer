@@ -9,7 +9,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean gcEnabled;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private final Integer readPosition;
@@ -21,7 +20,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        gcEnabled = builder.isGCEnabled();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         readPosition = builder.newCursor();
         writePosition = builder.newCursor();
@@ -74,11 +72,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
                 this.readPosition.set(readPosition - 1);
             }
         }
-        T element = buffer[readPosition];
-        if (gcEnabled) {
-            buffer[readPosition] = null;
-        }
-        return element;
+        return buffer[readPosition];
     }
 
     @Override
@@ -103,9 +97,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         if (notSplit) {
             for (int j = 0; readPosition > newReadPosition; readPosition--) {
                 buffer[j++] = this.buffer[readPosition];
-                if (gcEnabled) {
-                    this.buffer[readPosition] = null;
-                }
             }
         } else {
             fillSplit(readPosition, newReadPosition, buffer);
@@ -116,15 +107,9 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         int j = 0;
         for (; readPosition >= 0; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
-            if (gcEnabled) {
-                this.buffer[readPosition] = null;
-            }
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
-            if (gcEnabled) {
-                this.buffer[readPosition] = null;
-            }
         }
     }
 

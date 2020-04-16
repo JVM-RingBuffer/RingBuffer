@@ -81,6 +81,9 @@ public class RingBufferBuilder<T> {
     }
 
     public RingBuffer<T> build() {
+        if (isPrefilled && gcEnabled) {
+            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
+        }
         if (oneReader == null && oneWriter == null) {
             switch (type) {
                 case OVERWRITING:
@@ -104,40 +107,70 @@ public class RingBufferBuilder<T> {
             if (!oneWriter) {
                 switch (type) {
                     case OVERWRITING:
+                        if (isPrefilled) {
+                            break;
+                        }
+                        if (gcEnabled) {
+                            return new AtomicWriteGCRingBuffer<>(this);
+                        }
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
                         if (isPrefilled) {
-                            return new AtomicWriteBlockingPrefilledRingBuffer<>(this);
+                            return new AtomicBlockingPrefilledRingBuffer<>(this);
+                        }
+                        if (gcEnabled) {
+                            return new AtomicWriteBlockingGCRingBuffer<>(this);
                         }
                         return new AtomicWriteBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (isPrefilled) {
                             break;
                         }
+                        if (gcEnabled) {
+                            return new AtomicWriteDiscardingGCRingBuffer<>(this);
+                        }
                         return new AtomicWriteDiscardingRingBuffer<>(this);
                 }
             }
             switch (type) {
                 case OVERWRITING:
+                    if (gcEnabled) {
+                        return new VolatileGCRingBuffer<>(this);
+                    }
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
                     if (isPrefilled) {
-                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
+                        return new AtomicBlockingPrefilledRingBuffer<>(this);
+                    }
+                    if (gcEnabled) {
+                        return new VolatileBlockingGCRingBuffer<>(this);
                     }
                     return new VolatileBlockingRingBuffer<>(this);
                 case DISCARDING:
+                    if (gcEnabled) {
+                        return new VolatileDiscardingGCRingBuffer<>(this);
+                    }
                     return new VolatileDiscardingRingBuffer<>(this);
             }
         }
         switch (type) {
             case OVERWRITING:
+                if (gcEnabled) {
+                    return new AtomicReadGCRingBuffer<>(this);
+                }
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
                 if (isPrefilled) {
-                    return new AtomicReadBlockingPrefilledRingBuffer<>(this);
+                    return new AtomicBlockingPrefilledRingBuffer<>(this);
+                }
+                if (gcEnabled) {
+                    return new AtomicReadBlockingGCRingBuffer<>(this);
                 }
                 return new AtomicReadBlockingRingBuffer<>(this);
             case DISCARDING:
+                if (gcEnabled) {
+                    return new AtomicReadDiscardingGCRingBuffer<>(this);
+                }
                 return new AtomicReadDiscardingRingBuffer<>(this);
         }
         throw new AssertionError();
@@ -164,16 +197,6 @@ public class RingBufferBuilder<T> {
     @SuppressWarnings("unchecked")
     private T[] newBuffer() {
         return (T[]) new Object[capacity];
-    }
-
-    boolean isGCEnabled() {
-        if (!isPrefilled) {
-            return gcEnabled;
-        }
-        if (gcEnabled) {
-            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
-        }
-        return false;
     }
 
     BusyWaitStrategy getWriteBusyWaitStrategy() {

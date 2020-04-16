@@ -5,25 +5,22 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
+class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final Integer readPosition;
+    private int readPosition;
     private final Integer writePosition;
 
-    private int newWritePosition;
-
-    VolatileBlockingRingBuffer(RingBufferBuilder<T> builder) {
+    VolatileGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        readPosition = builder.newCursor();
         writePosition = builder.newCursor();
     }
 
@@ -34,100 +31,87 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+        return shouldNotBeGarbageCollected();
     }
 
     @Override
     public void put() {
-        writePosition.set(newWritePosition);
+        shouldNotBeGarbageCollected();
     }
 
     @Override
     public void put(T element) {
         int writePosition = this.writePosition.getPlain();
-        int newWritePosition;
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
         buffer[writePosition] = element;
-        this.writePosition.set(newWritePosition);
+        if (writePosition == 0) {
+            this.writePosition.set(capacityMinusOne);
+        } else {
+            this.writePosition.set(writePosition - 1);
+        }
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getPlain();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
-            this.readPosition.set(capacityMinusOne);
+            this.readPosition = capacityMinusOne;
         } else {
-            this.readPosition.set(readPosition - 1);
+            this.readPosition--;
         }
-        return buffer[readPosition];
+        T element = buffer[readPosition];
+        buffer[readPosition] = null;
+        return element;
     }
 
     @Override
     public void fill(T[] buffer) {
-        int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < buffer.length) {
+        while (size() < buffer.length) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition >= buffer.length) {
-            int newReadPosition = readPosition - buffer.length;
-            for (int j = 0; readPosition > newReadPosition; readPosition--) {
-                buffer[j++] = this.buffer[readPosition];
+            int i = readPosition;
+            readPosition -= buffer.length;
+            for (int j = 0; i > readPosition; i--) {
+                buffer[j++] = this.buffer[i];
+                this.buffer[i] = null;
             }
-            this.readPosition.set(newReadPosition);
         } else {
-            fillSplit(readPosition, buffer);
+            fillSplit(buffer);
         }
     }
 
-    private void fillSplit(int readPosition, T[] buffer) {
+    private void fillSplit(T[] buffer) {
+        int i = readPosition;
         int j = 0;
-        int newReadPosition = readPosition + capacity - buffer.length;
-        for (; readPosition >= 0; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
+        for (; i >= 0; i--) {
+            buffer[j++] = this.buffer[i];
+            this.buffer[i] = null;
         }
-        for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
+        readPosition += capacity - buffer.length;
+        for (i = capacityMinusOne; i > readPosition; i--) {
+            buffer[j++] = this.buffer[i];
+            this.buffer[i] = null;
         }
-        this.readPosition.set(newReadPosition);
     }
 
     @Override
     public void forEach(Consumer<T> action) {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
-            forEachSplit(action, readPosition, writePosition);
+            forEachSplit(action, writePosition);
         }
     }
 
-    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
+    private void forEachSplit(Consumer<T> action, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
@@ -138,7 +122,6 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
@@ -148,10 +131,10 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
             }
             return false;
         }
-        return containsSplit(element, readPosition, writePosition);
+        return containsSplit(element, writePosition);
     }
 
-    private boolean containsSplit(T element, int readPosition, int writePosition) {
+    private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
@@ -167,10 +150,6 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        return size(readPosition.get());
-    }
-
-    private int size(int readPosition) {
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
@@ -180,18 +159,17 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(readPosition.get(), writePosition.get());
+        return isEmpty(writePosition.get());
     }
 
-    private boolean isEmpty(int readPosition, int writePosition) {
+    private boolean isEmpty(int writePosition) {
         return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
-        if (isEmpty(readPosition, writePosition)) {
+        if (isEmpty(writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);
@@ -202,14 +180,14 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
                 builder.append(", ");
             }
         } else {
-            toStringSplit(builder, readPosition, writePosition);
+            toStringSplit(builder, writePosition);
         }
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
     }
 
-    private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
+    private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");

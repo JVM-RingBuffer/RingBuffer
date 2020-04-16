@@ -2,20 +2,20 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
 
-class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
+class LocalDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final T dummyElement;
 
     private int readPosition;
     private int writePosition;
 
-    LocalDiscardingRingBuffer(RingBufferBuilder<T> builder) {
+    LocalDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        dummyElement = builder.getDummyElement();
     }
 
     @Override
@@ -25,21 +25,13 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        int oldWritePosition = writePosition;
-        if (oldWritePosition == 0) {
-            writePosition = capacityMinusOne;
-        } else {
-            writePosition--;
-        }
-        if (readPosition == writePosition) {
-            writePosition = oldWritePosition;
-            return dummyElement;
-        }
-        return buffer[oldWritePosition];
+        return shouldNotBeGarbageCollected();
     }
 
     @Override
-    public void put() {}
+    public void put() {
+        shouldNotBeGarbageCollected();
+    }
 
     @Override
     public void put(T element) {
@@ -57,13 +49,14 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        int readPosition = this.readPosition;
+        T element = buffer[readPosition];
+        buffer[readPosition] = null;
         if (readPosition == 0) {
-            this.readPosition = capacityMinusOne;
+            readPosition = capacityMinusOne;
         } else {
-            this.readPosition--;
+            readPosition--;
         }
-        return buffer[readPosition];
+        return element;
     }
 
     @Override
@@ -73,6 +66,7 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
             readPosition -= buffer.length;
             for (int j = 0; i > readPosition; i--) {
                 buffer[j++] = this.buffer[i];
+                this.buffer[i] = null;
             }
         } else {
             fillSplit(buffer);
@@ -84,10 +78,12 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         int j = 0;
         for (; i >= 0; i--) {
             buffer[j++] = this.buffer[i];
+            this.buffer[i] = null;
         }
         readPosition += capacity - buffer.length;
         for (i = capacityMinusOne; i > readPosition; i--) {
             buffer[j++] = this.buffer[i];
+            this.buffer[i] = null;
         }
     }
 

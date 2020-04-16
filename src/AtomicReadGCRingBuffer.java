@@ -5,24 +5,22 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
+class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final BusyWaitStrategy writeBusyWaitStrategy;
 
     private final Integer readPosition;
     private final Integer writePosition;
 
-    private int newWritePosition;
-
-    VolatileBlockingRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPosition = builder.newCursor();
         writePosition = builder.newCursor();
     }
@@ -34,84 +32,84 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+        return shouldNotBeGarbageCollected();
     }
 
     @Override
     public void put() {
-        writePosition.set(newWritePosition);
+        shouldNotBeGarbageCollected();
     }
 
     @Override
     public void put(T element) {
         int writePosition = this.writePosition.getPlain();
-        int newWritePosition;
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
         buffer[writePosition] = element;
-        this.writePosition.set(newWritePosition);
+        if (writePosition == 0) {
+            this.writePosition.set(capacityMinusOne);
+        } else {
+            this.writePosition.set(writePosition - 1);
+        }
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getPlain();
-        readBusyWaitStrategy.reset();
-        while (writePosition.get() == readPosition) {
-            readBusyWaitStrategy.tick();
+        int readPosition;
+        synchronized (this) {
+            readPosition = this.readPosition.getPlain();
+            readBusyWaitStrategy.reset();
+            while (writePosition.get() == readPosition) {
+                readBusyWaitStrategy.tick();
+            }
+            if (readPosition == 0) {
+                this.readPosition.set(capacityMinusOne);
+            } else {
+                this.readPosition.set(readPosition - 1);
+            }
         }
-        if (readPosition == 0) {
-            this.readPosition.set(capacityMinusOne);
-        } else {
-            this.readPosition.set(readPosition - 1);
-        }
-        return buffer[readPosition];
+        T element = buffer[readPosition];
+        buffer[readPosition] = null;
+        return element;
     }
 
     @Override
     public void fill(T[] buffer) {
-        int readPosition = this.readPosition.getPlain();
-        readBusyWaitStrategy.reset();
-        while (size(readPosition) < buffer.length) {
-            readBusyWaitStrategy.tick();
-        }
-        if (readPosition >= buffer.length) {
-            int newReadPosition = readPosition - buffer.length;
-            for (int j = 0; readPosition > newReadPosition; readPosition--) {
-                buffer[j++] = this.buffer[readPosition];
+        int readPosition;
+        boolean notSplit;
+        int newReadPosition;
+        synchronized (this) {
+            readPosition = this.readPosition.getPlain();
+            readBusyWaitStrategy.reset();
+            while (size(readPosition) < buffer.length) {
+                readBusyWaitStrategy.tick();
+            }
+            notSplit = readPosition >= buffer.length;
+            if (notSplit) {
+                newReadPosition = readPosition - buffer.length;
+            } else {
+                newReadPosition = readPosition + capacity - buffer.length;
             }
             this.readPosition.set(newReadPosition);
+        }
+        if (notSplit) {
+            for (int j = 0; readPosition > newReadPosition; readPosition--) {
+                buffer[j++] = this.buffer[readPosition];
+                this.buffer[readPosition] = null;
+            }
         } else {
-            fillSplit(readPosition, buffer);
+            fillSplit(readPosition, newReadPosition, buffer);
         }
     }
 
-    private void fillSplit(int readPosition, T[] buffer) {
+    private void fillSplit(int readPosition, int newReadPosition, T[] buffer) {
         int j = 0;
-        int newReadPosition = readPosition + capacity - buffer.length;
         for (; readPosition >= 0; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
+            this.buffer[readPosition] = null;
         }
         for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
             buffer[j++] = this.buffer[readPosition];
+            this.buffer[readPosition] = null;
         }
-        this.readPosition.set(newReadPosition);
     }
 
     @Override
