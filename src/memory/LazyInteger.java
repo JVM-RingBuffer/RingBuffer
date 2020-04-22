@@ -11,11 +11,6 @@ public class LazyInteger implements Integer {
     }
 
     @Override
-    public int getAndDecrement() {
-        return value.getAndDecrement();
-    }
-
-    @Override
     public int get() {
         return value.getAcquire();
     }
