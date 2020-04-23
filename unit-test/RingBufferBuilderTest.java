@@ -20,13 +20,13 @@ class RingBufferBuilderTest {
         expectClass(VolatileBlockingRingBuffer.class, OneToOneBlockingPerfTest.RING_BUFFER);
         expectClass(VolatileRingBuffer.class, OneToOneTest.RING_BUFFER);
 
-        expectClass(AtomicBlockingPrefilledRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER, PrefilledManyReadersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicReadBlockingRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER, PrefilledManyReadersBlockingPerfTest.RING_BUFFER);
         expectClass(AtomicReadRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER);
 
-        expectClass(AtomicBlockingPrefilledRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER, PrefilledManyWritersBlockingPerfTest.RING_BUFFER);
+        expectClass(VolatileBlockingRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER, PrefilledManyWritersBlockingPerfTest.RING_BUFFER);
         expectClass(VolatileRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER);
 
-        expectClass(AtomicBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
+        expectClass(VolatileBlockingRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
         expectClass(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
 
         expectClass(LocalRingBuffer.class, LocalRingBufferTest.RING_BUFFER, PrefilledLocalRingBufferTest.RING_BUFFER);

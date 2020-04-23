@@ -76,41 +76,23 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(T[] buffer) {
-        int readPosition;
-        boolean notSplit;
-        int newReadPosition;
-        synchronized (this) {
-            readPosition = this.readPosition.getPlain();
-            readBusyWaitStrategy.reset();
-            while (size(readPosition) < buffer.length) {
-                readBusyWaitStrategy.tick();
-            }
-            notSplit = readPosition >= buffer.length;
-            if (notSplit) {
-                newReadPosition = readPosition - buffer.length;
-            } else {
-                newReadPosition = readPosition + capacity - buffer.length;
-            }
-            this.readPosition.set(newReadPosition);
-        }
-        if (notSplit) {
-            for (int j = 0; readPosition > newReadPosition; readPosition--) {
-                buffer[j++] = this.buffer[readPosition];
-            }
-        } else {
-            fillSplit(readPosition, newReadPosition, buffer);
+    public void prepareTake(int amount) {
+        int readPosition = this.readPosition.getPlain();
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < amount) {
+            readBusyWaitStrategy.tick();
         }
     }
 
-    private void fillSplit(int readPosition, int newReadPosition, T[] buffer) {
-        int j = 0;
-        for (; readPosition >= 0; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
+    @Override
+    public T takeNow() {
+        int readPosition = this.readPosition.getPlain();
+        if (readPosition == 0) {
+            this.readPosition.set(capacityMinusOne);
+        } else {
+            this.readPosition.set(readPosition - 1);
         }
-        for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
-        }
+        return buffer[readPosition];
     }
 
     @Override

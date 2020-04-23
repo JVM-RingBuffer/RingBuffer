@@ -8,6 +8,6 @@ class PrefilledManyReadersBlockingBatchPerfTest extends PrefilledManyReadersBloc
     @Override
     public long run() {
         PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return SynchronizedAdvancingBatchReader.runGroupAsync(READ_BUFFER_SIZE, RING_BUFFER);
+        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }
 }

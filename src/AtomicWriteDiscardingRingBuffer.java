@@ -83,33 +83,23 @@ class AtomicWriteDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(T[] buffer) {
+    public void prepareTake(int amount) {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < buffer.length) {
+        while (size(readPosition) < amount) {
             readBusyWaitStrategy.tick();
-        }
-        if (readPosition >= buffer.length) {
-            int newReadPosition = readPosition - buffer.length;
-            for (int j = 0; readPosition > newReadPosition; readPosition--) {
-                buffer[j++] = this.buffer[readPosition];
-            }
-            this.readPosition.set(newReadPosition);
-        } else {
-            fillSplit(readPosition, buffer);
         }
     }
 
-    private void fillSplit(int readPosition, T[] buffer) {
-        int j = 0;
-        int newReadPosition = readPosition + capacity - buffer.length;
-        for (; readPosition >= 0; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
+    @Override
+    public T takeNow() {
+        int readPosition = this.readPosition.getPlain();
+        if (readPosition == 0) {
+            this.readPosition.set(capacityMinusOne);
+        } else {
+            this.readPosition.set(readPosition - 1);
         }
-        for (readPosition = capacityMinusOne; readPosition > newReadPosition; readPosition--) {
-            buffer[j++] = this.buffer[readPosition];
-        }
-        this.readPosition.set(newReadPosition);
+        return buffer[readPosition];
     }
 
     @Override

@@ -34,7 +34,7 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
     public long run() {
         TestThreadGroup group = Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
         Processor processor = Processor.startAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER, CONSUMERS_RING_BUFFER);
-        long sum = BatchReader.runGroupAsync(READ_BUFFER_SIZE, CONSUMERS_RING_BUFFER);
+        long sum = SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
         processor.reportPerformance();
         group.reportPerformance();
         return sum;

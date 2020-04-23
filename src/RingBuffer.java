@@ -60,9 +60,9 @@ public interface RingBuffer<T> {
      * <p>
      * If external synchronization is not performed, then the buffer cannot be shared by multiple threads.
      */
-    void fill(T[] buffer);
+    void prepareTake(int amount);
 
-    default void advance() {}
+    T takeNow();
 
     /**
      * If the ring buffer supports a single reader and is not blocking nor discarding,

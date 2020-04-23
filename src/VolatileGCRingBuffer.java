@@ -68,35 +68,23 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(T[] buffer) {
+    public void prepareTake(int amount) {
         readBusyWaitStrategy.reset();
-        while (size() < buffer.length) {
+        while (size() < amount) {
             readBusyWaitStrategy.tick();
-        }
-        if (readPosition >= buffer.length) {
-            int i = readPosition;
-            readPosition -= buffer.length;
-            for (int j = 0; i > readPosition; i--) {
-                buffer[j++] = this.buffer[i];
-                this.buffer[i] = null;
-            }
-        } else {
-            fillSplit(buffer);
         }
     }
 
-    private void fillSplit(T[] buffer) {
-        int i = readPosition;
-        int j = 0;
-        for (; i >= 0; i--) {
-            buffer[j++] = this.buffer[i];
-            this.buffer[i] = null;
+    @Override
+    public T takeNow() {
+        T element = buffer[readPosition];
+        buffer[readPosition] = null;
+        if (readPosition == 0) {
+            readPosition = capacityMinusOne;
+        } else {
+            readPosition--;
         }
-        readPosition += capacity - buffer.length;
-        for (i = capacityMinusOne; i > readPosition; i--) {
-            buffer[j++] = this.buffer[i];
-            this.buffer[i] = null;
-        }
+        return element;
     }
 
     @Override

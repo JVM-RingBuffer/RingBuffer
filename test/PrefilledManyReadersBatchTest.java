@@ -8,7 +8,7 @@ class PrefilledManyReadersBatchTest extends PrefilledManyReadersTest {
     @Override
     public long run() {
         PrefilledWriter writer = PrefilledWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        long sum = BatchReader.runGroupAsync(READ_BUFFER_SIZE, RING_BUFFER);
+        long sum = SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
         writer.reportPerformance();
         return sum;
     }

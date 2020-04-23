@@ -104,28 +104,19 @@ public class RingBufferBuilder<T> {
             throw new IllegalArgumentException("Multiple readers and writers are not supported. Consider using a concurrent queue instead.");
         }
         if (oneReader) {
-            if (!oneWriter) {
+            if (!oneWriter && !isPrefilled) {
                 switch (type) {
                     case OVERWRITING:
-                        if (isPrefilled) {
-                            break;
-                        }
                         if (gcEnabled) {
                             return new AtomicWriteGCRingBuffer<>(this);
                         }
                         return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
-                        if (isPrefilled) {
-                            return new AtomicBlockingPrefilledRingBuffer<>(this);
-                        }
                         if (gcEnabled) {
                             return new AtomicWriteBlockingGCRingBuffer<>(this);
                         }
                         return new AtomicWriteBlockingRingBuffer<>(this);
                     case DISCARDING:
-                        if (isPrefilled) {
-                            break;
-                        }
                         if (gcEnabled) {
                             return new AtomicWriteDiscardingGCRingBuffer<>(this);
                         }
@@ -139,9 +130,6 @@ public class RingBufferBuilder<T> {
                     }
                     return new VolatileRingBuffer<>(this);
                 case BLOCKING:
-                    if (isPrefilled) {
-                        return new AtomicBlockingPrefilledRingBuffer<>(this);
-                    }
                     if (gcEnabled) {
                         return new VolatileBlockingGCRingBuffer<>(this);
                     }
@@ -160,9 +148,6 @@ public class RingBufferBuilder<T> {
                 }
                 return new AtomicReadRingBuffer<>(this);
             case BLOCKING:
-                if (isPrefilled) {
-                    return new AtomicBlockingPrefilledRingBuffer<>(this);
-                }
                 if (gcEnabled) {
                     return new AtomicReadBlockingGCRingBuffer<>(this);
                 }

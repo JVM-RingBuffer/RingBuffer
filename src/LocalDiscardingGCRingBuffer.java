@@ -60,31 +60,11 @@ class LocalDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void fill(T[] buffer) {
-        if (readPosition >= buffer.length) {
-            int i = readPosition;
-            readPosition -= buffer.length;
-            for (int j = 0; i > readPosition; i--) {
-                buffer[j++] = this.buffer[i];
-                this.buffer[i] = null;
-            }
-        } else {
-            fillSplit(buffer);
-        }
-    }
+    public void prepareTake(int amount) {}
 
-    private void fillSplit(T[] buffer) {
-        int i = readPosition;
-        int j = 0;
-        for (; i >= 0; i--) {
-            buffer[j++] = this.buffer[i];
-            this.buffer[i] = null;
-        }
-        readPosition += capacity - buffer.length;
-        for (i = capacityMinusOne; i > readPosition; i--) {
-            buffer[j++] = this.buffer[i];
-            this.buffer[i] = null;
-        }
+    @Override
+    public T takeNow() {
+        return take();
     }
 
     @Override

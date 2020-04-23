@@ -8,6 +8,6 @@ class PrefilledLocalRingBufferBatchTest extends PrefilledLocalRingBufferTest {
     @Override
     public long run() {
         PrefilledWriter.runSync(NUM_ITERATIONS, RING_BUFFER);
-        return BatchReader.runSync(NUM_ITERATIONS, READ_BUFFER_SIZE, RING_BUFFER);
+        return BatchReader.runSync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
     }
 }
