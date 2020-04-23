@@ -68,15 +68,15 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareTake(int amount) {
+    public void prepareBatch(int size) {
         readBusyWaitStrategy.reset();
-        while (size() < amount) {
+        while (size() < size) {
             readBusyWaitStrategy.tick();
         }
     }
 
     @Override
-    public T takeNow() {
+    public T takePlain() {
         T element = buffer[readPosition];
         buffer[readPosition] = null;
         if (readPosition == 0) {

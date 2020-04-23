@@ -56,10 +56,10 @@ class LocalGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareTake(int amount) {}
+    public void prepareBatch(int size) {}
 
     @Override
-    public T takeNow() {
+    public T takePlain() {
         return take();
     }
 

@@ -72,15 +72,15 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareTake(int amount) {
+    public void prepareBatch(int size) {
         readBusyWaitStrategy.reset();
-        while (size() < amount) {
+        while (size() < size) {
             readBusyWaitStrategy.tick();
         }
     }
 
     @Override
-    public T takeNow() {
+    public T takePlain() {
         int readPosition = this.readPosition;
         if (readPosition == 0) {
             this.readPosition = capacityMinusOne;

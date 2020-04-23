@@ -26,11 +26,10 @@ Runnable processor = () -> {
     }
 };
 Runnable consumer = () -> {
-    Event[] buffer = new Event[5];
     for (int i = 0; i < 100 / 5; i++) {
-        processorToConsumers.fill(buffer);
-        for (Event event : buffer) {
-            System.out.println(event.getData());
+        processorToConsumers.prepareBatch(5);
+        for (int j = 0; j < 5; j++) {
+            System.out.println(processorToConsumers.takePlain().getData());
         }
     }
 };

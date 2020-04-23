@@ -83,16 +83,16 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareTake(int amount) {
+    public void prepareBatch(int size) {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < amount) {
+        while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
     }
 
     @Override
-    public T takeNow() {
+    public T takePlain() {
         int readPosition = this.readPosition.getPlain();
         if (readPosition == 0) {
             this.readPosition.set(capacityMinusOne);

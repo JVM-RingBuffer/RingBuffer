@@ -22,9 +22,9 @@ class SynchronizedBatchReader extends BatchReader {
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             synchronized (ringBuffer) {
-                ringBuffer.prepareTake(batchSize);
+                ringBuffer.prepareBatch(batchSize);
                 for (int j = batchSize; j > 0; j--) {
-                    sum += ringBuffer.takeNow().getData();
+                    sum += ringBuffer.takePlain().getData();
                 }
             }
         }
