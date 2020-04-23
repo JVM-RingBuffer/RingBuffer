@@ -44,16 +44,17 @@ public class Benchmark {
         }
 
         void report() {
-            String minimum = formatExecutionTime(this.minimum);
-            String average = formatExecutionTime(Math.round(sum / count));
-            String maximum = formatExecutionTime(this.maximum);
-            System.out.println(prefix + minimum + " min, " + average + " avg, " + maximum + " max");
+            long average = Math.round(sum / count);
+            String report = prefix + formatExecutionTime(average);
+            if (minimum != Long.MAX_VALUE) {
+                long absoluteVariance = Math.max(maximum - average, average - minimum);
+                int relativeVariance = Math.round((float) absoluteVariance / average * 100F);
+                report += " ± " + relativeVariance + '%';
+            }
+            System.out.println(report);
         }
 
         private static String formatExecutionTime(long value) {
-            if (value == Long.MAX_VALUE) {
-                return "0ns";
-            }
             if (value < 2_000L) {
                 return value + "ns";
             }
