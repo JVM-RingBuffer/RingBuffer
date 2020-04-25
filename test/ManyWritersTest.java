@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 public class ManyWritersTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>empty(MANY_READERS_OR_WRITERS_SIZE)
+            RingBuffer.<Event>empty(NOT_ONE_TO_ONE_SIZE)
                     .oneReader()
                     .manyWriters()
                     .build();

@@ -8,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class RingBufferBuilderTest {
     @Test
     void testClasses() {
+        expectClass(ConcurrentBlockingGCRingBuffer.class, ManyToManyBlockingTest.RING_BUFFER);
+        expectClass(ConcurrentBlockingRingBuffer.class, ManyToManyBlockingPerfTest.RING_BUFFER);
+        expectClass(ConcurrentRingBuffer.class, ManyToManyTest.RING_BUFFER);
+
         expectClass(AtomicReadBlockingGCRingBuffer.class, ManyReadersBlockingTest.RING_BUFFER);
         expectClass(AtomicReadBlockingRingBuffer.class, ManyReadersBlockingPerfTest.RING_BUFFER);
         expectClass(AtomicReadRingBuffer.class, ManyReadersTest.RING_BUFFER);
@@ -20,6 +24,9 @@ class RingBufferBuilderTest {
         expectClass(VolatileBlockingRingBuffer.class, OneToOneBlockingPerfTest.RING_BUFFER);
         expectClass(VolatileRingBuffer.class, OneToOneTest.RING_BUFFER);
 
+        expectClass(ConcurrentBlockingRingBuffer.class, PrefilledManyToManyBlockingTest.RING_BUFFER, PrefilledManyToManyBlockingPerfTest.RING_BUFFER);
+        expectClass(ConcurrentRingBuffer.class, PrefilledManyToManyTest.RING_BUFFER);
+
         expectClass(AtomicReadBlockingRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER, PrefilledManyReadersBlockingPerfTest.RING_BUFFER);
         expectClass(AtomicReadRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER);
 
@@ -29,7 +36,8 @@ class RingBufferBuilderTest {
         expectClass(VolatileBlockingRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
         expectClass(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
 
-        expectClass(LocalRingBuffer.class, LocalRingBufferTest.RING_BUFFER, PrefilledLocalRingBufferTest.RING_BUFFER);
+        expectClass(LocalGCRingBuffer.class, LocalRingBufferTest.RING_BUFFER);
+        expectClass(LocalRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER);
 
         expectClass(AtomicWriteBlockingGCRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersPerfTest.PRODUCERS_RING_BUFFER);

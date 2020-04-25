@@ -3,7 +3,7 @@ package test;
 import eu.menzani.ringbuffer.RingBuffer;
 
 public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcessorToConsumersTest {
-    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(MANY_READERS_OR_WRITERS_SIZE)
+    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(NOT_ONE_TO_ONE_SIZE)
             .manyWriters()
             .oneReader()
             .blocking()

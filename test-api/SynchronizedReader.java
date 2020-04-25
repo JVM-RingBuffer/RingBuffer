@@ -20,7 +20,7 @@ class SynchronizedReader extends Reader {
         RingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
-            synchronized (ringBuffer) {
+            synchronized (ringBuffer.getReadMonitor()) {
                 sum += ringBuffer.take().getData();
             }
         }

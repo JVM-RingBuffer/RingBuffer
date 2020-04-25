@@ -31,6 +31,11 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public Object getReadMonitor() {
+        return this;
+    }
+
+    @Override
     public T next() {
         return shouldNotBeGarbageCollected();
     }

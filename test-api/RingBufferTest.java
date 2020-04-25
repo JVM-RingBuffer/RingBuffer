@@ -1,7 +1,6 @@
 package test;
 
 import java.util.function.Supplier;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,13 +9,29 @@ interface RingBufferTest {
     int CONCURRENCY = 5;
     int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
 
-    long ONE_TO_ONE_SUM = LongStream.range(0L, NUM_ITERATIONS).sum();
-    long MANY_READERS_SUM = LongStream.range(0L, TOTAL_ELEMENTS).sum();
+    long ONE_TO_ONE_SUM = getOneToOneSum();
+    long ONE_TO_MANY_SUM = getOneToManySum();
     long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * CONCURRENCY;
+
+    private static long getOneToOneSum() {
+        long result = 0L;
+        for (int i = 0; i < NUM_ITERATIONS; i++) {
+            result += i;
+        }
+        return result;
+    }
+
+    private static long getOneToManySum() {
+        long result = 0L;
+        for (int i = 0; i < TOTAL_ELEMENTS; i++) {
+            result += i;
+        }
+        return result;
+    }
 
     int BLOCKING_SIZE = 5;
     int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
-    int MANY_READERS_OR_WRITERS_SIZE = TOTAL_ELEMENTS + 1;
+    int NOT_ONE_TO_ONE_SIZE = TOTAL_ELEMENTS + 1;
 
     int BATCH_SIZE = 20;
     int BLOCKING_BATCH_SIZE = 4;

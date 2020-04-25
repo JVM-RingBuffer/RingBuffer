@@ -11,7 +11,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    private final Integer readPosition;
+    private int readPosition;
     private final Integer writePosition;
 
     private int newWritePosition;
@@ -21,13 +21,17 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        readPosition = builder.newCursor();
         writePosition = builder.newCursor();
     }
 
     @Override
     public int getCapacity() {
         return capacity;
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        return this;
     }
 
     @Override
@@ -61,15 +65,15 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     public T take() {
         int readPosition;
         synchronized (this) {
-            readPosition = this.readPosition.getPlain();
+            readPosition = this.readPosition;
             readBusyWaitStrategy.reset();
             while (writePosition.get() == readPosition) {
                 readBusyWaitStrategy.tick();
             }
             if (readPosition == 0) {
-                this.readPosition.set(capacityMinusOne);
+                this.readPosition = capacityMinusOne;
             } else {
-                this.readPosition.set(readPosition - 1);
+                this.readPosition--;
             }
         }
         return buffer[readPosition];
@@ -77,38 +81,36 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void takeBatch(int size) {
-        int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
+        while (size() < size) {
             readBusyWaitStrategy.tick();
         }
     }
 
     @Override
     public T takePlain() {
-        int readPosition = this.readPosition.getPlain();
+        int readPosition = this.readPosition;
         if (readPosition == 0) {
-            this.readPosition.set(capacityMinusOne);
+            this.readPosition = capacityMinusOne;
         } else {
-            this.readPosition.set(readPosition - 1);
+            this.readPosition--;
         }
         return buffer[readPosition];
     }
 
     @Override
     public void forEach(Consumer<T> action) {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
-            forEachSplit(action, readPosition, writePosition);
+            forEachSplit(action, writePosition);
         }
     }
 
-    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
+    private void forEachSplit(Consumer<T> action, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
@@ -119,7 +121,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
@@ -129,10 +130,10 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
             }
             return false;
         }
-        return containsSplit(element, readPosition, writePosition);
+        return containsSplit(element, writePosition);
     }
 
-    private boolean containsSplit(T element, int readPosition, int writePosition) {
+    private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
@@ -148,10 +149,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
-        return size(readPosition.get());
-    }
-
-    private int size(int readPosition) {
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
@@ -161,18 +158,17 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(readPosition.get(), writePosition.get());
+        return isEmpty(writePosition.get());
     }
 
-    private boolean isEmpty(int readPosition, int writePosition) {
+    private boolean isEmpty(int writePosition) {
         return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
-        int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
-        if (isEmpty(readPosition, writePosition)) {
+        if (isEmpty(writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);
@@ -183,14 +179,14 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
                 builder.append(", ");
             }
         } else {
-            toStringSplit(builder, readPosition, writePosition);
+            toStringSplit(builder, writePosition);
         }
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
     }
 
-    private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
+    private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");

@@ -87,8 +87,14 @@ public class RingBufferBuilder<T> {
         if (oneReader == null && oneWriter == null) {
             switch (type) {
                 case OVERWRITING:
+                    if (gcEnabled) {
+                        return new LocalGCRingBuffer<>(this);
+                    }
                     return new LocalRingBuffer<>(this);
                 case DISCARDING:
+                    if (gcEnabled) {
+                        return new LocalDiscardingGCRingBuffer<>(this);
+                    }
                     return new LocalDiscardingRingBuffer<>(this);
                 case BLOCKING:
                     throw new IllegalArgumentException("A local ring buffer cannot be blocking.");
@@ -99,9 +105,6 @@ public class RingBufferBuilder<T> {
         }
         if (oneWriter == null) {
             throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
-        }
-        if (!oneReader && !oneWriter) {
-            throw new IllegalArgumentException("Multiple readers and writers are not supported. Consider using a concurrent queue instead.");
         }
         if (oneReader) {
             if (!oneWriter && !isPrefilled) {
@@ -141,22 +144,41 @@ public class RingBufferBuilder<T> {
                     return new VolatileDiscardingRingBuffer<>(this);
             }
         }
+        if (oneWriter) {
+            switch (type) {
+                case OVERWRITING:
+                    if (gcEnabled) {
+                        return new AtomicReadGCRingBuffer<>(this);
+                    }
+                    return new AtomicReadRingBuffer<>(this);
+                case BLOCKING:
+                    if (gcEnabled) {
+                        return new AtomicReadBlockingGCRingBuffer<>(this);
+                    }
+                    return new AtomicReadBlockingRingBuffer<>(this);
+                case DISCARDING:
+                    if (gcEnabled) {
+                        return new AtomicReadDiscardingGCRingBuffer<>(this);
+                    }
+                    return new AtomicReadDiscardingRingBuffer<>(this);
+            }
+        }
         switch (type) {
             case OVERWRITING:
                 if (gcEnabled) {
-                    return new AtomicReadGCRingBuffer<>(this);
+                    return new ConcurrentGCRingBuffer<>(this);
                 }
-                return new AtomicReadRingBuffer<>(this);
+                return new ConcurrentRingBuffer<>(this);
             case BLOCKING:
                 if (gcEnabled) {
-                    return new AtomicReadBlockingGCRingBuffer<>(this);
+                    return new ConcurrentBlockingGCRingBuffer<>(this);
                 }
-                return new AtomicReadBlockingRingBuffer<>(this);
+                return new ConcurrentBlockingRingBuffer<>(this);
             case DISCARDING:
                 if (gcEnabled) {
-                    return new AtomicReadDiscardingGCRingBuffer<>(this);
+                    return new ConcurrentDiscardingGCRingBuffer<>(this);
                 }
-                return new AtomicReadDiscardingRingBuffer<>(this);
+                return new ConcurrentDiscardingRingBuffer<>(this);
         }
         throw new AssertionError();
     }

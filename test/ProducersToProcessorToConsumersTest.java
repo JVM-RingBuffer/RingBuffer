@@ -10,7 +10,7 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
             .blocking()
             .withGC()
             .build();
-    public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
+    public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.prefilled(NOT_ONE_TO_ONE_SIZE, FILLER)
             .oneWriter()
             .manyReaders()
             .waitingWith(YieldBusyWaitStrategy.getDefault())

@@ -22,7 +22,7 @@ public class ManyReadersBlockingTest implements RingBufferTest {
 
     @Override
     public long getSum() {
-        return MANY_READERS_SUM;
+        return ONE_TO_MANY_SUM;
     }
 
     @Override

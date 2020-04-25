@@ -33,6 +33,11 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public Object getReadMonitor() {
+        return this;
+    }
+
+    @Override
     public T next() {
         int writePosition = this.writePosition.getPlain();
         if (writePosition == 0) {

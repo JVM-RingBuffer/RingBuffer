@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 public interface RingBuffer<T> {
     int getCapacity();
 
+    Object getReadMonitor();
+
     /**
      * If the ring buffer supports at least one reader and writer, then after the returned object has been
      * populated, {@link #put()} must be called.
@@ -40,7 +42,7 @@ public interface RingBuffer<T> {
      * must be performed while reading elements taken out:
      *
      * <pre>{@code
-     * synchronized (ringBuffer) {
+     * synchronized (ringBuffer.getReadMonitor()) {
      *    T element = ringBuffer.take();
      *    // Read element
      * }
@@ -57,7 +59,7 @@ public interface RingBuffer<T> {
      * performed during the whole process:
      *
      * <pre>{@code
-     * synchronized (ringBuffer) {
+     * synchronized (ringBuffer.getReadMonitor()) {
      *    ringBuffer.takeBatch(size);
      *    for (int i = size; i > 0; i--) {
      *        T element = ringBuffer.takePlain();
@@ -78,32 +80,32 @@ public interface RingBuffer<T> {
     T takePlain();
 
     /**
-     * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
+     * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     void forEach(Consumer<T> action);
 
     /**
-     * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
+     * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     boolean contains(T element);
 
     /**
-     * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
+     * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     int size();
 
     /**
-     * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
+     * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     boolean isEmpty();
 
     /**
-     * If the ring buffer supports a single reader and is not blocking nor discarding,
-     * then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
+     * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     String toString();
 

@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 public class PrefilledManyReadersTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.prefilled(MANY_READERS_OR_WRITERS_SIZE, FILLER)
+            RingBuffer.prefilled(NOT_ONE_TO_ONE_SIZE, FILLER)
                     .manyReaders()
                     .oneWriter()
                     .build();
@@ -20,7 +20,7 @@ public class PrefilledManyReadersTest implements RingBufferTest {
 
     @Override
     public long getSum() {
-        return MANY_READERS_SUM;
+        return ONE_TO_MANY_SUM;
     }
 
     @Override
