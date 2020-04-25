@@ -114,8 +114,8 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                action.accept(buffer[i]);
+            for (; readPosition > writePosition; readPosition--) {
+                action.accept(buffer[readPosition]);
             }
         } else {
             forEachSplit(action, readPosition, writePosition);
@@ -123,11 +123,11 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            action.accept(buffer[i]);
+        for (; readPosition >= 0; readPosition--) {
+            action.accept(buffer[readPosition]);
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            action.accept(buffer[i]);
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            action.accept(buffer[readPosition]);
         }
     }
 
@@ -136,8 +136,8 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         int readPosition = this.readPosition.get();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                if (buffer[i].equals(element)) {
+            for (; readPosition > writePosition; readPosition--) {
+                if (buffer[readPosition].equals(element)) {
                     return true;
                 }
             }
@@ -147,13 +147,13 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private boolean containsSplit(T element, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            if (buffer[i].equals(element)) {
+        for (; readPosition >= 0; readPosition--) {
+            if (buffer[readPosition].equals(element)) {
                 return true;
             }
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            if (buffer[i].equals(element)) {
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            if (buffer[readPosition].equals(element)) {
                 return true;
             }
         }
@@ -192,8 +192,8 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         StringBuilder builder = new StringBuilder(16);
         builder.append('[');
         if (writePosition < readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                builder.append(buffer[i].toString());
+            for (; readPosition > writePosition; readPosition--) {
+                builder.append(buffer[readPosition].toString());
                 builder.append(", ");
             }
         } else {
@@ -205,12 +205,12 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            builder.append(buffer[i].toString());
+        for (; readPosition >= 0; readPosition--) {
+            builder.append(buffer[readPosition].toString());
             builder.append(", ");
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            builder.append(buffer[i].toString());
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            builder.append(buffer[readPosition].toString());
             builder.append(", ");
         }
     }
