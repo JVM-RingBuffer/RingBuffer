@@ -58,7 +58,7 @@ public interface RingBuffer<T> {
      *
      * <pre>{@code
      * synchronized (ringBuffer) {
-     *    ringBuffer.prepareBatch(size);
+     *    ringBuffer.takeBatch(size);
      *    for (int i = size; i > 0; i--) {
      *        T element = ringBuffer.takePlain();
      *        // Read element
@@ -66,14 +66,14 @@ public interface RingBuffer<T> {
      * }
      * }</pre>
      */
-    void prepareBatch(int size);
+    void takeBatch(int size);
 
     /**
      * Does not possibly wait until at least one element is available.
      * <p>
      * If the ring buffer supports at least one reader and writer, then this method must be repeatedly invoked
-     * after {@link #prepareBatch(int)} has returned.
-     * Otherwise, this method is equal to {@link #take()}.
+     * after {@link #takeBatch(int)} has returned.
+     * Otherwise, {@link #take()} will be equal to this method.
      */
     T takePlain();
 

@@ -72,7 +72,7 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareBatch(int size) {
+    public void takeBatch(int size) {
         readBusyWaitStrategy.reset();
         while (size() < size) {
             readBusyWaitStrategy.tick();

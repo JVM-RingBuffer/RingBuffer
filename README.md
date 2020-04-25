@@ -27,7 +27,7 @@ Runnable processor = () -> {
 };
 Runnable consumer = () -> {
     for (int i = 0; i < 100 / 5; i++) {
-        processorToConsumers.prepareBatch(5);
+        processorToConsumers.takeBatch(5);
         for (int j = 0; j < 5; j++) {
             System.out.println(processorToConsumers.takePlain().getData());
         }

@@ -60,7 +60,7 @@ class LocalDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareBatch(int size) {}
+    public void takeBatch(int size) {}
 
     @Override
     public T takePlain() {

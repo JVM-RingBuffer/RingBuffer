@@ -85,7 +85,7 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void prepareBatch(int size) {
+    public void takeBatch(int size) {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
