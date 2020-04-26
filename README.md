@@ -5,7 +5,7 @@ RingBuffer<Integer> producersToProcessor = RingBuffer.<Integer>empty(5)
         .blocking()
         .withGC()
         .build();
-RingBuffer<Event> processorToConsumers = RingBuffer.prefilled(301, Event::new)
+RingBuffer<Event> processorToConsumers = RingBuffer.prefilled(300 + 1, Event::new)
         .oneWriter()
         .manyReaders()
         .waitingWith(YieldBusyWaitStrategy.getDefault())

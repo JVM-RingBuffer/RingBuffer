@@ -23,6 +23,9 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     @Override
+    public void reset() {}
+
+    @Override
     public void tick() {
         throw exceptionSupplier.get();
     }

@@ -10,6 +10,9 @@ import java.util.function.Supplier;
 public interface RingBuffer<T> {
     int getCapacity();
 
+    /**
+     * Returns the monitor to be used when synchronizing externally while reading.
+     */
     Object getReadMonitor();
 
     /**
@@ -47,6 +50,8 @@ public interface RingBuffer<T> {
      *    // Read element
      * }
      * }</pre>
+     *
+     * If the ring buffer supports one writer, then synchronization can be performed on this instance.
      */
     T take();
 
@@ -67,6 +72,8 @@ public interface RingBuffer<T> {
      *    }
      * }
      * }</pre>
+     *
+     * If the ring buffer supports one writer, then synchronization can be performed on this instance.
      */
     void takeBatch(int size);
 

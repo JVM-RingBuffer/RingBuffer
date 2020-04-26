@@ -16,7 +16,6 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final Integer writePosition;
 
     private int newWritePosition;
-    private final Object readMonitor = new Object();
 
     ConcurrentDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -35,7 +34,7 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public Object getReadMonitor() {
-        return readMonitor;
+        return readBusyWaitStrategy;
     }
 
     @Override
@@ -75,7 +74,7 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        synchronized (readMonitor) {
+        synchronized (readBusyWaitStrategy) {
             int readPosition = this.readPosition.getPlain();
             readBusyWaitStrategy.reset();
             while (writePosition.get() == readPosition) {

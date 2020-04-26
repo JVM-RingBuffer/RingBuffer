@@ -24,6 +24,9 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     @Override
+    public void reset() {}
+
+    @Override
     public void tick() {
         LockSupport.parkNanos(sleepTime);
     }

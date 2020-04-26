@@ -16,7 +16,6 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
     private final Integer writePosition;
 
     private int newWritePosition;
-    private final Object readMonitor = new Object();
 
     ConcurrentBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -35,7 +34,7 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public Object getReadMonitor() {
-        return readMonitor;
+        return readBusyWaitStrategy;
     }
 
     @Override
@@ -77,7 +76,7 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        synchronized (readMonitor) {
+        synchronized (readBusyWaitStrategy) {
             int readPosition = this.readPosition.getPlain();
             readBusyWaitStrategy.reset();
             while (writePosition.get() == readPosition) {

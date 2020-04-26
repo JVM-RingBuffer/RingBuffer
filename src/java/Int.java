@@ -12,4 +12,8 @@ public class Int {
         }
         return highestOneBit << 1;
     }
+
+    public static boolean isPowerOfTwo(int value) {
+        return (value & -value) == value;
+    }
 }
