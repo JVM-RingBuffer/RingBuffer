@@ -1,18 +1,18 @@
 package test;
 
 public class Profiler {
-    private final String prefix;
+    private final String name;
     private final double divideBy;
     private long start;
     private long executionTime;
 
     public Profiler(Object instance, int divideBy) {
-        prefix = instance.getClass().getSimpleName() + ": ";
+        name = instance.getClass().getSimpleName();
         this.divideBy = divideBy;
     }
 
-    String getPrefix() {
-        return prefix;
+    String getName() {
+        return name;
     }
 
     long getExecutionTime() {
