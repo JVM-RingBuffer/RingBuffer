@@ -34,7 +34,7 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public Object getReadMonitor() {
-        return readBusyWaitStrategy;
+        return buffer;
     }
 
     @Override
@@ -66,7 +66,7 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        synchronized (readBusyWaitStrategy) {
+        synchronized (buffer) {
             int readPosition = this.readPosition.getPlain();
             readBusyWaitStrategy.reset();
             while (writePosition.get() == readPosition) {

@@ -31,7 +31,7 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public Object getReadMonitor() {
-        return readBusyWaitStrategy;
+        return buffer;
     }
 
     @Override
@@ -64,7 +64,7 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     @Override
     public T take() {
         int readPosition;
-        synchronized (readBusyWaitStrategy) {
+        synchronized (buffer) {
             readPosition = this.readPosition;
             readBusyWaitStrategy.reset();
             while (writePosition.get() == readPosition) {
@@ -204,7 +204,7 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     }
 
     private int getReadPosition() {
-        synchronized (readBusyWaitStrategy) {
+        synchronized (buffer) {
             return readPosition;
         }
     }
