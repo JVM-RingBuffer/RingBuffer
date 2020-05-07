@@ -14,7 +14,7 @@ class VolatileRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    VolatileRingBuffer(RingBufferBuilder<T> builder) {
+    VolatileRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

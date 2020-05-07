@@ -10,7 +10,7 @@ class LocalDiscardingRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    LocalDiscardingRingBuffer(RingBufferBuilder<T> builder) {
+    LocalDiscardingRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

@@ -20,56 +20,56 @@ public abstract class RingBufferBuilder<T> {
         this.capacity = capacity;
     }
 
-    abstract RingBufferBuilder<T> oneWriter();
+    public abstract RingBufferBuilder<T> oneWriter();
 
     void oneWriter0() {
         oneWriter = true;
     }
 
-    abstract RingBufferBuilder<T> manyWriters();
+    public abstract RingBufferBuilder<T> manyWriters();
 
     void manyWriters0() {
         oneWriter = false;
     }
 
-    abstract RingBufferBuilder<T> oneReader();
+    public abstract RingBufferBuilder<T> oneReader();
 
     void oneReader0() {
         oneReader = true;
     }
 
-    abstract RingBufferBuilder<T> manyReaders();
+    public abstract RingBufferBuilder<T> manyReaders();
 
     void manyReaders0() {
         oneReader = false;
     }
 
-    abstract RingBufferBuilder<T> blocking();
+    public abstract RingBufferBuilder<T> blocking();
 
     void blocking0() {
         blocking0(HintBusyWaitStrategy.getDefault());
     }
 
-    abstract RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy);
+    public abstract RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy);
 
     void blocking0(BusyWaitStrategy busyWaitStrategy) {
         type = RingBufferType.BLOCKING;
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    abstract RingBufferBuilder<T> discarding();
+    public abstract RingBufferBuilder<T> discarding();
 
     void discarding0() {
         type = RingBufferType.DISCARDING;
     }
 
-    abstract RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
+    public abstract RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
 
     void waitingWith0(BusyWaitStrategy busyWaitStrategy) {
         readBusyWaitStrategy = busyWaitStrategy;
     }
 
-    abstract RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder);
+    public abstract RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder);
 
     void withMemoryOrder0(MemoryOrder memoryOrder) {
         this.memoryOrder = memoryOrder;

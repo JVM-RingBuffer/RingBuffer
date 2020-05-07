@@ -18,7 +18,7 @@ class AtomicWriteRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicWriteRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

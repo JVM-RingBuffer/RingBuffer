@@ -10,7 +10,7 @@ class LocalRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    LocalRingBuffer(RingBufferBuilder<T> builder) {
+    LocalRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

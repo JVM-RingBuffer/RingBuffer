@@ -19,7 +19,7 @@ class ConcurrentDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    ConcurrentDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
+    ConcurrentDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

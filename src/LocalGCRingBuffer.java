@@ -10,7 +10,7 @@ class LocalGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    LocalGCRingBuffer(RingBufferBuilder<T> builder) {
+    LocalGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

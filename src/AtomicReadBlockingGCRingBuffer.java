@@ -19,7 +19,7 @@ class AtomicReadBlockingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    AtomicReadBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadBlockingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

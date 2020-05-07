@@ -1,11 +1,11 @@
 ```java
-RingBuffer<Integer> producersToProcessor = RingBuffer.<Integer>empty(5)
+EmptyRingBuffer<Integer> producersToProcessor = EmptyRingBuffer.<Integer>withCapacity(5)
         .manyWriters()
         .oneReader()
         .blocking()
         .withGC()
         .build();
-RingBuffer<Event> processorToConsumers = RingBuffer.prefilled(300 + 1, Event::new)
+PrefilledRingBuffer<Event> processorToConsumers = PrefilledRingBuffer.withCapacityAndFiller(300 + 1, Event::new)
         .oneWriter()
         .manyReaders()
         .waitingWith(YieldBusyWaitStrategy.getDefault())
@@ -31,6 +31,7 @@ Runnable consumer = () -> {
         for (int j = 0; j < 5; j++) {
             System.out.println(processorToConsumers.takePlain().getData());
         }
+        processorToConsumers.advanceBatch();
     }
 };
 

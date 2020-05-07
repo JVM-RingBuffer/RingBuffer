@@ -20,7 +20,7 @@ class ConcurrentBlockingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    ConcurrentBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
+    ConcurrentBlockingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

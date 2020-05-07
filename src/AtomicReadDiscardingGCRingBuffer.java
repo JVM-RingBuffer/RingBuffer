@@ -18,7 +18,7 @@ class AtomicReadDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    AtomicReadDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

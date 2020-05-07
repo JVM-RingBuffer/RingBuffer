@@ -14,7 +14,7 @@ class VolatileGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    VolatileGCRingBuffer(RingBufferBuilder<T> builder) {
+    VolatileGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
