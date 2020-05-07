@@ -2,11 +2,10 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
 
-class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
+class LocalDiscardingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final T dummyElement;
 
     private int readPosition;
     private int writePosition;
@@ -15,31 +14,12 @@ class LocalDiscardingRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        dummyElement = builder.getDummyElement();
     }
 
     @Override
     public int getCapacity() {
         return capacity;
     }
-
-    @Override
-    public T next() {
-        int oldWritePosition = writePosition;
-        if (oldWritePosition == 0) {
-            writePosition = capacityMinusOne;
-        } else {
-            writePosition--;
-        }
-        if (readPosition == writePosition) {
-            writePosition = oldWritePosition;
-            return dummyElement;
-        }
-        return buffer[oldWritePosition];
-    }
-
-    @Override
-    public void put() {}
 
     @Override
     public void put(T element) {

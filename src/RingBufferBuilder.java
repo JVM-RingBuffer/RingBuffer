@@ -6,188 +6,101 @@ import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
-import java.util.function.Supplier;
-
-public class RingBufferBuilder<T> {
+public abstract class RingBufferBuilder<T> {
     private final int capacity;
-    private final Supplier<? extends T> filler;
-    private final boolean isPrefilled;
-    private final T dummyElement;
     private Boolean oneWriter;
     private Boolean oneReader;
     private RingBufferType type = RingBufferType.OVERWRITING;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
-    private boolean gcEnabled;
     private MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
-    RingBufferBuilder(int capacity, Supplier<? extends T> filler, T dummyElement) {
+    RingBufferBuilder(int capacity) {
         Assume.notLesser(capacity, 2);
         this.capacity = capacity;
-        this.filler = filler;
-        isPrefilled = filler != null;
-        this.dummyElement = dummyElement;
     }
 
-    public RingBufferBuilder<T> oneWriter() {
+    abstract RingBufferBuilder<T> oneWriter();
+
+    void oneWriter0() {
         oneWriter = true;
-        return this;
     }
 
-    public RingBufferBuilder<T> manyWriters() {
+    abstract RingBufferBuilder<T> manyWriters();
+
+    void manyWriters0() {
         oneWriter = false;
-        return this;
     }
 
-    public RingBufferBuilder<T> oneReader() {
+    abstract RingBufferBuilder<T> oneReader();
+
+    void oneReader0() {
         oneReader = true;
-        return this;
     }
 
-    public RingBufferBuilder<T> manyReaders() {
+    abstract RingBufferBuilder<T> manyReaders();
+
+    void manyReaders0() {
         oneReader = false;
-        return this;
     }
 
-    public RingBufferBuilder<T> blocking() {
-        blocking(HintBusyWaitStrategy.getDefault());
-        return this;
+    abstract RingBufferBuilder<T> blocking();
+
+    void blocking0() {
+        blocking0(HintBusyWaitStrategy.getDefault());
     }
 
-    public RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy) {
+    abstract RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy);
+
+    void blocking0(BusyWaitStrategy busyWaitStrategy) {
         type = RingBufferType.BLOCKING;
         writeBusyWaitStrategy = busyWaitStrategy;
-        return this;
     }
 
-    public RingBufferBuilder<T> discarding() {
+    abstract RingBufferBuilder<T> discarding();
+
+    void discarding0() {
         type = RingBufferType.DISCARDING;
-        return this;
     }
 
-    public RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
+    abstract RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
+
+    void waitingWith0(BusyWaitStrategy busyWaitStrategy) {
         readBusyWaitStrategy = busyWaitStrategy;
-        return this;
     }
 
-    public RingBufferBuilder<T> withGC() {
-        gcEnabled = true;
-        return this;
-    }
+    abstract RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder);
 
-    public RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
+    void withMemoryOrder0(MemoryOrder memoryOrder) {
         this.memoryOrder = memoryOrder;
-        return this;
     }
 
-    public RingBuffer<T> build() {
-        if (isPrefilled && gcEnabled) {
-            throw new IllegalArgumentException("A pre-filled ring buffer cannot be garbage collected.");
-        }
+    RingBuffer<T> build() {
+        RingBufferConcurrency concurrency;
         if (oneReader == null && oneWriter == null) {
-            switch (type) {
-                case OVERWRITING:
-                    if (gcEnabled) {
-                        return new LocalGCRingBuffer<>(this);
-                    }
-                    return new LocalRingBuffer<>(this);
-                case DISCARDING:
-                    if (gcEnabled) {
-                        return new LocalDiscardingGCRingBuffer<>(this);
-                    }
-                    return new LocalDiscardingRingBuffer<>(this);
-                case BLOCKING:
-                    throw new IllegalArgumentException("A local ring buffer cannot be blocking.");
+            if (type == RingBufferType.BLOCKING) {
+                throw new IllegalArgumentException("A local ring buffer cannot be blocking.");
             }
-        }
-        if (oneReader == null) {
+            concurrency = RingBufferConcurrency.LOCAL;
+        } else if (oneReader == null) {
             throw new IllegalStateException("You must call either oneReader() or manyReaders().");
-        }
-        if (oneWriter == null) {
+        } else if (oneWriter == null) {
             throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
-        }
-        if (oneReader) {
+        } else if (oneReader) {
             if (oneWriter) {
-                switch (type) {
-                    case OVERWRITING:
-                        if (gcEnabled) {
-                            return new VolatileGCRingBuffer<>(this);
-                        }
-                        return new VolatileRingBuffer<>(this);
-                    case BLOCKING:
-                        if (gcEnabled) {
-                            return new VolatileBlockingGCRingBuffer<>(this);
-                        }
-                        return new VolatileBlockingRingBuffer<>(this);
-                    case DISCARDING:
-                        if (gcEnabled) {
-                            return new VolatileDiscardingGCRingBuffer<>(this);
-                        }
-                        return new VolatileDiscardingRingBuffer<>(this);
-                }
+                concurrency = RingBufferConcurrency.VOLATILE;
+            } else {
+                concurrency = RingBufferConcurrency.ATOMIC_WRITE;
             }
-            switch (type) {
-                case OVERWRITING:
-                    if (gcEnabled) {
-                        return new AtomicWriteGCRingBuffer<>(this);
-                    }
-                    return new AtomicWriteRingBuffer<>(this);
-                case BLOCKING:
-                    if (gcEnabled) {
-                        return new AtomicWriteBlockingGCRingBuffer<>(this);
-                    }
-                    return new AtomicWriteBlockingRingBuffer<>(this);
-                case DISCARDING:
-                    if (gcEnabled) {
-                        return new AtomicWriteDiscardingGCRingBuffer<>(this);
-                    }
-                    return new AtomicWriteDiscardingRingBuffer<>(this);
-            }
+        } else if (oneWriter) {
+            concurrency = RingBufferConcurrency.ATOMIC_READ;
+        } else {
+            concurrency = RingBufferConcurrency.CONCURRENT;
         }
-        if (oneWriter) {
-            switch (type) {
-                case OVERWRITING:
-                    if (gcEnabled) {
-                        return new AtomicReadGCRingBuffer<>(this);
-                    }
-                    return new AtomicReadRingBuffer<>(this);
-                case BLOCKING:
-                    if (isPrefilled) {
-                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
-                    }
-                    if (gcEnabled) {
-                        return new AtomicReadBlockingGCRingBuffer<>(this);
-                    }
-                    return new AtomicReadBlockingRingBuffer<>(this);
-                case DISCARDING:
-                    if (gcEnabled) {
-                        return new AtomicReadDiscardingGCRingBuffer<>(this);
-                    }
-                    return new AtomicReadDiscardingRingBuffer<>(this);
-            }
-        }
-        switch (type) {
-            case OVERWRITING:
-                if (gcEnabled) {
-                    return new ConcurrentGCRingBuffer<>(this);
-                }
-                return new ConcurrentRingBuffer<>(this);
-            case BLOCKING:
-                if (isPrefilled) {
-                    return new ConcurrentBlockingPrefilledRingBuffer<>(this);
-                }
-                if (gcEnabled) {
-                    return new ConcurrentBlockingGCRingBuffer<>(this);
-                }
-                return new ConcurrentBlockingRingBuffer<>(this);
-            case DISCARDING:
-                if (gcEnabled) {
-                    return new ConcurrentDiscardingGCRingBuffer<>(this);
-                }
-                return new ConcurrentDiscardingRingBuffer<>(this);
-        }
-        throw new AssertionError();
+        return create(concurrency, type);
     }
+
+    abstract RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type);
 
     int getCapacity() {
         return capacity;
@@ -197,18 +110,8 @@ public class RingBufferBuilder<T> {
         return capacity - 1;
     }
 
-    T[] getBuffer() {
-        T[] buffer = newBuffer();
-        if (isPrefilled) {
-            for (int i = 0; i < capacity; i++) {
-                buffer[i] = filler.get();
-            }
-        }
-        return buffer;
-    }
-
     @SuppressWarnings("unchecked")
-    private T[] newBuffer() {
+    T[] getBuffer() {
         return (T[]) new Object[capacity];
     }
 
@@ -220,20 +123,21 @@ public class RingBufferBuilder<T> {
         return readBusyWaitStrategy;
     }
 
-    T getDummyElement() {
-        if (isPrefilled) {
-            return filler.get();
-        }
-        return dummyElement;
-    }
-
     Integer newCursor() {
         return memoryOrder.newInteger();
     }
 
-    private enum RingBufferType {
+    enum RingBufferType {
         OVERWRITING,
         BLOCKING,
         DISCARDING
+    }
+
+    enum RingBufferConcurrency {
+        LOCAL,
+        VOLATILE,
+        ATOMIC_READ,
+        ATOMIC_WRITE,
+        CONCURRENT
     }
 }

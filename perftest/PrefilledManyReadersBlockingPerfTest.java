@@ -1,10 +1,10 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledManyReadersBlockingPerfTest extends PrefilledManyReadersBlockingTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.prefilled(NOT_ONE_TO_ONE_SIZE, FILLER)
+    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+            PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
                     .manyReaders()
                     .oneWriter()
                     .blocking()

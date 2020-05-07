@@ -7,9 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
-
-class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
+class AtomicWriteGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -31,16 +29,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        return shouldNotBeGarbageCollected();
-    }
-
-    @Override
-    public void put() {
-        shouldNotBeGarbageCollected();
     }
 
     @Override

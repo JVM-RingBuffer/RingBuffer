@@ -1,5 +1,6 @@
 package test;
 
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class SynchronizedBatchReader extends BatchReader {
@@ -17,7 +18,7 @@ class SynchronizedBatchReader extends BatchReader {
     @Override
     long collect() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = getBatchSize();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {

@@ -1,16 +1,17 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
 public class ProducersToProcessorToConsumersTest implements RingBufferTest {
-    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(BLOCKING_SIZE)
+    public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER = EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
             .manyWriters()
             .oneReader()
             .blocking()
             .withGC()
             .build();
-    public static final RingBuffer<Event> CONSUMERS_RING_BUFFER = RingBuffer.prefilled(NOT_ONE_TO_ONE_SIZE, FILLER)
+    public static final PrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER = PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
             .oneWriter()
             .manyReaders()
             .waitingWith(YieldBusyWaitStrategy.getDefault())

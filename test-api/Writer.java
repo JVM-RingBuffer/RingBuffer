@@ -1,6 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 class Writer extends TestThread {
     static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
@@ -36,7 +37,7 @@ class Writer extends TestThread {
     @Override
     void loop() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             ringBuffer.put(new Event(i));
         }

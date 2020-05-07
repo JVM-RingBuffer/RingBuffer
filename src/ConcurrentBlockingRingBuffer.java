@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
+class ConcurrentBlockingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -19,7 +19,6 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
 
     private final Integer readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
     ConcurrentBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -34,28 +33,6 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        writeLock.lock();
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
-    }
-
-    @Override
-    public void put() {
-        writePosition.set(newWritePosition);
-        writeLock.unlock();
     }
 
     @Override

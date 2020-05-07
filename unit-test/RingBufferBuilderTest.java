@@ -25,23 +25,23 @@ class RingBufferBuilderTest {
         expectClass(VolatileRingBuffer.class, OneToOneTest.RING_BUFFER);
 
         expectClass(ConcurrentBlockingPrefilledRingBuffer.class, PrefilledManyToManyBlockingTest.RING_BUFFER, PrefilledManyToManyBlockingPerfTest.RING_BUFFER);
-        expectClass(ConcurrentRingBuffer.class, PrefilledManyToManyTest.RING_BUFFER);
+        expectClass(ConcurrentPrefilledRingBuffer.class, PrefilledManyToManyTest.RING_BUFFER);
 
         expectClass(AtomicReadBlockingPrefilledRingBuffer.class, PrefilledManyReadersBlockingTest.RING_BUFFER, PrefilledManyReadersBlockingPerfTest.RING_BUFFER);
-        expectClass(AtomicReadRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER);
+        expectClass(AtomicReadPrefilledRingBuffer.class, PrefilledManyReadersTest.RING_BUFFER);
 
-        expectClass(AtomicWriteBlockingRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER, PrefilledManyWritersBlockingPerfTest.RING_BUFFER);
-        expectClass(AtomicWriteRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER);
+        expectClass(AtomicWriteBlockingPrefilledRingBuffer.class, PrefilledManyWritersBlockingTest.RING_BUFFER, PrefilledManyWritersBlockingPerfTest.RING_BUFFER);
+        expectClass(AtomicWritePrefilledRingBuffer.class, PrefilledManyWritersTest.RING_BUFFER);
 
-        expectClass(VolatileBlockingRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
-        expectClass(VolatileRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
+        expectClass(VolatileBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
+        expectClass(VolatilePrefilledRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
 
         expectClass(LocalGCRingBuffer.class, LocalRingBufferTest.RING_BUFFER);
-        expectClass(LocalRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER);
+        expectClass(LocalPrefilledRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER);
 
         expectClass(AtomicWriteBlockingGCRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersPerfTest.PRODUCERS_RING_BUFFER);
-        expectClass(AtomicReadRingBuffer.class, ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER);
+        expectClass(AtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER);
     }
 
     private static void expectClass(Class<?> clazz, RingBuffer<?>... ringBuffers) {

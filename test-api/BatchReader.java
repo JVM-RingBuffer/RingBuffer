@@ -1,5 +1,6 @@
 package test;
 
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Int;
 
@@ -32,7 +33,7 @@ class BatchReader extends Reader {
     @Override
     long collect() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {

@@ -5,7 +5,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatileRingBuffer<T> implements RingBuffer<T> {
+class VolatileRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -13,7 +13,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     private int readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
     VolatileRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -26,22 +25,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        return buffer[writePosition];
-    }
-
-    @Override
-    public void put() {
-        writePosition.set(newWritePosition);
     }
 
     @Override

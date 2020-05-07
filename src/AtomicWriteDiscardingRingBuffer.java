@@ -7,25 +7,22 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-class AtomicWriteDiscardingRingBuffer<T> implements RingBuffer<T> {
+class AtomicWriteDiscardingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final T dummyElement;
 
     private final Lock writeLock = new ReentrantLock();
 
     private final Integer readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
     AtomicWriteDiscardingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        dummyElement = builder.getDummyElement();
         readPosition = builder.newCursor();
         writePosition = builder.newCursor();
     }
@@ -33,28 +30,6 @@ class AtomicWriteDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        writeLock.lock();
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        if (readPosition.get() == newWritePosition) {
-            newWritePosition = writePosition;
-            return dummyElement;
-        }
-        return buffer[writePosition];
-    }
-
-    @Override
-    public void put() {
-        writePosition.set(newWritePosition);
-        writeLock.unlock();
     }
 
     @Override

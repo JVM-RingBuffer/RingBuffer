@@ -1,5 +1,6 @@
 package test;
 
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class SynchronizedReader extends Reader {
@@ -17,7 +18,7 @@ class SynchronizedReader extends Reader {
     @Override
     long collect() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             sum += ringBuffer.take().getData();

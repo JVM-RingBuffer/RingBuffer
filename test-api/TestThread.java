@@ -1,6 +1,8 @@
 package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 abstract class TestThread extends Thread {
     private final int numIterations;
@@ -22,12 +24,16 @@ abstract class TestThread extends Thread {
         return numIterations;
     }
 
-    RingBuffer<Event> getRingBuffer() {
-        return ringBuffer;
+    EmptyRingBuffer<Event> getRingBuffer() {
+        return (EmptyRingBuffer<Event>) ringBuffer;
     }
 
-    RingBuffer<Event> getRingBuffer2() {
-        return ringBuffer2;
+    PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
+        return (PrefilledRingBuffer<Event>) ringBuffer;
+    }
+
+    EmptyRingBuffer<Event> getRingBuffer2() {
+        return (EmptyRingBuffer<Event>) ringBuffer2;
     }
 
     @Override

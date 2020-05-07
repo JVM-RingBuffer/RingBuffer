@@ -1,10 +1,10 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledLocalRingBufferTest implements RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.prefilled(ONE_TO_ONE_SIZE, FILLER)
+    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+            PrefilledRingBuffer.withCapacityAndFiller(ONE_TO_ONE_SIZE, FILLER)
                     .build();
 
     public static void main(String[] args) {

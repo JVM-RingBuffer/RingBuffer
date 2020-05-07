@@ -1,10 +1,11 @@
 package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 public class LocalRingBufferTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
+            EmptyRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
                     .withGC()
                     .build();
 

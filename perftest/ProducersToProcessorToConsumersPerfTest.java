@@ -1,13 +1,14 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcessorToConsumersTest {
-    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER = RingBuffer.<Event>empty(NOT_ONE_TO_ONE_SIZE)
-            .manyWriters()
-            .oneReader()
-            .blocking()
-            .build();
+    public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
+            EmptyRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .manyWriters()
+                    .oneReader()
+                    .blocking()
+                    .build();
 
     public static void main(String[] args) {
         new ProducersToProcessorToConsumersPerfTest().runTest();

@@ -7,9 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
-
-class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
+class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -22,7 +20,7 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final Integer writePosition;
     private int newWritePosition;
 
-    AtomicReadBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -55,11 +53,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void put() {
         writePosition.set(newWritePosition);
-    }
-
-    @Override
-    public void put(T element) {
-        shouldNotBeBlockingAndPrefilled();
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-class AtomicReadRingBuffer<T> implements RingBuffer<T> {
+class AtomicReadRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -17,7 +17,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     private int readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
     AtomicReadRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -30,22 +29,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        return buffer[writePosition];
-    }
-
-    @Override
-    public void put() {
-        writePosition.set(newWritePosition);
     }
 
     @Override

@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
 
-class LocalRingBuffer<T> implements RingBuffer<T> {
+class LocalRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -20,20 +20,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     public int getCapacity() {
         return capacity;
     }
-
-    @Override
-    public T next() {
-        int writePosition = this.writePosition;
-        if (writePosition == 0) {
-            this.writePosition = capacityMinusOne;
-        } else {
-            this.writePosition--;
-        }
-        return buffer[writePosition];
-    }
-
-    @Override
-    public void put() {}
 
     @Override
     public void put(T element) {

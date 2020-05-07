@@ -1,13 +1,14 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledManyToManyBlockingTest implements RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER = RingBuffer.prefilled(BLOCKING_SIZE, FILLER)
-            .manyReaders()
-            .manyWriters()
-            .blocking()
-            .build();
+    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+            PrefilledRingBuffer.withCapacityAndFiller(BLOCKING_SIZE, FILLER)
+                    .manyReaders()
+                    .manyWriters()
+                    .blocking()
+                    .build();
 
     public static void main(String[] args) {
         new PrefilledManyToManyBlockingTest().runTest();

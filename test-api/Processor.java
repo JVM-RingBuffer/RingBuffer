@@ -1,6 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 class Processor extends TestThread {
     static Processor startAsync(int numIterations, RingBuffer<Event> producersRingBuffer, RingBuffer<Event> consumersRingBuffer) {
@@ -20,8 +21,8 @@ class Processor extends TestThread {
     @Override
     void loop() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> consumersRingBuffer = getRingBuffer2();
-        RingBuffer<Event> producersRingBuffer = getRingBuffer();
+        EmptyRingBuffer<Event> consumersRingBuffer = getRingBuffer2();
+        EmptyRingBuffer<Event> producersRingBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             consumersRingBuffer.put(producersRingBuffer.take());
         }

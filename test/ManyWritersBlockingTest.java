@@ -1,10 +1,10 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 public class ManyWritersBlockingTest implements RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>empty(BLOCKING_SIZE)
+    public static final EmptyRingBuffer<Event> RING_BUFFER =
+            EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .oneReader()
                     .manyWriters()
                     .blocking()

@@ -1,5 +1,6 @@
 package test;
 
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class PrefilledWriter extends TestThread {
@@ -26,7 +27,7 @@ class PrefilledWriter extends TestThread {
     @Override
     void loop() {
         int numIterations = getNumIterations();
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
         for (int i = 0; i < numIterations; i++) {
             Event event = ringBuffer.next();
             event.setData(i);

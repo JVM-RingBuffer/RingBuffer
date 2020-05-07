@@ -1,12 +1,13 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledManyToManyTest implements RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER = RingBuffer.prefilled(NOT_ONE_TO_ONE_SIZE, FILLER)
-            .manyReaders()
-            .manyWriters()
-            .build();
+    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+            PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
+                    .manyReaders()
+                    .manyWriters()
+                    .build();
 
     public static void main(String[] args) {
         new PrefilledManyToManyTest().runTest();

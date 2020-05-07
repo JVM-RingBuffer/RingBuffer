@@ -1,34 +1,9 @@
 package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-/**
- * The {@code null} element may be used if the {@link #contains(Object) contains(T)} and {@link #toString()}
- * methods are never called.
- */
 public interface RingBuffer<T> {
     int getCapacity();
-
-    /**
-     * If the ring buffer supports at least one reader and writer, then after the returned object has been
-     * populated, {@link #put()} must be called.
-     *
-     * <pre>{@code
-     * T element = ringBuffer.next();
-     * // Populate element
-     * ringBuffer.put();
-     * }</pre>
-     */
-    T next();
-
-    /**
-     * If the ring buffer supports at least one reader and writer, then this method must be called after
-     * the object returned by {@link #next()} has been populated.
-     */
-    void put();
-
-    void put(T element);
 
     /**
      * If the ring buffer supports multiple readers and is blocking and pre-filled, then after the returned
@@ -108,16 +83,4 @@ public interface RingBuffer<T> {
      * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
     String toString();
-
-    static <T> RingBufferBuilder<T> empty(int capacity) {
-        return new RingBufferBuilder<>(capacity, null, null);
-    }
-
-    static <T> RingBufferBuilder<T> empty(int capacity, T dummyElement) {
-        return new RingBufferBuilder<>(capacity, null, dummyElement);
-    }
-
-    static <T> RingBufferBuilder<T> prefilled(int capacity, Supplier<? extends T> filler) {
-        return new RingBufferBuilder<>(capacity, filler, null);
-    }
 }

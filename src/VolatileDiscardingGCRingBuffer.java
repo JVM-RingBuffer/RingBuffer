@@ -5,9 +5,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
-
-class VolatileDiscardingGCRingBuffer<T> implements RingBuffer<T> {
+class VolatileDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -28,16 +26,6 @@ class VolatileDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public T next() {
-        return shouldNotBeGarbageCollected();
-    }
-
-    @Override
-    public void put() {
-        shouldNotBeGarbageCollected();
     }
 
     @Override

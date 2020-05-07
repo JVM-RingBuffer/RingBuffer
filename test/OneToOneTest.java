@@ -1,10 +1,10 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 public class OneToOneTest implements RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>empty(ONE_TO_ONE_SIZE)
+    public static final EmptyRingBuffer<Event> RING_BUFFER =
+            EmptyRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
                     .build();
