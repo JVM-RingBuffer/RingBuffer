@@ -7,7 +7,7 @@ class PrefilledManyToManyBatchPerfTest extends PrefilledManyToManyPerfTest {
 
     @Override
     public long run() {
-        PrefilledSynchronizedWriter.runGroupAsync(RING_BUFFER);
-        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
+        PrefilledWriter.runGroupAsync(RING_BUFFER);
+        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }
 }

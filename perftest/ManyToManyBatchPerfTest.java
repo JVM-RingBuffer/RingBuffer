@@ -8,6 +8,6 @@ class ManyToManyBatchPerfTest extends ManyToManyPerfTest {
     @Override
     public long run() {
         Writer.runGroupAsync(RING_BUFFER);
-        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
+        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }
 }

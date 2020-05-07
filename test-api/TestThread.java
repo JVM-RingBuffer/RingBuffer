@@ -1,39 +1,34 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
+import eu.menzani.ringbuffer.RingBuffer;
 
 abstract class TestThread extends Thread {
     private final int numIterations;
     private final Profiler profiler;
-    private final RingBuffer<Event> ringBuffer, ringBuffer2;
+    private final RingBuffer<Event> ringBuffer;
 
     TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
-        this(numIterations, ringBuffer, null);
-    }
-
-    TestThread(int numIterations, RingBuffer<Event> ringBuffer, RingBuffer<Event> ringBuffer2) {
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
-        this.ringBuffer2 = ringBuffer2;
     }
 
     int getNumIterations() {
         return numIterations;
     }
 
-    EmptyRingBuffer<Event> getRingBuffer() {
+    RingBuffer<Event> getRingBuffer() {
+        return ringBuffer;
+    }
+
+    EmptyRingBuffer<Event> getEmptyRingBuffer() {
         return (EmptyRingBuffer<Event>) ringBuffer;
     }
 
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
         return (PrefilledRingBuffer<Event>) ringBuffer;
-    }
-
-    EmptyRingBuffer<Event> getRingBuffer2() {
-        return (EmptyRingBuffer<Event>) ringBuffer2;
     }
 
     @Override

@@ -4,6 +4,16 @@ import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class PrefilledWriter extends TestThread {
+    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledWriter(numIterations, ringBuffer));
+        group.start();
+        return group;
+    }
+
+    static void runGroupAsync(RingBuffer<Event> ringBuffer) {
+        startGroupAsync(ringBuffer).reportPerformance();
+    }
+
     static PrefilledWriter startAsync(int numIterations, RingBuffer<Event> ringBuffer) {
         PrefilledWriter writer = new PrefilledWriter(numIterations, ringBuffer);
         writer.start();
@@ -29,8 +39,7 @@ class PrefilledWriter extends TestThread {
         int numIterations = getNumIterations();
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
         for (int i = 0; i < numIterations; i++) {
-            Event event = ringBuffer.next();
-            event.setData(i);
+            ringBuffer.next().setData(i);
             ringBuffer.put();
         }
     }

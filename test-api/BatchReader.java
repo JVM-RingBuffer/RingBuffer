@@ -1,10 +1,16 @@
 package test;
 
-import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Int;
 
 class BatchReader extends Reader {
+    static long runGroupAsync(int batchSize, RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new BatchReader(numIterations, batchSize, ringBuffer));
+        group.start();
+        group.reportPerformance();
+        return group.getReaderSum();
+    }
+
     static long runAsync(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
         BatchReader reader = new BatchReader(numIterations, batchSize, ringBuffer);
         reader.start();
@@ -26,14 +32,10 @@ class BatchReader extends Reader {
         this.batchSize = batchSize;
     }
 
-    int getBatchSize() {
-        return batchSize;
-    }
-
     @Override
     long collect() {
         int numIterations = getNumIterations();
-        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
@@ -41,6 +43,7 @@ class BatchReader extends Reader {
             for (int j = batchSize; j > 0; j--) {
                 sum += ringBuffer.takePlain().getData();
             }
+            ringBuffer.advanceBatch();
         }
         return sum;
     }

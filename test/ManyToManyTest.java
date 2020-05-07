@@ -3,10 +3,11 @@ package test;
 import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 public class ManyToManyTest implements RingBufferTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER = EmptyRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
-            .manyReaders()
-            .manyWriters()
-            .build();
+    public static final EmptyRingBuffer<Event> RING_BUFFER =
+            EmptyRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .manyReaders()
+                    .manyWriters()
+                    .build();
 
     public static void main(String[] args) {
         new ManyToManyTest().runTest();

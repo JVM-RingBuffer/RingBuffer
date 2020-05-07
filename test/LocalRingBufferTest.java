@@ -1,7 +1,7 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.RingBuffer;
 
 public class LocalRingBufferTest implements RingBufferTest {
     public static final RingBuffer<Event> RING_BUFFER =

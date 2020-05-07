@@ -1,7 +1,6 @@
 package test;
 
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.EmptyRingBuffer;
 
 class Reader extends TestThread {
     static long runGroupAsync(RingBuffer<Event> ringBuffer) {
@@ -42,10 +41,11 @@ class Reader extends TestThread {
 
     long collect() {
         int numIterations = getNumIterations();
-        EmptyRingBuffer<Event> ringBuffer = getRingBuffer();
+        RingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
         for (int i = 0; i < numIterations; i++) {
             sum += ringBuffer.take().getData();
+            ringBuffer.advance();
         }
         return sum;
     }
