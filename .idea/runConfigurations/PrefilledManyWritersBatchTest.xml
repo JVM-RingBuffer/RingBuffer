@@ -2,7 +2,7 @@
   <configuration default="false" name="PrefilledManyWritersBatchTest" type="Application" factoryName="Application" folderName="Many Writers Prefilled">
     <option name="MAIN_CLASS_NAME" value="test.PrefilledManyWritersBatchTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms187m -Xmx187m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms187m -Xmx187m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

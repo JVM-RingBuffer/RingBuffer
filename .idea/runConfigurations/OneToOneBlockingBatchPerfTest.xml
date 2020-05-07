@@ -2,7 +2,7 @@
   <configuration default="false" name="OneToOneBlockingBatchPerfTest" type="Application" factoryName="Application" folderName="Volatile">
     <option name="MAIN_CLASS_NAME" value="test.OneToOneBlockingBatchPerfTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms1813m -Xmx1813m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms1813m -Xmx1813m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

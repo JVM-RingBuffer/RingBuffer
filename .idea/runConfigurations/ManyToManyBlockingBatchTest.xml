@@ -2,7 +2,7 @@
   <configuration default="false" name="ManyToManyBlockingBatchTest" type="Application" factoryName="Application" folderName="Concurrent">
     <option name="MAIN_CLASS_NAME" value="test.ManyToManyBlockingBatchTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms1790m -Xmx1790m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms1790m -Xmx1790m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

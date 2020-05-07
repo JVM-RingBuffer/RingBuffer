@@ -2,7 +2,7 @@
   <configuration default="false" name="ManyReadersBlockingTest" type="Application" factoryName="Application" folderName="Many Readers" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="test.ManyReadersBlockingTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms1715m -Xmx1715m -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms1715m -Xmx1715m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
