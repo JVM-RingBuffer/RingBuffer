@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static eu.menzani.ringbuffer.RingBufferHelper.*;
@@ -14,10 +16,10 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    private final Lock writeLock = new ReentrantLock();
+
     private final Integer readPosition;
     private final Integer writePosition;
-
-    private int newWritePosition;
 
     AtomicWriteBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -35,32 +37,18 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
-    }
-
-    @Override
     public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+        return shouldNotBeGarbageCollected();
     }
 
     @Override
     public void put() {
-        writePosition.set(newWritePosition);
+        shouldNotBeGarbageCollected();
     }
 
     @Override
-    public synchronized void put(T element) {
+    public void put(T element) {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         int newWritePosition;
         if (writePosition == 0) {
@@ -74,6 +62,7 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
         }
         buffer[writePosition] = element;
         this.writePosition.set(newWritePosition);
+        writeLock.unlock();
     }
 
     @Override
@@ -92,6 +81,9 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
         buffer[readPosition] = null;
         return element;
     }
+
+    @Override
+    public void advance() {}
 
     @Override
     public void takeBatch(int size) {
@@ -114,6 +106,9 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
         buffer[readPosition] = null;
         return element;
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

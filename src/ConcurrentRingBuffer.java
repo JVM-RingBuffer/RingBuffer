@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 class ConcurrentRingBuffer<T> implements RingBuffer<T> {
@@ -11,9 +13,11 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    private final Lock writeLock = new ReentrantLock();
+    private final Lock readLock = new ReentrantLock();
+
     private int readPosition;
     private final Integer writePosition;
-
     private int newWritePosition;
 
     ConcurrentRingBuffer(RingBufferBuilder<T> builder) {
@@ -30,12 +34,8 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return buffer;
-    }
-
-    @Override
     public T next() {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         if (writePosition == 0) {
             newWritePosition = capacityMinusOne;
@@ -48,10 +48,12 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void put() {
         writePosition.set(newWritePosition);
+        writeLock.unlock();
     }
 
     @Override
-    public synchronized void put(T element) {
+    public void put(T element) {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         buffer[writePosition] = element;
         if (writePosition == 0) {
@@ -59,28 +61,32 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.writePosition.set(writePosition - 1);
         }
+        writeLock.unlock();
     }
 
     @Override
     public T take() {
-        int readPosition;
-        synchronized (buffer) {
-            readPosition = this.readPosition;
-            readBusyWaitStrategy.reset();
-            while (writePosition.get() == readPosition) {
-                readBusyWaitStrategy.tick();
-            }
-            if (readPosition == 0) {
-                this.readPosition = capacityMinusOne;
-            } else {
-                this.readPosition--;
-            }
+        readLock.lock();
+        int readPosition = this.readPosition;
+        readBusyWaitStrategy.reset();
+        while (writePosition.get() == readPosition) {
+            readBusyWaitStrategy.tick();
         }
+        if (readPosition == 0) {
+            this.readPosition = capacityMinusOne;
+        } else {
+            this.readPosition--;
+        }
+        readLock.unlock();
         return buffer[readPosition];
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
+        readLock.lock();
         readBusyWaitStrategy.reset();
         while (size() < size) {
             readBusyWaitStrategy.tick();
@@ -96,6 +102,11 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
             this.readPosition--;
         }
         return buffer[readPosition];
+    }
+
+    @Override
+    public void advanceBatch() {
+        readLock.unlock();
     }
 
     @Override
@@ -204,8 +215,9 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
     }
 
     private int getReadPosition() {
-        synchronized (buffer) {
-            return readPosition;
-        }
+        readLock.lock();
+        int readPosition = this.readPosition;
+        readLock.unlock();
+        return readPosition;
     }
 }

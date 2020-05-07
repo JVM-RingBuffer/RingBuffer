@@ -24,11 +24,6 @@ class LocalDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
-    }
-
-    @Override
     public T next() {
         return shouldNotBeGarbageCollected();
     }
@@ -65,12 +60,18 @@ class LocalDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {}
 
     @Override
     public T takePlain() {
         return take();
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

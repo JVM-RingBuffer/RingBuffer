@@ -3,20 +3,26 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
+import static eu.menzani.ringbuffer.RingBufferHelper.*;
+
+class AtomicReadBlockingPrefilledRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    private final Lock readLock = new ReentrantLock();
+
     private final Integer readPosition;
     private final Integer writePosition;
     private int newWritePosition;
 
-    VolatileBlockingRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadBlockingPrefilledRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -53,23 +59,12 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void put(T element) {
-        int writePosition = this.writePosition.getPlain();
-        int newWritePosition;
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        buffer[writePosition] = element;
-        this.writePosition.set(newWritePosition);
+        shouldNotBeBlockingAndPrefilled();
     }
 
     @Override
     public T take() {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
@@ -84,10 +79,13 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+        readLock.unlock();
+    }
 
     @Override
     public void takeBatch(int size) {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -107,7 +105,9 @@ class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advanceBatch() {}
+    public void advanceBatch() {
+        readLock.unlock();
+    }
 
     @Override
     public void forEach(Consumer<T> action) {

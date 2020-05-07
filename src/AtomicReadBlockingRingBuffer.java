@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
@@ -12,9 +14,10 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    private final Lock readLock = new ReentrantLock();
+
     private final Integer readPosition;
     private final Integer writePosition;
-
     private int newWritePosition;
 
     AtomicReadBlockingRingBuffer(RingBufferBuilder<T> builder) {
@@ -30,11 +33,6 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public Object getReadMonitor() {
-        return this;
     }
 
     @Override
@@ -75,7 +73,8 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized T take() {
+    public T take() {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
@@ -86,11 +85,17 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition.set(readPosition - 1);
         }
-        return buffer[readPosition];
+        T element = buffer[readPosition];
+        readLock.unlock();
+        return element;
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -107,6 +112,11 @@ class AtomicReadBlockingRingBuffer<T> implements RingBuffer<T> {
             this.readPosition.set(readPosition - 1);
         }
         return buffer[readPosition];
+    }
+
+    @Override
+    public void advanceBatch() {
+        readLock.unlock();
     }
 
     @Override

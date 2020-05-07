@@ -2,8 +2,6 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
 
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
-
 class LocalRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -21,11 +19,6 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
     }
 
     @Override
@@ -64,12 +57,18 @@ class LocalRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {}
 
     @Override
     public T takePlain() {
         return take();
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static eu.menzani.ringbuffer.RingBufferHelper.*;
@@ -12,6 +14,8 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
+
+    private final Lock writeLock = new ReentrantLock();
 
     private int readPosition;
     private final Integer writePosition;
@@ -30,11 +34,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
-    }
-
-    @Override
     public T next() {
         return shouldNotBeGarbageCollected();
     }
@@ -45,7 +44,8 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized void put(T element) {
+    public void put(T element) {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         buffer[writePosition] = element;
         if (writePosition == 0) {
@@ -53,6 +53,7 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.writePosition.set(writePosition - 1);
         }
+        writeLock.unlock();
     }
 
     @Override
@@ -73,6 +74,9 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
         readBusyWaitStrategy.reset();
         while (size() < size) {
@@ -91,6 +95,9 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
         }
         return element;
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

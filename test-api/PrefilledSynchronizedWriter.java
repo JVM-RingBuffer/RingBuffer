@@ -22,11 +22,9 @@ class PrefilledSynchronizedWriter extends TestThread {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         for (int i = 0; i < numIterations; i++) {
-            synchronized (ringBuffer) {
-                Event event = ringBuffer.next();
-                event.setData(i);
-                ringBuffer.put();
-            }
+            Event event = ringBuffer.next();
+            event.setData(i);
+            ringBuffer.put();
         }
     }
 }

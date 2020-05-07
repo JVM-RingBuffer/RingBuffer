@@ -3,9 +3,9 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
 
 class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
@@ -13,9 +13,10 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    private final Lock writeLock = new ReentrantLock();
+
     private int readPosition;
     private final Integer writePosition;
-
     private int newWritePosition;
 
     AtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
@@ -32,12 +33,8 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
-    }
-
-    @Override
     public T next() {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         if (writePosition == 0) {
             newWritePosition = capacityMinusOne;
@@ -50,10 +47,12 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void put() {
         writePosition.set(newWritePosition);
+        writeLock.unlock();
     }
 
     @Override
-    public synchronized void put(T element) {
+    public void put(T element) {
+        writeLock.lock();
         int writePosition = this.writePosition.getPlain();
         buffer[writePosition] = element;
         if (writePosition == 0) {
@@ -61,6 +60,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.writePosition.set(writePosition - 1);
         }
+        writeLock.unlock();
     }
 
     @Override
@@ -77,6 +77,9 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         }
         return buffer[readPosition];
     }
+
+    @Override
+    public void advance() {}
 
     @Override
     public void takeBatch(int size) {
@@ -96,6 +99,9 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         }
         return buffer[readPosition];
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

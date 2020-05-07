@@ -5,7 +5,7 @@ class RingBufferHelper {
         throw new AssertionError("This should not have been a garbage collected implementation.");
     }
 
-    static <T> T readingIsNotAtomic() {
-        throw new UnsupportedOperationException("Reading is not atomic.");
+    static void shouldNotBeBlockingAndPrefilled() {
+        throw new AssertionError("This should not have been a blocking and pre-filled implementation.");
     }
 }

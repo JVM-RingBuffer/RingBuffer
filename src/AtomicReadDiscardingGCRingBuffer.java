@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static eu.menzani.ringbuffer.RingBufferHelper.*;
@@ -12,6 +14,8 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
+
+    private final Lock readLock = new ReentrantLock();
 
     private final Integer readPosition;
     private final Integer writePosition;
@@ -28,11 +32,6 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public Object getReadMonitor() {
-        return this;
     }
 
     @Override
@@ -61,7 +60,8 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public synchronized T take() {
+    public T take() {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (writePosition.get() == readPosition) {
@@ -74,11 +74,16 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         }
         T element = buffer[readPosition];
         buffer[readPosition] = null;
+        readLock.unlock();
         return element;
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -97,6 +102,11 @@ class AtomicReadDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         T element = buffer[readPosition];
         buffer[readPosition] = null;
         return element;
+    }
+
+    @Override
+    public void advanceBatch() {
+        readLock.unlock();
     }
 
     @Override

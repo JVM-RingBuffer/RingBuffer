@@ -30,11 +30,6 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
-    }
-
-    @Override
     public T next() {
         return shouldNotBeGarbageCollected();
     }
@@ -73,6 +68,9 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
         readBusyWaitStrategy.reset();
         while (size() < size) {
@@ -91,6 +89,9 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
         }
         return element;
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {

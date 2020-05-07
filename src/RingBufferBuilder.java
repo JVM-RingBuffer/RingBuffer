@@ -107,41 +107,41 @@ public class RingBufferBuilder<T> {
             throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
         }
         if (oneReader) {
-            if (!oneWriter && !isPrefilled) {
+            if (oneWriter) {
                 switch (type) {
                     case OVERWRITING:
                         if (gcEnabled) {
-                            return new AtomicWriteGCRingBuffer<>(this);
+                            return new VolatileGCRingBuffer<>(this);
                         }
-                        return new AtomicWriteRingBuffer<>(this);
+                        return new VolatileRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
-                            return new AtomicWriteBlockingGCRingBuffer<>(this);
+                            return new VolatileBlockingGCRingBuffer<>(this);
                         }
-                        return new AtomicWriteBlockingRingBuffer<>(this);
+                        return new VolatileBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (gcEnabled) {
-                            return new AtomicWriteDiscardingGCRingBuffer<>(this);
+                            return new VolatileDiscardingGCRingBuffer<>(this);
                         }
-                        return new AtomicWriteDiscardingRingBuffer<>(this);
+                        return new VolatileDiscardingRingBuffer<>(this);
                 }
             }
             switch (type) {
                 case OVERWRITING:
                     if (gcEnabled) {
-                        return new VolatileGCRingBuffer<>(this);
+                        return new AtomicWriteGCRingBuffer<>(this);
                     }
-                    return new VolatileRingBuffer<>(this);
+                    return new AtomicWriteRingBuffer<>(this);
                 case BLOCKING:
                     if (gcEnabled) {
-                        return new VolatileBlockingGCRingBuffer<>(this);
+                        return new AtomicWriteBlockingGCRingBuffer<>(this);
                     }
-                    return new VolatileBlockingRingBuffer<>(this);
+                    return new AtomicWriteBlockingRingBuffer<>(this);
                 case DISCARDING:
                     if (gcEnabled) {
-                        return new VolatileDiscardingGCRingBuffer<>(this);
+                        return new AtomicWriteDiscardingGCRingBuffer<>(this);
                     }
-                    return new VolatileDiscardingRingBuffer<>(this);
+                    return new AtomicWriteDiscardingRingBuffer<>(this);
             }
         }
         if (oneWriter) {
@@ -152,6 +152,9 @@ public class RingBufferBuilder<T> {
                     }
                     return new AtomicReadRingBuffer<>(this);
                 case BLOCKING:
+                    if (isPrefilled) {
+                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
+                    }
                     if (gcEnabled) {
                         return new AtomicReadBlockingGCRingBuffer<>(this);
                     }
@@ -170,6 +173,9 @@ public class RingBufferBuilder<T> {
                 }
                 return new ConcurrentRingBuffer<>(this);
             case BLOCKING:
+                if (isPrefilled) {
+                    return new ConcurrentBlockingPrefilledRingBuffer<>(this);
+                }
                 if (gcEnabled) {
                     return new ConcurrentBlockingGCRingBuffer<>(this);
                 }

@@ -5,8 +5,6 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-import static eu.menzani.ringbuffer.RingBufferHelper.*;
-
 class VolatileRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
@@ -15,7 +13,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
 
     private int readPosition;
     private final Integer writePosition;
-
     private int newWritePosition;
 
     VolatileRingBuffer(RingBufferBuilder<T> builder) {
@@ -29,11 +26,6 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public Object getReadMonitor() {
-        return readingIsNotAtomic();
     }
 
     @Override
@@ -79,6 +71,9 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public void advance() {}
+
+    @Override
     public void takeBatch(int size) {
         readBusyWaitStrategy.reset();
         while (size() < size) {
@@ -96,6 +91,9 @@ class VolatileRingBuffer<T> implements RingBuffer<T> {
         }
         return buffer[readPosition];
     }
+
+    @Override
+    public void advanceBatch() {}
 
     @Override
     public void forEach(Consumer<T> action) {
