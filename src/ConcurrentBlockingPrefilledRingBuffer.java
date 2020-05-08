@@ -3,8 +3,6 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
@@ -14,8 +12,8 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final Lock writeLock = new ReentrantLock();
-    private final Lock readLock = new ReentrantLock();
+    private final Lock writeLock = new Lock();
+    private final Lock readLock = new Lock();
 
     private final Integer readPosition;
     private final Integer writePosition;

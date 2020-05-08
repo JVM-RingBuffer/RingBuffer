@@ -3,8 +3,6 @@ package eu.menzani.ringbuffer;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 class AtomicWriteDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
@@ -13,7 +11,7 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    private final Lock writeLock = new ReentrantLock();
+    private final Lock writeLock = new Lock();
 
     private final Integer readPosition;
     private final Integer writePosition;
