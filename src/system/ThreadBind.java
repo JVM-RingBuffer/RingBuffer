@@ -1,6 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
 import eu.menzani.ringbuffer.java.Assume;
+import eu.menzani.ringbuffer.java.Ensure;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +59,8 @@ public class ThreadBind {
         throw new AssertionError();
     }
 
-    public static Spread.Builder spread(int firstCPU, int increment) {
-        return new Spread.Builder(firstCPU, increment);
+    public static Spread.Builder spread() {
+        return new Spread.Builder();
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
@@ -82,7 +83,7 @@ public class ThreadBind {
         private final boolean cycle;
         private final AtomicInteger nextCPU;
 
-        private Spread(Builder builder) {
+        Spread(Builder builder) {
             firstCPU = builder.firstCPU;
             lastCPU = builder.lastCPU;
             increment = builder.increment;
@@ -104,22 +105,41 @@ public class ThreadBind {
         }
 
         public static class Builder {
-            private final int firstCPU;
-            private final int increment;
-            private int lastCPU;
+            private int firstCPU = -1;
+            private int increment = -1;
+            private int lastCPU = -1;
             private boolean cycle;
 
-            private Builder(int firstCPU, int increment) {
+            public Builder firstCPU(int firstCPU) {
                 Assume.notNegative(firstCPU);
-                Assume.notLesser(increment, 1);
                 this.firstCPU = firstCPU;
+                return this;
+            }
+
+            public Builder fromFirstCPU() {
+                firstCPU(0);
+                return this;
+            }
+
+            public Builder increment(int increment) {
+                Assume.notLesser(increment, 1);
                 this.increment = increment;
+                return this;
+            }
+
+            public Builder skipHyperthreads() {
+                increment(2);
+                return this;
             }
 
             public Builder lastCPU(int lastCPU) {
                 Assume.notNegative(lastCPU);
-                Assume.notGreater(firstCPU, lastCPU);
                 this.lastCPU = lastCPU;
+                return this;
+            }
+
+            public Builder toLastCPU() {
+                lastCPU(Runtime.getRuntime().availableProcessors() - 1);
                 return this;
             }
 
@@ -129,6 +149,16 @@ public class ThreadBind {
             }
 
             public Spread build() {
+                if (firstCPU == -1) {
+                    throw new IllegalStateException("firstCPU not set");
+                }
+                if (increment == -1) {
+                    throw new IllegalStateException("increment not set");
+                }
+                if (lastCPU == -1) {
+                    throw new IllegalStateException("lastCPU not set");
+                }
+                Ensure.notGreater(firstCPU, lastCPU);
                 return new Spread(this);
             }
         }
