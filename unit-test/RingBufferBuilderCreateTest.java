@@ -5,7 +5,7 @@ import test.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RingBufferBuilderTest {
+class RingBufferBuilderCreateTest {
     @Test
     void testClasses() {
         expectClass(ConcurrentBlockingGCRingBuffer.class, ManyToManyBlockingTest.RING_BUFFER);

@@ -79,7 +79,7 @@ public abstract class RingBufferBuilder<T> {
         RingBufferConcurrency concurrency;
         if (oneReader == null && oneWriter == null) {
             if (type == RingBufferType.BLOCKING) {
-                throw new IllegalArgumentException("A local ring buffer cannot be blocking.");
+                throw new IllegalStateException("A local ring buffer cannot be blocking.");
             }
             concurrency = RingBufferConcurrency.LOCAL;
         } else if (oneReader == null) {
