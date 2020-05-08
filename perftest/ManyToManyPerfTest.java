@@ -2,11 +2,11 @@ package test;
 
 class ManyToManyPerfTest extends ManyToManyTest {
     public static void main(String[] args) {
-        new ManyToManyPerfTest().runTest();
+        new ManyToManyPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

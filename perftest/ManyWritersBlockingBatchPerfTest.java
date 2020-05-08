@@ -2,11 +2,11 @@ package test;
 
 class ManyWritersBlockingBatchPerfTest extends ManyWritersBlockingPerfTest {
     public static void main(String[] args) {
-        new ManyWritersBlockingBatchPerfTest().runTest();
+        new ManyWritersBlockingBatchPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
     }

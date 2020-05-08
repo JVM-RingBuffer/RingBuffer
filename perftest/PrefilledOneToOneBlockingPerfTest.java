@@ -11,11 +11,11 @@ public class PrefilledOneToOneBlockingPerfTest extends PrefilledOneToOneBlocking
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledOneToOneBlockingPerfTest().runTest();
+        new PrefilledOneToOneBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }

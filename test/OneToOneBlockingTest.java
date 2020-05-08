@@ -2,7 +2,7 @@ package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
 
-public class OneToOneBlockingTest implements RingBufferTest {
+public class OneToOneBlockingTest extends RingBufferTest {
     public static final EmptyRingBuffer<Event> RING_BUFFER =
             EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .oneReader()
@@ -12,21 +12,21 @@ public class OneToOneBlockingTest implements RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneBlockingTest().runTest();
+        new OneToOneBlockingTest().run();
     }
 
     @Override
-    public int getBenchmarkRepeatTimes() {
+    protected int getRepeatTimes() {
         return 50;
     }
 
     @Override
-    public long getSum() {
+    long getSum() {
         return ONE_TO_ONE_SUM;
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer writer = Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
         long sum = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
         writer.reportPerformance();

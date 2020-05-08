@@ -30,13 +30,14 @@ abstract class MultiStepBusyWaitStrategyTest {
         SIXTH = new TestBusyWaitStrategy("sixth");
         BusyWaitStrategy[] steps = {FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH};
 
-        final int numIterations = 2;
-        int numSteps = performanceTest.getNumSteps();
-        Assert.notGreater(numSteps, steps.length);
-        performanceTest.run(numIterations, 1);
+        performanceTest.run();
         eventIterator = events.iterator();
 
+        int numIterations = performanceTest.getNumIterations();
+        int numSteps = performanceTest.getNumSteps();
+        Assert.notGreater(numSteps, steps.length);
         int numStepsMinusOne = numSteps - 1;
+
         for (int i = 0; i < numIterations; i++) {
             for (int j = 0; j < numStepsMinusOne; j++) {
                 TestBusyWaitStrategy step = (TestBusyWaitStrategy) steps[j];

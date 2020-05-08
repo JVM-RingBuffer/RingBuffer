@@ -2,7 +2,7 @@ package test;
 
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
-public class PrefilledManyToManyBlockingTest implements RingBufferTest {
+public class PrefilledManyToManyBlockingTest extends RingBufferTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =
             PrefilledRingBuffer.withCapacityAndFiller(BLOCKING_SIZE, FILLER)
                     .manyReaders()
@@ -11,21 +11,21 @@ public class PrefilledManyToManyBlockingTest implements RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyToManyBlockingTest().runTest();
+        new PrefilledManyToManyBlockingTest().run();
     }
 
     @Override
-    public int getBenchmarkRepeatTimes() {
+    protected int getRepeatTimes() {
         return 10;
     }
 
     @Override
-    public long getSum() {
+    long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    public long run() {
+    long testSum() {
         TestThreadGroup group = PrefilledWriter.startGroupAsync(RING_BUFFER);
         long sum = Reader.runGroupAsync(RING_BUFFER);
         group.reportPerformance();

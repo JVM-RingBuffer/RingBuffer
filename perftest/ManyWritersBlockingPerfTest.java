@@ -11,11 +11,11 @@ public class ManyWritersBlockingPerfTest extends ManyWritersBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyWritersBlockingPerfTest().runTest();
+        new ManyWritersBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }

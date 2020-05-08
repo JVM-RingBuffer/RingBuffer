@@ -46,7 +46,7 @@ abstract class TestThread extends Thread {
         } catch (InterruptedException e) {
             throw new AssertionError();
         }
-        RingBufferTest.BENCHMARK.add(profiler);
+        Benchmark.current().add(profiler);
     }
 
     interface Factory {

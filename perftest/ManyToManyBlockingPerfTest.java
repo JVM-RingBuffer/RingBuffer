@@ -11,11 +11,11 @@ public class ManyToManyBlockingPerfTest extends ManyToManyBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyToManyBlockingPerfTest().runTest();
+        new ManyToManyBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

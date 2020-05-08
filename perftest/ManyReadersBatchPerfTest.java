@@ -2,11 +2,11 @@ package test;
 
 class ManyReadersBatchPerfTest extends ManyReadersPerfTest {
     public static void main(String[] args) {
-        new ManyReadersBatchPerfTest().runTest();
+        new ManyReadersBatchPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

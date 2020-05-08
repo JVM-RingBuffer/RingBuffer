@@ -11,11 +11,11 @@ public class OneToOneBlockingPerfTest extends OneToOneBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneBlockingPerfTest().runTest();
+        new OneToOneBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }

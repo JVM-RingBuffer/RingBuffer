@@ -2,11 +2,11 @@ package test;
 
 class ManyToManyBlockingBatchPerfTest extends ManyToManyBlockingPerfTest {
     public static void main(String[] args) {
-        new ManyToManyBlockingBatchPerfTest().runTest();
+        new ManyToManyBlockingBatchPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

@@ -4,14 +4,14 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-interface RingBufferTest {
-    int NUM_ITERATIONS = 1_000_000;
-    int CONCURRENCY = 5;
-    int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
+abstract class RingBufferTest extends Benchmark {
+    static final int NUM_ITERATIONS = 1_000_000;
+    static final int CONCURRENCY = 5;
+    static final int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
 
-    long ONE_TO_ONE_SUM = getOneToOneSum();
-    long ONE_TO_MANY_SUM = getOneToManySum();
-    long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * CONCURRENCY;
+    static final long ONE_TO_ONE_SUM = getOneToOneSum();
+    static final long ONE_TO_MANY_SUM = getOneToManySum();
+    static final long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * CONCURRENCY;
 
     private static long getOneToOneSum() {
         long result = 0L;
@@ -29,32 +29,26 @@ interface RingBufferTest {
         return result;
     }
 
-    int BLOCKING_SIZE = 5;
-    int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
-    int NOT_ONE_TO_ONE_SIZE = TOTAL_ELEMENTS + 1;
+    static final int BLOCKING_SIZE = 5;
+    static final int ONE_TO_ONE_SIZE = NUM_ITERATIONS + 1;
+    static final int NOT_ONE_TO_ONE_SIZE = TOTAL_ELEMENTS + 1;
 
-    int BATCH_SIZE = 20;
-    int BLOCKING_BATCH_SIZE = 4;
+    static final int BATCH_SIZE = 20;
+    static final int BLOCKING_BATCH_SIZE = 4;
 
-    Supplier<Event> FILLER = () -> new Event(0);
-    Benchmark BENCHMARK = new Benchmark();
+    static final Supplier<Event> FILLER = () -> new Event(0);
 
-    int getBenchmarkRepeatTimes();
+    abstract long getSum();
 
-    long getSum();
+    abstract long testSum();
 
-    long run();
-
-    default void runTest() {
-        test();
-        BENCHMARK.begin();
-        test();
-        BENCHMARK.report();
+    @Override
+    protected int getNumIterations() {
+        return 0;
     }
 
-    private void test() {
-        for (int i = 0; i < getBenchmarkRepeatTimes(); i++) {
-            assertEquals(getSum(), run());
-        }
+    @Override
+    protected void test(int i) {
+        assertEquals(getSum(), testSum());
     }
 }

@@ -2,7 +2,7 @@ package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
 
-public class ManyWritersBlockingTest implements RingBufferTest {
+public class ManyWritersBlockingTest extends RingBufferTest {
     public static final EmptyRingBuffer<Event> RING_BUFFER =
             EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .oneReader()
@@ -12,21 +12,21 @@ public class ManyWritersBlockingTest implements RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyWritersBlockingTest().runTest();
+        new ManyWritersBlockingTest().run();
     }
 
     @Override
-    public int getBenchmarkRepeatTimes() {
+    protected int getRepeatTimes() {
         return 10;
     }
 
     @Override
-    public long getSum() {
+    long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    public long run() {
+    long testSum() {
         TestThreadGroup group = Writer.startGroupAsync(RING_BUFFER);
         long sum = Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         group.reportPerformance();

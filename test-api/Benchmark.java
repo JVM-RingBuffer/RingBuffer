@@ -5,22 +5,50 @@ import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Benchmark {
+public abstract class Benchmark {
+    private static Benchmark instance;
+
+    public static Benchmark current() {
+        return instance;
+    }
+
     private final Map<String, Result> results = new LinkedHashMap<>();
 
-    public void add(Profiler profiler) {
-        results.computeIfAbsent(profiler.getName(), Result::new)
-                .update(profiler.getExecutionTime());
+    protected Benchmark() {
+        instance = this;
     }
 
-    public void begin() {
+    protected int getWarmupRepeatTimes() {
+        return getRepeatTimes();
+    }
+
+    protected abstract int getRepeatTimes();
+
+    protected abstract int getNumIterations();
+
+    public final void run() {
+        int numIterations = getNumIterations();
+        for (int i = getWarmupRepeatTimes(); i > 0; i--) {
+            test(numIterations);
+        }
         results.clear();
-    }
-
-    public void report() {
+        for (int i = getRepeatTimes(); i > 0; i--) {
+            test(numIterations);
+        }
         for (Result result : results.values()) {
             result.report();
         }
+    }
+
+    protected abstract void test(int i);
+
+    public final Profiler newProfiler() {
+        return new Profiler(this, getNumIterations());
+    }
+
+    public final void add(Profiler profiler) {
+        results.computeIfAbsent(profiler.getName(), Result::new)
+                .update(profiler.getExecutionTime());
     }
 
     private static class Result {

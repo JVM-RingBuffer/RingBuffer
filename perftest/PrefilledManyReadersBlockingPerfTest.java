@@ -11,11 +11,11 @@ public class PrefilledManyReadersBlockingPerfTest extends PrefilledManyReadersBl
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyReadersBlockingPerfTest().runTest();
+        new PrefilledManyReadersBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

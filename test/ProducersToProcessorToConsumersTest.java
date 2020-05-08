@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
-public class ProducersToProcessorToConsumersTest implements RingBufferTest {
+public class ProducersToProcessorToConsumersTest extends RingBufferTest {
     public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
             EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .manyWriters()
@@ -20,21 +20,21 @@ public class ProducersToProcessorToConsumersTest implements RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ProducersToProcessorToConsumersTest().runTest();
+        new ProducersToProcessorToConsumersTest().run();
     }
 
     @Override
-    public int getBenchmarkRepeatTimes() {
+    protected int getRepeatTimes() {
         return 10;
     }
 
     @Override
-    public long getSum() {
+    long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    public long run() {
+    long testSum() {
         TestThreadGroup group = Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
         Processor processor = Processor.startAsync(TOTAL_ELEMENTS);
         long sum = BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);

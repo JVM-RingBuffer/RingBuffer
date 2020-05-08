@@ -2,11 +2,11 @@ package test;
 
 class ManyWritersPerfTest extends ManyWritersTest {
     public static void main(String[] args) {
-        new ManyWritersPerfTest().runTest();
+        new ManyWritersPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }

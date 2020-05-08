@@ -5,7 +5,11 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 public class TwoStepMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new TwoStepMultiStepTest().runBenchmark();
+        new TwoStepMultiStepTest(true).run();
+    }
+
+    public TwoStepMultiStepTest(boolean isPerfTest) {
+        super(isPerfTest);
     }
 
     @Override

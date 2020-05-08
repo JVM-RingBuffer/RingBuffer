@@ -2,11 +2,11 @@ package test;
 
 class PrefilledManyReadersBatchPerfTest extends PrefilledManyReadersPerfTest {
     public static void main(String[] args) {
-        new PrefilledManyReadersBatchPerfTest().runTest();
+        new PrefilledManyReadersBatchPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

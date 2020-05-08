@@ -2,11 +2,11 @@ package test;
 
 class PrefilledOneToOnePerfTest extends PrefilledOneToOneTest {
     public static void main(String[] args) {
-        new PrefilledOneToOnePerfTest().runTest();
+        new PrefilledOneToOnePerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }

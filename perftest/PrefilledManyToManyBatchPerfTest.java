@@ -2,11 +2,11 @@ package test;
 
 class PrefilledManyToManyBatchPerfTest extends PrefilledManyToManyPerfTest {
     public static void main(String[] args) {
-        new PrefilledManyToManyBatchPerfTest().runTest();
+        new PrefilledManyToManyBatchPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runGroupAsync(RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

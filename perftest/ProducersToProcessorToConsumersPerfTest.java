@@ -11,11 +11,11 @@ public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcesso
                     .build();
 
     public static void main(String[] args) {
-        new ProducersToProcessorToConsumersPerfTest().runTest();
+        new ProducersToProcessorToConsumersPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         Writer.runGroupAsync(PRODUCERS_RING_BUFFER);
         Processor.runAsync(TOTAL_ELEMENTS);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);

@@ -6,7 +6,7 @@ import eu.menzani.ringbuffer.wait.NoopBusyWaitStrategy;
 import test.Benchmark;
 import test.Profiler;
 
-public abstract class MultiStepBusyWaitStrategyTest {
+public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     public static final int STEP_TICKS = 100;
     public static final int NUM_TICKS = STEP_TICKS * (6 + 1);
 
@@ -17,37 +17,47 @@ public abstract class MultiStepBusyWaitStrategyTest {
     public static BusyWaitStrategy FIFTH;
     public static BusyWaitStrategy SIXTH;
 
-    private final Benchmark benchmark = new Benchmark();
+    private final boolean isPerfTest;
+
+    MultiStepBusyWaitStrategyTest(boolean isPerfTest) {
+        this.isPerfTest = isPerfTest;
+        if (isPerfTest) {
+            FIRST = SECOND = THIRD = FOURTH = FIFTH = SIXTH = NoopBusyWaitStrategy.DEFAULT_INSTANCE;
+        }
+    }
 
     public int getNumSteps() {
         return 6;
     }
 
-    void runBenchmark() {
-        FIRST = SECOND = THIRD = FOURTH = FIFTH = SIXTH = new NoopBusyWaitStrategy();
-
-        final int numIterations = 300_000;
-        final int repeatTimes = 50;
-        run(numIterations, repeatTimes);
-        benchmark.begin();
-        run(numIterations, repeatTimes);
-        benchmark.report();
+    @Override
+    protected int getWarmupRepeatTimes() {
+        return isPerfTest ? getRepeatTimes() : 0;
     }
 
-    public void run(int numIterations, int repeatTimes) {
-        Profiler profiler = new Profiler(this, numIterations);
+    @Override
+    protected int getRepeatTimes() {
+        return isPerfTest ? 50 : 1;
+    }
+
+    @Override
+    public int getNumIterations() {
+        return isPerfTest ? 300_000 : 2;
+    }
+
+    @Override
+    protected void test(int i) {
         BusyWaitStrategy strategy = getStrategy();
-        for (int i = 0; i < repeatTimes; i++) {
-            profiler.start();
-            for (int j = 0; j < numIterations; j++) {
-                strategy.reset();
-                for (int k = 0; k < NUM_TICKS; k++) {
-                    strategy.tick();
-                }
+        Profiler profiler = newProfiler();
+        profiler.start();
+        for (; i > 0; i--) {
+            strategy.reset();
+            for (int j = 0; j < NUM_TICKS; j++) {
+                strategy.tick();
             }
-            profiler.stop();
-            benchmark.add(profiler);
         }
+        profiler.stop();
+        add(profiler);
     }
 
     BusyWaitStrategy getStrategy() {

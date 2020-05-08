@@ -2,11 +2,11 @@ package test;
 
 class ManyToManyBatchTest extends ManyToManyTest {
     public static void main(String[] args) {
-        new ManyToManyBatchTest().runTest();
+        new ManyToManyBatchTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         TestThreadGroup group = Writer.startGroupAsync(RING_BUFFER);
         long sum = BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
         group.reportPerformance();

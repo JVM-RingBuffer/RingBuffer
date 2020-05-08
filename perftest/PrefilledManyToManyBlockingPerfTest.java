@@ -11,11 +11,11 @@ public class PrefilledManyToManyBlockingPerfTest extends PrefilledManyToManyBloc
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyToManyBlockingPerfTest().runTest();
+        new PrefilledManyToManyBlockingPerfTest().run();
     }
 
     @Override
-    public long run() {
+    long testSum() {
         PrefilledWriter.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }
