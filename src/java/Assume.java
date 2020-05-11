@@ -30,4 +30,10 @@ public class Assume {
             throw new IllegalArgumentException(value + " < 0");
         }
     }
+
+    public static void notZero(int value) {
+        if (value == 0) {
+            throw new IllegalArgumentException();
+        }
+    }
 }

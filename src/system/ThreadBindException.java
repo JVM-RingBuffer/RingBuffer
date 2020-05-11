@@ -1,6 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
-import java.util.OptionalInt;
+import eu.menzani.ringbuffer.java.Assume;
+import eu.menzani.ringbuffer.java.Ensure;
 
 public class ThreadBindException extends RuntimeException {
     private static final long serialVersionUID = 0L;
@@ -18,13 +19,16 @@ public class ThreadBindException extends RuntimeException {
     }
 
     ThreadBindException(int errorCode) {
+        Assume.notZero(errorCode);
         this.errorCode = errorCode;
     }
 
-    public OptionalInt getErrorCode() {
-        if (errorCode == 0) {
-            return OptionalInt.empty();
-        }
-        return OptionalInt.of(errorCode);
+    public boolean hasErrorCode() {
+        return errorCode != 0;
+    }
+
+    public int getErrorCode() {
+        Ensure.notZero(errorCode);
+        return errorCode;
     }
 }

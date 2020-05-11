@@ -4,9 +4,10 @@ import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.system.ThreadBind;
+import eu.menzani.ringbuffer.system.ThreadSpreader;
 
 abstract class TestThread extends Thread {
-    private static final ThreadBind.Spread spread = ThreadBind.spread()
+    private static final ThreadSpreader spreader = ThreadBind.spreadOverCPUs()
             .fromFirstCPU().toLastCPU().skipHyperthreads().cycle().build();
 
     static {
@@ -41,7 +42,7 @@ abstract class TestThread extends Thread {
 
     @Override
     public void run() {
-        spread.bindCurrentThreadToNextCPU();
+        spreader.bindCurrentThreadToNextCPU();
         profiler.start();
         loop();
         profiler.stop();

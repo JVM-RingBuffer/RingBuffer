@@ -6,4 +6,10 @@ public class Ensure {
             throw new IllegalStateException(value + " > " + cap);
         }
     }
+
+    public static void notZero(int value) {
+        if (value == 0) {
+            throw new IllegalStateException();
+        }
+    }
 }
