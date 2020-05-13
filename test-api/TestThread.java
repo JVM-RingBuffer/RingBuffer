@@ -3,15 +3,15 @@ package test;
 import eu.menzani.ringbuffer.EmptyRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
-import eu.menzani.ringbuffer.system.ThreadBind;
 import eu.menzani.ringbuffer.system.ThreadSpreader;
+import eu.menzani.ringbuffer.system.Threads;
 
 abstract class TestThread extends Thread {
-    private static final ThreadSpreader spreader = ThreadBind.spreadOverCPUs()
+    private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU().toLastCPU().skipHyperthreads().cycle().build();
 
     static {
-        ThreadBind.loadNativeLibrary();
+        Threads.loadNativeLibrary();
     }
 
     private final int numIterations;
@@ -43,6 +43,7 @@ abstract class TestThread extends Thread {
     @Override
     public void run() {
         spreader.bindCurrentThreadToNextCPU();
+        Threads.setCurrentThreadPriorityToRealtime();
         profiler.start();
         loop();
         profiler.stop();

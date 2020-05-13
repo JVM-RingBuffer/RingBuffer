@@ -3,22 +3,23 @@ package eu.menzani.ringbuffer.system;
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Ensure;
 
-public class ThreadBindException extends RuntimeException {
+public class ThreadManipulationException extends RuntimeException {
     private static final long serialVersionUID = 0L;
 
     private final int errorCode;
 
-    ThreadBindException(Throwable cause) {
+    ThreadManipulationException(Throwable cause) {
         super(cause);
         errorCode = 0;
     }
 
-    ThreadBindException(String message) {
+    ThreadManipulationException(String message) {
         super(message);
         errorCode = 0;
     }
 
-    ThreadBindException(int errorCode) {
+    ThreadManipulationException(int errorCode) {
+        super("Error code = " + errorCode);
         Assume.notZero(errorCode);
         this.errorCode = errorCode;
     }

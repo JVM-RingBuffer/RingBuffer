@@ -10,7 +10,7 @@ PrefilledRingBuffer<Event> processorToConsumers = PrefilledRingBuffer.withCapaci
         .manyReaders()
         .waitingWith(YieldBusyWaitStrategy.getDefault())
         .build();
-ThreadBind.loadNativeLibrary();
+Threads.loadNativeLibrary();
 
 Runnable producer = () -> {
     for (int i = 0; i < 100; i++) {
@@ -18,7 +18,9 @@ Runnable producer = () -> {
     }
 };
 Runnable processor = () -> {
-    ThreadBind.bindCurrentThreadToCPU(5);
+    Threads.bindCurrentThreadToCPU(5);
+    Threads.setCurrentThreadPriorityToRealtime();
+
     for (int i = 0; i < 300; i++) {
         Event event = processorToConsumers.next();
         event.setData(producersToProcessor.take());

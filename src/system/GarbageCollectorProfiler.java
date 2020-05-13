@@ -46,22 +46,6 @@ public class GarbageCollectorProfiler {
         return sumValues(memoryUsage) / (1024L * 1024L);
     }
 
-    private static class ValuesSumAction implements Consumer<MemoryUsage> {
-        private long total;
-
-        void resetTotal() {
-            total = 0L;
-        }
-
-        long getTotal() {
-            return total;
-        }
-
-        @Override
-        public void accept(MemoryUsage memoryUsage) {
-            total += memoryUsage.getUsed();
-        }
-    }
     private static final ValuesSumAction valuesSumAction = new ValuesSumAction();
 
     public static long sumValues(Map<String, MemoryUsage> memoryUsage) {
@@ -70,23 +54,8 @@ public class GarbageCollectorProfiler {
         return valuesSumAction.getTotal();
     }
 
-    private static class JVMListener implements NotificationListener {
-        private final List<Listener> userListeners = new CopyOnWriteArrayList<>();
-
-        JVMListener() {}
-
-        void addUserListener(Listener userListener) {
-            userListeners.add(userListener);
-        }
-
-        @Override
-        public void handleNotification(Notification notification, Object handback) {
-            GarbageCollectionNotificationInfo notificationInfo = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
-            GcInfo gcInfo = notificationInfo.getGcInfo();
-            for (int i = 0; i < userListeners.size(); i++) {
-                userListeners.get(i).onEvent(notificationInfo, gcInfo);
-            }
-        }
+    public interface Listener {
+        void onEvent(GarbageCollectionNotificationInfo notification, GcInfo info);
     }
 
     private static class Logger implements Listener {
@@ -111,7 +80,41 @@ public class GarbageCollectorProfiler {
         }
     }
 
-    public interface Listener {
-        void onEvent(GarbageCollectionNotificationInfo notification, GcInfo info);
+    private static class JVMListener implements NotificationListener {
+        private final List<Listener> userListeners = new CopyOnWriteArrayList<>();
+
+        JVMListener() {}
+
+        void addUserListener(Listener userListener) {
+            userListeners.add(userListener);
+        }
+
+        @Override
+        public void handleNotification(Notification notification, Object handback) {
+            GarbageCollectionNotificationInfo notificationInfo = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
+            GcInfo gcInfo = notificationInfo.getGcInfo();
+            for (int i = 0; i < userListeners.size(); i++) {
+                userListeners.get(i).onEvent(notificationInfo, gcInfo);
+            }
+        }
+    }
+
+    private static class ValuesSumAction implements Consumer<MemoryUsage> {
+        private long total;
+
+        ValuesSumAction() {}
+
+        void resetTotal() {
+            total = 0L;
+        }
+
+        long getTotal() {
+            return total;
+        }
+
+        @Override
+        public void accept(MemoryUsage memoryUsage) {
+            total += memoryUsage.getUsed();
+        }
     }
 }

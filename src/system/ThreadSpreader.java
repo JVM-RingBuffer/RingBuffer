@@ -22,7 +22,7 @@ public class ThreadSpreader {
     }
 
     public void bindCurrentThreadToNextCPU() {
-        ThreadBind.bindCurrentThreadToCPU(nextCPU.getAndUpdate(updateFunction));
+        Threads.bindCurrentThreadToCPU(nextCPU.getAndUpdate(updateFunction));
     }
 
     private final IntUnaryOperator updateFunction = new IntUnaryOperator() {
@@ -35,7 +35,7 @@ public class ThreadSpreader {
             if (cycle) {
                 return firstCPU;
             }
-            throw new ThreadBindException("No more CPUs are available to bind to.");
+            throw new ThreadManipulationException("No more CPUs are available to bind to.");
         }
     };
 

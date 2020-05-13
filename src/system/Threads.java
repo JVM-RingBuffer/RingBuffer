@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
  */
-public class ThreadBind {
+public class Threads {
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
     public static Optional<Path> getLibraryPath() {
@@ -24,33 +24,33 @@ public class ThreadBind {
     public static void loadNativeLibrary(Platform platform, Path libraryDirectory) {
         String libraryName = libraryNameFor(platform);
         Path libraryPath = libraryDirectory.resolve(libraryName);
-        if (!ThreadBind.libraryPath.compareAndSet(null, libraryPath)) {
+        if (!Threads.libraryPath.compareAndSet(null, libraryPath)) {
             throw new IllegalStateException("A native library has already been loaded.");
         }
         if (Files.notExists(libraryPath)) {
-            try (InputStream stream = ThreadBind.class.getResourceAsStream(libraryName)) {
+            try (InputStream stream = Threads.class.getResourceAsStream(libraryName)) {
                 Files.copy(stream, libraryPath);
             } catch (IOException e) {
-                throw new ThreadBindException(e);
+                throw new ThreadManipulationException(e);
             }
         }
         try {
             System.load(libraryPath.toAbsolutePath().toString());
         } catch (UnsatisfiedLinkError e) {
-            throw new ThreadBindException(e);
+            throw new ThreadManipulationException(e);
         }
     }
 
     private static String libraryNameFor(Platform platform) {
         switch (platform) {
             case LINUX_32:
-                return "libthreadbind_32.so";
+                return "libthreadmanipulation_32.so";
             case LINUX_64:
-                return "libthreadbind_64.so";
+                return "libthreadmanipulation_64.so";
             case WINDOWS_32:
-                return "ThreadBind_32.dll";
+                return "ThreadManipulation_32.dll";
             case WINDOWS_64:
-                return "ThreadBind_64.dll";
+                return "ThreadManipulation_64.dll";
         }
         throw new AssertionError();
     }
@@ -59,14 +59,35 @@ public class ThreadBind {
         try {
             int errorCode = bindCurrentThread(cpu);
             if (errorCode != 0) {
-                throw new ThreadBindException(errorCode);
+                throw new ThreadManipulationException(errorCode);
             }
         } catch (UnsatisfiedLinkError e) {
-            throw new ThreadBindException(e);
+            throw new ThreadManipulationException(e);
         }
     }
 
     private static native int bindCurrentThread(int cpu);
+
+    /**
+     * On Linux, if not running under root, you need to add this to {@code /etc/security/limits.conf}:
+     *
+     * <pre>{@code
+     * <user> hard rtprio 99
+     * <user> soft rtprio 99
+     * }</pre>
+     */
+    public static void setCurrentThreadPriorityToRealtime() {
+        try {
+            int errorCode = setCurrentThreadPriority();
+            if (errorCode != 0) {
+                throw new ThreadManipulationException(errorCode);
+            }
+        } catch (UnsatisfiedLinkError e) {
+            throw new ThreadManipulationException(e);
+        }
+    }
+
+    private static native int setCurrentThreadPriority();
 
     public static ThreadSpreader.Builder spreadOverCPUs() {
         return new ThreadSpreader.Builder();
