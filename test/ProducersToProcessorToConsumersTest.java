@@ -61,7 +61,7 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
         @Override
         void loop() {
             int numIterations = getNumIterations();
-            for (int i = 0; i < numIterations; i++) {
+            for (; numIterations > 0; numIterations--) {
                 int eventData = PRODUCERS_RING_BUFFER.take().getData();
                 CONSUMERS_RING_BUFFER.next().setData(eventData);
                 CONSUMERS_RING_BUFFER.put();

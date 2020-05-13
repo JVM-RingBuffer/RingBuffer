@@ -38,7 +38,7 @@ class BatchReader extends Reader {
         RingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
-        for (int i = 0; i < numIterations; i++) {
+        for (; numIterations > 0; numIterations--) {
             ringBuffer.takeBatch(batchSize);
             for (int j = batchSize; j > 0; j--) {
                 sum += ringBuffer.takePlain().getData();

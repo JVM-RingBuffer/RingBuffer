@@ -43,7 +43,7 @@ class Reader extends TestThread {
         int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
-        for (int i = 0; i < numIterations; i++) {
+        for (; numIterations > 0; numIterations--) {
             sum += ringBuffer.take().getData();
             ringBuffer.advance();
         }

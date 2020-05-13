@@ -38,8 +38,8 @@ class PrefilledWriter extends TestThread {
     void loop() {
         int numIterations = getNumIterations();
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
-        for (int i = 0; i < numIterations; i++) {
-            ringBuffer.next().setData(i);
+        for (; numIterations > 0; numIterations--) {
+            ringBuffer.next().setData(numIterations);
             ringBuffer.put();
         }
     }

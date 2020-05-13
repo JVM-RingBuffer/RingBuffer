@@ -38,8 +38,8 @@ class Writer extends TestThread {
     void loop() {
         int numIterations = getNumIterations();
         EmptyRingBuffer<Event> ringBuffer = getEmptyRingBuffer();
-        for (int i = 0; i < numIterations; i++) {
-            ringBuffer.put(new Event(i));
+        for (; numIterations > 0; numIterations--) {
+            ringBuffer.put(new Event(numIterations));
         }
     }
 }

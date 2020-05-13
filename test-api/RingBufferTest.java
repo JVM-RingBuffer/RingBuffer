@@ -15,7 +15,7 @@ abstract class RingBufferTest extends Benchmark {
 
     private static long getOneToOneSum() {
         long result = 0L;
-        for (int i = 0; i < NUM_ITERATIONS; i++) {
+        for (int i = 1; i <= NUM_ITERATIONS; i++) {
             result += i;
         }
         return result;
@@ -23,7 +23,7 @@ abstract class RingBufferTest extends Benchmark {
 
     private static long getOneToManySum() {
         long result = 0L;
-        for (int i = 0; i < TOTAL_ELEMENTS; i++) {
+        for (int i = 1; i <= TOTAL_ELEMENTS; i++) {
             result += i;
         }
         return result;
