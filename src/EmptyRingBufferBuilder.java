@@ -72,19 +72,6 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     @Override
     RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
-            case LOCAL:
-                switch (type) {
-                    case OVERWRITING:
-                        if (gcEnabled) {
-                            return new LocalGCRingBuffer<>(this);
-                        }
-                        return new LocalRingBuffer<>(this);
-                    case DISCARDING:
-                        if (gcEnabled) {
-                            return new LocalDiscardingGCRingBuffer<>(this);
-                        }
-                        return new LocalDiscardingRingBuffer<>(this);
-                }
             case VOLATILE:
                 switch (type) {
                     case OVERWRITING:

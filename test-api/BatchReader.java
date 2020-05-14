@@ -18,13 +18,6 @@ class BatchReader extends Reader {
         return reader.getSum();
     }
 
-    static long runSync(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
-        BatchReader reader = new BatchReader(numIterations, batchSize, ringBuffer);
-        reader.run();
-        reader.reportPerformance();
-        return reader.getSum();
-    }
-
     private final int batchSize;
 
     BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {

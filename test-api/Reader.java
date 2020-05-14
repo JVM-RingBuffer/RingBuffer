@@ -17,13 +17,6 @@ class Reader extends TestThread {
         return reader.getSum();
     }
 
-    static long runSync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Reader reader = new Reader(numIterations, ringBuffer);
-        reader.run();
-        reader.reportPerformance();
-        return reader.getSum();
-    }
-
     private long sum;
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {

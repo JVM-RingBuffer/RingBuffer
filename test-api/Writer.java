@@ -24,12 +24,6 @@ class Writer extends TestThread {
         startAsync(numIterations, ringBuffer).reportPerformance();
     }
 
-    static void runSync(int numIterations, RingBuffer<Event> ringBuffer) {
-        Writer writer = new Writer(numIterations, ringBuffer);
-        writer.run();
-        writer.reportPerformance();
-    }
-
     private Writer(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }

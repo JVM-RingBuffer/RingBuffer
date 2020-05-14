@@ -76,17 +76,17 @@ abstract class RingBufferBuilder<T> {
     }
 
     RingBuffer<T> build() {
-        RingBufferConcurrency concurrency;
         if (oneReader == null && oneWriter == null) {
-            if (type == RingBufferType.BLOCKING) {
-                throw new IllegalStateException("A local ring buffer cannot be blocking.");
-            }
-            concurrency = RingBufferConcurrency.LOCAL;
-        } else if (oneReader == null) {
+            throw new IllegalStateException("You must call either oneReader() or manyReaders(), and oneWriter() or manyWriters().");
+        }
+        if (oneReader == null) {
             throw new IllegalStateException("You must call either oneReader() or manyReaders().");
-        } else if (oneWriter == null) {
+        }
+        if (oneWriter == null) {
             throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
-        } else if (oneReader) {
+        }
+        RingBufferConcurrency concurrency;
+        if (oneReader) {
             if (oneWriter) {
                 concurrency = RingBufferConcurrency.VOLATILE;
             } else {
@@ -134,7 +134,6 @@ abstract class RingBufferBuilder<T> {
     }
 
     enum RingBufferConcurrency {
-        LOCAL,
         VOLATILE,
         ATOMIC_READ,
         ATOMIC_WRITE,

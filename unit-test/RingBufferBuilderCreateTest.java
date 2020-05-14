@@ -36,9 +36,6 @@ class RingBufferBuilderCreateTest {
         expectClass(VolatileBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingTest.RING_BUFFER, PrefilledOneToOneBlockingPerfTest.RING_BUFFER);
         expectClass(VolatilePrefilledRingBuffer.class, PrefilledOneToOneTest.RING_BUFFER);
 
-        expectClass(LocalGCRingBuffer.class, LocalRingBufferTest.RING_BUFFER);
-        expectClass(LocalPrefilledRingBuffer.class, PrefilledLocalRingBufferTest.RING_BUFFER);
-
         expectClass(AtomicWriteBlockingGCRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersPerfTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersTest.CONSUMERS_RING_BUFFER);

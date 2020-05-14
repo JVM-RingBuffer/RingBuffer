@@ -67,13 +67,6 @@ public class OverwritingPrefilledRingBufferBuilder<T> extends AbstractPrefilledR
     @Override
     RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
-            case LOCAL:
-                switch (type) {
-                    case OVERWRITING:
-                        return new LocalPrefilledRingBuffer<>(this);
-                    case DISCARDING:
-                        return new LocalDiscardingPrefilledRingBuffer<>(this);
-                }
             case VOLATILE:
                 if (type == RingBufferType.OVERWRITING) {
                     return new VolatilePrefilledRingBuffer<>(this);

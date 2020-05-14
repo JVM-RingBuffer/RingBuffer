@@ -14,7 +14,7 @@ class RingBufferBuilderBuildTest {
     }
 
     @Test
-    void testLocalBlocking() {
+    void testConcurrencyNotSet() {
         builder.blocking();
         assertThrows(IllegalStateException.class, builder::build);
     }

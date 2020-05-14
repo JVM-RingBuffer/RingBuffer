@@ -23,12 +23,6 @@ class OverwritingPrefilledWriter extends TestThread {
         startAsync(numIterations, ringBuffer).reportPerformance();
     }
 
-    static void runSync(int numIterations, OverwritingPrefilledRingBuffer<Event> ringBuffer) {
-        OverwritingPrefilledWriter writer = new OverwritingPrefilledWriter(numIterations, ringBuffer);
-        writer.run();
-        writer.reportPerformance();
-    }
-
     private OverwritingPrefilledWriter(int numIterations, OverwritingPrefilledRingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
