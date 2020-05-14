@@ -5,7 +5,12 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 class Writer extends TestThread {
     static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
+        TestThreadGroup group = new TestThreadGroup(new Factory() {
+            @Override
+            public TestThread newInstance(int numIterations) {
+                return new Writer(numIterations, ringBuffer);
+            }
+        });
         group.start();
         return group;
     }

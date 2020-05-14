@@ -5,7 +5,12 @@ import eu.menzani.ringbuffer.java.Int;
 
 class BatchReader extends Reader {
     static long runGroupAsync(int batchSize, RingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new BatchReader(numIterations, batchSize, ringBuffer));
+        TestThreadGroup group = new TestThreadGroup(new Factory() {
+            @Override
+            public TestThread newInstance(int numIterations) {
+                return new BatchReader(numIterations, batchSize, ringBuffer);
+            }
+        });
         group.start();
         group.reportPerformance();
         return group.getReaderSum();

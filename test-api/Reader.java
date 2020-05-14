@@ -4,7 +4,12 @@ import eu.menzani.ringbuffer.RingBuffer;
 
 class Reader extends TestThread {
     static long runGroupAsync(RingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
+        TestThreadGroup group = new TestThreadGroup(new Factory() {
+            @Override
+            public TestThread newInstance(int numIterations) {
+                return new Reader(numIterations, ringBuffer);
+            }
+        });
         group.start();
         group.reportPerformance();
         return group.getReaderSum();
