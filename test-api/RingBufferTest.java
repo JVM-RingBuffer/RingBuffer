@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class RingBufferTest extends Benchmark {
     static final int NUM_ITERATIONS = 1_000_000;
-    static final int CONCURRENCY = 5;
+    static final int CONCURRENCY = 3;
     static final int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
 
     static final long ONE_TO_ONE_SUM = getOneToOneSum();
@@ -49,6 +49,7 @@ abstract class RingBufferTest extends Benchmark {
 
     @Override
     protected void test(int i) {
+        TestThread.SPREADER.reset();
         assertEquals(getSum(), testSum());
     }
 }

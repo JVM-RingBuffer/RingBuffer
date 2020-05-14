@@ -14,9 +14,8 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     private final Integer readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
-    VolatileBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    VolatileBlockingPrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -32,23 +31,30 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+    public int nextKey() {
+        return writePosition.getPlain();
     }
 
     @Override
-    public void put() {
-        writePosition.set(newWritePosition);
+    public int nextPutKey(int key) {
+        if (key == 0) {
+            return capacityMinusOne;
+        }
+        return key - 1;
+    }
+
+    @Override
+    public T next(int key, int putKey) {
+        writeBusyWaitStrategy.reset();
+        while (readPosition.get() == putKey) {
+            writeBusyWaitStrategy.tick();
+        }
+        return buffer[key];
+    }
+
+    @Override
+    public void put(int putKey) {
+        writePosition.set(putKey);
     }
 
     @Override

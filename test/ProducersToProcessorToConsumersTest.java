@@ -1,6 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
@@ -12,7 +13,7 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
                     .blocking()
                     .withGC()
                     .build();
-    public static final PrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
+    public static final OverwritingPrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
             PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
                     .oneWriter()
                     .manyReaders()
@@ -63,8 +64,9 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
             int numIterations = getNumIterations();
             for (; numIterations > 0; numIterations--) {
                 int eventData = PRODUCERS_RING_BUFFER.take().getData();
-                CONSUMERS_RING_BUFFER.next().setData(eventData);
-                CONSUMERS_RING_BUFFER.put();
+                int key = CONSUMERS_RING_BUFFER.nextKey();
+                CONSUMERS_RING_BUFFER.next(key).setData(eventData);
+                CONSUMERS_RING_BUFFER.put(key);
             }
         }
     }

@@ -1,14 +1,15 @@
 package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.system.ThreadSpreader;
 import eu.menzani.ringbuffer.system.Threads;
 
 abstract class TestThread extends Thread {
-    private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
-            .fromFirstCPU().toLastCPU().skipHyperthreads().cycle().build();
+    static final ThreadSpreader SPREADER = Threads.spreadOverCPUs()
+            .fromFirstCPU().toLastCPU().skipHyperthreads().build();
 
     static {
         Threads.loadNativeLibrary();
@@ -36,14 +37,19 @@ abstract class TestThread extends Thread {
         return (EmptyRingBuffer<Event>) ringBuffer;
     }
 
+    OverwritingPrefilledRingBuffer<Event> getOverwritingPrefilledRingBuffer() {
+        return (OverwritingPrefilledRingBuffer<Event>) ringBuffer;
+    }
+
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
         return (PrefilledRingBuffer<Event>) ringBuffer;
     }
 
     @Override
     public void run() {
-        spreader.bindCurrentThreadToNextCPU();
+        SPREADER.bindCurrentThreadToNextCPU();
         Threads.setCurrentThreadPriorityToRealtime();
+
         profiler.start();
         loop();
         profiler.stop();

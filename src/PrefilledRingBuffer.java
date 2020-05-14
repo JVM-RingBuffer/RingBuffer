@@ -2,26 +2,27 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Supplier;
 
+/**
+ * <pre>{@code
+ * int key = ringBuffer.nextKey();
+ * int putKey = ringBuffer.nextPutKey(key);
+ * T element = ringBuffer.next(key, putKey);
+ * // Populate element
+ * ringBuffer.put(putKey);
+ * }</pre>
+ * <p>
+ * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
+ */
 public interface PrefilledRingBuffer<T> extends RingBuffer<T> {
-    /**
-     * If the ring buffer supports at least one reader and writer, then after the returned object has been
-     * populated, {@link #put()} must be called.
-     *
-     * <pre>{@code
-     * T element = ringBuffer.next();
-     * // Populate element
-     * ringBuffer.put();
-     * }</pre>
-     */
-    T next();
+    int nextKey();
 
-    /**
-     * If the ring buffer supports at least one reader and writer, then this method must be called after
-     * the object returned by {@link #next()} has been populated.
-     */
-    void put();
+    int nextPutKey(int key);
 
-    static <T> PrefilledRingBufferBuilder<T> withCapacityAndFiller(int capacity, Supplier<? extends T> filler) {
-        return new PrefilledRingBufferBuilder<>(capacity, filler);
+    T next(int key, int putKey);
+
+    void put(int putKey);
+
+    static <T> OverwritingPrefilledRingBufferBuilder<T> withCapacityAndFiller(int capacity, Supplier<? extends T> filler) {
+        return new OverwritingPrefilledRingBufferBuilder<>(capacity, filler);
     }
 }

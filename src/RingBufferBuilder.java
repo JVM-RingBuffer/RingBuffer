@@ -6,14 +6,14 @@ import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
-public abstract class RingBufferBuilder<T> {
-    private final int capacity;
-    private Boolean oneWriter;
-    private Boolean oneReader;
-    private RingBufferType type = RingBufferType.OVERWRITING;
-    private BusyWaitStrategy writeBusyWaitStrategy;
-    private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
-    private MemoryOrder memoryOrder = MemoryOrder.LAZY;
+abstract class RingBufferBuilder<T> {
+    final int capacity;
+    Boolean oneWriter;
+    Boolean oneReader;
+    RingBufferType type = RingBufferType.OVERWRITING;
+    BusyWaitStrategy writeBusyWaitStrategy;
+    BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+    MemoryOrder memoryOrder = MemoryOrder.LAZY;
 
     RingBufferBuilder(int capacity) {
         Assume.notLesser(capacity, 2);
@@ -44,20 +44,20 @@ public abstract class RingBufferBuilder<T> {
         oneReader = false;
     }
 
-    public abstract RingBufferBuilder<T> blocking();
+    protected abstract RingBufferBuilder<T> blocking();
 
     void blocking0() {
         blocking0(HintBusyWaitStrategy.getDefault());
     }
 
-    public abstract RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy);
+    protected abstract RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy);
 
     void blocking0(BusyWaitStrategy busyWaitStrategy) {
         type = RingBufferType.BLOCKING;
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    public abstract RingBufferBuilder<T> discarding();
+    protected abstract RingBufferBuilder<T> discarding();
 
     void discarding0() {
         type = RingBufferType.DISCARDING;

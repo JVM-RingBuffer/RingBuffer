@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer;
 
 import java.util.function.Consumer;
 
-class LocalPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
+class LocalPrefilledRingBuffer<T> implements OverwritingPrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -10,7 +10,7 @@ class LocalPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private int readPosition;
     private int writePosition;
 
-    LocalPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    LocalPrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -22,7 +22,12 @@ class LocalPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public T next() {
+    public int nextKey() {
+        return 0;
+    }
+
+    @Override
+    public T next(int key) {
         int writePosition = this.writePosition;
         if (writePosition == 0) {
             this.writePosition = capacityMinusOne;
@@ -33,7 +38,7 @@ class LocalPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public void put() {}
+    public void put(int key) {}
 
     @Override
     public T take() {

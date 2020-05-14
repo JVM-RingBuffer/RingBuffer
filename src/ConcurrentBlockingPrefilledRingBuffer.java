@@ -17,9 +17,8 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
 
     private final Integer readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
-    ConcurrentBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    ConcurrentBlockingPrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -35,24 +34,31 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     }
 
     @Override
-    public T next() {
+    public int nextKey() {
         writeLock.lock();
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        writeBusyWaitStrategy.reset();
-        while (readPosition.get() == newWritePosition) {
-            writeBusyWaitStrategy.tick();
-        }
-        return buffer[writePosition];
+        return writePosition.getPlain();
     }
 
     @Override
-    public void put() {
-        writePosition.set(newWritePosition);
+    public int nextPutKey(int key) {
+        if (key == 0) {
+            return capacityMinusOne;
+        }
+        return key - 1;
+    }
+
+    @Override
+    public T next(int key, int putKey) {
+        writeBusyWaitStrategy.reset();
+        while (readPosition.get() == putKey) {
+            writeBusyWaitStrategy.tick();
+        }
+        return buffer[key];
+    }
+
+    @Override
+    public void put(int putKey) {
+        writePosition.set(putKey);
         writeLock.unlock();
     }
 

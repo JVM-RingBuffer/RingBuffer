@@ -1,9 +1,10 @@
 package test;
 
+import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledManyWritersTest extends RingBufferTest {
-    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+    public static final OverwritingPrefilledRingBuffer<Event> RING_BUFFER =
             PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
                     .oneReader()
                     .manyWriters()
@@ -25,7 +26,7 @@ public class PrefilledManyWritersTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = PrefilledWriter.startGroupAsync(RING_BUFFER);
+        TestThreadGroup group = OverwritingPrefilledWriter.startGroupAsync(RING_BUFFER);
         long sum = Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         group.reportPerformance();
         return sum;

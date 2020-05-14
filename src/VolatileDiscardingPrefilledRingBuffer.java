@@ -14,9 +14,8 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
 
     private final Integer readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
-    VolatileDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    VolatileDiscardingPrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -32,23 +31,29 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     }
 
     @Override
-    public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        if (readPosition.get() == newWritePosition) {
-            newWritePosition = writePosition;
-            return dummyElement;
-        }
-        return buffer[writePosition];
+    public int nextKey() {
+        return writePosition.getPlain();
     }
 
     @Override
-    public void put() {
-        writePosition.set(newWritePosition);
+    public int nextPutKey(int key) {
+        if (key == 0) {
+            return capacityMinusOne;
+        }
+        return key - 1;
+    }
+
+    @Override
+    public T next(int key, int putKey) {
+        if (readPosition.get() == putKey) {
+            return dummyElement;
+        }
+        return buffer[key];
+    }
+
+    @Override
+    public void put(int putKey) {
+        writePosition.set(putKey);
     }
 
     @Override

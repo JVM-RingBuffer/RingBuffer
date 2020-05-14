@@ -5,7 +5,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
+class VolatilePrefilledRingBuffer<T> implements OverwritingPrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -13,9 +13,8 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     private int readPosition;
     private final Integer writePosition;
-    private int newWritePosition;
 
-    VolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    VolatilePrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -29,19 +28,22 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public T next() {
-        int writePosition = this.writePosition.getPlain();
-        if (writePosition == 0) {
-            newWritePosition = capacityMinusOne;
-        } else {
-            newWritePosition = writePosition - 1;
-        }
-        return buffer[writePosition];
+    public int nextKey() {
+        return writePosition.getPlain();
     }
 
     @Override
-    public void put() {
-        writePosition.set(newWritePosition);
+    public T next(int key) {
+        return buffer[key];
+    }
+
+    @Override
+    public void put(int key) {
+        if (key == 0) {
+            writePosition.set(capacityMinusOne);
+        } else {
+            writePosition.set(key - 1);
+        }
     }
 
     @Override
