@@ -71,8 +71,9 @@ class AtomicReadPrefilledRingBuffer<T> implements OverwritingPrefilledRingBuffer
     @Override
     public void takeBatch(int size) {
         readLock.lock();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (size() < size) {
+        while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
     }
@@ -144,6 +145,10 @@ class AtomicReadPrefilledRingBuffer<T> implements OverwritingPrefilledRingBuffer
 
     @Override
     public int size() {
+        return size(readPosition);
+    }
+
+    private int size(int readPosition) {
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;

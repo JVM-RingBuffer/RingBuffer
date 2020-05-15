@@ -66,8 +66,9 @@ class ConcurrentRingBuffer<T> implements EmptyRingBuffer<T> {
     @Override
     public void takeBatch(int size) {
         readLock.lock();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (size() < size) {
+        while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
     }
@@ -141,10 +142,11 @@ class ConcurrentRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public int size() {
-        return size(getReadPosition(), writePosition.get());
+        return size(getReadPosition());
     }
 
-    private int size(int readPosition, int writePosition) {
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }

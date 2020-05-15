@@ -65,8 +65,9 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
     @Override
     public void takeBatch(int size) {
         readLock.lock();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (size() < size) {
+        while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
     }
@@ -139,6 +140,10 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public int size() {
+        return size(readPosition);
+    }
+
+    private int size(int readPosition) {
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
