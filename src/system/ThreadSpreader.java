@@ -1,9 +1,9 @@
 package eu.menzani.ringbuffer.system;
 
 import eu.menzani.ringbuffer.java.Assume;
+import eu.menzani.ringbuffer.java.AtomicInteger;
 import eu.menzani.ringbuffer.java.Ensure;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntUnaryOperator;
 
 public class ThreadSpreader {
@@ -46,7 +46,7 @@ public class ThreadSpreader {
     };
 
     public void reset() {
-        nextCPU.set(firstCPU);
+        nextCPU.setVolatile(firstCPU);
     }
 
     public static class Builder {

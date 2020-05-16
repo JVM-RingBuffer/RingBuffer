@@ -1,11 +1,12 @@
 package eu.menzani.ringbuffer.system;
 
+import eu.menzani.ringbuffer.java.AtomicReference;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
@@ -14,7 +15,7 @@ public class Threads {
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
     public static Optional<Path> getLibraryPath() {
-        return Optional.ofNullable(libraryPath.get());
+        return Optional.ofNullable(libraryPath.getVolatile());
     }
 
     public static void loadNativeLibrary() {
@@ -24,7 +25,7 @@ public class Threads {
     public static void loadNativeLibrary(Platform platform, Path libraryDirectory) {
         String libraryName = libraryNameFor(platform);
         Path libraryPath = libraryDirectory.resolve(libraryName);
-        if (!Threads.libraryPath.compareAndSet(null, libraryPath)) {
+        if (!Threads.libraryPath.compareAndSetVolatile(null, libraryPath)) {
             throw new IllegalStateException("A native library has already been loaded.");
         }
         if (Files.notExists(libraryPath)) {

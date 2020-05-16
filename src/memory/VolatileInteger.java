@@ -1,18 +1,18 @@
 package eu.menzani.ringbuffer.memory;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import eu.menzani.ringbuffer.java.AtomicInteger;
 
 public class VolatileInteger implements Integer {
     private final AtomicInteger value = new AtomicInteger();
 
     @Override
     public void set(int value) {
-        this.value.set(value);
+        this.value.setVolatile(value);
     }
 
     @Override
     public int get() {
-        return value.get();
+        return value.getVolatile();
     }
 
     @Override

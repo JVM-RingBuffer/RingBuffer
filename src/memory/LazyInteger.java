@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.memory;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import eu.menzani.ringbuffer.java.AtomicInteger;
 
 public class LazyInteger implements Integer {
     private final AtomicInteger value = new AtomicInteger();

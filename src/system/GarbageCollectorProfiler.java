@@ -2,6 +2,7 @@ package eu.menzani.ringbuffer.system;
 
 import com.sun.management.GarbageCollectionNotificationInfo;
 import com.sun.management.GcInfo;
+import eu.menzani.ringbuffer.java.AtomicBoolean;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
@@ -14,7 +15,6 @@ import java.lang.management.MemoryUsage;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class GarbageCollectorProfiler {
@@ -26,7 +26,7 @@ public class GarbageCollectorProfiler {
     }
 
     public static void addListener(Listener listener) {
-        if (jvmListenerRegistered.compareAndSet(false, true)) {
+        if (jvmListenerRegistered.compareAndSetVolatile(false, true)) {
             MBeanServer platformServer = ManagementFactory.getPlatformMBeanServer();
             JVMListener jvmListener = new JVMListener();
             try {
