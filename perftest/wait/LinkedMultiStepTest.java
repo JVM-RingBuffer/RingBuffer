@@ -13,6 +13,11 @@ public class LinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
     }
 
     @Override
+    String getProfilerName() {
+        return "LinkedMultiStep";
+    }
+
+    @Override
     MultiStepBusyWaitStrategy.Builder getStrategyBuilder() {
         return new LinkedMultiStepBusyWaitStrategy.Builder();
     }

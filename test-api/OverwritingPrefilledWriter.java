@@ -15,17 +15,17 @@ class OverwritingPrefilledWriter extends TestThread {
     }
 
     static void runGroupAsync(OverwritingPrefilledRingBuffer<Event> ringBuffer) {
-        startGroupAsync(ringBuffer).reportPerformance();
+        startGroupAsync(ringBuffer).waitForCompletion();
     }
 
     static OverwritingPrefilledWriter startAsync(int numIterations, OverwritingPrefilledRingBuffer<Event> ringBuffer) {
         OverwritingPrefilledWriter writer = new OverwritingPrefilledWriter(numIterations, ringBuffer);
-        writer.start();
+        writer.startNow();
         return writer;
     }
 
     static void runAsync(int numIterations, OverwritingPrefilledRingBuffer<Event> ringBuffer) {
-        startAsync(numIterations, ringBuffer).reportPerformance();
+        startAsync(numIterations, ringBuffer).waitForCompletion();
     }
 
     private OverwritingPrefilledWriter(int numIterations, OverwritingPrefilledRingBuffer<Event> ringBuffer) {
@@ -33,10 +33,14 @@ class OverwritingPrefilledWriter extends TestThread {
     }
 
     @Override
+    String getProfilerName() {
+        return "OverwritingPrefilledWriter";
+    }
+
+    @Override
     void loop() {
-        int numIterations = getNumIterations();
         OverwritingPrefilledRingBuffer<Event> ringBuffer = getOverwritingPrefilledRingBuffer();
-        for (; numIterations > 0; numIterations--) {
+        for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();
             ringBuffer.next(key).setData(numIterations);
             ringBuffer.put(key);

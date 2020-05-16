@@ -1,9 +1,7 @@
 package test;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Benchmark {
     private static Benchmark instance;
@@ -12,10 +10,21 @@ public abstract class Benchmark {
         return instance;
     }
 
-    private final Map<String, Result> results = new LinkedHashMap<>();
+    private final List<BenchmarkResult> results = new ArrayList<>(5);
 
     protected Benchmark() {
         instance = this;
+    }
+
+    final BenchmarkResult getResult(String profilerName) {
+        for (BenchmarkResult result : results) {
+            if (result.profilerName.equals(profilerName)) {
+                return result;
+            }
+        }
+        BenchmarkResult result = new BenchmarkResult(profilerName);
+        results.add(result);
+        return result;
     }
 
     protected int getWarmupRepeatTimes() {
@@ -35,65 +44,10 @@ public abstract class Benchmark {
         for (int i = getRepeatTimes(); i > 0; i--) {
             test(numIterations);
         }
-        for (Result result : results.values()) {
+        for (BenchmarkResult result : results) {
             result.report();
         }
     }
 
     protected abstract void test(int i);
-
-    public final Profiler newProfiler() {
-        return new Profiler(this, getNumIterations());
-    }
-
-    public final void add(Profiler profiler) {
-        results.computeIfAbsent(profiler.getName(), Result::new)
-                .update(profiler.getExecutionTime());
-    }
-
-    private static class Result {
-        private static final NumberFormat formatter = new DecimalFormat("#.##");
-
-        private final String profilerName;
-        private long sum;
-        private double count;
-        private long minimum = Long.MAX_VALUE;
-        private long maximum = 0L;
-
-        Result(String profilerName) {
-            this.profilerName = profilerName;
-        }
-
-        void update(long value) {
-            sum += value;
-            count++;
-            if (value < minimum) {
-                minimum = value;
-            }
-            if (value > maximum) {
-                maximum = value;
-            }
-        }
-
-        void report() {
-            double average = sum / count;
-            String report = profilerName + ": " + formatExecutionTime(average);
-            if (minimum != Long.MAX_VALUE) {
-                double absoluteVariance = Math.max(maximum - average, average - minimum);
-                long relativeVariance = Math.round(absoluteVariance / average * 100D);
-                report += " ± " + relativeVariance + '%';
-            }
-            System.out.println(report + " (" + formatExecutionTime(sum) + ')');
-        }
-
-        private static String formatExecutionTime(double value) {
-            if (value < 2_000D) {
-                return formatter.format(value) + "ns";
-            }
-            if (value < 2_000_000D) {
-                return formatter.format(value / 1_000D) + "us";
-            }
-            return formatter.format(value / 1_000_000D) + "ms";
-        }
-    }
 }

@@ -7,9 +7,7 @@ class ManyWritersBatchTest extends ManyWritersTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = Writer.startGroupAsync(RING_BUFFER);
-        long sum = BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
-        group.reportPerformance();
-        return sum;
+        Writer.startGroupAsync(RING_BUFFER);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
     }
 }

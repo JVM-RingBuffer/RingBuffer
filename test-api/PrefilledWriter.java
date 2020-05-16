@@ -15,17 +15,17 @@ class PrefilledWriter extends TestThread {
     }
 
     static void runGroupAsync(PrefilledRingBuffer<Event> ringBuffer) {
-        startGroupAsync(ringBuffer).reportPerformance();
+        startGroupAsync(ringBuffer).waitForCompletion();
     }
 
     static PrefilledWriter startAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {
         PrefilledWriter writer = new PrefilledWriter(numIterations, ringBuffer);
-        writer.start();
+        writer.startNow();
         return writer;
     }
 
     static void runAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {
-        startAsync(numIterations, ringBuffer).reportPerformance();
+        startAsync(numIterations, ringBuffer).waitForCompletion();
     }
 
     private PrefilledWriter(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {
@@ -33,10 +33,14 @@ class PrefilledWriter extends TestThread {
     }
 
     @Override
+    String getProfilerName() {
+        return "PrefilledWriter";
+    }
+
+    @Override
     void loop() {
-        int numIterations = getNumIterations();
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
-        for (; numIterations > 0; numIterations--) {
+        for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();
             int putKey = ringBuffer.nextPutKey(key);
             ringBuffer.next(key, putKey).setData(numIterations);

@@ -16,17 +16,17 @@ class Writer extends TestThread {
     }
 
     static void runGroupAsync(RingBuffer<Event> ringBuffer) {
-        startGroupAsync(ringBuffer).reportPerformance();
+        startGroupAsync(ringBuffer).waitForCompletion();
     }
 
     static Writer startAsync(int numIterations, RingBuffer<Event> ringBuffer) {
         Writer writer = new Writer(numIterations, ringBuffer);
-        writer.start();
+        writer.startNow();
         return writer;
     }
 
     static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        startAsync(numIterations, ringBuffer).reportPerformance();
+        startAsync(numIterations, ringBuffer).waitForCompletion();
     }
 
     private Writer(int numIterations, RingBuffer<Event> ringBuffer) {
@@ -34,10 +34,14 @@ class Writer extends TestThread {
     }
 
     @Override
+    String getProfilerName() {
+        return "Writer";
+    }
+
+    @Override
     void loop() {
-        int numIterations = getNumIterations();
         EmptyRingBuffer<Event> ringBuffer = getEmptyRingBuffer();
-        for (; numIterations > 0; numIterations--) {
+        for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             ringBuffer.put(new Event(numIterations));
         }
     }

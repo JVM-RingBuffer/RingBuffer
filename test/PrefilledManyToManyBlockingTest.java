@@ -26,9 +26,7 @@ public class PrefilledManyToManyBlockingTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = PrefilledWriter.startGroupAsync(RING_BUFFER);
-        long sum = Reader.runGroupAsync(RING_BUFFER);
-        group.reportPerformance();
-        return sum;
+        PrefilledWriter.startGroupAsync(RING_BUFFER);
+        return Reader.runGroupAsync(RING_BUFFER);
     }
 }

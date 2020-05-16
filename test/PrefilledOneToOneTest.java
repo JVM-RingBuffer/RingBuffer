@@ -26,9 +26,7 @@ public class PrefilledOneToOneTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter writer = OverwritingPrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
-        long sum = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        OverwritingPrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

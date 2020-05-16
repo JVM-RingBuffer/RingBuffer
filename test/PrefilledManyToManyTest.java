@@ -26,9 +26,7 @@ public class PrefilledManyToManyTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = OverwritingPrefilledWriter.startGroupAsync(RING_BUFFER);
-        long sum = Reader.runGroupAsync(RING_BUFFER);
-        group.reportPerformance();
-        return sum;
+        OverwritingPrefilledWriter.startGroupAsync(RING_BUFFER);
+        return Reader.runGroupAsync(RING_BUFFER);
     }
 }

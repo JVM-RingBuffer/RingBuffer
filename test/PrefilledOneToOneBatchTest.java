@@ -7,9 +7,7 @@ class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter writer = OverwritingPrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
-        long sum = BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        OverwritingPrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
     }
 }

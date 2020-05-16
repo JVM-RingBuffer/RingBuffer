@@ -36,38 +36,8 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
-        Processor processor = Processor.startAsync(TOTAL_ELEMENTS);
-        long sum = BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
-        processor.reportPerformance();
-        group.reportPerformance();
-        return sum;
-    }
-
-    static class Processor extends TestThread {
-        private static Processor startAsync(int numIterations) {
-            Processor processor = new Processor(numIterations);
-            processor.start();
-            return processor;
-        }
-
-        static void runAsync(int numIterations) {
-            startAsync(numIterations).reportPerformance();
-        }
-
-        private Processor(int numIterations) {
-            super(numIterations, null);
-        }
-
-        @Override
-        void loop() {
-            int numIterations = getNumIterations();
-            for (; numIterations > 0; numIterations--) {
-                int eventData = PRODUCERS_RING_BUFFER.take().getData();
-                int key = CONSUMERS_RING_BUFFER.nextKey();
-                CONSUMERS_RING_BUFFER.next(key).setData(eventData);
-                CONSUMERS_RING_BUFFER.put(key);
-            }
-        }
+        Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
+        Processor.startAsync();
+        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
     }
 }

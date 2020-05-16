@@ -3,7 +3,7 @@ package test;
 import eu.menzani.ringbuffer.RingBuffer;
 
 class Reader extends TestThread {
-    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(new Factory() {
             @Override
             public TestThread newInstance(int numIterations) {
@@ -11,14 +11,19 @@ class Reader extends TestThread {
             }
         });
         group.start();
-        group.reportPerformance();
+        return group;
+    }
+
+    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+        TestThreadGroup group = startGroupAsync(ringBuffer);
+        group.waitForCompletion();
         return group.getReaderSum();
     }
 
     static long runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
         Reader reader = new Reader(numIterations, ringBuffer);
-        reader.start();
-        reader.reportPerformance();
+        reader.startNow();
+        reader.waitForCompletion();
         return reader.getSum();
     }
 
@@ -26,6 +31,11 @@ class Reader extends TestThread {
 
     Reader(int numIterations, RingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
+    }
+
+    @Override
+    String getProfilerName() {
+        return "Reader";
     }
 
     long getSum() {
@@ -38,10 +48,9 @@ class Reader extends TestThread {
     }
 
     long collect() {
-        int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
-        for (; numIterations > 0; numIterations--) {
+        for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.take().getData();
             ringBuffer.advance();
         }

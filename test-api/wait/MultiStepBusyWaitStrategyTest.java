@@ -48,7 +48,7 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     @Override
     protected void test(int i) {
         BusyWaitStrategy strategy = getStrategy();
-        Profiler profiler = newProfiler();
+        Profiler profiler = new Profiler(getProfilerName(), getNumIterations());
         profiler.start();
         for (; i > 0; i--) {
             strategy.reset();
@@ -57,8 +57,9 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
             }
         }
         profiler.stop();
-        add(profiler);
     }
+
+    abstract String getProfilerName();
 
     BusyWaitStrategy getStrategy() {
         return getStrategyBuilder().endWith(SIXTH)

@@ -12,14 +12,14 @@ class BatchReader extends Reader {
             }
         });
         group.start();
-        group.reportPerformance();
+        group.waitForCompletion();
         return group.getReaderSum();
     }
 
     static long runAsync(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
         BatchReader reader = new BatchReader(numIterations, batchSize, ringBuffer);
-        reader.start();
-        reader.reportPerformance();
+        reader.startNow();
+        reader.waitForCompletion();
         return reader.getSum();
     }
 
@@ -31,12 +31,16 @@ class BatchReader extends Reader {
     }
 
     @Override
+    String getProfilerName() {
+        return "BatchReader";
+    }
+
+    @Override
     long collect() {
-        int numIterations = getNumIterations();
         RingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
-        for (; numIterations > 0; numIterations--) {
+        for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             ringBuffer.takeBatch(batchSize);
             for (int j = batchSize; j > 0; j--) {
                 sum += ringBuffer.takePlain().getData();

@@ -25,9 +25,7 @@ public class ManyWritersTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        TestThreadGroup group = Writer.startGroupAsync(RING_BUFFER);
-        long sum = Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        group.reportPerformance();
-        return sum;
+        Writer.startGroupAsync(RING_BUFFER);
+        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }
 }

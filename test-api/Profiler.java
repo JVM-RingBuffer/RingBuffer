@@ -1,22 +1,13 @@
 package test;
 
 public class Profiler {
-    private final String name;
+    private final BenchmarkResult result;
     private final double divideBy;
     private long start;
-    private long executionTime;
 
-    public Profiler(Object instance, int divideBy) {
-        name = instance.getClass().getSimpleName();
+    public Profiler(String name, int divideBy) {
         this.divideBy = divideBy;
-    }
-
-    String getName() {
-        return name;
-    }
-
-    long getExecutionTime() {
-        return executionTime;
+        result = Benchmark.current().getResult(name);
     }
 
     public void start() {
@@ -25,7 +16,6 @@ public class Profiler {
 
     public void stop() {
         final long end = System.nanoTime();
-        long elapsed = end - start;
-        executionTime = Math.round(elapsed / divideBy);
+        result.update(Math.round((end - start) / divideBy));
     }
 }

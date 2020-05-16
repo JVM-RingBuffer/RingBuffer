@@ -7,9 +7,7 @@ class PrefilledManyWritersBlockingBatchTest extends PrefilledManyWritersBlocking
 
     @Override
     long testSum() {
-        TestThreadGroup group = PrefilledWriter.startGroupAsync(RING_BUFFER);
-        long sum = BatchReader.runAsync(TOTAL_ELEMENTS, BLOCKING_BATCH_SIZE, RING_BUFFER);
-        group.reportPerformance();
-        return sum;
+        PrefilledWriter.startGroupAsync(RING_BUFFER);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BLOCKING_BATCH_SIZE, RING_BUFFER);
     }
 }

@@ -14,11 +14,17 @@ class TestThreadGroup {
         for (TestThread testThread : testThreads) {
             testThread.start();
         }
+        for (TestThread testThread : testThreads) {
+            testThread.waitUntilReady();
+        }
+        for (TestThread testThread : testThreads) {
+            testThread.commenceExecution();
+        }
     }
 
-    void reportPerformance() {
+    void waitForCompletion() {
         for (TestThread testThread : testThreads) {
-            testThread.reportPerformance();
+            testThread.waitForCompletion();
         }
     }
 

@@ -27,9 +27,7 @@ public class ManyReadersBlockingTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        Writer writer = Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        long sum = Reader.runGroupAsync(RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        return Reader.runGroupAsync(RING_BUFFER);
     }
 }

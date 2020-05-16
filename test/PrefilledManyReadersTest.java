@@ -26,9 +26,7 @@ public class PrefilledManyReadersTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter writer = OverwritingPrefilledWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        long sum = Reader.runGroupAsync(RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        OverwritingPrefilledWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        return Reader.runGroupAsync(RING_BUFFER);
     }
 }

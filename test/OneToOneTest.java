@@ -25,9 +25,7 @@ public class OneToOneTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        Writer writer = Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
-        long sum = Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

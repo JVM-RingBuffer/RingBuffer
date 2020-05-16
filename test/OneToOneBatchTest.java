@@ -7,9 +7,7 @@ class OneToOneBatchTest extends OneToOneTest {
 
     @Override
     long testSum() {
-        Writer writer = Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
-        long sum = BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
-        writer.reportPerformance();
-        return sum;
+        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
     }
 }
