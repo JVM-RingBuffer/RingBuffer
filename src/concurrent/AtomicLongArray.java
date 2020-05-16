@@ -1,4 +1,6 @@
-package eu.menzani.ringbuffer.java;
+package eu.menzani.ringbuffer.concurrent;
+
+import eu.menzani.ringbuffer.java.Assume;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -13,6 +15,11 @@ public class AtomicLongArray {
     public AtomicLongArray(int length) {
         Assume.notLesser(length, 1);
         value = new long[length];
+    }
+
+    public AtomicLongArray(long[] value) {
+        Assume.notLesser(value.length, 1);
+        this.value = value;
     }
 
     public int length() {
@@ -244,6 +251,50 @@ public class AtomicLongArray {
             if (weakCompareAndSetVolatile(index, prev, next))
                 return next;
             haveNext = (prev == (prev = getVolatile(index)));
+        }
+    }
+
+    public long getAcquireAndUpdateRelease(int index, LongUnaryOperator updateFunction) {
+        long prev = getAcquire(index), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsLong(prev);
+            if (weakComparePlainAndSetRelease(index, prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire(index)));
+        }
+    }
+
+    public long updateReleaseAndGetAcquire(int index, LongUnaryOperator updateFunction) {
+        long prev = getAcquire(index), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsLong(prev);
+            if (weakComparePlainAndSetRelease(index, prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire(index)));
+        }
+    }
+
+    public long getAcquireAndAccumulateRelease(int index, long constant, LongBinaryOperator accumulatorFunction) {
+        long prev = getAcquire(index), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsLong(prev, constant);
+            if (weakComparePlainAndSetRelease(index, prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire(index)));
+        }
+    }
+
+    public long accumulateReleaseAndGetAcquire(int index, long constant, LongBinaryOperator accumulatorFunction) {
+        long prev = getAcquire(index), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsLong(prev, constant);
+            if (weakComparePlainAndSetRelease(index, prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire(index)));
         }
     }
 

@@ -1,16 +1,16 @@
-package eu.menzani.ringbuffer.java;
+package eu.menzani.ringbuffer.concurrent;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-public class AtomicReference<T> {
+public class Atomic<T> {
     private static final VarHandle VALUE;
 
     static {
         try {
-            VALUE = MethodHandles.lookup().findVarHandle(AtomicReference.class, "value", Object.class);
+            VALUE = MethodHandles.lookup().findVarHandle(Atomic.class, "value", Object.class);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -18,9 +18,9 @@ public class AtomicReference<T> {
 
     private T value;
 
-    public AtomicReference() {}
+    public Atomic() {}
 
-    public AtomicReference(T value) {
+    public Atomic(T value) {
         this.value = value;
     }
 
@@ -150,6 +150,50 @@ public class AtomicReference<T> {
             if (weakCompareAndSetVolatile(prev, next))
                 return next;
             haveNext = (prev == (prev = getVolatile()));
+        }
+    }
+
+    public T getAcquireAndUpdateRelease(UnaryOperator<T> updateFunction) {
+        T prev = getAcquire(), next = null;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.apply(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public T updateReleaseAndGetAcquire(UnaryOperator<T> updateFunction) {
+        T prev = getAcquire(), next = null;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.apply(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public T getAcquireAndAccumulateRelease(T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getAcquire(), next = null;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.apply(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public T accumulateReleaseAndGetAcquire(T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getAcquire(), next = null;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.apply(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
         }
     }
 

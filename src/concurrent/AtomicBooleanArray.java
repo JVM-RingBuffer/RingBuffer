@@ -1,4 +1,6 @@
-package eu.menzani.ringbuffer.java;
+package eu.menzani.ringbuffer.concurrent;
+
+import eu.menzani.ringbuffer.java.Assume;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -11,6 +13,11 @@ public class AtomicBooleanArray {
     public AtomicBooleanArray(int length) {
         Assume.notLesser(length, 1);
         value = new boolean[length];
+    }
+
+    public AtomicBooleanArray(boolean[] value) {
+        Assume.notLesser(value.length, 1);
+        this.value = value;
     }
 
     public int length() {

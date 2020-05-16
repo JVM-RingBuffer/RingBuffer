@@ -1,16 +1,16 @@
-package eu.menzani.ringbuffer.java;
+package eu.menzani.ringbuffer.concurrent;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
-public class AtomicInteger {
+public class AtomicInt {
     private static final VarHandle VALUE;
 
     static {
         try {
-            VALUE = MethodHandles.lookup().findVarHandle(AtomicInteger.class, "value", int.class);
+            VALUE = MethodHandles.lookup().findVarHandle(AtomicInt.class, "value", int.class);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -18,9 +18,9 @@ public class AtomicInteger {
 
     private int value;
 
-    public AtomicInteger() {}
+    public AtomicInt() {}
 
-    public AtomicInteger(int value) {
+    public AtomicInt(int value) {
         this.value = value;
     }
 
@@ -249,6 +249,50 @@ public class AtomicInteger {
             if (weakCompareAndSetVolatile(prev, next))
                 return next;
             haveNext = (prev == (prev = getVolatile()));
+        }
+    }
+
+    public int getAcquireAndUpdateRelease(IntUnaryOperator updateFunction) {
+        int prev = getAcquire(), next = 0;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsInt(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public int updateReleaseAndGetAcquire(IntUnaryOperator updateFunction) {
+        int prev = getAcquire(), next = 0;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsInt(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public int getAcquireAndAccumulateRelease(int constant, IntBinaryOperator accumulatorFunction) {
+        int prev = getAcquire(), next = 0;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsInt(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public int accumulateReleaseAndGetAcquire(int constant, IntBinaryOperator accumulatorFunction) {
+        int prev = getAcquire(), next = 0;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsInt(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
         }
     }
 

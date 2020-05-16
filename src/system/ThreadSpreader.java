@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
 import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.java.AtomicInteger;
+import eu.menzani.ringbuffer.concurrent.AtomicInt;
 import eu.menzani.ringbuffer.java.Ensure;
 
 import java.util.function.IntUnaryOperator;
@@ -11,14 +11,14 @@ public class ThreadSpreader {
     private final int lastCPU;
     private final int increment;
     private final boolean cycle;
-    private final AtomicInteger nextCPU;
+    private final AtomicInt nextCPU;
 
     ThreadSpreader(Builder builder) {
         firstCPU = builder.firstCPU;
         lastCPU = builder.lastCPU;
         increment = builder.increment;
         cycle = builder.cycle;
-        nextCPU = new AtomicInteger(firstCPU);
+        nextCPU = new AtomicInt(firstCPU);
     }
 
     public int bindCurrentThreadToNextCPU() {

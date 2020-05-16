@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer.system;
 
 import com.sun.management.GarbageCollectionNotificationInfo;
 import com.sun.management.GcInfo;
-import eu.menzani.ringbuffer.java.AtomicBoolean;
+import eu.menzani.ringbuffer.concurrent.AtomicBoolean;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;

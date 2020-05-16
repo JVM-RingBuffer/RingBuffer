@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package eu.menzani.ringbuffer.concurrent;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -249,6 +249,50 @@ public class AtomicLong {
             if (weakCompareAndSetVolatile(prev, next))
                 return next;
             haveNext = (prev == (prev = getVolatile()));
+        }
+    }
+
+    public long getAcquireAndUpdateRelease(LongUnaryOperator updateFunction) {
+        long prev = getAcquire(), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsLong(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public long updateReleaseAndGetAcquire(LongUnaryOperator updateFunction) {
+        long prev = getAcquire(), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = updateFunction.applyAsLong(prev);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public long getAcquireAndAccumulateRelease(long constant, LongBinaryOperator accumulatorFunction) {
+        long prev = getAcquire(), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsLong(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return prev;
+            haveNext = (prev == (prev = getAcquire()));
+        }
+    }
+
+    public long accumulateReleaseAndGetAcquire(long constant, LongBinaryOperator accumulatorFunction) {
+        long prev = getAcquire(), next = 0L;
+        for (boolean haveNext = false; ; ) {
+            if (!haveNext)
+                next = accumulatorFunction.applyAsLong(prev, constant);
+            if (weakComparePlainAndSetRelease(prev, next))
+                return next;
+            haveNext = (prev == (prev = getAcquire()));
         }
     }
 

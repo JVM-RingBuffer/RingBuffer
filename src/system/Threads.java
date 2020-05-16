@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.system;
 
-import eu.menzani.ringbuffer.java.AtomicReference;
+import eu.menzani.ringbuffer.concurrent.Atomic;
 import eu.menzani.ringbuffer.java.Nullable;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
  */
 public class Threads {
-    private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
+    private static final Atomic<Path> libraryPath = new Atomic<>();
 
     public static @Nullable Path getLibraryPath() {
         return libraryPath.getVolatile();

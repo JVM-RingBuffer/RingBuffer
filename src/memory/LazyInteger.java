@@ -1,9 +1,9 @@
 package eu.menzani.ringbuffer.memory;
 
-import eu.menzani.ringbuffer.java.AtomicInteger;
+import eu.menzani.ringbuffer.concurrent.AtomicInt;
 
 public class LazyInteger implements Integer {
-    private final AtomicInteger value = new AtomicInteger();
+    private final AtomicInt value = new AtomicInt();
 
     @Override
     public void set(int value) {
