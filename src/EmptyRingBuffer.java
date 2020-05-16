@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.builder.EmptyRingBufferBuilder;
+
 public interface EmptyRingBuffer<T> extends RingBuffer<T> {
     void put(T element);
 

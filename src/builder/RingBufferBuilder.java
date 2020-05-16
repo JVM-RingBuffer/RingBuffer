@@ -1,5 +1,6 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
@@ -102,28 +103,28 @@ abstract class RingBufferBuilder<T> {
 
     abstract RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type);
 
-    int getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 
-    int getCapacityMinusOne() {
+    public int getCapacityMinusOne() {
         return capacity - 1;
     }
 
     @SuppressWarnings("unchecked")
-    T[] getBuffer() {
+    public T[] getBuffer() {
         return (T[]) new Object[capacity];
     }
 
-    BusyWaitStrategy getWriteBusyWaitStrategy() {
+    public BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;
     }
 
-    BusyWaitStrategy getReadBusyWaitStrategy() {
+    public BusyWaitStrategy getReadBusyWaitStrategy() {
         return readBusyWaitStrategy;
     }
 
-    Integer newCursor() {
+    public Integer newCursor() {
         return memoryOrder.newInteger();
     }
 

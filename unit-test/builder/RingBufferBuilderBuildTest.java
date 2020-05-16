@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

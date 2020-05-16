@@ -1,12 +1,18 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.AtomicReadPrefilledRingBuffer;
+import eu.menzani.ringbuffer.AtomicWritePrefilledRingBuffer;
+import eu.menzani.ringbuffer.ConcurrentPrefilledRingBuffer;
+import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
+import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.VolatilePrefilledRingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
 
 public class OverwritingPrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    OverwritingPrefilledRingBufferBuilder(int capacity, Supplier<? extends T> filler) {
+    public OverwritingPrefilledRingBufferBuilder(int capacity, Supplier<? extends T> filler) {
         super(capacity, filler);
     }
 

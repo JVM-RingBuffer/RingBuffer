@@ -1,5 +1,6 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.*;
 import org.junit.jupiter.api.Test;
 import test.*;
 

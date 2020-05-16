@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.builder.OverwritingPrefilledRingBufferBuilder;
+
 import java.util.function.Supplier;
 
 /**

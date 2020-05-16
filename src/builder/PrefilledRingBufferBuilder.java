@@ -1,5 +1,6 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.*;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 

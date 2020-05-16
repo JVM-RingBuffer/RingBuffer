@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
 import java.util.function.Supplier;
 
@@ -22,7 +22,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     }
 
     @Override
-    T[] getBuffer() {
+    public T[] getBuffer() {
         T[] buffer = super.getBuffer();
         for (int i = 0; i < capacity; i++) {
             buffer[i] = filler.get();
@@ -30,7 +30,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
         return buffer;
     }
 
-    T getDummyElement() {
+    public T getDummyElement() {
         return filler.get();
     }
 }

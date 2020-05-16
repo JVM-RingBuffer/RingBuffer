@@ -1,12 +1,13 @@
-package eu.menzani.ringbuffer;
+package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.*;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     private boolean gcEnabled;
 
-    EmptyRingBufferBuilder(int capacity) {
+    public EmptyRingBufferBuilder(int capacity) {
         super(capacity);
     }
 

@@ -1,11 +1,12 @@
 package eu.menzani.ringbuffer;
 
+import eu.menzani.ringbuffer.builder.PrefilledRingBufferBuilder;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
+public class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -17,7 +18,7 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     private final Integer readPosition;
     private final Integer writePosition;
 
-    AtomicReadBlockingPrefilledRingBuffer(AbstractPrefilledRingBufferBuilder<T> builder) {
+    public AtomicReadBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
