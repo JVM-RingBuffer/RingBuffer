@@ -11,7 +11,7 @@ public class OneToOneBlockingPerfTest extends OneToOneBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneBlockingPerfTest().run();
+        new OneToOneBlockingPerfTest().runBenchmark();
     }
 
     @Override

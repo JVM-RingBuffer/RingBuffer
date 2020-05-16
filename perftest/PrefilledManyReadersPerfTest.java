@@ -2,7 +2,7 @@ package test;
 
 class PrefilledManyReadersPerfTest extends PrefilledManyReadersTest {
     public static void main(String[] args) {
-        new PrefilledManyReadersPerfTest().run();
+        new PrefilledManyReadersPerfTest().runBenchmark();
     }
 
     @Override

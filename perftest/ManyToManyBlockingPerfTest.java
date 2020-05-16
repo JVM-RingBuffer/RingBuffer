@@ -11,7 +11,7 @@ public class ManyToManyBlockingPerfTest extends ManyToManyBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyToManyBlockingPerfTest().run();
+        new ManyToManyBlockingPerfTest().runBenchmark();
     }
 
     @Override

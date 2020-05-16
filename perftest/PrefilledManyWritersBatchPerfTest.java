@@ -2,7 +2,7 @@ package test;
 
 class PrefilledManyWritersBatchPerfTest extends PrefilledManyWritersPerfTest {
     public static void main(String[] args) {
-        new PrefilledManyWritersBatchPerfTest().run();
+        new PrefilledManyWritersBatchPerfTest().runBenchmark();
     }
 
     @Override

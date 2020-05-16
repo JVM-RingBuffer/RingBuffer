@@ -2,7 +2,7 @@ package test;
 
 class PrefilledManyToManyBlockingBatchTest extends PrefilledManyToManyBlockingTest {
     public static void main(String[] args) {
-        new PrefilledManyToManyBlockingBatchTest().run();
+        new PrefilledManyToManyBlockingBatchTest().runBenchmark();
     }
 
     @Override

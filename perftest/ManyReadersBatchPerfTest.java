@@ -2,7 +2,7 @@ package test;
 
 class ManyReadersBatchPerfTest extends ManyReadersPerfTest {
     public static void main(String[] args) {
-        new ManyReadersBatchPerfTest().run();
+        new ManyReadersBatchPerfTest().runBenchmark();
     }
 
     @Override

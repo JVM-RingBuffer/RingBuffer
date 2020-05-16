@@ -11,7 +11,7 @@ public class PrefilledManyToManyBlockingTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyToManyBlockingTest().run();
+        new PrefilledManyToManyBlockingTest().runBenchmark();
     }
 
     @Override

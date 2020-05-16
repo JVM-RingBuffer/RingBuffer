@@ -2,7 +2,7 @@ package test;
 
 class PrefilledManyToManyPerfTest extends PrefilledManyToManyTest {
     public static void main(String[] args) {
-        new PrefilledManyToManyPerfTest().run();
+        new PrefilledManyToManyPerfTest().runBenchmark();
     }
 
     @Override

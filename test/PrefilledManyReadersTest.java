@@ -11,7 +11,7 @@ public class PrefilledManyReadersTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyReadersTest().run();
+        new PrefilledManyReadersTest().runBenchmark();
     }
 
     @Override

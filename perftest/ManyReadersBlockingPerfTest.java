@@ -11,7 +11,7 @@ public class ManyReadersBlockingPerfTest extends ManyReadersBlockingTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyReadersBlockingPerfTest().run();
+        new ManyReadersBlockingPerfTest().runBenchmark();
     }
 
     @Override

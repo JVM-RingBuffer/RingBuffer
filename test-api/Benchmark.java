@@ -35,7 +35,7 @@ public abstract class Benchmark {
 
     protected abstract int getNumIterations();
 
-    public final void run() {
+    public final void runBenchmark() {
         int numIterations = getNumIterations();
         for (int i = getWarmupRepeatTimes(); i > 0; i--) {
             test(numIterations);

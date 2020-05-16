@@ -2,7 +2,7 @@ package test;
 
 class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
     public static void main(String[] args) {
-        new PrefilledOneToOneBatchTest().run();
+        new PrefilledOneToOneBatchTest().runBenchmark();
     }
 
     @Override

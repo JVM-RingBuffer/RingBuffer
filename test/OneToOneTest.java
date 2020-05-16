@@ -10,7 +10,7 @@ public class OneToOneTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneTest().run();
+        new OneToOneTest().runBenchmark();
     }
 
     @Override

@@ -11,7 +11,7 @@ public class PrefilledManyToManyBlockingPerfTest extends PrefilledManyToManyBloc
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyToManyBlockingPerfTest().run();
+        new PrefilledManyToManyBlockingPerfTest().runBenchmark();
     }
 
     @Override

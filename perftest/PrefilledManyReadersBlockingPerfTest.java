@@ -11,7 +11,7 @@ public class PrefilledManyReadersBlockingPerfTest extends PrefilledManyReadersBl
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyReadersBlockingPerfTest().run();
+        new PrefilledManyReadersBlockingPerfTest().runBenchmark();
     }
 
     @Override

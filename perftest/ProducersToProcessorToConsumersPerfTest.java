@@ -11,7 +11,7 @@ public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcesso
                     .build();
 
     public static void main(String[] args) {
-        new ProducersToProcessorToConsumersPerfTest().run();
+        new ProducersToProcessorToConsumersPerfTest().runBenchmark();
     }
 
     @Override

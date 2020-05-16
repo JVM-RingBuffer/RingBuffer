@@ -12,7 +12,7 @@ public class OneToOneBlockingTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneBlockingTest().run();
+        new OneToOneBlockingTest().runBenchmark();
     }
 
     @Override

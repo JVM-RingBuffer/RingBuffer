@@ -10,7 +10,7 @@ public class ManyReadersTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyReadersTest().run();
+        new ManyReadersTest().runBenchmark();
     }
 
     @Override

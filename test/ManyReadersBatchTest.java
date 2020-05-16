@@ -2,7 +2,7 @@ package test;
 
 class ManyReadersBatchTest extends ManyReadersTest {
     public static void main(String[] args) {
-        new ManyReadersBatchTest().run();
+        new ManyReadersBatchTest().runBenchmark();
     }
 
     @Override

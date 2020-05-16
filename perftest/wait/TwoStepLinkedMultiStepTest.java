@@ -5,7 +5,7 @@ import eu.menzani.ringbuffer.wait.LinkedMultiStepBusyWaitStrategy;
 
 public class TwoStepLinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new TwoStepLinkedMultiStepTest(true).run();
+        new TwoStepLinkedMultiStepTest(true).runBenchmark();
     }
 
     public TwoStepLinkedMultiStepTest(boolean isPerfTest) {

@@ -10,7 +10,7 @@ public class ManyToManyTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyToManyTest().run();
+        new ManyToManyTest().runBenchmark();
     }
 
     @Override

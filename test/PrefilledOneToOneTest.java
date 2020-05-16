@@ -11,7 +11,7 @@ public class PrefilledOneToOneTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledOneToOneTest().run();
+        new PrefilledOneToOneTest().runBenchmark();
     }
 
     @Override

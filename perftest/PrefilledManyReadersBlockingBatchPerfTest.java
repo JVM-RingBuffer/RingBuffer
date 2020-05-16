@@ -2,7 +2,7 @@ package test;
 
 class PrefilledManyReadersBlockingBatchPerfTest extends PrefilledManyReadersBlockingPerfTest {
     public static void main(String[] args) {
-        new PrefilledManyReadersBlockingBatchPerfTest().run();
+        new PrefilledManyReadersBlockingBatchPerfTest().runBenchmark();
     }
 
     @Override

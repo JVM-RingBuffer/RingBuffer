@@ -11,7 +11,7 @@ public class PrefilledOneToOneBlockingPerfTest extends PrefilledOneToOneBlocking
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledOneToOneBlockingPerfTest().run();
+        new PrefilledOneToOneBlockingPerfTest().runBenchmark();
     }
 
     @Override

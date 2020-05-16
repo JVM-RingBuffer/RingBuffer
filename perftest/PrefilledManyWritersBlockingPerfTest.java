@@ -11,7 +11,7 @@ public class PrefilledManyWritersBlockingPerfTest extends PrefilledManyWritersBl
                     .build();
 
     public static void main(String[] args) {
-        new PrefilledManyWritersBlockingPerfTest().run();
+        new PrefilledManyWritersBlockingPerfTest().runBenchmark();
     }
 
     @Override

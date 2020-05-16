@@ -2,7 +2,7 @@ package test;
 
 class ManyToManyBatchPerfTest extends ManyToManyPerfTest {
     public static void main(String[] args) {
-        new ManyToManyBatchPerfTest().run();
+        new ManyToManyBatchPerfTest().runBenchmark();
     }
 
     @Override

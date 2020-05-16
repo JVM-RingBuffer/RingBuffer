@@ -4,7 +4,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new ManualMultiStepTest(true).run();
+        new ManualMultiStepTest(true).runBenchmark();
     }
 
     public ManualMultiStepTest(boolean isPerfTest) {

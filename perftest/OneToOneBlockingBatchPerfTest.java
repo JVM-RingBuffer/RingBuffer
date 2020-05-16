@@ -2,7 +2,7 @@ package test;
 
 class OneToOneBlockingBatchPerfTest extends OneToOneBlockingPerfTest {
     public static void main(String[] args) {
-        new OneToOneBlockingBatchPerfTest().run();
+        new OneToOneBlockingBatchPerfTest().runBenchmark();
     }
 
     @Override

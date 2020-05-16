@@ -21,7 +21,7 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ProducersToProcessorToConsumersTest().run();
+        new ProducersToProcessorToConsumersTest().runBenchmark();
     }
 
     @Override

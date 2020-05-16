@@ -2,7 +2,7 @@ package test;
 
 class OneToOnePerfTest extends OneToOneTest {
     public static void main(String[] args) {
-        new OneToOnePerfTest().run();
+        new OneToOnePerfTest().runBenchmark();
     }
 
     @Override

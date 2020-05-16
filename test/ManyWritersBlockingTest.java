@@ -12,7 +12,7 @@ public class ManyWritersBlockingTest extends RingBufferTest {
                     .build();
 
     public static void main(String[] args) {
-        new ManyWritersBlockingTest().run();
+        new ManyWritersBlockingTest().runBenchmark();
     }
 
     @Override

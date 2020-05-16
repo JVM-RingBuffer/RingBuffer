@@ -2,7 +2,7 @@ package test;
 
 class ManyReadersPerfTest extends ManyReadersTest {
     public static void main(String[] args) {
-        new ManyReadersPerfTest().run();
+        new ManyReadersPerfTest().runBenchmark();
     }
 
     @Override

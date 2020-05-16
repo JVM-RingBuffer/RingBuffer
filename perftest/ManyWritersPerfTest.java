@@ -2,7 +2,7 @@ package test;
 
 class ManyWritersPerfTest extends ManyWritersTest {
     public static void main(String[] args) {
-        new ManyWritersPerfTest().run();
+        new ManyWritersPerfTest().runBenchmark();
     }
 
     @Override
