@@ -1,12 +1,12 @@
 package eu.menzani.ringbuffer.system;
 
 import eu.menzani.ringbuffer.java.AtomicReference;
+import eu.menzani.ringbuffer.java.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 /**
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
@@ -14,8 +14,8 @@ import java.util.Optional;
 public class Threads {
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
-    public static Optional<Path> getLibraryPath() {
-        return Optional.ofNullable(libraryPath.getVolatile());
+    public static @Nullable Path getLibraryPath() {
+        return libraryPath.getVolatile();
     }
 
     public static void loadNativeLibrary() {
