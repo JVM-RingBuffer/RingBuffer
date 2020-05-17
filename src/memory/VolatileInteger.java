@@ -2,7 +2,7 @@ package eu.menzani.ringbuffer.memory;
 
 import eu.menzani.ringbuffer.concurrent.AtomicInt;
 
-public class VolatileInteger implements Integer {
+class VolatileInteger implements Integer {
     private final AtomicInt value = new AtomicInt();
 
     @Override

@@ -112,6 +112,22 @@ public class AtomicLong {
         return addAndGetVolatile(1L);
     }
 
+    public void incrementVolatile() {
+        addVolatile(1L);
+    }
+
+    public void incrementPlainRelease() {
+        addPlainRelease(1L);
+    }
+
+    public void incrementAcquirePlain() {
+        addAcquirePlain(1L);
+    }
+
+    public void incrementPlain() {
+        value++;
+    }
+
     public long decrementReleaseAndGetPlain() {
         return addReleaseAndGetPlain(-1L);
     }
@@ -122,6 +138,22 @@ public class AtomicLong {
 
     public long decrementAndGetVolatile() {
         return addAndGetVolatile(-1L);
+    }
+
+    public void decrementVolatile() {
+        addVolatile(-1L);
+    }
+
+    public void decrementPlainRelease() {
+        addPlainRelease(-1L);
+    }
+
+    public void decrementAcquirePlain() {
+        addAcquirePlain(-1L);
+    }
+
+    public void decrementPlain() {
+        value--;
     }
 
     public long getPlainAndAddRelease(long value) {
@@ -146,6 +178,22 @@ public class AtomicLong {
 
     public long addAndGetVolatile(long value) {
         return (long) VALUE.getAndAdd(this, value) + value;
+    }
+
+    public void addVolatile(long value) {
+        VALUE.getAndAdd(this, value);
+    }
+
+    public void addPlainRelease(long value) {
+        VALUE.getAndAddRelease(this, value);
+    }
+
+    public void addAcquirePlain(long value) {
+        VALUE.getAndAddAcquire(this, value);
+    }
+
+    public void addPlain(long value) {
+        this.value += value;
     }
 
     public long getPlainAndSetRelease(long value) {

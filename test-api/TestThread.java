@@ -10,8 +10,12 @@ import eu.menzani.ringbuffer.system.Threads;
 import java.util.concurrent.CountDownLatch;
 
 abstract class TestThread extends Thread {
-    static final ThreadSpreader SPREADER = Threads.spreadOverCPUs()
-            .fromFirstCPU().toLastCPU().skipHyperthreads().build();
+    private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
+            .fromFirstCPU().toCPU(2 * 6 - 1).skipHyperthreads().build();
+
+    static void resetThreadSpreader() {
+        spreader.reset();
+    }
 
     static {
         Threads.loadNativeLibrary();
@@ -80,7 +84,7 @@ abstract class TestThread extends Thread {
 
     @Override
     public void run() {
-        SPREADER.bindCurrentThreadToNextCPU();
+        spreader.bindCurrentThreadToNextCPU();
         Threads.setCurrentThreadPriorityToRealtime();
 
         readyLatch.countDown();

@@ -54,7 +54,7 @@ abstract class RingBufferTest extends Benchmark {
 
     @Override
     protected void test(int i) {
-        TestThread.SPREADER.reset();
+        TestThread.resetThreadSpreader();
 
         assertEquals(getSum(), testSum());
     }

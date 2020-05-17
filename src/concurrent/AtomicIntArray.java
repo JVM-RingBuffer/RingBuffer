@@ -114,6 +114,22 @@ public class AtomicIntArray {
         return addAndGetVolatile(index, 1);
     }
 
+    public void incrementVolatile(int index) {
+        addVolatile(index, 1);
+    }
+
+    public void incrementPlainRelease(int index) {
+        addPlainRelease(index, 1);
+    }
+
+    public void incrementAcquirePlain(int index) {
+        addAcquirePlain(index, 1);
+    }
+
+    public void incrementPlain(int index) {
+        value[index]++;
+    }
+
     public int decrementReleaseAndGetPlain(int index) {
         return addReleaseAndGetPlain(index, -1);
     }
@@ -124,6 +140,22 @@ public class AtomicIntArray {
 
     public int decrementAndGetVolatile(int index) {
         return addAndGetVolatile(index, -1);
+    }
+
+    public void decrementVolatile(int index) {
+        addVolatile(index, -1);
+    }
+
+    public void decrementPlainRelease(int index) {
+        addPlainRelease(index, -1);
+    }
+
+    public void decrementAcquirePlain(int index) {
+        addAcquirePlain(index, -1);
+    }
+
+    public void decrementPlain(int index) {
+        value[index]--;
     }
 
     public int getPlainAndAddRelease(int index, int value) {
@@ -148,6 +180,22 @@ public class AtomicIntArray {
 
     public int addAndGetVolatile(int index, int value) {
         return (int) VALUE.getAndAdd(this.value, index, value) + value;
+    }
+
+    public void addVolatile(int index, int value) {
+        VALUE.getAndAdd(this.value, index, value);
+    }
+
+    public void addPlainRelease(int index, int value) {
+        VALUE.getAndAddRelease(this.value, index, value);
+    }
+
+    public void addAcquirePlain(int index, int value) {
+        VALUE.getAndAddAcquire(this.value, index, value);
+    }
+
+    public void addPlain(int index, int value) {
+        this.value[index] += value;
     }
 
     public int getPlainAndSetRelease(int index, int value) {

@@ -112,6 +112,22 @@ public class AtomicInt {
         return addAndGetVolatile(1);
     }
 
+    public void incrementVolatile() {
+        addVolatile(1);
+    }
+
+    public void incrementPlainRelease() {
+        addPlainRelease(1);
+    }
+
+    public void incrementAcquirePlain() {
+        addAcquirePlain(1);
+    }
+
+    public void incrementPlain() {
+        value++;
+    }
+
     public int decrementReleaseAndGetPlain() {
         return addReleaseAndGetPlain(-1);
     }
@@ -122,6 +138,22 @@ public class AtomicInt {
 
     public int decrementAndGetVolatile() {
         return addAndGetVolatile(-1);
+    }
+
+    public void decrementVolatile() {
+        addVolatile(-1);
+    }
+
+    public void decrementPlainRelease() {
+        addPlainRelease(-1);
+    }
+
+    public void decrementAcquirePlain() {
+        addAcquirePlain(-1);
+    }
+
+    public void decrementPlain() {
+        value--;
     }
 
     public int getPlainAndAddRelease(int value) {
@@ -146,6 +178,22 @@ public class AtomicInt {
 
     public int addAndGetVolatile(int value) {
         return (int) VALUE.getAndAdd(this, value) + value;
+    }
+
+    public void addVolatile(int value) {
+        VALUE.getAndAdd(this, value);
+    }
+
+    public void addPlainRelease(int value) {
+        VALUE.getAndAddRelease(this, value);
+    }
+
+    public void addAcquirePlain(int value) {
+        VALUE.getAndAddAcquire(this, value);
+    }
+
+    public void addPlain(int value) {
+        this.value += value;
     }
 
     public int getPlainAndSetRelease(int value) {

@@ -114,6 +114,22 @@ public class AtomicLongArray {
         return addAndGetVolatile(index, 1L);
     }
 
+    public void incrementVolatile(int index) {
+        addVolatile(index, 1L);
+    }
+
+    public void incrementPlainRelease(int index) {
+        addPlainRelease(index, 1L);
+    }
+
+    public void incrementAcquirePlain(int index) {
+        addAcquirePlain(index, 1L);
+    }
+
+    public void incrementPlain(int index) {
+        value[index]++;
+    }
+
     public long decrementReleaseAndGetPlain(int index) {
         return addReleaseAndGetPlain(index, -1L);
     }
@@ -124,6 +140,22 @@ public class AtomicLongArray {
 
     public long decrementAndGetVolatile(int index) {
         return addAndGetVolatile(index, -1L);
+    }
+
+    public void decrementVolatile(int index) {
+        addVolatile(index, -1L);
+    }
+
+    public void decrementPlainRelease(int index) {
+        addPlainRelease(index, -1L);
+    }
+
+    public void decrementAcquirePlain(int index) {
+        addAcquirePlain(index, -1L);
+    }
+
+    public void decrementPlain(int index) {
+        value[index]--;
     }
 
     public long getPlainAndAddRelease(int index, long value) {
@@ -148,6 +180,22 @@ public class AtomicLongArray {
 
     public long addAndGetVolatile(int index, long value) {
         return (long) VALUE.getAndAdd(this.value, index, value) + value;
+    }
+
+    public void addVolatile(int index, long value) {
+        VALUE.getAndAdd(this.value, index, value);
+    }
+
+    public void addPlainRelease(int index, long value) {
+        VALUE.getAndAddRelease(this.value, index, value);
+    }
+
+    public void addAcquirePlain(int index, long value) {
+        VALUE.getAndAddAcquire(this.value, index, value);
+    }
+
+    public void addPlain(int index, long value) {
+        this.value[index] += value;
     }
 
     public long getPlainAndSetRelease(int index, long value) {

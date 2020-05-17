@@ -1,8 +1,8 @@
 package eu.menzani.ringbuffer.memory;
 
-class LazyMemoryOrder implements MemoryOrder {
+class PlainMemoryOrder implements MemoryOrder {
     @Override
     public Integer newInteger() {
-        return new LazyInteger();
+        return new PlainInteger();
     }
 }

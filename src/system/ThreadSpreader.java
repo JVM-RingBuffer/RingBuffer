@@ -66,12 +66,6 @@ public class ThreadSpreader {
             return this;
         }
 
-        public Builder fromSecondCPU() {
-            ensureIncrementWasSet();
-            fromCPU(increment);
-            return this;
-        }
-
         public Builder increment(int increment) {
             Assume.notLesser(increment, 1);
             this.increment = increment;
@@ -94,11 +88,6 @@ public class ThreadSpreader {
             return this;
         }
 
-        public Builder toLastCPU() {
-            toCPU(Runtime.getRuntime().availableProcessors() - 1);
-            return this;
-        }
-
         public Builder cycle() {
             cycle = true;
             return this;
@@ -108,18 +97,14 @@ public class ThreadSpreader {
             if (firstCPU == -1) {
                 throw new IllegalStateException("The first CPU was not set.");
             }
-            ensureIncrementWasSet();
+            if (increment == -1) {
+                throw new IllegalStateException("The increment was not set.");
+            }
             if (lastCPU == -1) {
                 throw new IllegalStateException("The last CPU was not set.");
             }
             Ensure.notGreater(firstCPU, lastCPU);
             return new ThreadSpreader(this);
-        }
-
-        private void ensureIncrementWasSet() {
-            if (increment == -1) {
-                throw new IllegalStateException("The increment was not set.");
-            }
         }
     }
 }
