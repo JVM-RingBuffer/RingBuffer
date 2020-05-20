@@ -71,22 +71,40 @@ public class OverwritingPrefilledRingBufferBuilder<T> extends AbstractPrefilledR
     }
 
     @Override
+    public OverwritingPrefilledRingBufferBuilder<T> copyClass() {
+        super.copyClass0();
+        return this;
+    }
+
+    @Override
     RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(VolatilePrefilledRingBuffer.class);
+                    }
                     return new VolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
+                    }
                     return new AtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
+                    }
                     return new AtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
+                    }
                     return new ConcurrentPrefilledRingBuffer<>(this);
                 }
         }

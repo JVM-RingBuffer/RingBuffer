@@ -19,6 +19,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
         writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
         readBusyWaitStrategy = builder.readBusyWaitStrategy;
         memoryOrder = builder.memoryOrder;
+        copyClass = builder.copyClass;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer.system;
 
-import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.concurrent.AtomicInt;
+import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Ensure;
 
 import java.util.function.IntUnaryOperator;

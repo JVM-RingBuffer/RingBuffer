@@ -1,6 +1,7 @@
 package eu.menzani.ringbuffer.builder;
 
 import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.classcopy.CopiedClass;
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
@@ -15,6 +16,8 @@ abstract class RingBufferBuilder<T> {
     BusyWaitStrategy writeBusyWaitStrategy;
     BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
     MemoryOrder memoryOrder = MemoryOrder.LAZY;
+    boolean copyClass;
+    // All fields are copied in AbstractPrefilledRingBufferBuilder.<init>(AbstractPrefilledRingBufferBuilder<T>)
 
     RingBufferBuilder(int capacity) {
         Assume.notLesser(capacity, 2);
@@ -76,6 +79,12 @@ abstract class RingBufferBuilder<T> {
         this.memoryOrder = memoryOrder;
     }
 
+    public abstract RingBufferBuilder<T> copyClass();
+
+    void copyClass0() {
+        copyClass = true;
+    }
+
     RingBuffer<T> build() {
         if (oneReader == null && oneWriter == null) {
             throw new IllegalStateException("You must call either oneReader() or manyReaders(), and oneWriter() or manyWriters().");
@@ -102,6 +111,12 @@ abstract class RingBufferBuilder<T> {
     }
 
     abstract RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type);
+
+    RingBuffer<T> instantiateCopy(Class<?> ringBufferClass) {
+        return new CopiedClass<RingBuffer<T>>(ringBufferClass)
+                .getConstructor(getClass())
+                .call(this);
+    }
 
     public int getCapacity() {
         return capacity;
