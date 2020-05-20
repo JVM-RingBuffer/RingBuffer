@@ -6,7 +6,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-public class AtomicReadDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
+class AtomicReadDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -17,7 +17,7 @@ public class AtomicReadDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    public AtomicReadDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
+    AtomicReadDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

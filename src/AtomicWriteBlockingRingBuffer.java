@@ -6,7 +6,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-public class AtomicWriteBlockingRingBuffer<T> implements EmptyRingBuffer<T> {
+class AtomicWriteBlockingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -18,7 +18,7 @@ public class AtomicWriteBlockingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    public AtomicWriteBlockingRingBuffer(EmptyRingBufferBuilder<T> builder) {
+    AtomicWriteBlockingRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

@@ -6,7 +6,7 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-public class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
+class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -19,7 +19,7 @@ public class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRing
     private final Integer readPosition;
     private final Integer writePosition;
 
-    public ConcurrentDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    ConcurrentDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

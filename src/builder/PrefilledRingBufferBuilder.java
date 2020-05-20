@@ -1,8 +1,11 @@
 package eu.menzani.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.*;
+import eu.menzani.ringbuffer.PrefilledRingBuffer;
+import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+
+import static eu.menzani.ringbuffer.BuilderProxy.*;
 
 public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
     PrefilledRingBufferBuilder(OverwritingPrefilledRingBufferBuilder<T> builder) {
@@ -73,53 +76,53 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
                 switch (type) {
                     case BLOCKING:
                         if (copyClass) {
-                            return instantiateCopy(VolatileBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(volatileBlockingPrefilledRingBuffer());
                         }
-                        return new VolatileBlockingPrefilledRingBuffer<>(this);
+                        return volatileBlockingPrefilledRingBuffer(this);
                     case DISCARDING:
                         if (copyClass) {
-                            return instantiateCopy(VolatileDiscardingPrefilledRingBuffer.class);
+                            return instantiateCopy(volatileDiscardingPrefilledRingBuffer());
                         }
-                        return new VolatileDiscardingPrefilledRingBuffer<>(this);
+                        return volatileDiscardingPrefilledRingBuffer(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
                     case BLOCKING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicReadBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(atomicReadBlockingPrefilledRingBuffer());
                         }
-                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
+                        return atomicReadBlockingPrefilledRingBuffer(this);
                     case DISCARDING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicReadDiscardingPrefilledRingBuffer.class);
+                            return instantiateCopy(atomicReadDiscardingPrefilledRingBuffer());
                         }
-                        return new AtomicReadDiscardingPrefilledRingBuffer<>(this);
+                        return atomicReadDiscardingPrefilledRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
                     case BLOCKING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicWriteBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(atomicWriteBlockingPrefilledRingBuffer());
                         }
-                        return new AtomicWriteBlockingPrefilledRingBuffer<>(this);
+                        return atomicWriteBlockingPrefilledRingBuffer(this);
                     case DISCARDING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicWriteDiscardingPrefilledRingBuffer.class);
+                            return instantiateCopy(atomicWriteDiscardingPrefilledRingBuffer());
                         }
-                        return new AtomicWriteDiscardingPrefilledRingBuffer<>(this);
+                        return atomicWriteDiscardingPrefilledRingBuffer(this);
                 }
             case CONCURRENT:
                 switch (type) {
                     case BLOCKING:
                         if (copyClass) {
-                            return instantiateCopy(ConcurrentBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(concurrentBlockingPrefilledRingBuffer());
                         }
-                        return new ConcurrentBlockingPrefilledRingBuffer<>(this);
+                        return concurrentBlockingPrefilledRingBuffer(this);
                     case DISCARDING:
                         if (copyClass) {
-                            return instantiateCopy(ConcurrentDiscardingPrefilledRingBuffer.class);
+                            return instantiateCopy(concurrentDiscardingPrefilledRingBuffer());
                         }
-                        return new ConcurrentDiscardingPrefilledRingBuffer<>(this);
+                        return concurrentDiscardingPrefilledRingBuffer(this);
                 }
         }
         throw new AssertionError();

@@ -1,12 +1,11 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.*;
 import org.junit.jupiter.api.Test;
 import test.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RingBufferBuilderCreateTest {
+class RingBufferBuilderTest {
     @Test
     void testClasses() {
         expectClass(ConcurrentBlockingGCRingBuffer.class, ManyToManyBlockingTest.RING_BUFFER);
