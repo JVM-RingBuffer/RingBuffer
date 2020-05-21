@@ -17,7 +17,7 @@ public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcesso
     @Override
     long testSum() {
         Writer.runGroupAsync(PRODUCERS_RING_BUFFER);
-        Processor.runAsync();
+        Processor.runAsync(PRODUCERS_RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
     }
 }

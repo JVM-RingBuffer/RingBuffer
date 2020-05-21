@@ -38,7 +38,7 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
     @Override
     long testSum() {
         Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
-        Processor.startAsync();
+        Processor.startAsync(PRODUCERS_RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
     }
 }

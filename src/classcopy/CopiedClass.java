@@ -2,7 +2,6 @@ package eu.menzani.ringbuffer.classcopy;
 
 import eu.menzani.ringbuffer.concurrent.AtomicInt;
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 import java.lang.invoke.MethodHandles;
@@ -22,7 +21,7 @@ import java.lang.reflect.Modifier;
  * @param <T> a superclass or superinterface used to represent the object
  */
 public class CopiedClass<T> {
-    private static final ByteBuddy byteBuddy = new ByteBuddy(ClassFileVersion.JAVA_V11);
+    private static final ByteBuddy byteBuddy = new ByteBuddy();
     private static final AtomicInt ids = new AtomicInt(1);
 
     private final Class<T> clazz;
