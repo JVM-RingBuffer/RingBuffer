@@ -5,7 +5,8 @@ import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledOneToOneTest extends RingBufferTest {
     public static final OverwritingPrefilledRingBuffer<Event> RING_BUFFER =
-            PrefilledRingBuffer.withCapacityAndFiller(ONE_TO_ONE_SIZE, FILLER)
+            PrefilledRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
+                    .fillWith(FILLER)
                     .oneReader()
                     .oneWriter()
                     .build();

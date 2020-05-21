@@ -4,7 +4,8 @@ import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledOneToOneBlockingTest extends RingBufferTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =
-            PrefilledRingBuffer.withCapacityAndFiller(BLOCKING_SIZE, FILLER)
+            PrefilledRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
+                    .fillWith(FILLER)
                     .oneReader()
                     .oneWriter()
                     .blocking()

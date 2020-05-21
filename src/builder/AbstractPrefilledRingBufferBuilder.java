@@ -3,16 +3,15 @@ package eu.menzani.ringbuffer.builder;
 import java.util.function.Supplier;
 
 abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T> {
-    private final Supplier<? extends T> filler;
+    private Supplier<? extends T> filler;
+    // All fields are copied in <init>(AbstractPrefilledRingBufferBuilder<T>)
 
-    AbstractPrefilledRingBufferBuilder(int capacity, Supplier<? extends T> filler) {
+    AbstractPrefilledRingBufferBuilder(int capacity) {
         super(capacity);
-        this.filler = filler;
     }
 
     AbstractPrefilledRingBufferBuilder(AbstractPrefilledRingBufferBuilder<T> builder) {
         super(builder.capacity);
-        filler = builder.filler;
         oneWriter = builder.oneWriter;
         oneReader = builder.oneReader;
         type = builder.type;
@@ -20,6 +19,21 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
         readBusyWaitStrategy = builder.readBusyWaitStrategy;
         memoryOrder = builder.memoryOrder;
         copyClass = builder.copyClass;
+        filler = builder.filler;
+    }
+
+    public abstract AbstractPrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler);
+
+    void fillWith0(Supplier<? extends T> filler) {
+        this.filler = filler;
+    }
+
+    @Override
+    void validate() {
+        super.validate();
+        if (filler == null) {
+            throw new IllegalStateException("The filler was not set.");
+        }
     }
 
     @Override

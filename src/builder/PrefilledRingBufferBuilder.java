@@ -5,11 +5,19 @@ import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import java.util.function.Supplier;
+
 import static eu.menzani.ringbuffer.BuilderProxy.*;
 
 public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
     PrefilledRingBufferBuilder(OverwritingPrefilledRingBufferBuilder<T> builder) {
         super(builder);
+    }
+
+    @Override
+    public PrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler) {
+        super.fillWith0(filler);
+        return this;
     }
 
     @Override

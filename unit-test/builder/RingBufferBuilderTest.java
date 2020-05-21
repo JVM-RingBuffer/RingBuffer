@@ -14,6 +14,14 @@ class RingBufferBuilderTest {
     }
 
     @Test
+    void testFillerNotSet() {
+        AbstractPrefilledRingBufferBuilder<?> builder = new OverwritingPrefilledRingBufferBuilder<>(2);
+        builder.oneReader();
+        builder.oneWriter();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
     void testConcurrencyNotSet() {
         builder.blocking();
         assertThrows(IllegalStateException.class, builder::build);

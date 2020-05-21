@@ -7,7 +7,8 @@ EmptyRingBuffer<Integer> producersToProcessor =
                 .withGC()
                 .build();
 OverwritingPrefilledRingBuffer<Event> processorToConsumers =
-        PrefilledRingBuffer.withCapacityAndFiller(300 + 1, Event::new)
+        PrefilledRingBuffer.<Event>withCapacity(300 + 1)
+                .fillWith(Event::new)
                 .oneWriter()
                 .manyReaders()
                 .waitingWith(YieldBusyWaitStrategy.getDefault())

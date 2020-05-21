@@ -86,15 +86,8 @@ abstract class RingBufferBuilder<T> {
     }
 
     RingBuffer<T> build() {
-        if (oneReader == null && oneWriter == null) {
-            throw new IllegalStateException("You must call either oneReader() or manyReaders(), and oneWriter() or manyWriters().");
-        }
-        if (oneReader == null) {
-            throw new IllegalStateException("You must call either oneReader() or manyReaders().");
-        }
-        if (oneWriter == null) {
-            throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
-        }
+        validate();
+
         RingBufferConcurrency concurrency;
         if (oneReader) {
             if (oneWriter) {
@@ -108,6 +101,18 @@ abstract class RingBufferBuilder<T> {
             concurrency = RingBufferConcurrency.CONCURRENT;
         }
         return create(concurrency, type);
+    }
+
+    void validate() {
+        if (oneReader == null && oneWriter == null) {
+            throw new IllegalStateException("You must call either oneReader() or manyReaders(), and oneWriter() or manyWriters().");
+        }
+        if (oneReader == null) {
+            throw new IllegalStateException("You must call either oneReader() or manyReaders().");
+        }
+        if (oneWriter == null) {
+            throw new IllegalStateException("You must call either oneWriter() or manyWriters().");
+        }
     }
 
     abstract RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type);

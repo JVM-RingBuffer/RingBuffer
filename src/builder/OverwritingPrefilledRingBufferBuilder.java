@@ -10,8 +10,14 @@ import java.util.function.Supplier;
 import static eu.menzani.ringbuffer.BuilderProxy.*;
 
 public class OverwritingPrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    public OverwritingPrefilledRingBufferBuilder(int capacity, Supplier<? extends T> filler) {
-        super(capacity, filler);
+    public OverwritingPrefilledRingBufferBuilder(int capacity) {
+        super(capacity);
+    }
+
+    @Override
+    public OverwritingPrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler) {
+        super.fillWith0(filler);
+        return this;
     }
 
     @Override

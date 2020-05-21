@@ -1,2 +1,2 @@
 Java 11
-     ^ when changed update: CopiedClass.java, line 25, column 79
+     ^ when changed update: CopiedClass.java

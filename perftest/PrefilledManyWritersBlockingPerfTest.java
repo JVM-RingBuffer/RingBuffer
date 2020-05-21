@@ -4,7 +4,8 @@ import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledManyWritersBlockingPerfTest extends PrefilledManyWritersBlockingTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =
-            PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
+            PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .fillWith(FILLER)
                     .oneReader()
                     .manyWriters()
                     .blocking()

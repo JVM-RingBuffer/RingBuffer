@@ -14,7 +14,8 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
                     .withGC()
                     .build();
     public static final OverwritingPrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
-            PrefilledRingBuffer.withCapacityAndFiller(NOT_ONE_TO_ONE_SIZE, FILLER)
+            PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .fillWith(FILLER)
                     .oneWriter()
                     .manyReaders()
                     .waitingWith(YieldBusyWaitStrategy.getDefault())

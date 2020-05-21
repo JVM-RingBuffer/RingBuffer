@@ -28,7 +28,7 @@ public class CopiedClass<T> {
     private final Class<T> clazz;
 
     /**
-     * To be used for classes outside the package of the class performing the copy.
+     * Uses deep reflection.
      */
     public CopiedClass(Class<?> clazz) {
         this(clazz, getLookup(clazz));
