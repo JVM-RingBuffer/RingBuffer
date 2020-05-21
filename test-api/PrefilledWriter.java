@@ -44,7 +44,7 @@ class PrefilledWriter extends TestThread {
             int key = ringBuffer.nextKey();
             int putKey = ringBuffer.nextPutKey(key);
             ringBuffer.next(key, putKey).setData(numIterations);
-            ringBuffer.put(key);
+            ringBuffer.put(putKey);
         }
     }
 }

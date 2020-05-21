@@ -79,6 +79,9 @@ abstract class RingBufferBuilder<T> {
         this.memoryOrder = memoryOrder;
     }
 
+    /**
+     * A copy of the underlying implementation will be instantiated to allow inlining of polymorphic calls.
+     */
     public abstract RingBufferBuilder<T> copyClass();
 
     void copyClass0() {
