@@ -7,7 +7,7 @@ class PrefilledManyReadersBatchPerfTest extends PrefilledManyReadersPerfTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        PrefilledOverwritingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }
 }

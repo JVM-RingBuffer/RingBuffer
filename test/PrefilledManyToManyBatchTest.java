@@ -7,7 +7,7 @@ class PrefilledManyToManyBatchTest extends PrefilledManyToManyTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter.startGroupAsync(RING_BUFFER);
+        PrefilledOverwritingWriter.startGroupAsync(RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }
 }

@@ -1,7 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
-import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
+import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.system.ThreadSpreader;
@@ -74,8 +74,8 @@ abstract class TestThread extends Thread {
         return (EmptyRingBuffer<Event>) ringBuffer;
     }
 
-    OverwritingPrefilledRingBuffer<Event> getOverwritingPrefilledRingBuffer() {
-        return (OverwritingPrefilledRingBuffer<Event>) ringBuffer;
+    PrefilledOverwritingRingBuffer<Event> getPrefilledOverwritingRingBuffer() {
+        return (PrefilledOverwritingRingBuffer<Event>) ringBuffer;
     }
 
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {

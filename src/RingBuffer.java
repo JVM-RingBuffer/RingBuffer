@@ -6,9 +6,7 @@ import java.util.function.Consumer;
  * The {@code null} element may be used if the {@link #contains(Object) contains(T)} and {@link #toString()}
  * methods are never called.
  */
-public interface RingBuffer<T> {
-    int getCapacity();
-
+public interface RingBuffer<T> extends AbstractRingBuffer {
     /**
      * If the ring buffer supports multiple readers and is blocking and pre-filled, then after the returned
      * object has been read, {@link #advance()} must be called.
@@ -80,11 +78,6 @@ public interface RingBuffer<T> {
      * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
      * and is not blocking nor discarding, then this method can only be called from the reader thread.
      */
-    boolean isEmpty();
-
-    /**
-     * If the ring buffer supports one reader and multiple writers, or multiple readers and one writer,
-     * and is not blocking nor discarding, then this method can only be called from the reader thread.
-     */
+    @Override
     String toString();
 }

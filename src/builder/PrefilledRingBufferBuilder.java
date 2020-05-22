@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import static eu.menzani.ringbuffer.BuilderProxy.*;
 
 public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    PrefilledRingBufferBuilder(OverwritingPrefilledRingBufferBuilder<T> builder) {
+    PrefilledRingBufferBuilder(PrefilledOverwritingRingBufferBuilder<T> builder) {
         super(builder);
     }
 
@@ -45,17 +45,17 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    protected RingBufferBuilder<T> blocking() {
+    AbstractRingBufferBuilder<?> blocking() {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<T> blocking(BusyWaitStrategy busyWaitStrategy) {
+    AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<T> discarding() {
+    RingBufferBuilder<?> discarding() {
         throw new AssertionError();
     }
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RingBufferBuilderTest {
-    private RingBufferBuilder<?> builder;
+    private AbstractRingBufferBuilder<?> builder;
 
     @BeforeEach
     void setUp() {
@@ -15,7 +15,7 @@ class RingBufferBuilderTest {
 
     @Test
     void testFillerNotSet() {
-        AbstractPrefilledRingBufferBuilder<?> builder = new OverwritingPrefilledRingBufferBuilder<>(2);
+        AbstractRingBufferBuilder<?> builder = new PrefilledOverwritingRingBufferBuilder<>(2);
         builder.oneReader();
         builder.oneWriter();
         assertThrows(IllegalStateException.class, builder::build);

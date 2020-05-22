@@ -7,7 +7,7 @@ class PrefilledManyReadersPerfTest extends PrefilledManyReadersTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        PrefilledOverwritingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }
 }

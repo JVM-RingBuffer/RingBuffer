@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer;
 
 import eu.menzani.ringbuffer.builder.EmptyRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.OverwritingPrefilledRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.PrefilledOverwritingRingBufferBuilder;
 import eu.menzani.ringbuffer.builder.PrefilledRingBufferBuilder;
 
 public class BuilderProxy {
@@ -61,7 +61,7 @@ public class BuilderProxy {
         return AtomicReadGCRingBuffer.class;
     }
 
-    public static <T> AtomicReadPrefilledRingBuffer<T> atomicReadPrefilledRingBuffer(OverwritingPrefilledRingBufferBuilder<T> builder) {
+    public static <T> AtomicReadPrefilledRingBuffer<T> atomicReadPrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
         return new AtomicReadPrefilledRingBuffer<>(builder);
     }
 
@@ -133,7 +133,7 @@ public class BuilderProxy {
         return AtomicWriteGCRingBuffer.class;
     }
 
-    public static <T> AtomicWritePrefilledRingBuffer<T> atomicWritePrefilledRingBuffer(OverwritingPrefilledRingBufferBuilder<T> builder) {
+    public static <T> AtomicWritePrefilledRingBuffer<T> atomicWritePrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
         return new AtomicWritePrefilledRingBuffer<>(builder);
     }
 
@@ -205,7 +205,7 @@ public class BuilderProxy {
         return ConcurrentGCRingBuffer.class;
     }
 
-    public static <T> ConcurrentPrefilledRingBuffer<T> concurrentPrefilledRingBuffer(OverwritingPrefilledRingBufferBuilder<T> builder) {
+    public static <T> ConcurrentPrefilledRingBuffer<T> concurrentPrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
         return new ConcurrentPrefilledRingBuffer<>(builder);
     }
 
@@ -277,7 +277,7 @@ public class BuilderProxy {
         return VolatileGCRingBuffer.class;
     }
 
-    public static <T> VolatilePrefilledRingBuffer<T> volatilePrefilledRingBuffer(OverwritingPrefilledRingBufferBuilder<T> builder) {
+    public static <T> VolatilePrefilledRingBuffer<T> volatilePrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
         return new VolatilePrefilledRingBuffer<>(builder);
     }
 

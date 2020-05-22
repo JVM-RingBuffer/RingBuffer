@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer;
 
-import eu.menzani.ringbuffer.builder.OverwritingPrefilledRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.PrefilledOverwritingRingBufferBuilder;
 
 /**
  * <pre>{@code
@@ -22,7 +22,7 @@ public interface PrefilledRingBuffer<T> extends RingBuffer<T> {
 
     void put(int putKey);
 
-    static <T> OverwritingPrefilledRingBufferBuilder<T> withCapacity(int capacity) {
-        return new OverwritingPrefilledRingBufferBuilder<>(capacity);
+    static <T> PrefilledOverwritingRingBufferBuilder<T> withCapacity(int capacity) {
+        return new PrefilledOverwritingRingBufferBuilder<>(capacity);
     }
 }

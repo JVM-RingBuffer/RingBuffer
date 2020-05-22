@@ -1,7 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.EmptyRingBuffer;
-import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
+import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
 
@@ -13,7 +13,7 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
                     .blocking()
                     .withGC()
                     .build();
-    public static final OverwritingPrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
+    public static final PrefilledOverwritingRingBuffer<Event> CONSUMERS_RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneWriter()

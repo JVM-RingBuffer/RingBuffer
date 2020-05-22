@@ -1,10 +1,10 @@
 package test;
 
-import eu.menzani.ringbuffer.OverwritingPrefilledRingBuffer;
+import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.PrefilledRingBuffer;
 
 public class PrefilledOneToOneTest extends RingBufferTest {
-    public static final OverwritingPrefilledRingBuffer<Event> RING_BUFFER =
+    public static final PrefilledOverwritingRingBuffer<Event> RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneReader()
@@ -27,7 +27,7 @@ public class PrefilledOneToOneTest extends RingBufferTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
+        PrefilledOverwritingWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

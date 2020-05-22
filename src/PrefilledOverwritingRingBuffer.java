@@ -10,7 +10,7 @@ package eu.menzani.ringbuffer;
  * <p>
  * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
  */
-public interface OverwritingPrefilledRingBuffer<T> extends RingBuffer<T> {
+public interface PrefilledOverwritingRingBuffer<T> extends RingBuffer<T> {
     int nextKey();
 
     T next(int key);

@@ -7,7 +7,7 @@ class PrefilledOneToOnePerfTest extends PrefilledOneToOneTest {
 
     @Override
     long testSum() {
-        OverwritingPrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        PrefilledOverwritingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }
 }

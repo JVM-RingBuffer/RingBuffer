@@ -6,7 +6,7 @@ EmptyRingBuffer<Integer> producersToProcessor =
                 .blocking()
                 .withGC()
                 .build();
-OverwritingPrefilledRingBuffer<Event> processorToConsumers =
+PrefilledOverwritingRingBuffer<Event> processorToConsumers =
         PrefilledRingBuffer.<Event>withCapacity(300 + 1)
                 .fillWith(Event::new)
                 .oneWriter()
