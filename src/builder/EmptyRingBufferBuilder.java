@@ -1,11 +1,11 @@
 package eu.menzani.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.EmptyRingBuffer;
-import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
+import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
-import static eu.menzani.ringbuffer.BuilderProxy.*;
+import static eu.menzani.ringbuffer.object.BuilderProxy.*;
 
 public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     private boolean gcEnabled;

@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.PrefilledRingBuffer;
+import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
 
 public class PrefilledManyToManyBlockingTest extends RingBufferTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =

@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 
 public class ProducersToProcessorToConsumersPerfTest extends ProducersToProcessorToConsumersTest {
     public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =

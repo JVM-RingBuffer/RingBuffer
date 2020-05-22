@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.java.Int;
 
 class BatchReader extends Reader {

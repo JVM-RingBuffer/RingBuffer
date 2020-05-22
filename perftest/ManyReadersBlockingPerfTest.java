@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.EmptyRingBuffer;
+import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 
 public class ManyReadersBlockingPerfTest extends ManyReadersBlockingTest {
     public static final EmptyRingBuffer<Event> RING_BUFFER =

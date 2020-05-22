@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.object.RingBuffer;
 
 abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer<T>> {
     RingBufferBuilder(int capacity) {

@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
+import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 
 class PrefilledOverwritingWriter extends TestThread {
     static TestThreadGroup startGroupAsync(PrefilledOverwritingRingBuffer<Event> ringBuffer) {

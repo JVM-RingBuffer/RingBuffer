@@ -1,9 +1,9 @@
 package test;
 
-import eu.menzani.ringbuffer.EmptyRingBuffer;
-import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.PrefilledRingBuffer;
-import eu.menzani.ringbuffer.RingBuffer;
+import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
+import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.system.ThreadSpreader;
 import eu.menzani.ringbuffer.system.Threads;
 

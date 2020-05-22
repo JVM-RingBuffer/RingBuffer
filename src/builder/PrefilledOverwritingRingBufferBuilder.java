@@ -1,13 +1,13 @@
 package eu.menzani.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.RingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
+import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
 
-import static eu.menzani.ringbuffer.BuilderProxy.*;
+import static eu.menzani.ringbuffer.object.BuilderProxy.*;
 
 public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
     public PrefilledOverwritingRingBufferBuilder(int capacity) {

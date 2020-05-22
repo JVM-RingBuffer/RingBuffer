@@ -3,16 +3,16 @@ package eu.menzani.ringbuffer;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
-class Lock {
+public class Lock {
     private final ReentrantLock lock = new ReentrantLock();
 
-    void lock() {
+    public void lock() {
         while (!lock.tryLock()) {
             LockSupport.parkNanos(1L);
         }
     }
 
-    void unlock() {
+    public void unlock() {
         lock.unlock();
     }
 }
