@@ -5,4 +5,9 @@ class LazyMemoryOrder implements MemoryOrder {
     public Integer newInteger() {
         return new LazyInteger();
     }
+
+    @Override
+    public Long newLong() {
+        return new LazyLong();
+    }
 }

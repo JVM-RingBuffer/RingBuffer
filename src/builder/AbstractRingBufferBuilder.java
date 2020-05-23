@@ -20,6 +20,12 @@ abstract class AbstractRingBufferBuilder<T> {
     // AbstractPrefilledRingBufferBuilder.<init>(AbstractPrefilledRingBufferBuilder<T>)
     // and
     // AbstractHeapRingBufferBuilder.<init>(AbstractHeapRingBufferBuilder)
+    // and
+    // AbstractNativeRingBufferBuilder.<init>(AbstractNativeRingBufferBuilder)
+
+    AbstractRingBufferBuilder() {
+        capacity = -1;
+    }
 
     AbstractRingBufferBuilder(int capacity) {
         Assume.notLesser(capacity, 2);

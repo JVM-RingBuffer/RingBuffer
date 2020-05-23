@@ -5,4 +5,9 @@ class OpaqueMemoryOrder implements MemoryOrder {
     public Integer newInteger() {
         return new OpaqueInteger();
     }
+
+    @Override
+    public Long newLong() {
+        return new OpaqueLong();
+    }
 }

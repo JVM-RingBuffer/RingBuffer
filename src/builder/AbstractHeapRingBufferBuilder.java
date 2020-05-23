@@ -1,11 +1,11 @@
 package eu.menzani.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.java.Int;
+import eu.menzani.ringbuffer.java.Number;
 
 abstract class AbstractHeapRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
     AbstractHeapRingBufferBuilder(int capacity) {
         super(capacity);
-        if (!Int.isPowerOfTwo(capacity)) {
+        if (!Number.isPowerOfTwo(capacity)) {
             throw new IllegalArgumentException("capacity must be a power of 2.");
         }
     }

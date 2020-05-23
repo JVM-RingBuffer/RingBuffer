@@ -1,7 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.object.RingBuffer;
-import eu.menzani.ringbuffer.java.Int;
+import eu.menzani.ringbuffer.java.Number;
 
 class BatchReader extends Reader {
     static long runGroupAsync(int batchSize, RingBuffer<Event> ringBuffer) {
@@ -26,7 +26,7 @@ class BatchReader extends Reader {
     private final int batchSize;
 
     BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
-        super(Int.ceilDiv(numIterations, batchSize), ringBuffer);
+        super(Number.ceilDiv(numIterations, batchSize), ringBuffer);
         this.batchSize = batchSize;
     }
 

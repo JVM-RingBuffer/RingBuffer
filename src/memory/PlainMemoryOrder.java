@@ -5,4 +5,9 @@ class PlainMemoryOrder implements MemoryOrder {
     public Integer newInteger() {
         return new PlainInteger();
     }
+
+    @Override
+    public Long newLong() {
+        return new PlainLong();
+    }
 }

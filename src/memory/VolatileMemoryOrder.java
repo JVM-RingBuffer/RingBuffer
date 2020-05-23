@@ -5,4 +5,9 @@ class VolatileMemoryOrder implements MemoryOrder {
     public Integer newInteger() {
         return new VolatileInteger();
     }
+
+    @Override
+    public Long newLong() {
+        return new VolatileLong();
+    }
 }

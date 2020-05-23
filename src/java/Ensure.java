@@ -12,4 +12,10 @@ public class Ensure {
             throw new IllegalStateException();
         }
     }
+
+    public static void notNull(Object value) {
+        if (value == null) {
+            throw new IllegalStateException();
+        }
+    }
 }
