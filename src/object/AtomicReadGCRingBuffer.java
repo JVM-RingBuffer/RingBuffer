@@ -93,17 +93,18 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
+        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
-            forEachSplit(action, writePosition);
+            forEachSplit(action, readPosition, writePosition);
         }
     }
 
-    private void forEachSplit(Consumer<T> action, int writePosition) {
+    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
@@ -114,6 +115,7 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
+        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
@@ -123,10 +125,10 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
             }
             return false;
         }
-        return containsSplit(element, writePosition);
+        return containsSplit(element, readPosition, writePosition);
     }
 
-    private boolean containsSplit(T element, int writePosition) {
+    private boolean containsSplit(T element, int readPosition, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
@@ -142,7 +144,7 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public int size() {
-        return size(readPosition);
+        return size(getReadPosition());
     }
 
     private int size(int readPosition) {
@@ -155,17 +157,18 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(writePosition.get());
+        return isEmpty(getReadPosition(), writePosition.get());
     }
 
-    private boolean isEmpty(int writePosition) {
+    private boolean isEmpty(int readPosition, int writePosition) {
         return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
+        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
-        if (isEmpty(writePosition)) {
+        if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);
@@ -176,14 +179,14 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
                 builder.append(", ");
             }
         } else {
-            toStringSplit(builder, writePosition);
+            toStringSplit(builder, readPosition, writePosition);
         }
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
     }
 
-    private void toStringSplit(StringBuilder builder, int writePosition) {
+    private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");
@@ -192,5 +195,12 @@ class AtomicReadGCRingBuffer<T> implements EmptyRingBuffer<T> {
             builder.append(buffer[i].toString());
             builder.append(", ");
         }
+    }
+
+    private int getReadPosition() {
+        readLock.lock();
+        int readPosition = this.readPosition;
+        readLock.unlock();
+        return readPosition;
     }
 }

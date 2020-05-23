@@ -59,22 +59,26 @@ public interface RingBuffer<T> extends AbstractRingBuffer {
     void advanceBatch();
 
     /**
-     * If the ring buffer is not blocking nor discarding, then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and is not blocking nor discarding,
+     * then this method can only be called from the reader thread.
      */
     void forEach(Consumer<T> action);
 
     /**
-     * If the ring buffer is not blocking nor discarding, then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and is not blocking nor discarding,
+     * then this method can only be called from the reader thread.
      */
     boolean contains(T element);
 
     /**
-     * If the ring buffer is not blocking nor discarding, then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and is not blocking nor discarding,
+     * then this method can only be called from the reader thread.
      */
     int size();
 
     /**
-     * If the ring buffer is not blocking nor discarding, then this method can only be called from the reader thread.
+     * If the ring buffer supports one reader and is not blocking nor discarding,
+     * then this method can only be called from the reader thread.
      */
     @Override
     String toString();
