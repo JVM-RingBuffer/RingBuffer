@@ -1,26 +1,45 @@
 package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Number;
+import eu.menzani.ringbuffer.marshalling.array.ByteArray;
+import eu.menzani.ringbuffer.marshalling.array.SafeByteArray;
+import eu.menzani.ringbuffer.marshalling.array.UnsafeByteArray;
+import eu.menzani.ringbuffer.memory.Integer;
 
-abstract class AbstractHeapRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
+abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
+    private final int capacity;
+    // All fields are copied in <init>(AbstractHeapRingBufferBuilder<T>)
+
     AbstractHeapRingBufferBuilder(int capacity) {
-        super(capacity);
+        Assume.notLesser(capacity, 2);
         if (!Number.isPowerOfTwo(capacity)) {
             throw new IllegalArgumentException("capacity must be a power of 2.");
         }
+        this.capacity = capacity;
     }
 
     AbstractHeapRingBufferBuilder(AbstractHeapRingBufferBuilder<?> builder) {
-        super(builder.capacity);
-        oneWriter = builder.oneWriter;
-        oneReader = builder.oneReader;
-        writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
-        readBusyWaitStrategy = builder.readBusyWaitStrategy;
-        memoryOrder = builder.memoryOrder;
-        copyClass = builder.copyClass;
+        super(builder);
+        capacity = builder.capacity;
     }
 
-    public byte[] getBuffer() {
-        return new byte[capacity];
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getCapacityMinusOne() {
+        return capacity - 1;
+    }
+
+    public ByteArray getBuffer() {
+        if (unsafe) {
+            return new UnsafeByteArray(capacity);
+        }
+        return new SafeByteArray(capacity);
+    }
+
+    public Integer newCursor() {
+        return memoryOrder.newInteger();
     }
 }

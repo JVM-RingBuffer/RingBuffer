@@ -1,7 +1,7 @@
 package test;
 
-import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.java.Number;
+import eu.menzani.ringbuffer.object.RingBuffer;
 
 class BatchReader extends Reader {
     static long runGroupAsync(int batchSize, RingBuffer<Event> ringBuffer) {

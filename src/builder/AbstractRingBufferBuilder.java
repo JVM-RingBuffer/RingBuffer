@@ -1,35 +1,30 @@
 package eu.menzani.ringbuffer.builder;
 
 import eu.menzani.ringbuffer.classcopy.CopiedClass;
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 abstract class AbstractRingBufferBuilder<T> {
-    final int capacity;
     Boolean oneWriter;
     Boolean oneReader;
-    transient RingBufferType type = RingBufferType.OVERWRITING;
+    RingBufferType type = RingBufferType.OVERWRITING;
     BusyWaitStrategy writeBusyWaitStrategy;
     BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
     MemoryOrder memoryOrder = MemoryOrder.LAZY;
     boolean copyClass;
-    // All non-transient fields are copied in
-    // AbstractPrefilledRingBufferBuilder.<init>(AbstractPrefilledRingBufferBuilder<T>)
-    // and
-    // AbstractHeapRingBufferBuilder.<init>(AbstractHeapRingBufferBuilder)
-    // and
-    // AbstractNativeRingBufferBuilder.<init>(AbstractNativeRingBufferBuilder)
+    // All fields are copied in <init>(AbstractRingBufferBuilder<T>)
 
-    AbstractRingBufferBuilder() {
-        capacity = -1;
-    }
+    AbstractRingBufferBuilder() {}
 
-    AbstractRingBufferBuilder(int capacity) {
-        Assume.notLesser(capacity, 2);
-        this.capacity = capacity;
+    AbstractRingBufferBuilder(AbstractRingBufferBuilder<?> builder) {
+        oneWriter = builder.oneWriter;
+        oneReader = builder.oneReader;
+        type = builder.type;
+        writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
+        readBusyWaitStrategy = builder.readBusyWaitStrategy;
+        memoryOrder = builder.memoryOrder;
+        copyClass = builder.copyClass;
     }
 
     public abstract AbstractRingBufferBuilder<T> oneWriter();
@@ -128,23 +123,11 @@ abstract class AbstractRingBufferBuilder<T> {
                 .call(this);
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public int getCapacityMinusOne() {
-        return capacity - 1;
-    }
-
     public BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;
     }
 
     public BusyWaitStrategy getReadBusyWaitStrategy() {
         return readBusyWaitStrategy;
-    }
-
-    public Integer newCursor() {
-        return memoryOrder.newInteger();
     }
 }

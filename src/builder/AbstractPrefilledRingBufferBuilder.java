@@ -11,13 +11,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     }
 
     AbstractPrefilledRingBufferBuilder(AbstractPrefilledRingBufferBuilder<T> builder) {
-        super(builder.capacity);
-        oneWriter = builder.oneWriter;
-        oneReader = builder.oneReader;
-        writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
-        readBusyWaitStrategy = builder.readBusyWaitStrategy;
-        memoryOrder = builder.memoryOrder;
-        copyClass = builder.copyClass;
+        super(builder);
         filler = builder.filler;
     }
 

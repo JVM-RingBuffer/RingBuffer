@@ -1,4 +1,6 @@
-package eu.menzani.ringbuffer.marshalling;
+package eu.menzani.ringbuffer.marshalling.array;
+
+import eu.menzani.ringbuffer.java.Assume;
 
 import static eu.menzani.ringbuffer.system.Unsafe.*;
 
@@ -6,7 +8,8 @@ public class UnsafeNativeByteArray implements NativeByteArray {
     private final long address;
 
     public UnsafeNativeByteArray(long length) {
-        address = UNSAFE.allocateMemory(length);
+        Assume.notGreater(length, Long.MAX_VALUE - 8L);
+        address = UNSAFE.allocateMemory(length + 8L);
     }
 
     @Override

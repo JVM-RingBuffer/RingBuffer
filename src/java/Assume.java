@@ -25,6 +25,12 @@ public class Assume {
         }
     }
 
+    public static void notGreater(long value, long cap) {
+        if (value > cap) {
+            throw new IllegalArgumentException(value + " > " + cap);
+        }
+    }
+
     public static void notNegative(int value) {
         if (value < 0) {
             throw new IllegalArgumentException(value + " < 0");

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling;
+package eu.menzani.ringbuffer.marshalling.array;
 
 public interface NativeByteArray {
     void putByte(long index, byte value);

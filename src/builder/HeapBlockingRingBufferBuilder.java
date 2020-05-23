@@ -64,6 +64,12 @@ public class HeapBlockingRingBufferBuilder extends AbstractHeapRingBufferBuilder
     }
 
     @Override
+    public HeapBlockingRingBufferBuilder unsafe() {
+        super.unsafe0();
+        return this;
+    }
+
+    @Override
     HeapBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         if (copyClass) {
             return instantiateCopy(volatileHeapBlockingRingBuffer());

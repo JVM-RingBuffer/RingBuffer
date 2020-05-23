@@ -68,18 +68,6 @@ public class NativeBlockingRingBufferBuilder extends AbstractNativeRingBufferBui
     }
 
     @Override
-    public NativeBlockingRingBufferBuilder asserting() {
-        super.asserting0();
-        return this;
-    }
-
-    @Override
-    public NativeBlockingRingBufferBuilder notReporting() {
-        super.notReporting0();
-        return this;
-    }
-
-    @Override
     NativeBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         if (copyClass) {
             return instantiateCopy(null);

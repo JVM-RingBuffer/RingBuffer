@@ -1,15 +1,14 @@
 package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.builder.HeapBlockingRingBufferBuilder;
+import eu.menzani.ringbuffer.marshalling.array.ByteArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.marshalling.Marshaller.*;
 
 class VolatileHeapBlockingRingBuffer implements HeapBlockingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
-    private final byte[] buffer;
+    private final ByteArray buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -51,42 +50,42 @@ class VolatileHeapBlockingRingBuffer implements HeapBlockingRingBuffer {
 
     @Override
     public void writeByte(int offset, byte value) {
-        serializeByte(buffer, capacityMinusOne, offset, value);
+        buffer.putByte(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeChar(int offset, char value) {
-        serializeChar(buffer, capacityMinusOne, offset, value);
+        buffer.putChar(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeShort(int offset, short value) {
-        serializeShort(buffer, capacityMinusOne, offset, value);
+        buffer.putShort(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeInt(int offset, int value) {
-        serializeInt(buffer, capacityMinusOne, offset, value);
+        buffer.putInt(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeLong(int offset, long value) {
-        serializeLong(buffer, capacityMinusOne, offset, value);
+        buffer.putLong(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeBoolean(int offset, boolean value) {
-        serializeBoolean(buffer, capacityMinusOne, offset, value);
+        buffer.putBoolean(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeFloat(int offset, float value) {
-        serializeFloat(buffer, capacityMinusOne, offset, value);
+        buffer.putFloat(offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeDouble(int offset, double value) {
-        serializeDouble(buffer, capacityMinusOne, offset, value);
+        buffer.putDouble(offset & capacityMinusOne, value);
     }
 
     @Override
@@ -106,42 +105,42 @@ class VolatileHeapBlockingRingBuffer implements HeapBlockingRingBuffer {
 
     @Override
     public byte readByte(int offset) {
-        return deserializeByte(buffer, capacityMinusOne, offset);
+        return buffer.getByte(offset & capacityMinusOne);
     }
 
     @Override
     public char readChar(int offset) {
-        return deserializeChar(buffer, capacityMinusOne, offset);
+        return buffer.getChar(offset & capacityMinusOne);
     }
 
     @Override
     public short readShort(int offset) {
-        return deserializeShort(buffer, capacityMinusOne, offset);
+        return buffer.getShort(offset & capacityMinusOne);
     }
 
     @Override
     public int readInt(int offset) {
-        return deserializeInt(buffer, capacityMinusOne, offset);
+        return buffer.getInt(offset & capacityMinusOne);
     }
 
     @Override
     public long readLong(int offset) {
-        return deserializeLong(buffer, capacityMinusOne, offset);
+        return buffer.getLong(offset & capacityMinusOne);
     }
 
     @Override
     public boolean readBoolean(int offset) {
-        return deserializeBoolean(buffer, capacityMinusOne, offset);
+        return buffer.getBoolean(offset & capacityMinusOne);
     }
 
     @Override
     public float readFloat(int offset) {
-        return deserializeFloat(buffer, capacityMinusOne, offset);
+        return buffer.getFloat(offset & capacityMinusOne);
     }
 
     @Override
     public double readDouble(int offset) {
-        return deserializeDouble(buffer, capacityMinusOne, offset);
+        return buffer.getDouble(offset & capacityMinusOne);
     }
 
     @Override

@@ -1,16 +1,16 @@
-package eu.menzani.ringbuffer.marshalling;
+package eu.menzani.ringbuffer.marshalling.array;
 
 public class SafeNativeByteArray extends UnsafeNativeByteArray {
-    final long length;
+    private final long length;
 
     public SafeNativeByteArray(long length) {
         super(length);
         this.length = length;
     }
 
-    void checkBounds(long index) {
+    private void checkBounds(long index) {
         if (index < 0L || index >= length) {
-            throw new NativeByteArrayIndexOutOfBoundsException();
+            throw new NativeByteArrayIndexOutOfBoundsException(index);
         }
     }
 
