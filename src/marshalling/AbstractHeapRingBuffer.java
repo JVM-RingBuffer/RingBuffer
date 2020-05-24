@@ -3,6 +3,8 @@ package eu.menzani.ringbuffer.marshalling;
 import eu.menzani.ringbuffer.AbstractRingBuffer;
 
 interface AbstractHeapRingBuffer extends AbstractRingBuffer {
+    int getCapacity();
+
     void writeByte(int offset, byte value);
 
     void writeChar(int offset, char value);

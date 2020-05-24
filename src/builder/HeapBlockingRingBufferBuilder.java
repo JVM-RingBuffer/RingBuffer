@@ -71,9 +71,36 @@ public class HeapBlockingRingBufferBuilder extends AbstractHeapRingBufferBuilder
 
     @Override
     HeapBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        if (copyClass) {
-            return instantiateCopy(volatileHeapBlockingRingBuffer());
+        switch (concurrency) {
+            case VOLATILE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(volatileHeapBlockingRingBuffer());
+                    }
+                    return volatileHeapBlockingRingBuffer(this);
+                }
+            case ATOMIC_READ:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicReadHeapBlockingRingBuffer());
+                    }
+                    return atomicReadHeapBlockingRingBuffer(this);
+                }
+            case ATOMIC_WRITE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicWriteHeapBlockingRingBuffer());
+                    }
+                    return atomicWriteHeapBlockingRingBuffer(this);
+                }
+            case CONCURRENT:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(concurrentHeapBlockingRingBuffer());
+                    }
+                    return concurrentHeapBlockingRingBuffer(this);
+                }
         }
-        return volatileHeapBlockingRingBuffer(this);
+        throw new AssertionError();
     }
 }

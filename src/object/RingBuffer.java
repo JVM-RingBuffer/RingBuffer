@@ -9,6 +9,8 @@ import java.util.function.Consumer;
  * methods are never called.
  */
 public interface RingBuffer<T> extends AbstractRingBuffer {
+    int getCapacity();
+
     /**
      * If the ring buffer supports multiple readers and is blocking and pre-filled, then after the returned
      * object has been read, {@link #advance()} must be called.

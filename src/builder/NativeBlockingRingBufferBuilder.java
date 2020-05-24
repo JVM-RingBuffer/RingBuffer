@@ -4,6 +4,8 @@ import eu.menzani.ringbuffer.marshalling.NativeBlockingRingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import static eu.menzani.ringbuffer.marshalling.BuilderProxy.*;
+
 public class NativeBlockingRingBufferBuilder extends AbstractNativeRingBufferBuilder<NativeBlockingRingBuffer> {
     NativeBlockingRingBufferBuilder(NativeRingBufferBuilder builder) {
         super(builder);
@@ -69,9 +71,36 @@ public class NativeBlockingRingBufferBuilder extends AbstractNativeRingBufferBui
 
     @Override
     NativeBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        if (copyClass) {
-            return instantiateCopy(null);
+        switch (concurrency) {
+            case VOLATILE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(volatileNativeBlockingRingBuffer());
+                    }
+                    return volatileNativeBlockingRingBuffer(this);
+                }
+            case ATOMIC_READ:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicReadNativeBlockingRingBuffer());
+                    }
+                    return atomicReadNativeBlockingRingBuffer(this);
+                }
+            case ATOMIC_WRITE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicWriteNativeBlockingRingBuffer());
+                    }
+                    return atomicWriteNativeBlockingRingBuffer(this);
+                }
+            case CONCURRENT:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(concurrentNativeBlockingRingBuffer());
+                    }
+                    return concurrentNativeBlockingRingBuffer(this);
+                }
         }
-        return null;
+        throw new AssertionError();
     }
 }

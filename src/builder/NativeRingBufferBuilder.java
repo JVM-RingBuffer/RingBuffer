@@ -4,6 +4,8 @@ import eu.menzani.ringbuffer.marshalling.NativeRingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
+import static eu.menzani.ringbuffer.marshalling.BuilderProxy.*;
+
 public class NativeRingBufferBuilder extends AbstractNativeRingBufferBuilder<NativeRingBuffer> {
     public NativeRingBufferBuilder(long capacity) {
         super(capacity);
@@ -71,9 +73,36 @@ public class NativeRingBufferBuilder extends AbstractNativeRingBufferBuilder<Nat
 
     @Override
     NativeRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        if (copyClass) {
-            return instantiateCopy(null);
+        switch (concurrency) {
+            case VOLATILE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(volatileNativeRingBuffer());
+                    }
+                    return volatileNativeRingBuffer(this);
+                }
+            case ATOMIC_READ:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicReadNativeRingBuffer());
+                    }
+                    return atomicReadNativeRingBuffer(this);
+                }
+            case ATOMIC_WRITE:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(atomicWriteNativeRingBuffer());
+                    }
+                    return atomicWriteNativeRingBuffer(this);
+                }
+            case CONCURRENT:
+                if (type == RingBufferType.OVERWRITING) {
+                    if (copyClass) {
+                        return instantiateCopy(concurrentNativeRingBuffer());
+                    }
+                    return concurrentNativeRingBuffer(this);
+                }
         }
-        return null;
+        throw new AssertionError();
     }
 }
