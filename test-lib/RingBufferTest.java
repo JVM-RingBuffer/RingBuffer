@@ -10,10 +10,5 @@ abstract class RingBufferTest extends AbstractRingBufferTest {
     static final int BATCH_SIZE = 20;
     static final int BLOCKING_BATCH_SIZE = 4;
 
-    static final Supplier<Event> FILLER = new Supplier<>() {
-        @Override
-        public Event get() {
-            return new Event(0);
-        }
-    };
+    static final Supplier<Event> FILLER = () -> new Event(0);
 }

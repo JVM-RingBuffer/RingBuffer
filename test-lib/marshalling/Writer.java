@@ -8,12 +8,7 @@ import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Writer extends TestThread {
     static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(new Factory() {
-            @Override
-            public TestThread newInstance(int numIterations) {
-                return new Writer(numIterations, ringBuffer);
-            }
-        });
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
         group.start();
         return group;
     }

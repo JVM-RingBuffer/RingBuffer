@@ -1,3 +1,5 @@
+### Object ring buffers
+
 ```java
 EmptyRingBuffer<Integer> producersToProcessor =
         EmptyRingBuffer.<Integer>withCapacity(5)
@@ -48,4 +50,43 @@ for (int i = 0; i < 3; i++) {
     new Thread(consumer).start();
 }
 new Thread(processor).start();
+```
+
+### Native ring buffers
+
+```java
+HeapBlockingRingBuffer heapRingBuffer =
+        HeapRingBuffer.withCapacity(Number.getNextPowerOfTwo(100))
+                .oneWriter()
+                .oneReader()
+                .blocking(FailBusyWaitStrategy.writingTooSlow())
+                .unsafe()
+                .build();
+
+int offset = heapRingBuffer.next(INT + CHAR);
+heapRingBuffer.writeInt(offset, 55);
+heapRingBuffer.writeChar(offset + INT, 'x');
+heapRingBuffer.put(offset + INT + CHAR);
+
+int offset = heapRingBuffer.take(INT + CHAR);
+System.out.println(heapRingBuffer.readInt(offset));
+System.out.println(heapRingBuffer.readChar(offset + INT));
+heapRingBuffer.advance(offset + INT + CHAR);
+
+NativeRingBuffer nativeRingBuffer =
+        NativeRingBuffer.withCapacity(2048)
+                .manyWriters()
+                .manyReaders()
+                .copyClass()
+                .build();
+
+long offset = nativeRingBuffer.next();
+nativeRingBuffer.writeBoolean(offset, true); offset += BOOLEAN;
+nativeRingBuffer.writeDouble(offset, 5D); offset += DOUBLE;
+nativeRingBuffer.put(offset);
+
+long offset = nativeRingBuffer.take(BOOLEAN + DOUBLE);
+System.out.println(nativeRingBuffer.readBoolean(offset)); offset += BOOLEAN;
+System.out.println(nativeRingBuffer.readDouble(offset));
+nativeRingBuffer.advance();
 ```

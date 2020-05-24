@@ -4,12 +4,7 @@ import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 
 class PrefilledOverwritingWriter extends TestThread {
     static TestThreadGroup startGroupAsync(PrefilledOverwritingRingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(new Factory() {
-            @Override
-            public TestThread newInstance(int numIterations) {
-                return new PrefilledOverwritingWriter(numIterations, ringBuffer);
-            }
-        });
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledOverwritingWriter(numIterations, ringBuffer));
         group.start();
         return group;
     }

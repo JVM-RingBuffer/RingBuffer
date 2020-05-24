@@ -4,8 +4,6 @@ import eu.menzani.ringbuffer.concurrent.AtomicInt;
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Ensure;
 
-import java.util.function.IntUnaryOperator;
-
 public class ThreadSpreader {
     private final int firstCPU;
     private final int lastCPU;
@@ -28,12 +26,7 @@ public class ThreadSpreader {
     }
 
     int nextCPU() {
-        return nextCPU.getAndUpdate(updateFunction);
-    }
-
-    private final IntUnaryOperator updateFunction = new IntUnaryOperator() {
-        @Override
-        public int applyAsInt(int cpu) {
+        return nextCPU.getAndUpdate(cpu -> {
             if (cpu > lastCPU) {
                 throw new ThreadManipulationException("No more CPUs are available to bind to.");
             }
@@ -42,8 +35,8 @@ public class ThreadSpreader {
                 return firstCPU;
             }
             return next;
-        }
-    };
+        });
+    }
 
     public void reset() {
         nextCPU.setVolatile(firstCPU);
