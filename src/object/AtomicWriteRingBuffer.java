@@ -2,10 +2,13 @@ package eu.menzani.ringbuffer.object;
 
 import eu.menzani.ringbuffer.Lock;
 import eu.menzani.ringbuffer.builder.EmptyRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
+
+import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class AtomicWriteRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
@@ -19,11 +22,11 @@ class AtomicWriteRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer writePosition;
 
     AtomicWriteRingBuffer(EmptyRingBufferBuilder<T> builder) {
-        capacity = builder.getCapacity();
-        capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBuffer();
-        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePosition = builder.newCursor();
+        capacity = Proxy.getCapacity(builder);
+        capacityMinusOne = getCapacityMinusOne(builder);
+        buffer = getBuffer(builder);
+        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
+        writePosition = newCursor(builder);
     }
 
     @Override

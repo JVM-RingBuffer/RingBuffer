@@ -24,22 +24,22 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
         capacity = builder.capacity;
     }
 
-    public int getCapacity() {
+    int getCapacity() {
         return capacity;
     }
 
-    public int getCapacityMinusOne() {
+    int getCapacityMinusOne() {
         return capacity - 1;
     }
 
-    public ByteArray getBuffer() {
+    ByteArray getBuffer() {
         if (unsafe) {
             return new UnsafeByteArray(capacity);
         }
         return new SafeByteArray(capacity);
     }
 
-    public Integer newCursor() {
+    Integer newCursor() {
         return memoryOrder.newInteger();
     }
 }

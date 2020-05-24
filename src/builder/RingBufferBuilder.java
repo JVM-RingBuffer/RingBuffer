@@ -24,20 +24,20 @@ abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer
         type = RingBufferType.DISCARDING;
     }
 
-    public int getCapacity() {
+    int getCapacity() {
         return capacity;
     }
 
-    public int getCapacityMinusOne() {
+    int getCapacityMinusOne() {
         return capacity - 1;
     }
 
     @SuppressWarnings("unchecked")
-    public T[] getBuffer() {
+    T[] getBuffer() {
         return (T[]) new Object[capacity];
     }
 
-    public Integer newCursor() {
+    Integer newCursor() {
         return memoryOrder.newInteger();
     }
 }

@@ -24,22 +24,22 @@ abstract class AbstractNativeRingBufferBuilder<T> extends MarshallingRingBufferB
         capacity = builder.capacity;
     }
 
-    public long getCapacity() {
+    long getCapacity() {
         return capacity;
     }
 
-    public long getCapacityMinusOne() {
+    long getCapacityMinusOne() {
         return capacity - 1L;
     }
 
-    public NativeByteArray getBuffer() {
+    NativeByteArray getBuffer() {
         if (unsafe) {
             return new UnsafeNativeByteArray(capacity);
         }
         return new SafeNativeByteArray(capacity);
     }
 
-    public Long newCursor() {
+    Long newCursor() {
         return memoryOrder.newLong();
     }
 }

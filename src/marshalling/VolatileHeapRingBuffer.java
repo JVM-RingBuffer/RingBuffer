@@ -1,9 +1,12 @@
 package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.builder.HeapRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.marshalling.array.ByteArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+
+import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class VolatileHeapRingBuffer implements HeapRingBuffer {
     private final int capacity;
@@ -15,11 +18,11 @@ class VolatileHeapRingBuffer implements HeapRingBuffer {
     private final Integer writePosition;
 
     VolatileHeapRingBuffer(HeapRingBufferBuilder builder) {
-        capacity = builder.getCapacity();
-        capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBuffer();
-        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePosition = builder.newCursor();
+        capacity = Proxy.getCapacity(builder);
+        capacityMinusOne = getCapacityMinusOne(builder);
+        buffer = getBuffer(builder);
+        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
+        writePosition = newCursor(builder);
     }
 
     @Override

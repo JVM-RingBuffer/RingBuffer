@@ -123,11 +123,11 @@ abstract class AbstractRingBufferBuilder<T> {
                 .call(this);
     }
 
-    public BusyWaitStrategy getWriteBusyWaitStrategy() {
+    BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;
     }
 
-    public BusyWaitStrategy getReadBusyWaitStrategy() {
+    BusyWaitStrategy getReadBusyWaitStrategy() {
         return readBusyWaitStrategy;
     }
 }
