@@ -41,7 +41,5 @@ interface AbstractNativeRingBuffer extends AbstractRingBuffer {
 
     double readDouble(long offset);
 
-    void advance(long offset);
-
     long size();
 }

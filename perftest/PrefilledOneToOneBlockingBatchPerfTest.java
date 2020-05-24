@@ -6,7 +6,7 @@ class PrefilledOneToOneBlockingBatchPerfTest extends PrefilledOneToOneBlockingPe
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
     }

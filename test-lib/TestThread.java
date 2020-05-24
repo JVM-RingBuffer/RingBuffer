@@ -1,5 +1,10 @@
 package test;
 
+import eu.menzani.ringbuffer.AbstractRingBuffer;
+import eu.menzani.ringbuffer.marshalling.HeapBlockingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.HeapRingBuffer;
+import eu.menzani.ringbuffer.marshalling.NativeBlockingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.NativeRingBuffer;
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
@@ -9,7 +14,7 @@ import eu.menzani.ringbuffer.system.Threads;
 
 import java.util.concurrent.CountDownLatch;
 
-abstract class TestThread extends Thread {
+public abstract class TestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU().toCPU(2 * 6 - 1).skipHyperthreads().build();
 
@@ -23,20 +28,20 @@ abstract class TestThread extends Thread {
 
     private final int numIterations;
     private final Profiler profiler;
-    private final RingBuffer<Event> ringBuffer;
+    private final AbstractRingBuffer ringBuffer;
 
     private final CountDownLatch readyLatch = new CountDownLatch(1);
     private final CountDownLatch commenceLatch = new CountDownLatch(1);
 
-    TestThread(int numIterations, RingBuffer<Event> ringBuffer) {
+    protected TestThread(int numIterations, AbstractRingBuffer ringBuffer) {
         this.numIterations = numIterations;
         profiler = new Profiler(getProfilerName(), numIterations);
         this.ringBuffer = ringBuffer;
     }
 
-    abstract String getProfilerName();
+    protected abstract String getProfilerName();
 
-    void startNow() {
+    protected void startNow() {
         start();
         waitUntilReady();
         commenceExecution();
@@ -54,7 +59,7 @@ abstract class TestThread extends Thread {
         commenceLatch.countDown();
     }
 
-    void waitForCompletion() {
+    protected void waitForCompletion() {
         try {
             join();
         } catch (InterruptedException e) {
@@ -62,24 +67,44 @@ abstract class TestThread extends Thread {
         }
     }
 
-    int getNumIterations() {
+    protected int getNumIterations() {
         return numIterations;
     }
 
-    RingBuffer<Event> getRingBuffer() {
-        return ringBuffer;
+    @SuppressWarnings("unchecked")
+    protected RingBuffer<Event> getRingBuffer() {
+        return (RingBuffer<Event>) ringBuffer;
     }
 
-    EmptyRingBuffer<Event> getEmptyRingBuffer() {
+    @SuppressWarnings("unchecked")
+    protected EmptyRingBuffer<Event> getEmptyRingBuffer() {
         return (EmptyRingBuffer<Event>) ringBuffer;
     }
 
+    @SuppressWarnings("unchecked")
     PrefilledOverwritingRingBuffer<Event> getPrefilledOverwritingRingBuffer() {
         return (PrefilledOverwritingRingBuffer<Event>) ringBuffer;
     }
 
+    @SuppressWarnings("unchecked")
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
         return (PrefilledRingBuffer<Event>) ringBuffer;
+    }
+
+    protected HeapRingBuffer getHeapRingBuffer() {
+        return (HeapRingBuffer) ringBuffer;
+    }
+
+    protected HeapBlockingRingBuffer getHeapBlockingRingBuffer() {
+        return (HeapBlockingRingBuffer) ringBuffer;
+    }
+
+    protected NativeRingBuffer getNativeRingBuffer() {
+        return (NativeRingBuffer) ringBuffer;
+    }
+
+    protected NativeBlockingRingBuffer getNativeBlockingRingBuffer() {
+        return (NativeBlockingRingBuffer) ringBuffer;
     }
 
     @Override
@@ -99,9 +124,9 @@ abstract class TestThread extends Thread {
         profiler.stop();
     }
 
-    abstract void loop();
+    protected abstract void loop();
 
-    interface Factory {
+    protected interface Factory {
         TestThread newInstance(int numIterations);
     }
 }

@@ -1,16 +1,16 @@
-package test;
+package test.marshalling;
 
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import eu.menzani.ringbuffer.marshalling.HeapRingBuffer;
 
-public class OneToOneTest extends RingBufferTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
+public class OneToOneHeapTest extends RingBufferTest {
+    public static final HeapRingBuffer RING_BUFFER =
+            HeapRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
                     .build();
 
     public static void main(String[] args) {
-        new OneToOneTest().runBenchmark();
+        new OneToOneHeapTest().runBenchmark();
     }
 
     @Override

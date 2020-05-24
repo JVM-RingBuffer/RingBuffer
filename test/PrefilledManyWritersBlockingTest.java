@@ -21,12 +21,12 @@ public class PrefilledManyWritersBlockingTest extends RingBufferTest {
     }
 
     @Override
-    long getSum() {
+    protected long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledWriter.startGroupAsync(RING_BUFFER);
         return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }

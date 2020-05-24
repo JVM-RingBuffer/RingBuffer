@@ -21,12 +21,12 @@ public class PrefilledOneToOneBlockingTest extends RingBufferTest {
     }
 
     @Override
-    long getSum() {
+    protected long getSum() {
         return ONE_TO_ONE_SUM;
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
     }

@@ -1,6 +1,6 @@
 package eu.menzani.ringbuffer.marshalling.array;
 
-public class NativeByteArrayIndexOutOfBoundsException extends RuntimeException {
+public class NativeByteArrayIndexOutOfBoundsException extends IndexOutOfBoundsException {
     private final long index;
 
     NativeByteArrayIndexOutOfBoundsException(long index) {

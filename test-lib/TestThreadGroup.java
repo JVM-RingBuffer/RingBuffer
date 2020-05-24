@@ -1,16 +1,16 @@
 package test;
 
-class TestThreadGroup {
+public class TestThreadGroup {
     private final TestThread[] testThreads;
 
-    TestThreadGroup(TestThread.Factory testThreadFactory) {
+    public TestThreadGroup(TestThread.Factory testThreadFactory) {
         testThreads = new TestThread[RingBufferTest.CONCURRENCY];
         for (int i = 0; i < testThreads.length; i++) {
             testThreads[i] = testThreadFactory.newInstance(RingBufferTest.NUM_ITERATIONS);
         }
     }
 
-    void start() {
+    public void start() {
         for (TestThread testThread : testThreads) {
             testThread.start();
         }
@@ -22,13 +22,13 @@ class TestThreadGroup {
         }
     }
 
-    void waitForCompletion() {
+    public void waitForCompletion() {
         for (TestThread testThread : testThreads) {
             testThread.waitForCompletion();
         }
     }
 
-    long getReaderSum() {
+    public long getReaderSum() {
         long sum = 0L;
         for (TestThread testThread : testThreads) {
             sum += ((Reader) testThread).getSum();

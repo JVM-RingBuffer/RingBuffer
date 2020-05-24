@@ -6,7 +6,7 @@ class PrefilledManyToManyBlockingBatchTest extends PrefilledManyToManyBlockingTe
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledWriter.startGroupAsync(RING_BUFFER);
         return BatchReader.runGroupAsync(BLOCKING_BATCH_SIZE, RING_BUFFER);
     }

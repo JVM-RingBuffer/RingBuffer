@@ -33,12 +33,12 @@ class PrefilledWriter extends TestThread {
     }
 
     @Override
-    String getProfilerName() {
+    protected String getProfilerName() {
         return "PrefilledWriter";
     }
 
     @Override
-    void loop() {
+    protected void loop() {
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();

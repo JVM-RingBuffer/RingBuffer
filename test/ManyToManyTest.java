@@ -19,12 +19,12 @@ public class ManyToManyTest extends RingBufferTest {
     }
 
     @Override
-    long getSum() {
+    protected long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.startGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

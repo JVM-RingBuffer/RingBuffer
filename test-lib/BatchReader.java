@@ -31,7 +31,7 @@ class BatchReader extends Reader {
     }
 
     @Override
-    String getProfilerName() {
+    protected String getProfilerName() {
         return "BatchReader";
     }
 

@@ -6,7 +6,7 @@ class ManyReadersBatchTest extends ManyReadersTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

@@ -21,12 +21,12 @@ class Processor extends TestThread {
     }
 
     @Override
-    String getProfilerName() {
+    protected String getProfilerName() {
         return "Processor";
     }
 
     @Override
-    void loop() {
+    protected void loop() {
         EmptyRingBuffer<Event> producersRingBuffer = getEmptyRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int eventData = producersRingBuffer.take().getData();

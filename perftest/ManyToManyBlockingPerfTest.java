@@ -15,7 +15,7 @@ public class ManyToManyBlockingPerfTest extends ManyToManyBlockingTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

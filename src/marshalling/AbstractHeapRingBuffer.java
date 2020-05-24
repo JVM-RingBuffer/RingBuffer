@@ -41,7 +41,5 @@ interface AbstractHeapRingBuffer extends AbstractRingBuffer {
 
     double readDouble(int offset);
 
-    void advance(int offset);
-
     int size();
 }

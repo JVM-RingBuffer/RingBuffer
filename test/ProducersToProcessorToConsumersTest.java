@@ -31,12 +31,12 @@ public class ProducersToProcessorToConsumersTest extends RingBufferTest {
     }
 
     @Override
-    long getSum() {
+    protected long getSum() {
         return MANY_WRITERS_SUM;
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
         Processor.startAsync(PRODUCERS_RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);

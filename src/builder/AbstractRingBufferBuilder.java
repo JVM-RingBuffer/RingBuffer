@@ -130,4 +130,17 @@ abstract class AbstractRingBufferBuilder<T> {
     BusyWaitStrategy getReadBusyWaitStrategy() {
         return readBusyWaitStrategy;
     }
+
+    enum RingBufferConcurrency {
+        VOLATILE,
+        ATOMIC_READ,
+        ATOMIC_WRITE,
+        CONCURRENT
+    }
+
+    enum RingBufferType {
+        OVERWRITING,
+        BLOCKING,
+        DISCARDING
+    }
 }

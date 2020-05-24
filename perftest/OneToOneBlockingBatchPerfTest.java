@@ -6,7 +6,7 @@ class OneToOneBlockingBatchPerfTest extends OneToOneBlockingPerfTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
         return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
     }

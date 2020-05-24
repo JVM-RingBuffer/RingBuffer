@@ -6,7 +6,7 @@ class PrefilledManyToManyPerfTest extends PrefilledManyToManyTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledOverwritingWriter.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

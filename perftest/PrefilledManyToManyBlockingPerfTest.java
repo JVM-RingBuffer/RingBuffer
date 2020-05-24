@@ -16,7 +16,7 @@ public class PrefilledManyToManyBlockingPerfTest extends PrefilledManyToManyBloc
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         PrefilledWriter.runGroupAsync(RING_BUFFER);
         return Reader.runGroupAsync(RING_BUFFER);
     }

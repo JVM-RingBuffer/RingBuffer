@@ -1,10 +1,13 @@
-package test;
+package test.marshalling;
 
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
-import eu.menzani.ringbuffer.object.RingBuffer;
+import eu.menzani.ringbuffer.marshalling.HeapRingBuffer;
+import test.TestThread;
+import test.TestThreadGroup;
+
+import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Writer extends TestThread {
-    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
+    static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(new Factory() {
             @Override
             public TestThread newInstance(int numIterations) {
@@ -15,21 +18,21 @@ class Writer extends TestThread {
         return group;
     }
 
-    static void runGroupAsync(RingBuffer<Event> ringBuffer) {
+    static void runGroupAsync(HeapRingBuffer ringBuffer) {
         startGroupAsync(ringBuffer).waitForCompletion();
     }
 
-    static Writer startAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static Writer startAsync(int numIterations, HeapRingBuffer ringBuffer) {
         Writer writer = new Writer(numIterations, ringBuffer);
         writer.startNow();
         return writer;
     }
 
-    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static void runAsync(int numIterations, HeapRingBuffer ringBuffer) {
         startAsync(numIterations, ringBuffer).waitForCompletion();
     }
 
-    private Writer(int numIterations, RingBuffer<Event> ringBuffer) {
+    private Writer(int numIterations, HeapRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -40,9 +43,11 @@ class Writer extends TestThread {
 
     @Override
     protected void loop() {
-        EmptyRingBuffer<Event> ringBuffer = getEmptyRingBuffer();
+        HeapRingBuffer ringBuffer = getHeapRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            ringBuffer.put(new Event(numIterations));
+            int offset = ringBuffer.next();
+            ringBuffer.writeInt(offset, numIterations);
+            ringBuffer.put(offset + INT);
         }
     }
 }

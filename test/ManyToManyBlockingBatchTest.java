@@ -6,7 +6,7 @@ class ManyToManyBlockingBatchTest extends ManyToManyBlockingTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.startGroupAsync(RING_BUFFER);
         return BatchReader.runGroupAsync(BLOCKING_BATCH_SIZE, RING_BUFFER);
     }

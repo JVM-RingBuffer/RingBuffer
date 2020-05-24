@@ -6,7 +6,7 @@ class ManyReadersBlockingBatchPerfTest extends ManyReadersBlockingPerfTest {
     }
 
     @Override
-    long testSum() {
+    protected long testSum() {
         Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
     }

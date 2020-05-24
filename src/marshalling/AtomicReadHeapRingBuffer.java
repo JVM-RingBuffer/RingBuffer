@@ -91,7 +91,9 @@ class AtomicReadHeapRingBuffer implements HeapRingBuffer {
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
-        return this.readPosition;
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
     }
 
     @Override
@@ -135,8 +137,7 @@ class AtomicReadHeapRingBuffer implements HeapRingBuffer {
     }
 
     @Override
-    public void advance(int offset) {
-        readPosition = offset;
+    public void advance() {
         readLock.unlock();
     }
 

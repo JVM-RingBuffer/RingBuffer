@@ -87,7 +87,9 @@ class VolatileNativeRingBuffer implements NativeRingBuffer {
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
-        return this.readPosition;
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
     }
 
     @Override
@@ -131,9 +133,7 @@ class VolatileNativeRingBuffer implements NativeRingBuffer {
     }
 
     @Override
-    public void advance(long offset) {
-        readPosition = offset;
-    }
+    public void advance() {}
 
     @Override
     public long size() {

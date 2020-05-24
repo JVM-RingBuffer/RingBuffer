@@ -1,7 +1,7 @@
 package test;
 
 public class Profiler {
-    private final BenchmarkResult result;
+    private final Benchmark.Result result;
     private final double divideBy;
     private long start;
 

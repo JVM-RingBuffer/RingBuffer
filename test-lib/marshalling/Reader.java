@@ -1,9 +1,13 @@
-package test;
+package test.marshalling;
 
-import eu.menzani.ringbuffer.object.RingBuffer;
+import eu.menzani.ringbuffer.marshalling.HeapRingBuffer;
+import test.TestThread;
+import test.TestThreadGroup;
+
+import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Reader extends TestThread {
-    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
+    static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(new Factory() {
             @Override
             public TestThread newInstance(int numIterations) {
@@ -14,13 +18,13 @@ class Reader extends TestThread {
         return group;
     }
 
-    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+    static long runGroupAsync(HeapRingBuffer ringBuffer) {
         TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static long runAsync(int numIterations, HeapRingBuffer ringBuffer) {
         Reader reader = new Reader(numIterations, ringBuffer);
         reader.startNow();
         reader.waitForCompletion();
@@ -29,7 +33,7 @@ class Reader extends TestThread {
 
     private long sum;
 
-    Reader(int numIterations, RingBuffer<Event> ringBuffer) {
+    Reader(int numIterations, HeapRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -48,10 +52,10 @@ class Reader extends TestThread {
     }
 
     long collect() {
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        HeapRingBuffer ringBuffer = getHeapRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            sum += ringBuffer.take().getData();
+            sum += ringBuffer.readInt(ringBuffer.take(INT));
             ringBuffer.advance();
         }
         return sum;

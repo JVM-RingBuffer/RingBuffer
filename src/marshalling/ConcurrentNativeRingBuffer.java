@@ -94,7 +94,9 @@ class ConcurrentNativeRingBuffer implements NativeRingBuffer {
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
-        return this.readPosition;
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
     }
 
     @Override
@@ -138,8 +140,7 @@ class ConcurrentNativeRingBuffer implements NativeRingBuffer {
     }
 
     @Override
-    public void advance(long offset) {
-        readPosition = offset;
+    public void advance() {
         readLock.unlock();
     }
 

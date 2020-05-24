@@ -1,114 +1,112 @@
 package eu.menzani.ringbuffer.marshalling.array;
 
-import eu.menzani.ringbuffer.java.Assume;
-
-public class SafeByteArray implements ByteArray {
-    private final byte[] array;
+public class SafeByteArray extends UnsafeByteArray {
+    private final int length;
 
     public SafeByteArray(int length) {
-        Assume.notGreater(length, Integer.MAX_VALUE - 8);
-        array = new byte[length + 8];
+        super(length);
+        this.length = length;
+    }
+
+    private void checkBounds(int index) {
+        if (index < 0 || index >= length) {
+            throw new ByteArrayIndexOutOfBoundsException(index);
+        }
     }
 
     @Override
     public void putByte(int index, byte value) {
-        array[index] = value;
+        checkBounds(index);
+        super.putByte(index, value);
     }
 
     @Override
     public void putChar(int index, char value) {
-        array[index] = (byte) ((value >>> 8) & 0xFF);
-        array[index + 1] = (byte) (value & 0xFF);
+        checkBounds(index);
+        super.putChar(index, value);
     }
 
     @Override
     public void putShort(int index, short value) {
-        array[index] = (byte) ((value >>> 8) & 0xFF);
-        array[index + 1] = (byte) (value & 0xFF);
+        checkBounds(index);
+        super.putShort(index, value);
     }
 
     @Override
     public void putInt(int index, int value) {
-        array[index] = (byte) ((value >>> 24) & 0xFF);
-        array[index + 1] = (byte) ((value >>> 16) & 0xFF);
-        array[index + 2] = (byte) ((value >>> 8) & 0xFF);
-        array[index + 3] = (byte) (value & 0xFF);
+        checkBounds(index);
+        super.putInt(index, value);
     }
 
     @Override
     public void putLong(int index, long value) {
-        array[index] = (byte) (value >>> 56);
-        array[index + 1] = (byte) (value >>> 48);
-        array[index + 2] = (byte) (value >>> 40);
-        array[index + 3] = (byte) (value >>> 32);
-        array[index + 4] = (byte) (value >>> 24);
-        array[index + 5] = (byte) (value >>> 16);
-        array[index + 6] = (byte) (value >>> 8);
-        array[index + 7] = (byte) value;
+        checkBounds(index);
+        super.putLong(index, value);
     }
 
     @Override
     public void putBoolean(int index, boolean value) {
-        putByte(index, value ? (byte) 1 : (byte) 0);
+        checkBounds(index);
+        super.putBoolean(index, value);
     }
 
     @Override
     public void putFloat(int index, float value) {
-        putInt(index, Float.floatToIntBits(value));
+        checkBounds(index);
+        super.putFloat(index, value);
     }
 
     @Override
     public void putDouble(int index, double value) {
-        putLong(index, Double.doubleToLongBits(value));
+        checkBounds(index);
+        super.putDouble(index, value);
     }
 
     @Override
     public byte getByte(int index) {
-        return array[index];
+        checkBounds(index);
+        return super.getByte(index);
     }
 
     @Override
     public char getChar(int index) {
-        return (char) ((array[index] << 8) + array[index + 1]);
+        checkBounds(index);
+        return super.getChar(index);
     }
 
     @Override
     public short getShort(int index) {
-        return (short) ((array[index] << 8) + array[index + 1]);
+        checkBounds(index);
+        return super.getShort(index);
     }
 
     @Override
     public int getInt(int index) {
-        return (array[index] << 24) +
-                (array[index + 1] << 16) +
-                (array[index + 2] << 8) +
-                array[index + 3];
+        checkBounds(index);
+        return super.getInt(index);
     }
 
     @Override
     public long getLong(int index) {
-        return ((long) array[index] << 56) +
-                ((long) (array[index + 1] & 255) << 48) +
-                ((long) (array[index + 2] & 255) << 40) +
-                ((long) (array[index + 3] & 255) << 32) +
-                ((long) (array[index + 4] & 255) << 24) +
-                ((array[index + 5] & 255) << 16) +
-                ((array[index + 6] & 255) << 8) +
-                (array[index + 7] & 255);
+        checkBounds(index);
+        return super.getLong(index);
     }
 
     @Override
     public boolean getBoolean(int index) {
-        return getByte(index) == (byte) 1;
+        checkBounds(index);
+        return super.getBoolean(index);
     }
 
     @Override
     public float getFloat(int index) {
-        return Float.intBitsToFloat(getInt(index));
+        checkBounds(index);
+        return super.getFloat(index);
     }
 
     @Override
     public double getDouble(int index) {
-        return Double.longBitsToDouble(getLong(index));
+        checkBounds(index);
+        return super.getDouble(index);
     }
 }
