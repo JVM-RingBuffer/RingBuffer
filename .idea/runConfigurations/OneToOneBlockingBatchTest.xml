@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="OneToOneBlockingBatchTest" type="Application" factoryName="Application" folderName="Volatile">
-    <option name="MAIN_CLASS_NAME" value="test.OneToOneBlockingBatchTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.OneToOneBlockingBatchTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms1792m -Xmx1792m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

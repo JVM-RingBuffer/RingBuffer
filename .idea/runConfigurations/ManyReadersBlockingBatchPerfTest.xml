@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ManyReadersBlockingBatchPerfTest" type="Application" factoryName="Application" folderName="Many Readers">
-    <option name="MAIN_CLASS_NAME" value="test.ManyReadersBlockingBatchPerfTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.ManyReadersBlockingBatchPerfTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms1735m -Xmx1735m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

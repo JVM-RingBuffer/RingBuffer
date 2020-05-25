@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ProducersToProcessorToConsumersTest" type="Application" factoryName="Application" folderName="Complex">
-    <option name="MAIN_CLASS_NAME" value="test.ProducersToProcessorToConsumersTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.ProducersToProcessorToConsumersTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms1894m -Xmx1894m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

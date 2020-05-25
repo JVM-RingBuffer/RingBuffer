@@ -1,12 +1,12 @@
 package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
-import test.TestThread;
+import test.AbstractReader;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
-class Reader extends TestThread {
+class Reader extends TestThread implements AbstractReader {
     static TestThreadGroup startGroupAsync(MarshallingRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
         group.start();
@@ -37,7 +37,8 @@ class Reader extends TestThread {
         return "Reader";
     }
 
-    long getSum() {
+    @Override
+    public long getSum() {
         return sum;
     }
 
@@ -47,7 +48,7 @@ class Reader extends TestThread {
     }
 
     long collect() {
-        MarshallingRingBuffer ringBuffer = getHeapRingBuffer();
+        MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));

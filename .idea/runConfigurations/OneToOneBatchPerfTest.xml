@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="OneToOneBatchPerfTest" type="Application" factoryName="Application" folderName="Volatile">
-    <option name="MAIN_CLASS_NAME" value="test.OneToOneBatchPerfTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.OneToOneBatchPerfTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms1792m -Xmx1792m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

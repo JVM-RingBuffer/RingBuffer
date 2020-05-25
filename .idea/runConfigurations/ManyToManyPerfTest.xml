@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ManyToManyPerfTest" type="Application" factoryName="Application" folderName="Concurrent">
-    <option name="MAIN_CLASS_NAME" value="test.ManyToManyPerfTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.ManyToManyPerfTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms2170m -Xmx2170m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

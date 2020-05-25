@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PrefilledManyWritersBlockingTest" type="Application" factoryName="Application" folderName="Many Writers Prefilled">
-    <option name="MAIN_CLASS_NAME" value="test.PrefilledManyWritersBlockingTest" />
+    <option name="MAIN_CLASS_NAME" value="test.object.PrefilledManyWritersBlockingTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms6m -Xmx6m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">

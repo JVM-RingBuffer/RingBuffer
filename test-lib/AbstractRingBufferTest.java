@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractRingBufferTest extends Benchmark {
     protected static final int NUM_ITERATIONS = 1_000_000;
-    protected static final int CONCURRENCY = 3;
+    static final int CONCURRENCY = 3;
     protected static final int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
 
     protected static final long ONE_TO_ONE_SUM = getOneToOneSum();
@@ -32,13 +32,13 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     protected abstract long testSum();
 
     @Override
-    final protected int getNumIterations() {
+    protected final int getNumIterations() {
         return 0;
     }
 
     @Override
-    final protected void test(int i) {
-        TestThread.resetThreadSpreader();
+    protected final void test(int i) {
+        AbstractTestThread.resetThreadSpreader();
 
         assertEquals(getSum(), testSum());
     }

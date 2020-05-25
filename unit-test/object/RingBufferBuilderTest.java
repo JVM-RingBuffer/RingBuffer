@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer.object;
 
 import org.junit.jupiter.api.Test;
-import test.*;
+import test.object.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

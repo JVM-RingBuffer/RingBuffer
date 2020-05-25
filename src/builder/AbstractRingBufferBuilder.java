@@ -6,11 +6,11 @@ import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
 
 abstract class AbstractRingBufferBuilder<T> {
-    Boolean oneWriter;
-    Boolean oneReader;
+    private Boolean oneWriter;
+    private Boolean oneReader;
     RingBufferType type = RingBufferType.OVERWRITING;
-    BusyWaitStrategy writeBusyWaitStrategy;
-    BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+    private BusyWaitStrategy writeBusyWaitStrategy;
+    private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
     MemoryOrder memoryOrder = MemoryOrder.LAZY;
     boolean copyClass;
     // All fields are copied in <init>(AbstractRingBufferBuilder<T>)

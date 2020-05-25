@@ -1,7 +1,6 @@
 package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
-import test.TestThread;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
@@ -38,7 +37,7 @@ class Writer extends TestThread {
 
     @Override
     protected void loop() {
-        MarshallingRingBuffer ringBuffer = getHeapRingBuffer();
+        MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int offset = ringBuffer.next();
             ringBuffer.writeInt(offset, numIterations);
