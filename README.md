@@ -52,41 +52,41 @@ for (int i = 0; i < 3; i++) {
 new Thread(processor).start();
 ```
 
-### Native ring buffers
+### Marshalling ring buffers
 
 ```java
-HeapBlockingRingBuffer heapRingBuffer =
-        HeapRingBuffer.withCapacity(Number.getNextPowerOfTwo(100))
+MarshallingBlockingRingBuffer ringBuffer =
+        MarshallingRingBuffer.withCapacity(Number.getNextPowerOfTwo(100))
                 .oneWriter()
                 .oneReader()
                 .blocking(FailBusyWaitStrategy.writingTooSlow())
                 .unsafe()
                 .build();
 
-int offset = heapRingBuffer.next(INT + CHAR);
-heapRingBuffer.writeInt(offset, 55);
-heapRingBuffer.writeChar(offset + INT, 'x');
-heapRingBuffer.put(offset + INT + CHAR);
+int offset = ringBuffer.next(INT + CHAR);
+ringBuffer.writeInt(offset, 55);
+ringBuffer.writeChar(offset + INT, 'x');
+ringBuffer.put(offset + INT + CHAR);
 
-int offset = heapRingBuffer.take(INT + CHAR);
-System.out.println(heapRingBuffer.readInt(offset));
-System.out.println(heapRingBuffer.readChar(offset + INT));
-heapRingBuffer.advance(offset + INT + CHAR);
+int offset = ringBuffer.take(INT + CHAR);
+System.out.println(ringBuffer.readInt(offset));
+System.out.println(ringBuffer.readChar(offset + INT));
+ringBuffer.advance(offset + INT + CHAR);
 
-NativeRingBuffer nativeRingBuffer =
-        NativeRingBuffer.withCapacity(2048)
+DirectMarshallingRingBuffer ringBuffer =
+        DirectMarshallingRingBuffer.withCapacity(2048)
                 .manyWriters()
                 .manyReaders()
                 .copyClass()
                 .build();
 
-long offset = nativeRingBuffer.next();
-nativeRingBuffer.writeBoolean(offset, true); offset += BOOLEAN;
-nativeRingBuffer.writeDouble(offset, 5D); offset += DOUBLE;
-nativeRingBuffer.put(offset);
+long offset = ringBuffer.next();
+ringBuffer.writeBoolean(offset, true); offset += BOOLEAN;
+ringBuffer.writeDouble(offset, 5D); offset += DOUBLE;
+ringBuffer.put(offset);
 
-long offset = nativeRingBuffer.take(BOOLEAN + DOUBLE);
-System.out.println(nativeRingBuffer.readBoolean(offset)); offset += BOOLEAN;
-System.out.println(nativeRingBuffer.readDouble(offset));
-nativeRingBuffer.advance();
+long offset = ringBuffer.take(BOOLEAN + DOUBLE);
+System.out.println(ringBuffer.readBoolean(offset)); offset += BOOLEAN;
+System.out.println(ringBuffer.readDouble(offset));
+ringBuffer.advance();
 ```

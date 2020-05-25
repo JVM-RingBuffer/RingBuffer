@@ -1,10 +1,10 @@
 package test;
 
 import eu.menzani.ringbuffer.AbstractRingBuffer;
-import eu.menzani.ringbuffer.marshalling.HeapBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.HeapRingBuffer;
-import eu.menzani.ringbuffer.marshalling.NativeBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.NativeRingBuffer;
+import eu.menzani.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
@@ -91,20 +91,20 @@ public abstract class TestThread extends Thread {
         return (PrefilledRingBuffer<Event>) ringBuffer;
     }
 
-    protected HeapRingBuffer getHeapRingBuffer() {
-        return (HeapRingBuffer) ringBuffer;
+    protected MarshallingRingBuffer getHeapRingBuffer() {
+        return (MarshallingRingBuffer) ringBuffer;
     }
 
-    protected HeapBlockingRingBuffer getHeapBlockingRingBuffer() {
-        return (HeapBlockingRingBuffer) ringBuffer;
+    protected MarshallingBlockingRingBuffer getHeapBlockingRingBuffer() {
+        return (MarshallingBlockingRingBuffer) ringBuffer;
     }
 
-    protected NativeRingBuffer getNativeRingBuffer() {
-        return (NativeRingBuffer) ringBuffer;
+    protected DirectMarshallingRingBuffer getNativeRingBuffer() {
+        return (DirectMarshallingRingBuffer) ringBuffer;
     }
 
-    protected NativeBlockingRingBuffer getNativeBlockingRingBuffer() {
-        return (NativeBlockingRingBuffer) ringBuffer;
+    protected DirectMarshallingBlockingRingBuffer getNativeBlockingRingBuffer() {
+        return (DirectMarshallingBlockingRingBuffer) ringBuffer;
     }
 
     @Override

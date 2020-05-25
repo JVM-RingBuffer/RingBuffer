@@ -1,136 +1,136 @@
 package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.builder.HeapBlockingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.HeapRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.NativeBlockingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.NativeRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.MarshallingBlockingRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.MarshallingRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.DirectMarshallingBlockingRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.DirectMarshallingRingBufferBuilder;
 
 public class BuilderProxy {
-    public static AtomicReadHeapRingBuffer atomicReadHeapRingBuffer(HeapRingBufferBuilder builder) {
-        return new AtomicReadHeapRingBuffer(builder);
+    public static AtomicReadMarshallingRingBuffer atomicReadMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {
+        return new AtomicReadMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> atomicReadHeapRingBuffer() {
-        return AtomicReadHeapRingBuffer.class;
+    public static Class<?> atomicReadMarshallingRingBuffer() {
+        return AtomicReadMarshallingRingBuffer.class;
     }
 
-    public static AtomicReadHeapBlockingRingBuffer atomicReadHeapBlockingRingBuffer(HeapBlockingRingBufferBuilder builder) {
-        return new AtomicReadHeapBlockingRingBuffer(builder);
+    public static AtomicReadMarshallingBlockingRingBuffer atomicReadMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+        return new AtomicReadMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> atomicReadHeapBlockingRingBuffer() {
-        return AtomicReadHeapBlockingRingBuffer.class;
+    public static Class<?> atomicReadMarshallingBlockingRingBuffer() {
+        return AtomicReadMarshallingBlockingRingBuffer.class;
     }
 
-    public static AtomicReadNativeRingBuffer atomicReadNativeRingBuffer(NativeRingBufferBuilder builder) {
-        return new AtomicReadNativeRingBuffer(builder);
+    public static AtomicReadDirectMarshallingRingBuffer atomicReadDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
+        return new AtomicReadDirectMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> atomicReadNativeRingBuffer() {
-        return AtomicReadNativeRingBuffer.class;
+    public static Class<?> atomicReadDirectMarshallingRingBuffer() {
+        return AtomicReadDirectMarshallingRingBuffer.class;
     }
 
-    public static AtomicReadNativeBlockingRingBuffer atomicReadNativeBlockingRingBuffer(NativeBlockingRingBufferBuilder builder) {
-        return new AtomicReadNativeBlockingRingBuffer(builder);
+    public static AtomicReadDirectMarshallingBlockingRingBuffer atomicReadDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+        return new AtomicReadDirectMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> atomicReadNativeBlockingRingBuffer() {
-        return AtomicReadNativeBlockingRingBuffer.class;
+    public static Class<?> atomicReadDirectMarshallingBlockingRingBuffer() {
+        return AtomicReadDirectMarshallingBlockingRingBuffer.class;
     }
 
-    public static AtomicWriteHeapRingBuffer atomicWriteHeapRingBuffer(HeapRingBufferBuilder builder) {
-        return new AtomicWriteHeapRingBuffer(builder);
+    public static AtomicWriteMarshallingRingBuffer atomicWriteMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {
+        return new AtomicWriteMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> atomicWriteHeapRingBuffer() {
-        return AtomicWriteHeapRingBuffer.class;
+    public static Class<?> atomicWriteMarshallingRingBuffer() {
+        return AtomicWriteMarshallingRingBuffer.class;
     }
 
-    public static AtomicWriteHeapBlockingRingBuffer atomicWriteHeapBlockingRingBuffer(HeapBlockingRingBufferBuilder builder) {
-        return new AtomicWriteHeapBlockingRingBuffer(builder);
+    public static AtomicWriteMarshallingBlockingRingBuffer atomicWriteMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+        return new AtomicWriteMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> atomicWriteHeapBlockingRingBuffer() {
-        return AtomicWriteHeapBlockingRingBuffer.class;
+    public static Class<?> atomicWriteMarshallingBlockingRingBuffer() {
+        return AtomicWriteMarshallingBlockingRingBuffer.class;
     }
 
-    public static AtomicWriteNativeRingBuffer atomicWriteNativeRingBuffer(NativeRingBufferBuilder builder) {
-        return new AtomicWriteNativeRingBuffer(builder);
+    public static AtomicWriteDirectMarshallingRingBuffer atomicWriteDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
+        return new AtomicWriteDirectMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> atomicWriteNativeRingBuffer() {
-        return AtomicWriteNativeRingBuffer.class;
+    public static Class<?> atomicWriteDirectMarshallingRingBuffer() {
+        return AtomicWriteDirectMarshallingRingBuffer.class;
     }
 
-    public static AtomicWriteNativeBlockingRingBuffer atomicWriteNativeBlockingRingBuffer(NativeBlockingRingBufferBuilder builder) {
-        return new AtomicWriteNativeBlockingRingBuffer(builder);
+    public static AtomicWriteDirectMarshallingBlockingRingBuffer atomicWriteDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+        return new AtomicWriteDirectMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> atomicWriteNativeBlockingRingBuffer() {
-        return AtomicWriteNativeBlockingRingBuffer.class;
+    public static Class<?> atomicWriteDirectMarshallingBlockingRingBuffer() {
+        return AtomicWriteDirectMarshallingBlockingRingBuffer.class;
     }
 
-    public static ConcurrentHeapRingBuffer concurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
-        return new ConcurrentHeapRingBuffer(builder);
+    public static ConcurrentMarshallingRingBuffer concurrentMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {
+        return new ConcurrentMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> concurrentHeapRingBuffer() {
-        return ConcurrentHeapRingBuffer.class;
+    public static Class<?> concurrentMarshallingRingBuffer() {
+        return ConcurrentMarshallingRingBuffer.class;
     }
 
-    public static ConcurrentHeapBlockingRingBuffer concurrentHeapBlockingRingBuffer(HeapBlockingRingBufferBuilder builder) {
-        return new ConcurrentHeapBlockingRingBuffer(builder);
+    public static ConcurrentMarshallingBlockingRingBuffer concurrentMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+        return new ConcurrentMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> concurrentHeapBlockingRingBuffer() {
-        return ConcurrentHeapBlockingRingBuffer.class;
+    public static Class<?> concurrentMarshallingBlockingRingBuffer() {
+        return ConcurrentMarshallingBlockingRingBuffer.class;
     }
 
-    public static ConcurrentNativeRingBuffer concurrentNativeRingBuffer(NativeRingBufferBuilder builder) {
-        return new ConcurrentNativeRingBuffer(builder);
+    public static ConcurrentDirectMarshallingRingBuffer concurrentDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
+        return new ConcurrentDirectMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> concurrentNativeRingBuffer() {
-        return ConcurrentNativeRingBuffer.class;
+    public static Class<?> concurrentDirectMarshallingRingBuffer() {
+        return ConcurrentDirectMarshallingRingBuffer.class;
     }
 
-    public static ConcurrentNativeBlockingRingBuffer concurrentNativeBlockingRingBuffer(NativeBlockingRingBufferBuilder builder) {
-        return new ConcurrentNativeBlockingRingBuffer(builder);
+    public static ConcurrentDirectMarshallingBlockingRingBuffer concurrentDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+        return new ConcurrentDirectMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> concurrentNativeBlockingRingBuffer() {
-        return ConcurrentNativeBlockingRingBuffer.class;
+    public static Class<?> concurrentDirectMarshallingBlockingRingBuffer() {
+        return ConcurrentDirectMarshallingBlockingRingBuffer.class;
     }
 
-    public static VolatileHeapRingBuffer volatileHeapRingBuffer(HeapRingBufferBuilder builder) {
-        return new VolatileHeapRingBuffer(builder);
+    public static VolatileMarshallingRingBuffer volatileMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {
+        return new VolatileMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> volatileHeapRingBuffer() {
-        return VolatileHeapRingBuffer.class;
+    public static Class<?> volatileMarshallingRingBuffer() {
+        return VolatileMarshallingRingBuffer.class;
     }
 
-    public static VolatileHeapBlockingRingBuffer volatileHeapBlockingRingBuffer(HeapBlockingRingBufferBuilder builder) {
-        return new VolatileHeapBlockingRingBuffer(builder);
+    public static VolatileMarshallingBlockingRingBuffer volatileMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+        return new VolatileMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> volatileHeapBlockingRingBuffer() {
-        return VolatileHeapBlockingRingBuffer.class;
+    public static Class<?> volatileMarshallingBlockingRingBuffer() {
+        return VolatileMarshallingBlockingRingBuffer.class;
     }
 
-    public static VolatileNativeRingBuffer volatileNativeRingBuffer(NativeRingBufferBuilder builder) {
-        return new VolatileNativeRingBuffer(builder);
+    public static VolatileDirectMarshallingRingBuffer volatileDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
+        return new VolatileDirectMarshallingRingBuffer(builder);
     }
 
-    public static Class<?> volatileNativeRingBuffer() {
-        return VolatileNativeRingBuffer.class;
+    public static Class<?> volatileDirectMarshallingRingBuffer() {
+        return VolatileDirectMarshallingRingBuffer.class;
     }
 
-    public static VolatileNativeBlockingRingBuffer volatileNativeBlockingRingBuffer(NativeBlockingRingBufferBuilder builder) {
-        return new VolatileNativeBlockingRingBuffer(builder);
+    public static VolatileDirectMarshallingBlockingRingBuffer volatileDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+        return new VolatileDirectMarshallingBlockingRingBuffer(builder);
     }
 
-    public static Class<?> volatileNativeBlockingRingBuffer() {
-        return VolatileNativeBlockingRingBuffer.class;
+    public static Class<?> volatileDirectMarshallingBlockingRingBuffer() {
+        return VolatileDirectMarshallingBlockingRingBuffer.class;
     }
 }

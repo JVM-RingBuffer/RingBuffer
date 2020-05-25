@@ -1,7 +1,7 @@
 package eu.menzani.ringbuffer.builder;
 
 import eu.menzani.ringbuffer.marshalling.array.ByteArray;
-import eu.menzani.ringbuffer.marshalling.array.NativeByteArray;
+import eu.menzani.ringbuffer.marshalling.array.DirectByteArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.memory.Long;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
@@ -23,35 +23,35 @@ public class Proxy {
         return builder.newCursor();
     }
 
-    public static int getCapacity(AbstractHeapRingBufferBuilder<?> builder) {
+    public static int getCapacity(AbstractMarshallingRingBufferBuilder<?> builder) {
         return builder.getCapacity();
     }
 
-    public static int getCapacityMinusOne(AbstractHeapRingBufferBuilder<?> builder) {
+    public static int getCapacityMinusOne(AbstractMarshallingRingBufferBuilder<?> builder) {
         return builder.getCapacityMinusOne();
     }
 
-    public static ByteArray getBuffer(AbstractHeapRingBufferBuilder<?> builder) {
+    public static ByteArray getBuffer(AbstractMarshallingRingBufferBuilder<?> builder) {
         return builder.getBuffer();
     }
 
-    public static Integer newCursor(AbstractHeapRingBufferBuilder<?> builder) {
+    public static Integer newCursor(AbstractMarshallingRingBufferBuilder<?> builder) {
         return builder.newCursor();
     }
 
-    public static long getCapacity(AbstractNativeRingBufferBuilder<?> builder) {
+    public static long getCapacity(AbstractDirectMarshallingRingBufferBuilder<?> builder) {
         return builder.getCapacity();
     }
 
-    public static long getCapacityMinusOne(AbstractNativeRingBufferBuilder<?> builder) {
+    public static long getCapacityMinusOne(AbstractDirectMarshallingRingBufferBuilder<?> builder) {
         return builder.getCapacityMinusOne();
     }
 
-    public static NativeByteArray getBuffer(AbstractNativeRingBufferBuilder<?> builder) {
+    public static DirectByteArray getBuffer(AbstractDirectMarshallingRingBufferBuilder<?> builder) {
         return builder.getBuffer();
     }
 
-    public static Long newCursor(AbstractNativeRingBufferBuilder<?> builder) {
+    public static Long newCursor(AbstractDirectMarshallingRingBufferBuilder<?> builder) {
         return builder.newCursor();
     }
 
