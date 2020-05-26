@@ -37,7 +37,7 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBl
     public long next(long size) {
         long writePosition = this.writePosition.getPlain() & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (freeSpace(writePosition) < size) {
+        while (freeSpace(writePosition) <= size) {
             writeBusyWaitStrategy.tick();
         }
         return this.writePosition.getPlain();
@@ -49,6 +49,44 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBl
             return capacity - (writePosition - readPosition);
         }
         return readPosition - writePosition;
+    }
+
+    @Override
+    public void put(long offset) {
+        writePosition.set(offset);
+    }
+
+    @Override
+    public long take(long size) {
+        long readPosition = this.readPosition.getPlain() & capacityMinusOne;
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < size) {
+            readBusyWaitStrategy.tick();
+        }
+        return this.readPosition.getPlain();
+    }
+
+    @Override
+    public void advance(long offset) {
+        readPosition.set(offset);
+    }
+
+    @Override
+    public long size() {
+        return size(readPosition.get() & capacityMinusOne);
+    }
+
+    private long size(long readPosition) {
+        long writePosition = this.writePosition.get() & capacityMinusOne;
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
     }
 
     @Override
@@ -92,21 +130,6 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBl
     }
 
     @Override
-    public void put(long offset) {
-        writePosition.set(offset);
-    }
-
-    @Override
-    public long take(long size) {
-        long readPosition = this.readPosition.getPlain() & capacityMinusOne;
-        readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
-            readBusyWaitStrategy.tick();
-        }
-        return this.readPosition.getPlain();
-    }
-
-    @Override
     public byte readByte(long offset) {
         return buffer.getByte(offset & capacityMinusOne);
     }
@@ -144,28 +167,5 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBl
     @Override
     public double readDouble(long offset) {
         return buffer.getDouble(offset & capacityMinusOne);
-    }
-
-    @Override
-    public void advance(long offset) {
-        readPosition.set(offset);
-    }
-
-    @Override
-    public long size() {
-        return size(readPosition.get() & capacityMinusOne);
-    }
-
-    private long size(long readPosition) {
-        long writePosition = this.writePosition.get() & capacityMinusOne;
-        if (writePosition >= readPosition) {
-            return readPosition - writePosition;
-        }
-        return capacity - (writePosition - readPosition);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
     }
 }

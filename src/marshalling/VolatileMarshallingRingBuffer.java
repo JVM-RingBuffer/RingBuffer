@@ -36,6 +36,44 @@ class VolatileMarshallingRingBuffer implements MarshallingRingBuffer {
     }
 
     @Override
+    public void put(int offset) {
+        writePosition.set(offset);
+    }
+
+    @Override
+    public int take(int size) {
+        int readPosition = this.readPosition & capacityMinusOne;
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < size) {
+            readBusyWaitStrategy.tick();
+        }
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
+    }
+
+    @Override
+    public void advance() {}
+
+    @Override
+    public int size() {
+        return size(readPosition & capacityMinusOne);
+    }
+
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get() & capacityMinusOne;
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (writePosition.get() & capacityMinusOne) == (readPosition & capacityMinusOne);
+    }
+
+    @Override
     public void writeByte(int offset, byte value) {
         buffer.putByte(offset & capacityMinusOne, value);
     }
@@ -76,23 +114,6 @@ class VolatileMarshallingRingBuffer implements MarshallingRingBuffer {
     }
 
     @Override
-    public void put(int offset) {
-        writePosition.set(offset);
-    }
-
-    @Override
-    public int take(int size) {
-        int readPosition = this.readPosition & capacityMinusOne;
-        readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
-            readBusyWaitStrategy.tick();
-        }
-        readPosition = this.readPosition;
-        this.readPosition += size;
-        return readPosition;
-    }
-
-    @Override
     public byte readByte(int offset) {
         return buffer.getByte(offset & capacityMinusOne);
     }
@@ -130,26 +151,5 @@ class VolatileMarshallingRingBuffer implements MarshallingRingBuffer {
     @Override
     public double readDouble(int offset) {
         return buffer.getDouble(offset & capacityMinusOne);
-    }
-
-    @Override
-    public void advance() {}
-
-    @Override
-    public int size() {
-        return size(readPosition & capacityMinusOne);
-    }
-
-    private int size(int readPosition) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
-        if (writePosition <= readPosition) {
-            return readPosition - writePosition;
-        }
-        return capacity - (writePosition - readPosition);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition & capacityMinusOne);
     }
 }

@@ -42,7 +42,7 @@ class ConcurrentMarshallingBlockingRingBuffer implements MarshallingBlockingRing
         writeLock.lock();
         int writePosition = this.writePosition.getPlain() & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (freeSpace(writePosition) < size) {
+        while (freeSpace(writePosition) <= size) {
             writeBusyWaitStrategy.tick();
         }
         return this.writePosition.getPlain();
@@ -54,6 +54,47 @@ class ConcurrentMarshallingBlockingRingBuffer implements MarshallingBlockingRing
             return capacity - (writePosition - readPosition);
         }
         return readPosition - writePosition;
+    }
+
+    @Override
+    public void put(int offset) {
+        writePosition.set(offset);
+        writeLock.unlock();
+    }
+
+    @Override
+    public int take(int size) {
+        readLock.lock();
+        int readPosition = this.readPosition.getPlain() & capacityMinusOne;
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < size) {
+            readBusyWaitStrategy.tick();
+        }
+        return this.readPosition.getPlain();
+    }
+
+    @Override
+    public void advance(int offset) {
+        readPosition.set(offset);
+        readLock.unlock();
+    }
+
+    @Override
+    public int size() {
+        return size(readPosition.get() & capacityMinusOne);
+    }
+
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get() & capacityMinusOne;
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
     }
 
     @Override
@@ -97,23 +138,6 @@ class ConcurrentMarshallingBlockingRingBuffer implements MarshallingBlockingRing
     }
 
     @Override
-    public void put(int offset) {
-        writePosition.set(offset);
-        writeLock.unlock();
-    }
-
-    @Override
-    public int take(int size) {
-        readLock.lock();
-        int readPosition = this.readPosition.getPlain() & capacityMinusOne;
-        readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
-            readBusyWaitStrategy.tick();
-        }
-        return this.readPosition.getPlain();
-    }
-
-    @Override
     public byte readByte(int offset) {
         return buffer.getByte(offset & capacityMinusOne);
     }
@@ -151,29 +175,5 @@ class ConcurrentMarshallingBlockingRingBuffer implements MarshallingBlockingRing
     @Override
     public double readDouble(int offset) {
         return buffer.getDouble(offset & capacityMinusOne);
-    }
-
-    @Override
-    public void advance(int offset) {
-        readPosition.set(offset);
-        readLock.unlock();
-    }
-
-    @Override
-    public int size() {
-        return size(readPosition.get() & capacityMinusOne);
-    }
-
-    private int size(int readPosition) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
-        if (writePosition >= readPosition) {
-            return readPosition - writePosition;
-        }
-        return capacity - (writePosition - readPosition);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
     }
 }

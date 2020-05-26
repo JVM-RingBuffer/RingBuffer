@@ -2,5 +2,6 @@
 !.idea/libraries
 !.idea/runConfigurations
 !.idea/modules.xml
+!.idea/compiler.xml
 
 lib/

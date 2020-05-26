@@ -1,9 +1,9 @@
 package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.builder.MarshallingBlockingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.MarshallingRingBufferBuilder;
 import eu.menzani.ringbuffer.builder.DirectMarshallingBlockingRingBufferBuilder;
 import eu.menzani.ringbuffer.builder.DirectMarshallingRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.MarshallingBlockingRingBufferBuilder;
+import eu.menzani.ringbuffer.builder.MarshallingRingBufferBuilder;
 
 public class BuilderProxy {
     public static AtomicReadMarshallingRingBuffer atomicReadMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {

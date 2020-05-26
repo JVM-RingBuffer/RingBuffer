@@ -73,28 +73,28 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     MarshallingBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(volatileMarshallingBlockingRingBuffer());
                     }
                     return volatileMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(atomicReadMarshallingBlockingRingBuffer());
                     }
                     return atomicReadMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(atomicWriteMarshallingBlockingRingBuffer());
                     }
                     return atomicWriteMarshallingBlockingRingBuffer(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(concurrentMarshallingBlockingRingBuffer());
                     }

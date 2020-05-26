@@ -73,28 +73,28 @@ public class DirectMarshallingBlockingRingBufferBuilder extends AbstractDirectMa
     DirectMarshallingBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(volatileDirectMarshallingBlockingRingBuffer());
                     }
                     return volatileDirectMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(atomicReadDirectMarshallingBlockingRingBuffer());
                     }
                     return atomicReadDirectMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(atomicWriteDirectMarshallingBlockingRingBuffer());
                     }
                     return atomicWriteDirectMarshallingBlockingRingBuffer(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
                         return instantiateCopy(concurrentDirectMarshallingBlockingRingBuffer());
                     }
