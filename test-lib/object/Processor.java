@@ -3,7 +3,7 @@ package test.object;
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 import eu.menzani.ringbuffer.object.RingBuffer;
 
-import static test.object.ProducersToProcessorToConsumersTest.*;
+import static test.object.ProducersToProcessorToConsumersContentionTest.*;
 
 class Processor extends TestThread {
     static Processor startAsync(int numIterations, RingBuffer<Event> producersRingBuffer) {

@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test-lib" isTestSource="true" packagePrefix="test" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test" isTestSource="true" packagePrefix="eu.menzani.ringbuffer" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test-lib" isTestSource="true" packagePrefix="eu.menzani.ringbuffer" />
-      <sourceFolder url="file://$MODULE_DIR$/perftest" isTestSource="true" packagePrefix="test" />
+      <sourceFolder url="file://$MODULE_DIR$/contention-test" isTestSource="true" packagePrefix="test" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

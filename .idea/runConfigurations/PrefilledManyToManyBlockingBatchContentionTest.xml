@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PrefilledManyToManyBlockingBatchContentionTest" type="Application" factoryName="Application" folderName="Concurrent Prefilled">
+    <option name="MAIN_CLASS_NAME" value="test.object.PrefilledManyToManyBlockingBatchContentionTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms6m -Xmx6m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

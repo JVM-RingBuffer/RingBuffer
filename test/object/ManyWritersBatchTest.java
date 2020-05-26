@@ -1,7 +1,5 @@
 package test.object;
 
-import test.AbstractRingBufferTest;
-
 class ManyWritersBatchTest extends ManyWritersTest {
     public static void main(String[] args) {
         new ManyWritersBatchTest().runBenchmark();
@@ -9,7 +7,7 @@ class ManyWritersBatchTest extends ManyWritersTest {
 
     @Override
     protected long testSum() {
-        Writer.startGroupAsync(RING_BUFFER);
-        return BatchReader.runAsync(AbstractRingBufferTest.TOTAL_ELEMENTS, RingBufferTest.BATCH_SIZE, RING_BUFFER);
+        Writer.runGroupAsync(RING_BUFFER);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
     }
 }

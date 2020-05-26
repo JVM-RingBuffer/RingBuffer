@@ -1,33 +1,13 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
-
-public class ManyToManyDirectMarshallingBlockingTest extends RingBufferTest {
-    public static final DirectMarshallingBlockingRingBuffer RING_BUFFER =
-            DirectMarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .manyReaders()
-                    .manyWriters()
-                    .blocking()
-                    .build();
-
+class ManyToManyDirectMarshallingBlockingTest extends ManyToManyDirectMarshallingBlockingContentionTest {
     public static void main(String[] args) {
         new ManyToManyDirectMarshallingBlockingTest().runBenchmark();
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 10;
-    }
-
-    @Override
-    protected long getSum() {
-        return MANY_WRITERS_SUM;
-    }
-
-    @Override
     protected long testSum() {
-        DirectBlockingWriter.startGroupAsync(RING_BUFFER);
+        DirectBlockingWriter.runGroupAsync(RING_BUFFER);
         return DirectBlockingReader.runGroupAsync(RING_BUFFER);
     }
 }

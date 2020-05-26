@@ -1,31 +1,13 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
-
-public class ManyWritersMarshallingTest extends RingBufferTest {
-    public static final MarshallingRingBuffer RING_BUFFER =
-            MarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .oneReader()
-                    .manyWriters()
-                    .build();
-
+class ManyWritersMarshallingTest extends ManyWritersMarshallingContentionTest {
     public static void main(String[] args) {
         new ManyWritersMarshallingTest().runBenchmark();
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 12;
-    }
-
-    @Override
-    protected long getSum() {
-        return MANY_WRITERS_SUM;
-    }
-
-    @Override
     protected long testSum() {
-        Writer.startGroupAsync(RING_BUFFER);
+        Writer.runGroupAsync(RING_BUFFER);
         return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
     }
 }
