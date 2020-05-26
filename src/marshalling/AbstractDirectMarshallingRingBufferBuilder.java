@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Number;

@@ -1,13 +1,9 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.object;
 
 import eu.menzani.ringbuffer.memory.MemoryOrder;
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
-
-import static eu.menzani.ringbuffer.object.BuilderProxy.*;
 
 public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
     public PrefilledOverwritingRingBufferBuilder(int capacity) {
@@ -81,35 +77,35 @@ public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledR
     }
 
     @Override
-    RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(volatilePrefilledRingBuffer());
+                        return instantiateCopy(VolatilePrefilledRingBuffer.class);
                     }
-                    return volatilePrefilledRingBuffer(this);
+                    return new VolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicReadPrefilledRingBuffer());
+                        return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
                     }
-                    return atomicReadPrefilledRingBuffer(this);
+                    return new AtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicWritePrefilledRingBuffer());
+                        return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
                     }
-                    return atomicWritePrefilledRingBuffer(this);
+                    return new AtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(concurrentPrefilledRingBuffer());
+                        return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
                     }
-                    return concurrentPrefilledRingBuffer(this);
+                    return new ConcurrentPrefilledRingBuffer<>(this);
                 }
         }
         throw new AssertionError();

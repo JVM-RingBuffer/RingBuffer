@@ -1,10 +1,7 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.marshalling.BuilderProxy.*;
 
 public class MarshallingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<MarshallingRingBuffer> {
     public MarshallingRingBufferBuilder(int capacity) {
@@ -72,35 +69,35 @@ public class MarshallingRingBufferBuilder extends AbstractMarshallingRingBufferB
     }
 
     @Override
-    MarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected MarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(volatileMarshallingRingBuffer());
+                        return instantiateCopy(VolatileMarshallingRingBuffer.class);
                     }
-                    return volatileMarshallingRingBuffer(this);
+                    return new VolatileMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicReadMarshallingRingBuffer());
+                        return instantiateCopy(AtomicReadMarshallingRingBuffer.class);
                     }
-                    return atomicReadMarshallingRingBuffer(this);
+                    return new AtomicReadMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicWriteMarshallingRingBuffer());
+                        return instantiateCopy(AtomicWriteMarshallingRingBuffer.class);
                     }
-                    return atomicWriteMarshallingRingBuffer(this);
+                    return new AtomicWriteMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.OVERWRITING) {
                     if (copyClass) {
-                        return instantiateCopy(concurrentMarshallingRingBuffer());
+                        return instantiateCopy(ConcurrentMarshallingRingBuffer.class);
                     }
-                    return concurrentMarshallingRingBuffer(this);
+                    return new ConcurrentMarshallingRingBuffer(this);
                 }
         }
         throw new AssertionError();

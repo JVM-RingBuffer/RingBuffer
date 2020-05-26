@@ -1,12 +1,15 @@
 package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.AbstractRingBufferBuilder;
+import eu.menzani.ringbuffer.object.EmptyRingBufferBuilder;
+import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBufferBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RingBufferBuilderTest {
-    private AbstractRingBufferBuilder<?> builder;
+    private EmptyRingBufferBuilder<?> builder;
 
     @BeforeEach
     void setUp() {

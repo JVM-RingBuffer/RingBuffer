@@ -1,10 +1,8 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
+import eu.menzani.ringbuffer.AbstractRingBufferBuilder;
 import eu.menzani.ringbuffer.memory.MemoryOrder;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.marshalling.BuilderProxy.*;
 
 public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<MarshallingBlockingRingBuffer> {
     MarshallingBlockingRingBufferBuilder(MarshallingRingBufferBuilder builder) {
@@ -36,12 +34,12 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     }
 
     @Override
-    AbstractRingBufferBuilder<?> blocking() {
+    protected AbstractRingBufferBuilder<?> blocking() {
         throw new AssertionError();
     }
 
     @Override
-    AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
+    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
         throw new AssertionError();
     }
 
@@ -70,35 +68,35 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     }
 
     @Override
-    MarshallingBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected MarshallingBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(volatileMarshallingBlockingRingBuffer());
+                        return instantiateCopy(VolatileMarshallingBlockingRingBuffer.class);
                     }
-                    return volatileMarshallingBlockingRingBuffer(this);
+                    return new VolatileMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicReadMarshallingBlockingRingBuffer());
+                        return instantiateCopy(AtomicReadMarshallingBlockingRingBuffer.class);
                     }
-                    return atomicReadMarshallingBlockingRingBuffer(this);
+                    return new AtomicReadMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(atomicWriteMarshallingBlockingRingBuffer());
+                        return instantiateCopy(AtomicWriteMarshallingBlockingRingBuffer.class);
                     }
-                    return atomicWriteMarshallingBlockingRingBuffer(this);
+                    return new AtomicWriteMarshallingBlockingRingBuffer(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(concurrentMarshallingBlockingRingBuffer());
+                        return instantiateCopy(ConcurrentMarshallingBlockingRingBuffer.class);
                     }
-                    return concurrentMarshallingBlockingRingBuffer(this);
+                    return new ConcurrentMarshallingBlockingRingBuffer(this);
                 }
         }
         throw new AssertionError();

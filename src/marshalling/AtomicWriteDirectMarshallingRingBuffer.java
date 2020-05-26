@@ -1,13 +1,9 @@
 package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.builder.DirectMarshallingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.marshalling.array.DirectByteArray;
 import eu.menzani.ringbuffer.memory.Long;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class AtomicWriteDirectMarshallingRingBuffer implements DirectMarshallingRingBuffer {
     private final long capacity;
@@ -21,11 +17,11 @@ class AtomicWriteDirectMarshallingRingBuffer implements DirectMarshallingRingBuf
     private final Long writePosition;
 
     AtomicWriteDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
-        capacity = Proxy.getCapacity(builder);
-        capacityMinusOne = getCapacityMinusOne(builder);
-        buffer = getBuffer(builder);
-        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
-        writePosition = newCursor(builder);
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        writePosition = builder.newCursor();
     }
 
     @Override

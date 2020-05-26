@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.object;
 
 import eu.menzani.ringbuffer.java.Assume;
 
@@ -25,7 +25,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     }
 
     @Override
-    void validate() {
+    protected void validate() {
         super.validate();
         if (filler == null) {
             throw new IllegalStateException("You must call fillWith().");

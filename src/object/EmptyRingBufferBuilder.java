@@ -1,11 +1,7 @@
-package eu.menzani.ringbuffer.builder;
+package eu.menzani.ringbuffer.object;
 
 import eu.menzani.ringbuffer.memory.MemoryOrder;
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
-import eu.menzani.ringbuffer.object.RingBuffer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.object.BuilderProxy.*;
 
 public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     private boolean gcEnabled;
@@ -80,151 +76,151 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     }
 
     @Override
-    RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 switch (type) {
                     case OVERWRITING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(volatileGCRingBuffer());
+                                return instantiateCopy(VolatileGCRingBuffer.class);
                             }
-                            return volatileGCRingBuffer(this);
+                            return new VolatileGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(volatileRingBuffer());
+                            return instantiateCopy(VolatileRingBuffer.class);
                         }
-                        return volatileRingBuffer(this);
+                        return new VolatileRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(volatileBlockingGCRingBuffer());
+                                return instantiateCopy(VolatileBlockingGCRingBuffer.class);
                             }
-                            return volatileBlockingGCRingBuffer(this);
+                            return new VolatileBlockingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(volatileBlockingRingBuffer());
+                            return instantiateCopy(VolatileBlockingRingBuffer.class);
                         }
-                        return volatileBlockingRingBuffer(this);
+                        return new VolatileBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(volatileDiscardingGCRingBuffer());
+                                return instantiateCopy(VolatileDiscardingGCRingBuffer.class);
                             }
-                            return volatileDiscardingGCRingBuffer(this);
+                            return new VolatileDiscardingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(volatileDiscardingRingBuffer());
+                            return instantiateCopy(VolatileDiscardingRingBuffer.class);
                         }
-                        return volatileDiscardingRingBuffer(this);
+                        return new VolatileDiscardingRingBuffer<>(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
                     case OVERWRITING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicReadGCRingBuffer());
+                                return instantiateCopy(AtomicReadGCRingBuffer.class);
                             }
-                            return atomicReadGCRingBuffer(this);
+                            return new AtomicReadGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicReadRingBuffer());
+                            return instantiateCopy(AtomicReadRingBuffer.class);
                         }
-                        return atomicReadRingBuffer(this);
+                        return new AtomicReadRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicReadBlockingGCRingBuffer());
+                                return instantiateCopy(AtomicReadBlockingGCRingBuffer.class);
                             }
-                            return atomicReadBlockingGCRingBuffer(this);
+                            return new AtomicReadBlockingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicReadBlockingRingBuffer());
+                            return instantiateCopy(AtomicReadBlockingRingBuffer.class);
                         }
-                        return atomicReadBlockingRingBuffer(this);
+                        return new AtomicReadBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicReadDiscardingGCRingBuffer());
+                                return instantiateCopy(AtomicReadDiscardingGCRingBuffer.class);
                             }
-                            return atomicReadDiscardingGCRingBuffer(this);
+                            return new AtomicReadDiscardingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicReadDiscardingRingBuffer());
+                            return instantiateCopy(AtomicReadDiscardingRingBuffer.class);
                         }
-                        return atomicReadDiscardingRingBuffer(this);
+                        return new AtomicReadDiscardingRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
                     case OVERWRITING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicWriteGCRingBuffer());
+                                return instantiateCopy(AtomicWriteGCRingBuffer.class);
                             }
-                            return atomicWriteGCRingBuffer(this);
+                            return new AtomicWriteGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicWriteRingBuffer());
+                            return instantiateCopy(AtomicWriteRingBuffer.class);
                         }
-                        return atomicWriteRingBuffer(this);
+                        return new AtomicWriteRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicWriteBlockingGCRingBuffer());
+                                return instantiateCopy(AtomicWriteBlockingGCRingBuffer.class);
                             }
-                            return atomicWriteBlockingGCRingBuffer(this);
+                            return new AtomicWriteBlockingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicWriteBlockingRingBuffer());
+                            return instantiateCopy(AtomicWriteBlockingRingBuffer.class);
                         }
-                        return atomicWriteBlockingRingBuffer(this);
+                        return new AtomicWriteBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(atomicWriteDiscardingGCRingBuffer());
+                                return instantiateCopy(AtomicWriteDiscardingGCRingBuffer.class);
                             }
-                            return atomicWriteDiscardingGCRingBuffer(this);
+                            return new AtomicWriteDiscardingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(atomicWriteDiscardingRingBuffer());
+                            return instantiateCopy(AtomicWriteDiscardingRingBuffer.class);
                         }
-                        return atomicWriteDiscardingRingBuffer(this);
+                        return new AtomicWriteDiscardingRingBuffer<>(this);
                 }
             case CONCURRENT:
                 switch (type) {
                     case OVERWRITING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(concurrentGCRingBuffer());
+                                return instantiateCopy(ConcurrentGCRingBuffer.class);
                             }
-                            return concurrentGCRingBuffer(this);
+                            return new ConcurrentGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(concurrentRingBuffer());
+                            return instantiateCopy(ConcurrentRingBuffer.class);
                         }
-                        return concurrentRingBuffer(this);
+                        return new ConcurrentRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(concurrentBlockingGCRingBuffer());
+                                return instantiateCopy(ConcurrentBlockingGCRingBuffer.class);
                             }
-                            return concurrentBlockingGCRingBuffer(this);
+                            return new ConcurrentBlockingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(concurrentBlockingRingBuffer());
+                            return instantiateCopy(ConcurrentBlockingRingBuffer.class);
                         }
-                        return concurrentBlockingRingBuffer(this);
+                        return new ConcurrentBlockingRingBuffer<>(this);
                     case DISCARDING:
                         if (gcEnabled) {
                             if (copyClass) {
-                                return instantiateCopy(concurrentDiscardingGCRingBuffer());
+                                return instantiateCopy(ConcurrentDiscardingGCRingBuffer.class);
                             }
-                            return concurrentDiscardingGCRingBuffer(this);
+                            return new ConcurrentDiscardingGCRingBuffer<>(this);
                         }
                         if (copyClass) {
-                            return instantiateCopy(concurrentDiscardingRingBuffer());
+                            return instantiateCopy(ConcurrentDiscardingRingBuffer.class);
                         }
-                        return concurrentDiscardingRingBuffer(this);
+                        return new ConcurrentDiscardingRingBuffer<>(this);
                 }
         }
         throw new AssertionError();

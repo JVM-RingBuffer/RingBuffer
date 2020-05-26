@@ -1,14 +1,10 @@
 package eu.menzani.ringbuffer.object;
 
 import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.builder.PrefilledOverwritingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
-
-import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer<T> {
     private final int capacity;
@@ -23,11 +19,11 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
     private final Integer writePosition;
 
     ConcurrentPrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
-        capacity = Proxy.getCapacity(builder);
-        capacityMinusOne = getCapacityMinusOne(builder);
-        buffer = getBuffer(builder);
-        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
-        writePosition = newCursor(builder);
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        writePosition = builder.newCursor();
     }
 
     @Override

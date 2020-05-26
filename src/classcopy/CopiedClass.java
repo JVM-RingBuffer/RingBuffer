@@ -30,13 +30,15 @@ public class CopiedClass<T> {
     private final Class<?> original;
 
     /**
-     * Uses deep reflection.
+     * Uses deep reflection to access a class for which a {@link MethodHandles.Lookup} created in the same package
+     * is not available.
      *
      * @param original must be concrete
+     * @param lookup   must be allowed to do deep reflection on {@code original}
      */
-    public static <T> CopiedClass<T> of(Class<?> original) {
+    public static <T> CopiedClass<T> ofExternal(Class<?> original, MethodHandles.Lookup lookup) {
         try {
-            return of(original, MethodHandles.privateLookupIn(original, MethodHandles.lookup()));
+            return of(original, MethodHandles.privateLookupIn(original, lookup));
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
@@ -44,14 +46,19 @@ public class CopiedClass<T> {
 
     /**
      * @param original must be concrete
-     * @param lookup   must have package privileges
+     * @param lookup   must have package privileges, and it must be able to access {@code original}
      */
     public static <T> CopiedClass<T> of(Class<?> original, MethodHandles.Lookup lookup) {
         if (Modifier.isAbstract(original.getModifiers())) {
-            throw new IllegalArgumentException("Class must be concrete.");
+            throw new IllegalArgumentException("original must be concrete.");
         }
         if ((lookup.lookupModes() & MethodHandles.Lookup.PACKAGE) == 0) {
             throw new IllegalArgumentException("lookup must have package privileges.");
+        }
+        try {
+            lookup.accessClass(original);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("original cannot be accessed by lookup.");
         }
         return new CopiedClass<>(byteBuddy
                 .redefine(original)

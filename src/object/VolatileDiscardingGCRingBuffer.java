@@ -1,13 +1,9 @@
 package eu.menzani.ringbuffer.object;
 
-import eu.menzani.ringbuffer.builder.EmptyRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
-
-import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class VolatileDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
@@ -19,12 +15,12 @@ class VolatileDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer writePosition;
 
     VolatileDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
-        capacity = Proxy.getCapacity(builder);
-        capacityMinusOne = getCapacityMinusOne(builder);
-        buffer = getBuffer(builder);
-        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
-        readPosition = newCursor(builder);
-        writePosition = newCursor(builder);
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        readPosition = builder.newCursor();
+        writePosition = builder.newCursor();
     }
 
     @Override

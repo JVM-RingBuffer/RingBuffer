@@ -1,12 +1,8 @@
 package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.builder.MarshallingBlockingRingBufferBuilder;
-import eu.menzani.ringbuffer.builder.Proxy;
 import eu.menzani.ringbuffer.marshalling.array.ByteArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-
-import static eu.menzani.ringbuffer.builder.Proxy.*;
 
 class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
     private final int capacity;
@@ -19,13 +15,13 @@ class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBu
     private final Integer writePosition;
 
     VolatileMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
-        capacity = Proxy.getCapacity(builder);
-        capacityMinusOne = getCapacityMinusOne(builder);
-        buffer = getBuffer(builder);
-        readBusyWaitStrategy = getReadBusyWaitStrategy(builder);
-        writeBusyWaitStrategy = getWriteBusyWaitStrategy(builder);
-        readPosition = newCursor(builder);
-        writePosition = newCursor(builder);
+        capacity = builder.getCapacity();
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
+        readPosition = builder.newCursor();
+        writePosition = builder.newCursor();
     }
 
     @Override

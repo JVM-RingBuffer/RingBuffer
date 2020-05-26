@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer.object;
 
-import eu.menzani.ringbuffer.builder.PrefilledOverwritingRingBufferBuilder;
-
 /**
  * <pre>{@code
  * int key = ringBuffer.nextKey();

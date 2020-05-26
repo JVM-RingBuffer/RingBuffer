@@ -1,7 +1,5 @@
 package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.builder.DirectMarshallingRingBufferBuilder;
-
 public interface DirectMarshallingRingBuffer extends AbstractDirectMarshallingRingBuffer {
     long next();
 
