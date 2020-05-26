@@ -5,7 +5,7 @@ public class YieldBusyWaitStrategy implements BusyWaitStrategy {
 
     public static BusyWaitStrategy getDefault() {
         return LinkedMultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
-                .after(HintBusyWaitStrategy.getDefault(), 100)
+                .after(HintBusyWaitStrategy.DEFAULT_INSTANCE, 100)
                 .build();
     }
 

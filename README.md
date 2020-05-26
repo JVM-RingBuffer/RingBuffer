@@ -59,7 +59,7 @@ MarshallingBlockingRingBuffer ringBuffer =
         MarshallingRingBuffer.withCapacity(Number.getNextPowerOfTwo(100))
                 .oneWriter()
                 .oneReader()
-                .blocking(FailBusyWaitStrategy.writingTooSlow())
+                .blocking(FailBusyWaitStrategy.readingTooSlow())
                 .unsafe()
                 .build();
 

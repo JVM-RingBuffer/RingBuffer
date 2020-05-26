@@ -9,11 +9,15 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
             () -> BusyWaitException.whileReading("The writing side is slower than expected."));
 
     public static BusyWaitStrategy readingTooSlow() {
-        return READING_TOO_SLOW;
+        return LinkedMultiStepBusyWaitStrategy.endWith(READING_TOO_SLOW)
+                .after(HintBusyWaitStrategy.DEFAULT_INSTANCE, 100)
+                .build();
     }
 
     public static BusyWaitStrategy writingTooSlow() {
-        return WRITING_TOO_SLOW;
+        return LinkedMultiStepBusyWaitStrategy.endWith(WRITING_TOO_SLOW)
+                .after(HintBusyWaitStrategy.DEFAULT_INSTANCE, 100)
+                .build();
     }
 
     private final Supplier<? extends BusyWaitException> exceptionSupplier;
