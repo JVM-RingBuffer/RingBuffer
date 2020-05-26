@@ -7,14 +7,9 @@ import test.TestThreadGroup;
 import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectReader extends TestThread implements AbstractReader {
-    static TestThreadGroup startGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
+    static long runGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectReader(numIterations, ringBuffer));
         group.start();
-        return group;
-    }
-
-    static long runGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
-        TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }

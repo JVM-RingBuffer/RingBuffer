@@ -5,14 +5,9 @@ import test.AbstractReader;
 import test.TestThreadGroup;
 
 class Reader extends TestThread implements AbstractReader {
-    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
+    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
         group.start();
-        return group;
-    }
-
-    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
-        TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }

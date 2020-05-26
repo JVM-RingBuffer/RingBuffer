@@ -302,50 +302,6 @@ public class AtomicIntArray {
         }
     }
 
-    public int getAcquireAndUpdateRelease(int index, IntUnaryOperator updateFunction) {
-        int prev = getAcquire(index), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsInt(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public int updateReleaseAndGetAcquire(int index, IntUnaryOperator updateFunction) {
-        int prev = getAcquire(index), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsInt(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public int getAcquireAndAccumulateRelease(int index, int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getAcquire(index), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public int accumulateReleaseAndGetAcquire(int index, int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getAcquire(index), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

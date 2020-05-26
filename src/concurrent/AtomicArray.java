@@ -157,50 +157,6 @@ public class AtomicArray<T> {
         }
     }
 
-    public T getAcquireAndUpdateRelease(int index, UnaryOperator<T> updateFunction) {
-        T prev = getAcquire(index), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.apply(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public T updateReleaseAndGetAcquire(int index, UnaryOperator<T> updateFunction) {
-        T prev = getAcquire(index), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.apply(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public T getAcquireAndAccumulateRelease(int index, T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getAcquire(index), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.apply(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public T accumulateReleaseAndGetAcquire(int index, T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getAcquire(index), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.apply(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

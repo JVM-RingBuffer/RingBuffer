@@ -21,7 +21,7 @@ class BatchReader extends Reader {
 
     private final int batchSize;
 
-    BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
+    private BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
         super(Number.ceilDiv(numIterations, batchSize), ringBuffer);
         this.batchSize = batchSize;
     }

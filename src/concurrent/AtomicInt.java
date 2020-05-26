@@ -300,50 +300,6 @@ public class AtomicInt {
         }
     }
 
-    public int getAcquireAndUpdateRelease(IntUnaryOperator updateFunction) {
-        int prev = getAcquire(), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsInt(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public int updateReleaseAndGetAcquire(IntUnaryOperator updateFunction) {
-        int prev = getAcquire(), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsInt(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public int getAcquireAndAccumulateRelease(int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getAcquire(), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public int accumulateReleaseAndGetAcquire(int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getAcquire(), next = 0;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
     @Override
     public String toString() {
         return Integer.toString(getVolatile());

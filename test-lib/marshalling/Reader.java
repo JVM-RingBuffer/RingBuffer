@@ -7,14 +7,9 @@ import test.TestThreadGroup;
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Reader extends TestThread implements AbstractReader {
-    static TestThreadGroup startGroupAsync(MarshallingRingBuffer ringBuffer) {
+    static long runGroupAsync(MarshallingRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
         group.start();
-        return group;
-    }
-
-    static long runGroupAsync(MarshallingRingBuffer ringBuffer) {
-        TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }

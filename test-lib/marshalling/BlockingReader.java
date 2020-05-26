@@ -7,14 +7,9 @@ import test.TestThreadGroup;
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class BlockingReader extends TestThread implements AbstractReader {
-    static TestThreadGroup startGroupAsync(MarshallingBlockingRingBuffer ringBuffer) {
+    static long runGroupAsync(MarshallingBlockingRingBuffer ringBuffer) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new BlockingReader(numIterations, ringBuffer));
         group.start();
-        return group;
-    }
-
-    static long runGroupAsync(MarshallingBlockingRingBuffer ringBuffer) {
-        TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }

@@ -302,50 +302,6 @@ public class AtomicLongArray {
         }
     }
 
-    public long getAcquireAndUpdateRelease(int index, LongUnaryOperator updateFunction) {
-        long prev = getAcquire(index), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsLong(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public long updateReleaseAndGetAcquire(int index, LongUnaryOperator updateFunction) {
-        long prev = getAcquire(index), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsLong(prev);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public long getAcquireAndAccumulateRelease(int index, long constant, LongBinaryOperator accumulatorFunction) {
-        long prev = getAcquire(index), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsLong(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
-    public long accumulateReleaseAndGetAcquire(int index, long constant, LongBinaryOperator accumulatorFunction) {
-        long prev = getAcquire(index), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsLong(prev, constant);
-            if (weakComparePlainAndSetRelease(index, prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire(index)));
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

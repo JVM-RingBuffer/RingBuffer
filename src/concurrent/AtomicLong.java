@@ -300,50 +300,6 @@ public class AtomicLong {
         }
     }
 
-    public long getAcquireAndUpdateRelease(LongUnaryOperator updateFunction) {
-        long prev = getAcquire(), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsLong(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public long updateReleaseAndGetAcquire(LongUnaryOperator updateFunction) {
-        long prev = getAcquire(), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.applyAsLong(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public long getAcquireAndAccumulateRelease(long constant, LongBinaryOperator accumulatorFunction) {
-        long prev = getAcquire(), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsLong(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public long accumulateReleaseAndGetAcquire(long constant, LongBinaryOperator accumulatorFunction) {
-        long prev = getAcquire(), next = 0L;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.applyAsLong(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
     @Override
     public String toString() {
         return Long.toString(getVolatile());

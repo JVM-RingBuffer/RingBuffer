@@ -153,50 +153,6 @@ public class Atomic<T> {
         }
     }
 
-    public T getAcquireAndUpdateRelease(UnaryOperator<T> updateFunction) {
-        T prev = getAcquire(), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.apply(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public T updateReleaseAndGetAcquire(UnaryOperator<T> updateFunction) {
-        T prev = getAcquire(), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = updateFunction.apply(prev);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public T getAcquireAndAccumulateRelease(T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getAcquire(), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.apply(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return prev;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
-    public T accumulateReleaseAndGetAcquire(T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getAcquire(), next = null;
-        for (boolean haveNext = false; ; ) {
-            if (!haveNext)
-                next = accumulatorFunction.apply(prev, constant);
-            if (weakComparePlainAndSetRelease(prev, next))
-                return next;
-            haveNext = (prev == (prev = getAcquire()));
-        }
-    }
-
     @Override
     public String toString() {
         return String.valueOf(getVolatile());
