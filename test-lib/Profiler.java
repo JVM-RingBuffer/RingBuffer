@@ -5,9 +5,9 @@ public class Profiler {
     private final double divideBy;
     private long start;
 
-    public Profiler(String name, int divideBy) {
+    public Profiler(Object object, int divideBy) {
         this.divideBy = divideBy;
-        result = Benchmark.current().getResult(name);
+        result = Benchmark.current().getResult(object.getClass().getSimpleName());
     }
 
     public void start() {

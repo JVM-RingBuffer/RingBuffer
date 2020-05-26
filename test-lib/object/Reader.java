@@ -31,11 +31,6 @@ class Reader extends TestThread implements AbstractReader {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "Reader";
-    }
-
-    @Override
     public long getSum() {
         return sum;
     }

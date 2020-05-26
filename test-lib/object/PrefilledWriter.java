@@ -29,11 +29,6 @@ class PrefilledWriter extends TestThread {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "PrefilledWriter";
-    }
-
-    @Override
     protected void loop() {
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

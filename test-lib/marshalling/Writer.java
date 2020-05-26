@@ -31,11 +31,6 @@ class Writer extends TestThread {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "Writer";
-    }
-
-    @Override
     protected void loop() {
         MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

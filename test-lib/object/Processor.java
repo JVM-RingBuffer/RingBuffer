@@ -21,11 +21,6 @@ class Processor extends TestThread {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "Processor";
-    }
-
-    @Override
     protected void loop() {
         EmptyRingBuffer<Event> producersRingBuffer = getEmptyRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

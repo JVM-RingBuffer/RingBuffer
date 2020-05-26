@@ -33,11 +33,6 @@ class BlockingReader extends TestThread implements AbstractReader {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "BlockingReader";
-    }
-
-    @Override
     public long getSum() {
         return sum;
     }

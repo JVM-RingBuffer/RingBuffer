@@ -27,11 +27,6 @@ class BatchReader extends Reader {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "BatchReader";
-    }
-
-    @Override
     long collect() {
         RingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;

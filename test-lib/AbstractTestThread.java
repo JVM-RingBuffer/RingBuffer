@@ -27,11 +27,9 @@ public abstract class AbstractTestThread extends Thread {
 
     protected AbstractTestThread(int numIterations, AbstractRingBuffer ringBuffer) {
         this.numIterations = numIterations;
-        profiler = new Profiler(getProfilerName(), numIterations);
+        profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;
     }
-
-    protected abstract String getProfilerName();
 
     protected void startNow() {
         start();

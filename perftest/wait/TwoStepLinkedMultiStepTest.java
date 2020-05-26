@@ -13,11 +13,6 @@ public class TwoStepLinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
     }
 
     @Override
-    String getProfilerName() {
-        return "TwoStepLinkedMultiStep";
-    }
-
-    @Override
     BusyWaitStrategy getStrategy() {
         return LinkedMultiStepBusyWaitStrategy.endWith(SECOND)
                 .after(FIRST, STEP_TICKS)

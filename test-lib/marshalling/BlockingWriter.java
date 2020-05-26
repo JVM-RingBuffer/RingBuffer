@@ -31,11 +31,6 @@ class BlockingWriter extends TestThread {
     }
 
     @Override
-    protected String getProfilerName() {
-        return "BlockingWriter";
-    }
-
-    @Override
     protected void loop() {
         MarshallingBlockingRingBuffer ringBuffer = getMarshallingBlockingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

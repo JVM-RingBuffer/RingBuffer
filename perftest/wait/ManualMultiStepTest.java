@@ -12,11 +12,6 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     }
 
     @Override
-    String getProfilerName() {
-        return "ManualMultiStep";
-    }
-
-    @Override
     BusyWaitStrategy getStrategy() {
         return new ManualMultiStepBusyWaitStrategy();
     }

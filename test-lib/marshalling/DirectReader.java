@@ -1,26 +1,26 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
+import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import test.AbstractReader;
 import test.TestThreadGroup;
 
-import static eu.menzani.ringbuffer.marshalling.Offsets.*;
+import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
 
-class Reader extends TestThread implements AbstractReader {
-    static TestThreadGroup startGroupAsync(MarshallingRingBuffer ringBuffer) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
+class DirectReader extends TestThread implements AbstractReader {
+    static TestThreadGroup startGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectReader(numIterations, ringBuffer));
         group.start();
         return group;
     }
 
-    static long runGroupAsync(MarshallingRingBuffer ringBuffer) {
+    static long runGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
         TestThreadGroup group = startGroupAsync(ringBuffer);
         group.waitForCompletion();
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, MarshallingRingBuffer ringBuffer) {
-        Reader reader = new Reader(numIterations, ringBuffer);
+    static long runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
+        DirectReader reader = new DirectReader(numIterations, ringBuffer);
         reader.startNow();
         reader.waitForCompletion();
         return reader.getSum();
@@ -28,7 +28,7 @@ class Reader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    Reader(int numIterations, MarshallingRingBuffer ringBuffer) {
+    DirectReader(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -43,7 +43,7 @@ class Reader extends TestThread implements AbstractReader {
     }
 
     long collect() {
-        MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
+        DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));
