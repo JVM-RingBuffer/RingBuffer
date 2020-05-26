@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer.builder;
 
+import eu.menzani.ringbuffer.java.Assume;
+
 import java.util.function.Supplier;
 
 abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T> {
@@ -18,6 +20,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     public abstract AbstractPrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler);
 
     void fillWith0(Supplier<? extends T> filler) {
+        Assume.notNull(filler);
         this.filler = filler;
     }
 
@@ -25,7 +28,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     void validate() {
         super.validate();
         if (filler == null) {
-            throw new IllegalStateException("The filler was not set.");
+            throw new IllegalStateException("You must call fillWith().");
         }
     }
 

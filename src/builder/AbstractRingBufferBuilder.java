@@ -77,7 +77,10 @@ abstract class AbstractRingBufferBuilder<T> {
     }
 
     /**
-     * A copy of the underlying implementation will be instantiated to allow inlining of polymorphic calls.
+     * A separate implementation will be created to allow inlining of polymorphic calls.
+     * <p>
+     * This is not a win-win: as with C++ templates, duplicated code will put more pressure on the CPU caches,
+     * so performance should be evaluated for each case.
      */
     public abstract AbstractRingBufferBuilder<T> copyClass();
 
@@ -118,7 +121,7 @@ abstract class AbstractRingBufferBuilder<T> {
     abstract T create(RingBufferConcurrency concurrency, RingBufferType type);
 
     T instantiateCopy(Class<?> ringBufferClass) {
-        return new CopiedClass<T>(ringBufferClass)
+        return CopiedClass.<T>of(ringBufferClass)
                 .getConstructor(getClass())
                 .call(this);
     }

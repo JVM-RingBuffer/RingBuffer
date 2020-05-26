@@ -88,13 +88,13 @@ public class ThreadSpreader {
 
         public ThreadSpreader build() {
             if (firstCPU == -1) {
-                throw new IllegalStateException("The first CPU was not set.");
+                throw new IllegalStateException("You must call fromCPU() or fromFirstCPU().");
             }
             if (increment == -1) {
-                throw new IllegalStateException("The increment was not set.");
+                throw new IllegalStateException("You must call increment(), skipHyperthreads() or skipFourWayHyperthreads().");
             }
             if (lastCPU == -1) {
-                throw new IllegalStateException("The last CPU was not set.");
+                throw new IllegalStateException("You must call toCPU().");
             }
             Ensure.notGreater(firstCPU, lastCPU);
             return new ThreadSpreader(this);

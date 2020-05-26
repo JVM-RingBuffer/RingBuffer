@@ -37,15 +37,15 @@ public class Assume {
         }
     }
 
-    public static void notNegative(long value) {
-        if (value < 0L) {
-            throw new IllegalArgumentException(value + " < 0");
-        }
-    }
-
     public static void notZero(int value) {
         if (value == 0) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public static void notNull(Object value) {
+        if (value == null) {
+            throw new NullPointerException();
         }
     }
 }
