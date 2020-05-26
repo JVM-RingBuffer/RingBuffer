@@ -1,6 +1,7 @@
 package eu.menzani.ringbuffer.marshalling.array;
 
 import eu.menzani.ringbuffer.java.Assume;
+import eu.menzani.ringbuffer.marshalling.DirectByteArray;
 
 import static eu.menzani.ringbuffer.system.Unsafe.*;
 

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling.array;
+package eu.menzani.ringbuffer.marshalling;
 
 public interface ByteArray {
     void putByte(int index, byte value);
@@ -32,4 +32,8 @@ public interface ByteArray {
     float getFloat(int index);
 
     double getDouble(int index);
+
+    interface Factory {
+        ByteArray newInstance(int capacity);
+    }
 }

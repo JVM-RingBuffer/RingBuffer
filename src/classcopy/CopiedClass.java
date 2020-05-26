@@ -83,9 +83,6 @@ public class CopiedClass<T> {
         return original;
     }
 
-    /**
-     * The constructor must be accessible.
-     */
     public Invokable<T> getConstructor(Class<?>... parameterTypes) {
         java.lang.reflect.Constructor<T> constructor;
         try {
@@ -94,13 +91,13 @@ public class CopiedClass<T> {
             throw new IllegalArgumentException(e);
         }
         if (!constructor.canAccess(null)) {
-            throw new IllegalArgumentException("Constructor must be accessible.");
+            constructor.setAccessible(true);
         }
         return new Constructor<>(constructor);
     }
 
     /**
-     * The method must be accessible, it must be static, and it must return a subtype of the original class.
+     * The method must be static, and it must return a subtype of the original class.
      */
     public Invokable<T> getFactoryMethod(String name, Class<?>... parameterTypes) {
         Method method;
@@ -112,12 +109,12 @@ public class CopiedClass<T> {
         if (!Modifier.isStatic(method.getModifiers())) {
             throw new IllegalArgumentException("Method must be static.");
         }
-        if (!method.canAccess(null)) {
-            throw new IllegalArgumentException("Method must be accessible.");
-        }
         Class<?> returnType = method.getReturnType();
         if (returnType != copy && !original.isAssignableFrom(returnType)) {
             throw new IllegalArgumentException("Method must be a factory.");
+        }
+        if (!method.canAccess(null)) {
+            method.setAccessible(true);
         }
         return new FactoryMethod<>(method);
     }

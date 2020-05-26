@@ -68,6 +68,12 @@ public class DirectMarshallingBlockingRingBufferBuilder extends AbstractDirectMa
     }
 
     @Override
+    public DirectMarshallingBlockingRingBufferBuilder withByteArray(DirectByteArray.Factory factory) {
+        super.withByteArray0(factory);
+        return this;
+    }
+
+    @Override
     protected DirectMarshallingBlockingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:

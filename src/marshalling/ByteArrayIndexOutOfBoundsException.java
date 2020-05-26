@@ -1,9 +1,9 @@
-package eu.menzani.ringbuffer.marshalling.array;
+package eu.menzani.ringbuffer.marshalling;
 
 public class ByteArrayIndexOutOfBoundsException extends IndexOutOfBoundsException {
     private final int index;
 
-    ByteArrayIndexOutOfBoundsException(int index) {
+    public ByteArrayIndexOutOfBoundsException(int index) {
         super(Integer.toString(index));
         this.index = index;
     }

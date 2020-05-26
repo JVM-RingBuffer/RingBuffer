@@ -69,6 +69,12 @@ public class MarshallingRingBufferBuilder extends AbstractMarshallingRingBufferB
     }
 
     @Override
+    public MarshallingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
+        super.withByteArray0(factory);
+        return this;
+    }
+
+    @Override
     protected MarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:

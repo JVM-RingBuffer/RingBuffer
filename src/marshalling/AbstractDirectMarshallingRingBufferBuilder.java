@@ -2,13 +2,13 @@ package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.java.Assume;
 import eu.menzani.ringbuffer.java.Number;
-import eu.menzani.ringbuffer.marshalling.array.DirectByteArray;
 import eu.menzani.ringbuffer.marshalling.array.SafeDirectByteArray;
 import eu.menzani.ringbuffer.marshalling.array.UnsafeDirectByteArray;
 import eu.menzani.ringbuffer.memory.Long;
 
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
     private final long capacity;
+    private DirectByteArray.Factory byteArrayFactory;
     // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<T>)
 
     AbstractDirectMarshallingRingBufferBuilder(long capacity) {
@@ -22,6 +22,13 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
     AbstractDirectMarshallingRingBufferBuilder(AbstractDirectMarshallingRingBufferBuilder<?> builder) {
         super(builder);
         capacity = builder.capacity;
+        byteArrayFactory = builder.byteArrayFactory;
+    }
+
+    public abstract AbstractDirectMarshallingRingBufferBuilder<T> withByteArray(DirectByteArray.Factory factory);
+
+    void withByteArray0(DirectByteArray.Factory factory) {
+        byteArrayFactory = factory;
     }
 
     long getCapacity() {
@@ -33,6 +40,9 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
     }
 
     DirectByteArray getBuffer() {
+        if (byteArrayFactory != null) {
+            return byteArrayFactory.newInstance(capacity);
+        }
         if (unsafe) {
             return new UnsafeDirectByteArray(capacity);
         }

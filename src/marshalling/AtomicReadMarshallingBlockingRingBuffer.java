@@ -1,7 +1,6 @@
 package eu.menzani.ringbuffer.marshalling;
 
 import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.marshalling.array.ByteArray;
 import eu.menzani.ringbuffer.memory.Integer;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 

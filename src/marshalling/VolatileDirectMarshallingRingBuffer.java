@@ -1,6 +1,5 @@
 package eu.menzani.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.array.DirectByteArray;
 import eu.menzani.ringbuffer.memory.Long;
 import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
 

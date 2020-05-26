@@ -1,5 +1,7 @@
 package eu.menzani.ringbuffer.marshalling.array;
 
+import eu.menzani.ringbuffer.marshalling.ByteArrayIndexOutOfBoundsException;
+
 public class SafeByteArray extends UnsafeByteArray {
     private final int length;
 
