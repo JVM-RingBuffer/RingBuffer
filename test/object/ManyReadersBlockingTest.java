@@ -1,6 +1,7 @@
 package test.object;
 
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import test.Profiler;
 
 public class ManyReadersBlockingTest extends ManyReadersBlockingContentionTest {
     public static final EmptyRingBuffer<Event> RING_BUFFER =
@@ -16,7 +17,8 @@ public class ManyReadersBlockingTest extends ManyReadersBlockingContentionTest {
 
     @Override
     protected long testSum() {
-        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return Reader.runGroupAsync(RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

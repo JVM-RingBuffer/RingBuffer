@@ -1,6 +1,6 @@
 package test.object;
 
-import test.AbstractRingBufferTest;
+import test.Profiler;
 
 class PrefilledManyWritersBatchContentionTest extends PrefilledManyWritersContentionTest {
     public static void main(String[] args) {
@@ -9,7 +9,8 @@ class PrefilledManyWritersBatchContentionTest extends PrefilledManyWritersConten
 
     @Override
     protected long testSum() {
-        PrefilledOverwritingWriter.startGroupAsync(RING_BUFFER);
-        return BatchReader.runAsync(AbstractRingBufferTest.TOTAL_ELEMENTS, RingBufferTest.BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        PrefilledOverwritingWriter.startGroupAsync(RING_BUFFER, profiler);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

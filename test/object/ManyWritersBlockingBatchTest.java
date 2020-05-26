@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class ManyWritersBlockingBatchTest extends ManyWritersBlockingTest {
     public static void main(String[] args) {
         new ManyWritersBlockingBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyWritersBlockingBatchTest extends ManyWritersBlockingTest {
 
     @Override
     protected long testSum() {
-        Writer.runGroupAsync(RING_BUFFER);
-        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runGroupAsync(RING_BUFFER, profiler);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

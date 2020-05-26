@@ -1,6 +1,7 @@
 package test.object;
 
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
+import test.Profiler;
 
 public class PrefilledOneToOneBlockingContentionTest extends RingBufferTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =
@@ -27,7 +28,8 @@ public class PrefilledOneToOneBlockingContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

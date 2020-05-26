@@ -1,27 +1,28 @@
 package test.object;
 
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
+import test.Profiler;
 import test.TestThreadGroup;
 
 class PrefilledWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(PrefilledRingBuffer<Event> ringBuffer) {
+    static TestThreadGroup startGroupAsync(PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledWriter(numIterations, ringBuffer));
-        group.start();
+        group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(PrefilledRingBuffer<Event> ringBuffer) {
-        startGroupAsync(ringBuffer).waitForCompletion();
+    static void runGroupAsync(PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
+        startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static PrefilledWriter startAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {
+    static PrefilledWriter startAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
         PrefilledWriter writer = new PrefilledWriter(numIterations, ringBuffer);
-        writer.startNow();
+        writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {
-        startAsync(numIterations, ringBuffer).waitForCompletion();
+    static void runAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
+        startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
     private PrefilledWriter(int numIterations, PrefilledRingBuffer<Event> ringBuffer) {

@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class ManyToManyTest extends ManyToManyContentionTest {
     public static void main(String[] args) {
         new ManyToManyTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyToManyTest extends ManyToManyContentionTest {
 
     @Override
     protected long testSum() {
-        Writer.runGroupAsync(RING_BUFFER);
-        return Reader.runGroupAsync(RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runGroupAsync(RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

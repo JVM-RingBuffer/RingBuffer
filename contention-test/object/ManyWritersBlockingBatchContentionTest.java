@@ -1,6 +1,6 @@
 package test.object;
 
-import test.AbstractRingBufferTest;
+import test.Profiler;
 
 class ManyWritersBlockingBatchContentionTest extends ManyWritersBlockingContentionTest {
     public static void main(String[] args) {
@@ -9,7 +9,8 @@ class ManyWritersBlockingBatchContentionTest extends ManyWritersBlockingContenti
 
     @Override
     protected long testSum() {
-        Writer.startGroupAsync(RING_BUFFER);
-        return BatchReader.runAsync(AbstractRingBufferTest.TOTAL_ELEMENTS, RingBufferTest.BLOCKING_BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.startGroupAsync(RING_BUFFER, profiler);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

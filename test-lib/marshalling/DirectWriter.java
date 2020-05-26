@@ -1,29 +1,30 @@
 package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import test.Profiler;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
+    static TestThreadGroup startGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectWriter(numIterations, ringBuffer));
-        group.start();
+        group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(DirectMarshallingRingBuffer ringBuffer) {
-        startGroupAsync(ringBuffer).waitForCompletion();
+    static void runGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+        startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static DirectWriter startAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
+    static DirectWriter startAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
         DirectWriter writer = new DirectWriter(numIterations, ringBuffer);
-        writer.startNow();
+        writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
-        startAsync(numIterations, ringBuffer).waitForCompletion();
+    static void runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+        startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
     private DirectWriter(int numIterations, DirectMarshallingRingBuffer ringBuffer) {

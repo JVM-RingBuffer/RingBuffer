@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class OneToOneTest extends OneToOneContentionTest {
     public static void main(String[] args) {
         new OneToOneTest().runBenchmark();
@@ -7,7 +9,8 @@ class OneToOneTest extends OneToOneContentionTest {
 
     @Override
     protected long testSum() {
-        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

@@ -1,5 +1,7 @@
 package test.marshalling;
 
+import test.Profiler;
+
 class ManyWritersDirectMarshallingTest extends ManyWritersDirectMarshallingContentionTest {
     public static void main(String[] args) {
         new ManyWritersDirectMarshallingTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyWritersDirectMarshallingTest extends ManyWritersDirectMarshallingConte
 
     @Override
     protected long testSum() {
-        DirectWriter.runGroupAsync(RING_BUFFER);
-        return DirectReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        DirectWriter.runGroupAsync(RING_BUFFER, profiler);
+        return DirectReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

@@ -1,6 +1,7 @@
 package test.object;
 
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import test.Profiler;
 
 public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToConsumersContentionTest {
     public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
@@ -16,8 +17,9 @@ public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToC
 
     @Override
     protected long testSum() {
-        Writer.runGroupAsync(PRODUCERS_RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.runAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
+        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);
     }
 }

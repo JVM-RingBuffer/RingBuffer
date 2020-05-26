@@ -1,6 +1,7 @@
 package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
+import test.Profiler;
 
 public class ManyReadersMarshallingContentionTest extends RingBufferTest {
     public static final MarshallingRingBuffer RING_BUFFER =
@@ -25,7 +26,8 @@ public class ManyReadersMarshallingContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return Reader.runGroupAsync(RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

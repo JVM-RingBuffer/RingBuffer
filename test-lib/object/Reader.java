@@ -2,20 +2,21 @@ package test.object;
 
 import eu.menzani.ringbuffer.object.RingBuffer;
 import test.AbstractReader;
+import test.Profiler;
 import test.TestThreadGroup;
 
 class Reader extends TestThread implements AbstractReader {
-    static long runGroupAsync(RingBuffer<Event> ringBuffer) {
+    static long runGroupAsync(RingBuffer<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
-        group.start();
-        group.waitForCompletion();
+        group.start(null);
+        group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer, Profiler profiler) {
         Reader reader = new Reader(numIterations, ringBuffer);
-        reader.startNow();
-        reader.waitForCompletion();
+        reader.startNow(null);
+        reader.waitForCompletion(profiler);
         return reader.getSum();
     }
 

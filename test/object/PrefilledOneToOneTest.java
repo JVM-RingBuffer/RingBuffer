@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class PrefilledOneToOneTest extends PrefilledOneToOneContentionTest {
     public static void main(String[] args) {
         new PrefilledOneToOneTest().runBenchmark();
@@ -7,7 +9,8 @@ class PrefilledOneToOneTest extends PrefilledOneToOneContentionTest {
 
     @Override
     protected long testSum() {
-        PrefilledOverwritingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        PrefilledOverwritingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

@@ -4,6 +4,7 @@ import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
 import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
+import test.Profiler;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {
     public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
@@ -37,8 +38,9 @@ public class ProducersToProcessorToConsumersContentionTest extends RingBufferTes
 
     @Override
     protected long testSum() {
-        Writer.startGroupAsync(PRODUCERS_RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.startGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.startAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER);
+        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);
     }
 }

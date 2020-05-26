@@ -1,5 +1,7 @@
 package test.marshalling;
 
+import test.Profiler;
+
 class ManyWritersMarshallingBlockingTest extends ManyWritersMarshallingBlockingContentionTest {
     public static void main(String[] args) {
         new ManyWritersMarshallingBlockingTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyWritersMarshallingBlockingTest extends ManyWritersMarshallingBlockingC
 
     @Override
     protected long testSum() {
-        BlockingWriter.runGroupAsync(RING_BUFFER);
-        return BlockingReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        BlockingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return BlockingReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

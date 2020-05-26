@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class ManyToManyBlockingBatchTest extends ManyToManyBlockingTest {
     public static void main(String[] args) {
         new ManyToManyBlockingBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyToManyBlockingBatchTest extends ManyToManyBlockingTest {
 
     @Override
     protected long testSum() {
-        Writer.runGroupAsync(RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runGroupAsync(RING_BUFFER, profiler);
+        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

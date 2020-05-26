@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class PrefilledManyWritersBatchTest extends PrefilledManyWritersTest {
     public static void main(String[] args) {
         new PrefilledManyWritersBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class PrefilledManyWritersBatchTest extends PrefilledManyWritersTest {
 
     @Override
     protected long testSum() {
-        PrefilledOverwritingWriter.runGroupAsync(RING_BUFFER);
-        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        PrefilledOverwritingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

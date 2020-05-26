@@ -2,6 +2,7 @@ package test.object;
 
 import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
 import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
+import test.Profiler;
 
 public class PrefilledManyWritersContentionTest extends RingBufferTest {
     public static final PrefilledOverwritingRingBuffer<Event> RING_BUFFER =
@@ -27,7 +28,8 @@ public class PrefilledManyWritersContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        PrefilledOverwritingWriter.startGroupAsync(RING_BUFFER);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        PrefilledOverwritingWriter.startGroupAsync(RING_BUFFER, profiler);
+        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

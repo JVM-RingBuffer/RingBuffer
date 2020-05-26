@@ -1,5 +1,7 @@
 package test;
 
+import eu.menzani.ringbuffer.java.Nullable;
+
 public class TestThreadGroup {
     private final AbstractTestThread[] testThreads;
 
@@ -10,7 +12,7 @@ public class TestThreadGroup {
         }
     }
 
-    public void start() {
+    public void start(@Nullable Profiler profiler) {
         for (AbstractTestThread testThread : testThreads) {
             testThread.start();
         }
@@ -20,11 +22,17 @@ public class TestThreadGroup {
         for (AbstractTestThread testThread : testThreads) {
             testThread.commenceExecution();
         }
+        if (profiler != null) {
+            profiler.start();
+        }
     }
 
-    public void waitForCompletion() {
+    public void waitForCompletion(@Nullable Profiler profiler) {
         for (AbstractTestThread testThread : testThreads) {
             testThread.waitForCompletion();
+        }
+        if (profiler != null) {
+            profiler.stop();
         }
     }
 

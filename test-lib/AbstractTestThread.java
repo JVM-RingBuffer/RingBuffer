@@ -1,6 +1,7 @@
 package test;
 
 import eu.menzani.ringbuffer.AbstractRingBuffer;
+import eu.menzani.ringbuffer.java.Nullable;
 import eu.menzani.ringbuffer.system.ThreadSpreader;
 import eu.menzani.ringbuffer.system.Threads;
 
@@ -31,10 +32,13 @@ public abstract class AbstractTestThread extends Thread {
         this.ringBuffer = ringBuffer;
     }
 
-    protected void startNow() {
+    protected void startNow(@Nullable Profiler profiler) {
         start();
         waitUntilReady();
         commenceExecution();
+        if (profiler != null) {
+            profiler.start();
+        }
     }
 
     void waitUntilReady() {
@@ -49,11 +53,18 @@ public abstract class AbstractTestThread extends Thread {
         commenceLatch.countDown();
     }
 
-    protected void waitForCompletion() {
+    void waitForCompletion() {
         try {
             join();
         } catch (InterruptedException e) {
             throw new AssertionError();
+        }
+    }
+
+    protected void waitForCompletion(@Nullable Profiler profiler) {
+        waitForCompletion();
+        if (profiler != null) {
+            profiler.stop();
         }
     }
 

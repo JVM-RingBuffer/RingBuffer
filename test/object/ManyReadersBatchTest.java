@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class ManyReadersBatchTest extends ManyReadersTest {
     public static void main(String[] args) {
         new ManyReadersBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class ManyReadersBatchTest extends ManyReadersTest {
 
     @Override
     protected long testSum() {
-        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

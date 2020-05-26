@@ -2,22 +2,23 @@ package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
 import test.AbstractReader;
+import test.Profiler;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectBlockingReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(DirectMarshallingBlockingRingBuffer ringBuffer) {
+    static long runGroupAsync(DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectBlockingReader(numIterations, ringBuffer));
-        group.start();
-        group.waitForCompletion();
+        group.start(null);
+        group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectMarshallingBlockingRingBuffer ringBuffer) {
+    static long runAsync(int numIterations, DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {
         DirectBlockingReader reader = new DirectBlockingReader(numIterations, ringBuffer);
-        reader.startNow();
-        reader.waitForCompletion();
+        reader.startNow(null);
+        reader.waitForCompletion(profiler);
         return reader.getSum();
     }
 

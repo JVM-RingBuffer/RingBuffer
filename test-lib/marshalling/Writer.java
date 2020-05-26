@@ -1,29 +1,30 @@
 package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
+import test.Profiler;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Writer extends TestThread {
-    static TestThreadGroup startGroupAsync(MarshallingRingBuffer ringBuffer) {
+    static TestThreadGroup startGroupAsync(MarshallingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
-        group.start();
+        group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(MarshallingRingBuffer ringBuffer) {
-        startGroupAsync(ringBuffer).waitForCompletion();
+    static void runGroupAsync(MarshallingRingBuffer ringBuffer, Profiler profiler) {
+        startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static Writer startAsync(int numIterations, MarshallingRingBuffer ringBuffer) {
+    static Writer startAsync(int numIterations, MarshallingRingBuffer ringBuffer, Profiler profiler) {
         Writer writer = new Writer(numIterations, ringBuffer);
-        writer.startNow();
+        writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, MarshallingRingBuffer ringBuffer) {
-        startAsync(numIterations, ringBuffer).waitForCompletion();
+    static void runAsync(int numIterations, MarshallingRingBuffer ringBuffer, Profiler profiler) {
+        startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
     private Writer(int numIterations, MarshallingRingBuffer ringBuffer) {

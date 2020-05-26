@@ -8,12 +8,12 @@ import static test.object.ProducersToProcessorToConsumersContentionTest.*;
 class Processor extends TestThread {
     static Processor startAsync(int numIterations, RingBuffer<Event> producersRingBuffer) {
         Processor processor = new Processor(numIterations, producersRingBuffer);
-        processor.startNow();
+        processor.startNow(null);
         return processor;
     }
 
     static void runAsync(int numIterations, RingBuffer<Event> producersRingBuffer) {
-        startAsync(numIterations, producersRingBuffer).waitForCompletion();
+        startAsync(numIterations, producersRingBuffer).waitForCompletion(null);
     }
 
     private Processor(int numIterations, RingBuffer<Event> producersRingBuffer) {

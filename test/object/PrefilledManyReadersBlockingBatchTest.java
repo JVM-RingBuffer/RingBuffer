@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class PrefilledManyReadersBlockingBatchTest extends PrefilledManyReadersBlockingTest {
     public static void main(String[] args) {
         new PrefilledManyReadersBlockingBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class PrefilledManyReadersBlockingBatchTest extends PrefilledManyReadersBlocking
 
     @Override
     protected long testSum() {
-        PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

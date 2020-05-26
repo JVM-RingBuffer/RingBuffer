@@ -1,5 +1,7 @@
 package test.object;
 
+import test.Profiler;
+
 class OneToOneBlockingBatchTest extends OneToOneBlockingTest {
     public static void main(String[] args) {
         new OneToOneBlockingBatchTest().runBenchmark();
@@ -7,7 +9,8 @@ class OneToOneBlockingBatchTest extends OneToOneBlockingTest {
 
     @Override
     protected long testSum() {
-        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER);
-        return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

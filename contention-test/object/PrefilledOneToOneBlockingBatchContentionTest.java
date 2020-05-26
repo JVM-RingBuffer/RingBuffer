@@ -1,6 +1,6 @@
 package test.object;
 
-import test.AbstractRingBufferTest;
+import test.Profiler;
 
 class PrefilledOneToOneBlockingBatchContentionTest extends PrefilledOneToOneBlockingContentionTest {
     public static void main(String[] args) {
@@ -9,7 +9,8 @@ class PrefilledOneToOneBlockingBatchContentionTest extends PrefilledOneToOneBloc
 
     @Override
     protected long testSum() {
-        PrefilledWriter.startAsync(AbstractRingBufferTest.NUM_ITERATIONS, RING_BUFFER);
-        return BatchReader.runAsync(AbstractRingBufferTest.NUM_ITERATIONS, RingBufferTest.BLOCKING_BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return BatchReader.runAsync(NUM_ITERATIONS, BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

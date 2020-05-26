@@ -2,22 +2,23 @@ package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
 import test.AbstractReader;
+import test.Profiler;
 import test.TestThreadGroup;
 
 import static eu.menzani.ringbuffer.marshalling.Offsets.*;
 
 class Reader extends TestThread implements AbstractReader {
-    static long runGroupAsync(MarshallingRingBuffer ringBuffer) {
+    static long runGroupAsync(MarshallingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
-        group.start();
-        group.waitForCompletion();
+        group.start(null);
+        group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, MarshallingRingBuffer ringBuffer) {
+    static long runAsync(int numIterations, MarshallingRingBuffer ringBuffer, Profiler profiler) {
         Reader reader = new Reader(numIterations, ringBuffer);
-        reader.startNow();
-        reader.waitForCompletion();
+        reader.startNow(null);
+        reader.waitForCompletion(profiler);
         return reader.getSum();
     }
 

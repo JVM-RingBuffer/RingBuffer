@@ -2,27 +2,28 @@ package test.object;
 
 import eu.menzani.ringbuffer.object.EmptyRingBuffer;
 import eu.menzani.ringbuffer.object.RingBuffer;
+import test.Profiler;
 import test.TestThreadGroup;
 
 class Writer extends TestThread {
-    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer) {
+    static TestThreadGroup startGroupAsync(RingBuffer<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
-        group.start();
+        group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(RingBuffer<Event> ringBuffer) {
-        startGroupAsync(ringBuffer).waitForCompletion();
+    static void runGroupAsync(RingBuffer<Event> ringBuffer, Profiler profiler) {
+        startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static Writer startAsync(int numIterations, RingBuffer<Event> ringBuffer) {
+    static Writer startAsync(int numIterations, RingBuffer<Event> ringBuffer, Profiler profiler) {
         Writer writer = new Writer(numIterations, ringBuffer);
-        writer.startNow();
+        writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer) {
-        startAsync(numIterations, ringBuffer).waitForCompletion();
+    static void runAsync(int numIterations, RingBuffer<Event> ringBuffer, Profiler profiler) {
+        startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
     private Writer(int numIterations, RingBuffer<Event> ringBuffer) {

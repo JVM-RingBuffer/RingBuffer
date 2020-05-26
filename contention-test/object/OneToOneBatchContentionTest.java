@@ -1,6 +1,6 @@
 package test.object;
 
-import test.AbstractRingBufferTest;
+import test.Profiler;
 
 class OneToOneBatchContentionTest extends OneToOneContentionTest {
     public static void main(String[] args) {
@@ -9,7 +9,8 @@ class OneToOneBatchContentionTest extends OneToOneContentionTest {
 
     @Override
     protected long testSum() {
-        Writer.startAsync(AbstractRingBufferTest.NUM_ITERATIONS, RING_BUFFER);
-        return BatchReader.runAsync(AbstractRingBufferTest.NUM_ITERATIONS, RingBufferTest.BATCH_SIZE, RING_BUFFER);
+        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

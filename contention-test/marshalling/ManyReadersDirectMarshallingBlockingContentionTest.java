@@ -2,6 +2,7 @@ package test.marshalling;
 
 import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
 import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import test.Profiler;
 
 public class ManyReadersDirectMarshallingBlockingContentionTest extends RingBufferTest {
     public static final DirectMarshallingBlockingRingBuffer RING_BUFFER =
@@ -27,7 +28,8 @@ public class ManyReadersDirectMarshallingBlockingContentionTest extends RingBuff
 
     @Override
     protected long testSum() {
-        DirectBlockingWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER);
-        return DirectBlockingReader.runGroupAsync(RING_BUFFER);
+        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        DirectBlockingWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return DirectBlockingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }
