@@ -80,9 +80,8 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     /**
      * A separate implementation will be created to allow inlining of polymorphic calls.
-     * <p>
-     * This is not a win-win: as with C++ templates, duplicated code will put more pressure on the CPU caches,
-     * so performance should be evaluated for each case.
+     *
+     * @see CopiedClass
      */
     public abstract AbstractRingBufferBuilder<T> copyClass();
 

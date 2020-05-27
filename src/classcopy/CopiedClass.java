@@ -19,6 +19,9 @@ import java.lang.reflect.Modifier;
  *
  * Api api = invokable.call(5);
  * }</pre>
+ * <p>
+ * This is not a win-win: as with C++ templates, duplicated code will put more pressure on the CPU caches,
+ * so performance should be evaluated for each case.
  *
  * @param <T> a superclass or superinterface used to represent the object
  */
