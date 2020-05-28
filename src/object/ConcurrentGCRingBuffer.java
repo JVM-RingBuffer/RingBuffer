@@ -111,18 +111,19 @@ class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
-        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
+        readLock.lock();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(buffer[i]);
             }
         } else {
-            forEachSplit(action, readPosition, writePosition);
+            forEachSplit(action, writePosition);
         }
+        readLock.unlock();
     }
 
-    private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
+    private void forEachSplit(Consumer<T> action, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             action.accept(buffer[i]);
         }
@@ -133,20 +134,24 @@ class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
-        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
-        if (writePosition <= readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                if (buffer[i].equals(element)) {
-                    return true;
+        readLock.lock();
+        try {
+            if (writePosition <= readPosition) {
+                for (int i = readPosition; i > writePosition; i--) {
+                    if (buffer[i].equals(element)) {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            return containsSplit(element, writePosition);
+        } finally {
+            readLock.unlock();
         }
-        return containsSplit(element, readPosition, writePosition);
     }
 
-    private boolean containsSplit(T element, int readPosition, int writePosition) {
+    private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             if (buffer[i].equals(element)) {
                 return true;
@@ -178,15 +183,16 @@ class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
         return isEmpty(getReadPosition(), writePosition.get());
     }
 
-    private boolean isEmpty(int readPosition, int writePosition) {
+    private static boolean isEmpty(int readPosition, int writePosition) {
         return writePosition == readPosition;
     }
 
     @Override
     public String toString() {
-        int readPosition = getReadPosition();
         int writePosition = this.writePosition.get();
+        readLock.lock();
         if (isEmpty(readPosition, writePosition)) {
+            readLock.unlock();
             return "[]";
         }
         StringBuilder builder = new StringBuilder(16);
@@ -197,14 +203,15 @@ class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
                 builder.append(", ");
             }
         } else {
-            toStringSplit(builder, readPosition, writePosition);
+            toStringSplit(builder, writePosition);
         }
+        readLock.unlock();
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
     }
 
-    private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
+    private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
             builder.append(buffer[i].toString());
             builder.append(", ");

@@ -191,7 +191,7 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<
         return isEmpty(readPosition.get(), writePosition.get());
     }
 
-    private boolean isEmpty(int readPosition, int writePosition) {
+    private static boolean isEmpty(int readPosition, int writePosition) {
         return writePosition == readPosition;
     }
 

@@ -128,11 +128,11 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
     }
 
     private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            action.accept(buffer[i]);
+        for (; readPosition >= 0; readPosition--) {
+            action.accept(buffer[readPosition]);
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            action.accept(buffer[i]);
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            action.accept(buffer[readPosition]);
         }
     }
 
@@ -152,13 +152,13 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
     }
 
     private boolean containsSplit(T element, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            if (buffer[i].equals(element)) {
+        for (; readPosition >= 0; readPosition--) {
+            if (buffer[readPosition].equals(element)) {
                 return true;
             }
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            if (buffer[i].equals(element)) {
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            if (buffer[readPosition].equals(element)) {
                 return true;
             }
         }
@@ -183,7 +183,7 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
         return isEmpty(getReadPosition(), writePosition.get());
     }
 
-    private boolean isEmpty(int readPosition, int writePosition) {
+    private static boolean isEmpty(int readPosition, int writePosition) {
         return writePosition == readPosition;
     }
 
@@ -210,12 +210,12 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
     }
 
     private void toStringSplit(StringBuilder builder, int readPosition, int writePosition) {
-        for (int i = readPosition; i >= 0; i--) {
-            builder.append(buffer[i].toString());
+        for (; readPosition >= 0; readPosition--) {
+            builder.append(buffer[readPosition].toString());
             builder.append(", ");
         }
-        for (int i = capacityMinusOne; i > writePosition; i--) {
-            builder.append(buffer[i].toString());
+        for (readPosition = capacityMinusOne; readPosition > writePosition; readPosition--) {
+            builder.append(buffer[readPosition].toString());
             builder.append(", ");
         }
     }
