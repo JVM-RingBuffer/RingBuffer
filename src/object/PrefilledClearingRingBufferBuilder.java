@@ -21,37 +21,37 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
 
-public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    public PrefilledOverwritingRingBufferBuilder(int capacity) {
+public class PrefilledClearingRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
+    public PrefilledClearingRingBufferBuilder(int capacity) {
         super(capacity);
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> fillWith(Supplier<? extends T> filler) {
+    public PrefilledClearingRingBufferBuilder<T> fillWith(Supplier<? extends T> filler) {
         super.fillWith0(filler);
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> oneWriter() {
+    public PrefilledClearingRingBufferBuilder<T> oneWriter() {
         super.oneWriter0();
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> manyWriters() {
+    public PrefilledClearingRingBufferBuilder<T> manyWriters() {
         super.manyWriters0();
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> oneReader() {
+    public PrefilledClearingRingBufferBuilder<T> oneReader() {
         super.oneReader0();
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> manyReaders() {
+    public PrefilledClearingRingBufferBuilder<T> manyReaders() {
         super.manyReaders0();
         return this;
     }
@@ -75,19 +75,19 @@ public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledR
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
+    public PrefilledClearingRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
+    public PrefilledClearingRingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
         super.withMemoryOrder0(memoryOrder);
         return this;
     }
 
     @Override
-    public PrefilledOverwritingRingBufferBuilder<T> copyClass() {
+    public PrefilledClearingRingBufferBuilder<T> copyClass() {
         super.copyClass0();
         return this;
     }
@@ -96,28 +96,28 @@ public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledR
     protected RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.CLEARING) {
                     if (copyClass) {
                         return instantiateCopy(VolatilePrefilledRingBuffer.class);
                     }
                     return new VolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.CLEARING) {
                     if (copyClass) {
                         return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
                     }
                     return new AtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.CLEARING) {
                     if (copyClass) {
                         return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
                     }
                     return new AtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.OVERWRITING) {
+                if (type == RingBufferType.CLEARING) {
                     if (copyClass) {
                         return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
                     }
@@ -128,7 +128,7 @@ public class PrefilledOverwritingRingBufferBuilder<T> extends AbstractPrefilledR
     }
 
     @Override
-    public PrefilledOverwritingRingBuffer<T> build() {
-        return (PrefilledOverwritingRingBuffer<T>) super.build();
+    public PrefilledClearingRingBuffer<T> build() {
+        return (PrefilledClearingRingBuffer<T>) super.build();
     }
 }

@@ -26,7 +26,7 @@ package org.ringbuffer.object;
  * <p>
  * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
  */
-public interface PrefilledOverwritingRingBuffer<T> extends RingBuffer<T> {
+public interface PrefilledClearingRingBuffer<T> extends RingBuffer<T> {
     int nextKey();
 
     T next(int key);

@@ -36,7 +36,7 @@ public interface PrefilledRingBuffer<T> extends RingBuffer<T> {
 
     void put(int putKey);
 
-    static <T> PrefilledOverwritingRingBufferBuilder<T> withCapacity(int capacity) {
-        return new PrefilledOverwritingRingBufferBuilder<>(capacity);
+    static <T> PrefilledClearingRingBufferBuilder<T> withCapacity(int capacity) {
+        return new PrefilledClearingRingBufferBuilder<>(capacity);
     }
 }

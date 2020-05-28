@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.object.EmptyRingBufferBuilder;
-import org.ringbuffer.object.PrefilledOverwritingRingBufferBuilder;
+import org.ringbuffer.object.PrefilledClearingRingBufferBuilder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +34,7 @@ class RingBufferBuilderTest {
 
     @Test
     void testFillerNotSet() {
-        AbstractRingBufferBuilder<?> builder = new PrefilledOverwritingRingBufferBuilder<>(2);
+        AbstractRingBufferBuilder<?> builder = new PrefilledClearingRingBufferBuilder<>(2);
         builder.oneReader();
         builder.oneWriter();
         assertThrows(IllegalStateException.class, builder::build);

@@ -26,7 +26,7 @@ import java.lang.invoke.MethodHandles;
 public abstract class AbstractRingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
-    protected RingBufferType type = RingBufferType.OVERWRITING;
+    protected RingBufferType type = RingBufferType.CLEARING;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
     protected MemoryOrder memoryOrder = MemoryOrder.LAZY;
@@ -161,7 +161,7 @@ public abstract class AbstractRingBufferBuilder<T> {
     }
 
     protected enum RingBufferType {
-        OVERWRITING,
+        CLEARING,
         BLOCKING,
         DISCARDING
     }

@@ -96,7 +96,7 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
         switch (concurrency) {
             case VOLATILE:
                 switch (type) {
-                    case OVERWRITING:
+                    case CLEARING:
                         if (gcEnabled) {
                             if (copyClass) {
                                 return instantiateCopy(VolatileGCRingBuffer.class);
@@ -132,7 +132,7 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                 }
             case ATOMIC_READ:
                 switch (type) {
-                    case OVERWRITING:
+                    case CLEARING:
                         if (gcEnabled) {
                             if (copyClass) {
                                 return instantiateCopy(AtomicReadGCRingBuffer.class);
@@ -168,7 +168,7 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                 }
             case ATOMIC_WRITE:
                 switch (type) {
-                    case OVERWRITING:
+                    case CLEARING:
                         if (gcEnabled) {
                             if (copyClass) {
                                 return instantiateCopy(AtomicWriteGCRingBuffer.class);
@@ -204,7 +204,7 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                 }
             case CONCURRENT:
                 switch (type) {
-                    case OVERWRITING:
+                    case CLEARING:
                         if (gcEnabled) {
                             if (copyClass) {
                                 return instantiateCopy(ConcurrentGCRingBuffer.class);

@@ -26,7 +26,7 @@ class PrefilledManyReadersBatchTest extends PrefilledManyReadersTest {
     @Override
     protected long testSum() {
         Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
-        PrefilledOverwritingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        PrefilledClearingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

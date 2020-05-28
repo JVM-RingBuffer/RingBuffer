@@ -22,7 +22,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer<T> {
+class ConcurrentPrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -34,7 +34,7 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer
     private int readPosition;
     private final Integer writePosition;
 
-    ConcurrentPrefilledRingBuffer(PrefilledOverwritingRingBufferBuilder<T> builder) {
+    ConcurrentPrefilledRingBuffer(PrefilledClearingRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

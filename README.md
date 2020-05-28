@@ -11,7 +11,7 @@ This library supplies ring buffer implementations that are optimized for differe
 
 They can be prefilled, to support garbage-free operation.  
 They support reading elements in batches, which improves throughput at the cost of reduced granularity.  
-When full, they can either overwrite or discard elements, or they can block waiting for enough space to become available.  
+When full, they can either clear all elements, discard newer elements, or they can block waiting for enough space to become available.  
 Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
 If low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
 
@@ -84,7 +84,7 @@ EmptyRingBuffer<Integer> producersToProcessor =
                 .blocking()
                 .withGC()
                 .build();
-PrefilledOverwritingRingBuffer<Event> processorToConsumers =
+PrefilledClearingRingBuffer<Event> processorToConsumers =
         PrefilledRingBuffer.<Event>withCapacity(300 + 1)
                 .fillWith(Event::new)
                 .oneWriter()

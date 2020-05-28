@@ -17,7 +17,7 @@
 package test.object;
 
 import org.ringbuffer.object.EmptyRingBuffer;
-import org.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.RingBuffer;
 import test.AbstractTestThread;
@@ -38,8 +38,8 @@ abstract class TestThread extends AbstractTestThread {
     }
 
     @SuppressWarnings("unchecked")
-    PrefilledOverwritingRingBuffer<Event> getPrefilledOverwritingRingBuffer() {
-        return (PrefilledOverwritingRingBuffer<Event>) ringBuffer;
+    PrefilledClearingRingBuffer<Event> getPrefilledOverwritingRingBuffer() {
+        return (PrefilledClearingRingBuffer<Event>) ringBuffer;
     }
 
     @SuppressWarnings("unchecked")

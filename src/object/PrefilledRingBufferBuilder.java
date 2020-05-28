@@ -23,7 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 import java.util.function.Supplier;
 
 public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    PrefilledRingBufferBuilder(PrefilledOverwritingRingBufferBuilder<T> builder) {
+    PrefilledRingBufferBuilder(PrefilledClearingRingBufferBuilder<T> builder) {
         super(builder);
     }
 
