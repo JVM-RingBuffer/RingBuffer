@@ -1,8 +1,8 @@
-package eu.menzani.ringbuffer.classcopy;
+package org.ringbuffer.classcopy;
 
-import eu.menzani.ringbuffer.concurrent.AtomicInt;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import org.ringbuffer.concurrent.AtomicInt;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;

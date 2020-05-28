@@ -1,8 +1,8 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.memory.Integer;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.Lock;
+import org.ringbuffer.memory.Integer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 class AtomicReadMarshallingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;

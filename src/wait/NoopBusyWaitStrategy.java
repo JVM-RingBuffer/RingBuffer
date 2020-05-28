@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
 public class NoopBusyWaitStrategy implements BusyWaitStrategy {
     public static final NoopBusyWaitStrategy DEFAULT_INSTANCE = new NoopBusyWaitStrategy();

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
 public class Offsets {
     public static final int BYTE = 1;

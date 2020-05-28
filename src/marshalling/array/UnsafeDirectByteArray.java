@@ -1,9 +1,9 @@
-package eu.menzani.ringbuffer.marshalling.array;
+package org.ringbuffer.marshalling.array;
 
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.marshalling.DirectByteArray;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.marshalling.DirectByteArray;
 
-import static eu.menzani.ringbuffer.system.Unsafe.*;
+import static org.ringbuffer.system.Unsafe.*;
 
 public class UnsafeDirectByteArray implements DirectByteArray {
     private final long address;

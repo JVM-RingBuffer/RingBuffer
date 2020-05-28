@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
-import eu.menzani.ringbuffer.java.Assume;
+import org.ringbuffer.java.Assume;
 
 import java.util.function.Supplier;
 

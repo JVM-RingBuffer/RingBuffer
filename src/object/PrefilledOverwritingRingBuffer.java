@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
 /**
  * <pre>{@code

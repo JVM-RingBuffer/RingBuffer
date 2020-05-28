@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.memory;
+package org.ringbuffer.memory;
 
-import eu.menzani.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
 
 class OpaqueInteger implements Integer {
     private final AtomicInt value = new AtomicInt();

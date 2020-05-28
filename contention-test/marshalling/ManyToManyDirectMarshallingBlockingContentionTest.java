@@ -1,7 +1,7 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import test.Profiler;
 
 public class ManyToManyDirectMarshallingBlockingContentionTest extends RingBufferTest {

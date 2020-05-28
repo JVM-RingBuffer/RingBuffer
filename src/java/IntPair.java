@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 public class IntPair {
     public static long of(int first, int second) {

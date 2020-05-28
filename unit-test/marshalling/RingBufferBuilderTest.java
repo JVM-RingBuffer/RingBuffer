@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.AbstractRingBuffer;
 import org.junit.jupiter.api.Test;
+import org.ringbuffer.AbstractRingBuffer;
 import test.marshalling.*;
 
 import static org.junit.jupiter.api.Assertions.*;

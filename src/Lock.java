@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package org.ringbuffer;
 
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;

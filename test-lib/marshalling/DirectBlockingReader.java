@@ -1,11 +1,11 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
+import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectBlockingReader extends TestThread implements AbstractReader {
     static long runGroupAsync(DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {

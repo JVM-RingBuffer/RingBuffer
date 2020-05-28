@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.system;
+package org.ringbuffer.system;
 
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.java.Ensure;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.Ensure;
 
 public class ThreadManipulationException extends RuntimeException {
     private static final long serialVersionUID = 0L;

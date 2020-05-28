@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer;
+package org.ringbuffer;
 
 public interface AbstractRingBuffer {
     /**

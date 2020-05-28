@@ -1,10 +1,10 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static eu.menzani.ringbuffer.marshalling.DirectOffsets.*;
+import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectBlockingWriter extends TestThread {
     static TestThreadGroup startGroupAsync(DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {

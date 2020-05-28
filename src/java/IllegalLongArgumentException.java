@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 class IllegalLongArgumentException extends IllegalArgumentException {
     IllegalLongArgumentException(long value) {

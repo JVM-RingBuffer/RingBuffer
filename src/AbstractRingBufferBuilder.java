@@ -1,9 +1,9 @@
-package eu.menzani.ringbuffer;
+package org.ringbuffer;
 
-import eu.menzani.ringbuffer.classcopy.CopiedClass;
-import eu.menzani.ringbuffer.memory.MemoryOrder;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.HintBusyWaitStrategy;
+import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.memory.MemoryOrder;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 

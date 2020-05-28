@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
 class TwoStepMultiStepTest extends MultiStepBusyWaitStrategyTest {
     TwoStepMultiStepTest() {

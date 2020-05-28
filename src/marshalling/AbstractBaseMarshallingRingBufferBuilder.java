@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.AbstractRingBufferBuilder;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 

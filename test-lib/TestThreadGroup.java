@@ -1,6 +1,6 @@
 package test;
 
-import eu.menzani.ringbuffer.java.Nullable;
+import org.ringbuffer.java.Nullable;
 
 public class TestThreadGroup {
     private final AbstractTestThread[] testThreads;

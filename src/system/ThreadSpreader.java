@@ -1,8 +1,8 @@
-package eu.menzani.ringbuffer.system;
+package org.ringbuffer.system;
 
-import eu.menzani.ringbuffer.concurrent.AtomicInt;
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.java.Ensure;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.Ensure;
 
 public class ThreadSpreader {
     private final int firstCPU;

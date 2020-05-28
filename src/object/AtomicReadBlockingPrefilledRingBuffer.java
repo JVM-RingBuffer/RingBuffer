@@ -1,8 +1,8 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
-import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.memory.Integer;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.Lock;
+import org.ringbuffer.memory.Integer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
 public class DirectOffsets {
     public static final long BYTE = 1L;

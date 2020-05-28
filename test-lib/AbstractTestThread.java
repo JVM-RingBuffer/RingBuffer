@@ -1,9 +1,9 @@
 package test;
 
-import eu.menzani.ringbuffer.AbstractRingBuffer;
-import eu.menzani.ringbuffer.java.Nullable;
-import eu.menzani.ringbuffer.system.ThreadSpreader;
-import eu.menzani.ringbuffer.system.Threads;
+import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.java.Nullable;
+import org.ringbuffer.system.ThreadSpreader;
+import org.ringbuffer.system.Threads;
 
 import java.util.concurrent.CountDownLatch;
 

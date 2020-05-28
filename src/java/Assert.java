@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 public class Assert {
     public static void equal(int left, int right) {

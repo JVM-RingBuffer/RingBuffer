@@ -1,8 +1,8 @@
 package test.wait;
 
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.NoopBusyWaitStrategy;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
+import org.ringbuffer.wait.NoopBusyWaitStrategy;
 import test.Benchmark;
 import test.Profiler;
 

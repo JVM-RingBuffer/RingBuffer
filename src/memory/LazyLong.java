@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.memory;
+package org.ringbuffer.memory;
 
-import eu.menzani.ringbuffer.concurrent.AtomicLong;
+import org.ringbuffer.concurrent.AtomicLong;
 
 class LazyLong implements Long {
     private final AtomicLong value = new AtomicLong();

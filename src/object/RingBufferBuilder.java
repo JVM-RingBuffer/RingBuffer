@@ -1,9 +1,9 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
-import eu.menzani.ringbuffer.AbstractRingBufferBuilder;
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.memory.Integer;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.memory.Integer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 

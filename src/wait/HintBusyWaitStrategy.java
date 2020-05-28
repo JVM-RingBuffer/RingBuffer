@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
 public class HintBusyWaitStrategy implements BusyWaitStrategy {
     public static final HintBusyWaitStrategy DEFAULT_INSTANCE = new HintBusyWaitStrategy();

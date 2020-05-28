@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.system;
+package org.ringbuffer.system;
 
 import java.nio.file.Path;
 

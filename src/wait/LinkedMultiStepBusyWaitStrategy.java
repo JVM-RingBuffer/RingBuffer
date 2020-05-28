@@ -1,13 +1,13 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
-import eu.menzani.ringbuffer.java.Assert;
+import org.ringbuffer.java.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
+import static org.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
 
 /**
  * Might be slightly faster than {@link ArrayMultiStepBusyWaitStrategy} for two total steps, and slower otherwise.

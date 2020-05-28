@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.memory.Long;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.memory.Long;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBlockingRingBuffer {
     private final long capacity;

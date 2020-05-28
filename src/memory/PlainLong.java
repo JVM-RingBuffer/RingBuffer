@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.memory;
+package org.ringbuffer.memory;
 
 class PlainLong implements Long {
     private long value;

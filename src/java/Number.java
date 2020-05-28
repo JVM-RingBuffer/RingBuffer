@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 public class Number {
     public static int ceilDiv(int dividend, int divisor) {

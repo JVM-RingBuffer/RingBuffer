@@ -1,9 +1,9 @@
 package test.object;
 
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
-import eu.menzani.ringbuffer.wait.YieldBusyWaitStrategy;
+import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer;
+import org.ringbuffer.wait.YieldBusyWaitStrategy;
 import test.Profiler;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
 public class DirectByteArrayIndexOutOfBoundsException extends IndexOutOfBoundsException {
     private final long index;

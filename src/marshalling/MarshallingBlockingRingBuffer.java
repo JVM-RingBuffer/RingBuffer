@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
 /**
  * From {@link #next(int)} to {@link #put(int)} is an atomic operation.

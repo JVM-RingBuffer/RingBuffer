@@ -53,7 +53,7 @@ To build a Java library for low-latency inter-thread communication, we introduce
 
 ## Download
 
-Download the [latest artifact](https://github.com/Menzani/RingBuffer/releases/download/v1/RingBuffer-1.0.jar).
+Download the [latest artifact](https://github.com/JVM-RingBuffer/RingBuffer/releases/download/v1.0/RingBuffer-1.0.jar).
 
 **Warning.**
 These features of object ring buffers have not yet been tested:

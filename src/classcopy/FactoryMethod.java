@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.classcopy;
+package org.ringbuffer.classcopy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

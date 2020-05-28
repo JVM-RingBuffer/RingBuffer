@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 public class Assume {
     public static void notEqual(int left, int right) {

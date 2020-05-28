@@ -1,7 +1,7 @@
 package test.wait;
 
-import eu.menzani.ringbuffer.wait.LinkedMultiStepBusyWaitStrategy;
-import eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategy;
+import org.ringbuffer.wait.LinkedMultiStepBusyWaitStrategy;
+import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
 
 public class LinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {

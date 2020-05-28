@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
 import org.junit.jupiter.api.Test;
 import test.object.*;

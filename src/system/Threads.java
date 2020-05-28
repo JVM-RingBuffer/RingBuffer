@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.system;
+package org.ringbuffer.system;
 
-import eu.menzani.ringbuffer.concurrent.Atomic;
-import eu.menzani.ringbuffer.java.Nullable;
+import org.ringbuffer.concurrent.Atomic;
+import org.ringbuffer.java.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;

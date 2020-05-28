@@ -5,7 +5,7 @@
 #include <errno.h>
 #include "Threads.h"
 
-JNIEXPORT jint JNICALL Java_eu_menzani_ringbuffer_system_Threads_bindCurrentThread
+JNIEXPORT jint JNICALL Java_org_ringbuffer_system_Threads_bindCurrentThread
   (JNIEnv *env, jclass clazz, jint cpu)
 {
     cpu_set_t mask;
@@ -18,7 +18,7 @@ JNIEXPORT jint JNICALL Java_eu_menzani_ringbuffer_system_Threads_bindCurrentThre
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_eu_menzani_ringbuffer_system_Threads_setCurrentThreadPriority
+JNIEXPORT jint JNICALL Java_org_ringbuffer_system_Threads_setCurrentThreadPriority
   (JNIEnv *env, jclass clazz)
 {
     struct sched_param param;

@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.AbstractRingBuffer;
 
 interface AbstractDirectMarshallingRingBuffer extends AbstractRingBuffer {
     long getCapacity();

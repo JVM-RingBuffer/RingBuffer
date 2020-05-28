@@ -1,10 +1,10 @@
-package eu.menzani.ringbuffer.builder;
+package org.ringbuffer.builder;
 
-import eu.menzani.ringbuffer.AbstractRingBufferBuilder;
-import eu.menzani.ringbuffer.object.EmptyRingBufferBuilder;
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBufferBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.object.EmptyRingBufferBuilder;
+import org.ringbuffer.object.PrefilledOverwritingRingBufferBuilder;
 
 import static org.junit.jupiter.api.Assertions.*;
 

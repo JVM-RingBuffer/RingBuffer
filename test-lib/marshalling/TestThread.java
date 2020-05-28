@@ -1,10 +1,10 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.AbstractRingBuffer;
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
-import eu.menzani.ringbuffer.marshalling.MarshallingRingBuffer;
+import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.MarshallingRingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {

@@ -1,6 +1,6 @@
 package test.object;
 
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.EmptyRingBuffer;
 import test.Profiler;
 
 public class ManyReadersBlockingContentionTest extends RingBufferTest {

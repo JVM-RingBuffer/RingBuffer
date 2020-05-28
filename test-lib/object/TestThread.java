@@ -1,9 +1,9 @@
 package test.object;
 
-import eu.menzani.ringbuffer.object.EmptyRingBuffer;
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
-import eu.menzani.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {

@@ -1,9 +1,9 @@
-package eu.menzani.ringbuffer.marshalling.array;
+package org.ringbuffer.marshalling.array;
 
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.marshalling.ByteArray;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.marshalling.ByteArray;
 
-import static eu.menzani.ringbuffer.system.Unsafe.*;
+import static org.ringbuffer.system.Unsafe.*;
 
 public class UnsafeByteArray implements ByteArray {
     private static final long base = UNSAFE.arrayBaseOffset(byte[].class);

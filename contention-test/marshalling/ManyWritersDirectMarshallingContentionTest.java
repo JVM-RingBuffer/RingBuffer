@@ -1,6 +1,6 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import test.Profiler;
 
 public class ManyWritersDirectMarshallingContentionTest extends RingBufferTest {

@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
-import eu.menzani.ringbuffer.java.Assert;
 import org.junit.jupiter.api.Test;
+import org.ringbuffer.java.Assert;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 class IllegalIntArgumentException extends IllegalArgumentException {
     IllegalIntArgumentException(int value) {

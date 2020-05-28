@@ -1,10 +1,10 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.java.Assume;
-import eu.menzani.ringbuffer.java.Number;
-import eu.menzani.ringbuffer.marshalling.array.SafeDirectByteArray;
-import eu.menzani.ringbuffer.marshalling.array.UnsafeDirectByteArray;
-import eu.menzani.ringbuffer.memory.Long;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.Number;
+import org.ringbuffer.marshalling.array.SafeDirectByteArray;
+import org.ringbuffer.marshalling.array.UnsafeDirectByteArray;
+import org.ringbuffer.memory.Long;
 
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
     private final long capacity;

@@ -1,7 +1,7 @@
 package test.object;
 
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
-import eu.menzani.ringbuffer.object.PrefilledRingBuffer;
+import org.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer;
 import test.Profiler;
 
 public class PrefilledManyToManyContentionTest extends RingBufferTest {

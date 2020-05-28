@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
-import eu.menzani.ringbuffer.java.Assume;
+import org.ringbuffer.java.Assume;
 
 class MultiStepBusyWaitStrategyBuilderHelper {
     static void throwNoIntermediateStepsAdded() {

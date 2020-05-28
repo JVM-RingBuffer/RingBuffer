@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.java;
+package org.ringbuffer.java;
 
 class IllegalLongStateException extends IllegalStateException {
     IllegalLongStateException(long value) {

@@ -1,7 +1,7 @@
 package test.marshalling;
 
-import eu.menzani.ringbuffer.java.Number;
-import eu.menzani.ringbuffer.marshalling.Offsets;
+import org.ringbuffer.java.Number;
+import org.ringbuffer.marshalling.Offsets;
 import test.AbstractRingBufferTest;
 
 abstract class RingBufferTest extends AbstractRingBufferTest {

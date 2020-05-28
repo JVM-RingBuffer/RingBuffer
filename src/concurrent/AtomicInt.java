@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.concurrent;
+package org.ringbuffer.concurrent;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;

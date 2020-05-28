@@ -1,4 +1,4 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
 class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     ManualMultiStepTest() {

@@ -1,13 +1,13 @@
-package eu.menzani.ringbuffer.wait;
+package org.ringbuffer.wait;
 
-import eu.menzani.ringbuffer.java.ArrayView;
-import eu.menzani.ringbuffer.java.Assert;
-import eu.menzani.ringbuffer.java.IntArrayView;
+import org.ringbuffer.java.ArrayView;
+import org.ringbuffer.java.Assert;
+import org.ringbuffer.java.IntArrayView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static eu.menzani.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
+import static org.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
 
 public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy {
     private final int initialStrategyIndex;

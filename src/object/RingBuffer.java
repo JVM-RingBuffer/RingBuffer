@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.object;
+package org.ringbuffer.object;
 
-import eu.menzani.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.AbstractRingBuffer;
 
 import java.util.function.Consumer;
 

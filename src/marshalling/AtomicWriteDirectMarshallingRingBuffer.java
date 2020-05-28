@@ -1,8 +1,8 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.Lock;
-import eu.menzani.ringbuffer.memory.Long;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.Lock;
+import org.ringbuffer.memory.Long;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 class AtomicWriteDirectMarshallingRingBuffer implements DirectMarshallingRingBuffer {
     private final long capacity;

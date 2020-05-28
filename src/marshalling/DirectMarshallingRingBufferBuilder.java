@@ -1,7 +1,7 @@
-package eu.menzani.ringbuffer.marshalling;
+package org.ringbuffer.marshalling;
 
-import eu.menzani.ringbuffer.memory.MemoryOrder;
-import eu.menzani.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.memory.MemoryOrder;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallingRingBufferBuilder<DirectMarshallingRingBuffer> {
     public DirectMarshallingRingBufferBuilder(long capacity) {

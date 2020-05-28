@@ -1,6 +1,6 @@
 package test.object;
 
-import eu.menzani.ringbuffer.object.PrefilledOverwritingRingBuffer;
+import org.ringbuffer.object.PrefilledOverwritingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 

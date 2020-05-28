@@ -1,6 +1,6 @@
-package eu.menzani.ringbuffer.concurrent;
+package org.ringbuffer.concurrent;
 
-import eu.menzani.ringbuffer.java.Assume;
+import org.ringbuffer.java.Assume;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
