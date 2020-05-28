@@ -29,20 +29,10 @@ abstract class AbstractBaseMarshallingRingBufferBuilder<T> extends AbstractRingB
         return implLookup;
     }
 
-    boolean unsafe;
-    // All fields are copied in <init>(AbstractBaseMarshallingRingBufferBuilder<T>)
-
     AbstractBaseMarshallingRingBufferBuilder() {}
 
     AbstractBaseMarshallingRingBufferBuilder(AbstractBaseMarshallingRingBufferBuilder<?> builder) {
         super(builder);
-        unsafe = builder.unsafe;
-    }
-
-    public abstract AbstractBaseMarshallingRingBufferBuilder<T> unsafe();
-
-    void unsafe0() {
-        unsafe = true;
     }
 
     @Override

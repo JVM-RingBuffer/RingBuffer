@@ -16,6 +16,9 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.marshalling.array.SafeByteArray;
+import org.ringbuffer.marshalling.array.UnsafeByteArray;
+
 public interface ByteArray {
     void putByte(int index, byte value);
 
@@ -52,4 +55,7 @@ public interface ByteArray {
     interface Factory {
         ByteArray newInstance(int capacity);
     }
+
+    Factory SAFE = SafeByteArray::new;
+    Factory UNSAFE = UnsafeByteArray::new;
 }

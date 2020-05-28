@@ -18,13 +18,11 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Number;
-import org.ringbuffer.marshalling.array.SafeByteArray;
-import org.ringbuffer.marshalling.array.UnsafeByteArray;
 import org.ringbuffer.memory.Integer;
 
 abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
     private final int capacity;
-    private ByteArray.Factory byteArrayFactory;
+    private ByteArray.Factory byteArrayFactory = ByteArray.SAFE;
     // All fields are copied in <init>(AbstractMarshallingRingBufferBuilder<T>)
 
     AbstractMarshallingRingBufferBuilder(int capacity) {
@@ -56,13 +54,7 @@ abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarsh
     }
 
     ByteArray getBuffer() {
-        if (byteArrayFactory != null) {
-            return byteArrayFactory.newInstance(capacity);
-        }
-        if (unsafe) {
-            return new UnsafeByteArray(capacity);
-        }
-        return new SafeByteArray(capacity);
+        return byteArrayFactory.newInstance(capacity);
     }
 
     Integer newCursor() {

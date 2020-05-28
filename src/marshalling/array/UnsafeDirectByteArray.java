@@ -18,94 +18,93 @@ package org.ringbuffer.marshalling.array;
 
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.marshalling.DirectByteArray;
-
-import static org.ringbuffer.system.Unsafe.*;
+import org.ringbuffer.system.Unsafe;
 
 public class UnsafeDirectByteArray implements DirectByteArray {
     private final long address;
 
     public UnsafeDirectByteArray(long length) {
         Assume.notGreater(length, Long.MAX_VALUE - 8L);
-        address = UNSAFE.allocateMemory(length + 8L);
+        address = Unsafe.UNSAFE.allocateMemory(length + 8L);
     }
 
     @Override
     public void putByte(long index, byte value) {
-        UNSAFE.putByte(null, address + index, value);
+        Unsafe.UNSAFE.putByte(null, address + index, value);
     }
 
     @Override
     public void putChar(long index, char value) {
-        UNSAFE.putChar(null, address + index, value);
+        Unsafe.UNSAFE.putChar(null, address + index, value);
     }
 
     @Override
     public void putShort(long index, short value) {
-        UNSAFE.putShort(null, address + index, value);
+        Unsafe.UNSAFE.putShort(null, address + index, value);
     }
 
     @Override
     public void putInt(long index, int value) {
-        UNSAFE.putInt(null, address + index, value);
+        Unsafe.UNSAFE.putInt(null, address + index, value);
     }
 
     @Override
     public void putLong(long index, long value) {
-        UNSAFE.putLong(null, address + index, value);
+        Unsafe.UNSAFE.putLong(null, address + index, value);
     }
 
     @Override
     public void putBoolean(long index, boolean value) {
-        UNSAFE.putBoolean(null, address + index, value);
+        Unsafe.UNSAFE.putBoolean(null, address + index, value);
     }
 
     @Override
     public void putFloat(long index, float value) {
-        UNSAFE.putFloat(null, address + index, value);
+        Unsafe.UNSAFE.putFloat(null, address + index, value);
     }
 
     @Override
     public void putDouble(long index, double value) {
-        UNSAFE.putDouble(null, address + index, value);
+        Unsafe.UNSAFE.putDouble(null, address + index, value);
     }
 
     @Override
     public byte getByte(long index) {
-        return UNSAFE.getByte(null, address + index);
+        return Unsafe.UNSAFE.getByte(null, address + index);
     }
 
     @Override
     public char getChar(long index) {
-        return UNSAFE.getChar(null, address + index);
+        return Unsafe.UNSAFE.getChar(null, address + index);
     }
 
     @Override
     public short getShort(long index) {
-        return UNSAFE.getShort(null, address + index);
+        return Unsafe.UNSAFE.getShort(null, address + index);
     }
 
     @Override
     public int getInt(long index) {
-        return UNSAFE.getInt(null, address + index);
+        return Unsafe.UNSAFE.getInt(null, address + index);
     }
 
     @Override
     public long getLong(long index) {
-        return UNSAFE.getLong(null, address + index);
+        return Unsafe.UNSAFE.getLong(null, address + index);
     }
 
     @Override
     public boolean getBoolean(long index) {
-        return UNSAFE.getBoolean(null, address + index);
+        return Unsafe.UNSAFE.getBoolean(null, address + index);
     }
 
     @Override
     public float getFloat(long index) {
-        return UNSAFE.getFloat(null, address + index);
+        return Unsafe.UNSAFE.getFloat(null, address + index);
     }
 
     @Override
     public double getDouble(long index) {
-        return UNSAFE.getDouble(null, address + index);
+        return Unsafe.UNSAFE.getDouble(null, address + index);
     }
 }

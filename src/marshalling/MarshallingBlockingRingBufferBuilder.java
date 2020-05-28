@@ -78,12 +78,6 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder unsafe() {
-        super.unsafe0();
-        return this;
-    }
-
-    @Override
     public MarshallingBlockingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
         super.withByteArray0(factory);
         return this;

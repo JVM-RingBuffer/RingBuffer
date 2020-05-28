@@ -68,9 +68,7 @@ After building from source, you may run the benchmarks.
 `contention-test` folder: write and read at the same time
 
 `AbstractRingBufferTest.CONCURRENCY` is the number of threads reading and/or writing.  
-You may need to adjust `AbstractTestThread.spreader` which takes care of binding each thread to its own CPU.
-
-There is not much difference between the performance of [`ArrayBlockingQueue`](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html) and the MPMC ring buffers, however the latter have more features.
+You may need to tweak `AbstractTestThread.spreader` which takes care of binding each thread to its own CPU.
 
 ## Examples
 
@@ -136,7 +134,7 @@ MarshallingBlockingRingBuffer ringBuffer =
                 .oneWriter()
                 .oneReader()
                 .blocking(FailBusyWaitStrategy.readingTooSlow())
-                .unsafe()
+                .withByteArray(ByteArray.UNSAFE)
                 .build();
 
 int offset = ringBuffer.next(INT + CHAR);

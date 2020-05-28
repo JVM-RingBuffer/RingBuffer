@@ -16,6 +16,9 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.marshalling.array.SafeDirectByteArray;
+import org.ringbuffer.marshalling.array.UnsafeDirectByteArray;
+
 public interface DirectByteArray {
     void putByte(long index, byte value);
 
@@ -52,4 +55,7 @@ public interface DirectByteArray {
     interface Factory {
         DirectByteArray newInstance(long capacity);
     }
+
+    Factory SAFE = SafeDirectByteArray::new;
+    Factory UNSAFE = UnsafeDirectByteArray::new;
 }

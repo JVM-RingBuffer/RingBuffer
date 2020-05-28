@@ -79,12 +79,6 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
     }
 
     @Override
-    public DirectMarshallingRingBufferBuilder unsafe() {
-        super.unsafe0();
-        return this;
-    }
-
-    @Override
     public DirectMarshallingRingBufferBuilder withByteArray(DirectByteArray.Factory factory) {
         super.withByteArray0(factory);
         return this;
