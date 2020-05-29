@@ -11,12 +11,13 @@ This library supplies ring buffer implementations that are optimized for differe
 
 They can be prefilled, to support garbage-free operation.  
 They support reading elements in batches, which improves throughput at the cost of reduced granularity.  
-When full, they can either clear all elements, discard newer elements, or they can block waiting for enough space to become available.  
+When full, they can either clear all elements, discard incoming elements, or they can block waiting for an element to be read.  
 Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
 If low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
 
 **Marshalling ring buffers** are backed by a byte array and allow to transfer any primitive type.
 
+When full, they can either clear all elements or block waiting for enough space to become available.  
 Their capacity must be a power of 2. `Number.getNextPowerOfTwo()` can help.  
 The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.
 
@@ -27,9 +28,21 @@ An example of this is the implementation of a trading algorithm. When latency mu
 
 ## Thread priority and affinity
 
-First, load the native library for the current platform: `Threads.loadNativeLibrary();`
+First, load the native library for the current platform: `Threads.loadNativeLibrary()`
 - Bind threads to specific CPU cores: `Threads.bindCurrentThreadToCPU(int)`
 - Set threads priority to realtime: `Threads.setCurrentThreadPriorityToRealtime()`
+
+## Performance
+
+i7 8700
+
+scenario|msg/sec|latency
+---|---|---
+3 producers → 3 consumers | 20 million | 140ns
+3 producers → 1 consumer | 25 million | 40ns
+1 producer → 3 consumers | 62 million | 4ns
+1 producer → 1 consumer | 145 million | 7ns
+2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
 ## Class copying
 
@@ -48,7 +61,7 @@ To build a Java library for low-latency inter-thread communication, we introduce
 - `Platform.current()` returns the current OS and JVM architecture.
 - `Unsafe.UNSAFE` exposes the `sun.misc.Unsafe`.
 - `GarbageCollectorProfiler` supports listening to GC events and logging them.
-- `Assert`, `Assume` and `Ensure` allow for performant meaningful condition checking.
+- `Assert`, `Assume` and `Ensure` allow for performant clean condition checking.
 - `*ArrayView`s allow to view an array as `List`.
 
 ## Download
@@ -59,16 +72,6 @@ Download the [latest artifact](https://github.com/JVM-RingBuffer/RingBuffer/rele
 These features of object ring buffers have not yet been tested:
 - Discarding elements when full
 - `forEach()`, `contains()` and `toString()`
-
-## Benchmarks
-
-After building from source, you may run the benchmarks.
-
-`test` folder: write _then_ read  
-`contention-test` folder: write and read at the same time
-
-`AbstractRingBufferTest.CONCURRENCY` is the number of threads reading and/or writing.  
-You may need to tweak `AbstractTestThread.spreader` which takes care of binding each thread to its own CPU.
 
 ## Examples
 
