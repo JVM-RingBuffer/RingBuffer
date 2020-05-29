@@ -2,7 +2,7 @@
   <configuration default="false" name="ManyToManyMarshallingBlockingTest" type="Application" factoryName="Application" folderName="Concurrent Marshalling">
     <option name="MAIN_CLASS_NAME" value="test.marshalling.ManyToManyMarshallingBlockingTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms24m -Xmx24m -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms24m -Xmx24m -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

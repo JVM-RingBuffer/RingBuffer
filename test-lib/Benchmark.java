@@ -76,7 +76,7 @@ public abstract class Benchmark {
         private long sum;
         private double count;
         private long minimum = Long.MAX_VALUE;
-        private long maximum = 0L;
+        private long maximum;
 
         Result(String profilerName) {
             this.profilerName = profilerName;
@@ -106,10 +106,10 @@ public abstract class Benchmark {
             }
             double average = sum / count;
             String report = profilerName + ": " + formatExecutionTime(average);
-            if (count > 1D && minimum != Long.MAX_VALUE) {
+            if (count > 1D && maximum != 0L) {
                 double absoluteVariance = Math.max(maximum - average, average - minimum);
                 long relativeVariance = Math.round(absoluteVariance / average * 100D);
-                report += " ± " + relativeVariance + "% (" + formatExecutionTime(minimum) + ')';
+                report += " ± " + relativeVariance + "% (" + formatExecutionTime(maximum) + ')';
             }
             System.out.println(report);
         }
