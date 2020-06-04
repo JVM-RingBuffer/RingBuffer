@@ -7,19 +7,20 @@ This library supplies ring buffer implementations that are optimized for differe
 - Multiple-Producer Single-Consumer
 - Multiple-Producer Multiple-Consumer
 
+Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
+If low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
+
 **Object ring buffers** work with Java objects.
 
 They can be prefilled, to support garbage-free operation.  
 They support reading elements in batches, which improves throughput at the cost of reduced granularity.  
-When full, they can either clear all elements, discard incoming elements, or they can block waiting for an element to be read.  
-Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
-If low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
+When full, they can either clear all elements, discard incoming elements, or they can block waiting for an element to be read.
 
 **Marshalling ring buffers** are backed by a byte array and allow to transfer any primitive type.
 
-When full, they can either clear all elements or block waiting for enough space to become available.  
 Their capacity must be a power of 2. `Number.getNextPowerOfTwo()` can help.  
-The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.
+The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.  
+When full, they can either clear all elements or block waiting for enough space to become available.
 
 ## Motivation
 
