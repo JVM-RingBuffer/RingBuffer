@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.Lock;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Long;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -24,10 +24,9 @@ class ConcurrentDirectMarshallingRingBuffer implements DirectMarshallingRingBuff
     private final long capacity;
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
+    private final Lock readLock;
+    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
-
-    private final Lock writeLock = new Lock();
-    private final Lock readLock = new Lock();
 
     private long readPosition;
     private final Long writePosition;
@@ -36,6 +35,8 @@ class ConcurrentDirectMarshallingRingBuffer implements DirectMarshallingRingBuff
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
+        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }

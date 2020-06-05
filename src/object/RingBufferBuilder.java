@@ -18,6 +18,7 @@ package org.ringbuffer.object;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.java.Assume;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -48,6 +49,16 @@ abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer
 
     void discarding0() {
         type = RingBufferType.DISCARDING;
+    }
+
+    @Override
+    protected Lock getWriteLock() {
+        return super.getWriteLock();
+    }
+
+    @Override
+    protected Lock getReadLock() {
+        return super.getReadLock();
     }
 
     @Override

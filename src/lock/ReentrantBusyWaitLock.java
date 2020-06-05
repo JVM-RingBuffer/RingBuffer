@@ -14,20 +14,34 @@
  * limitations under the License.
  */
 
-package org.ringbuffer;
+package org.ringbuffer.lock;
 
-import java.util.concurrent.locks.LockSupport;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.SleepBusyWaitStrategy;
+
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Lock {
+public class ReentrantBusyWaitLock implements Lock {
+    private final BusyWaitStrategy busyWaitStrategy;
     private final ReentrantLock lock = new ReentrantLock();
 
+    public ReentrantBusyWaitLock() {
+        this(SleepBusyWaitStrategy.DEFAULT_INSTANCE);
+    }
+
+    public ReentrantBusyWaitLock(BusyWaitStrategy busyWaitStrategy) {
+        this.busyWaitStrategy = busyWaitStrategy;
+    }
+
+    @Override
     public void lock() {
+        busyWaitStrategy.reset();
         while (!lock.tryLock()) {
-            LockSupport.parkNanos(1L);
+            busyWaitStrategy.tick();
         }
     }
 
+    @Override
     public void unlock() {
         lock.unlock();
     }

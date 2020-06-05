@@ -16,7 +16,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.Lock;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -26,11 +26,10 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
+    private final Lock readLock;
+    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
-
-    private final Lock writeLock = new Lock();
-    private final Lock readLock = new Lock();
 
     private final Integer readPosition;
     private final Integer writePosition;
@@ -39,6 +38,8 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
+        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         dummyElement = builder.getDummyElement();
         readPosition = builder.newCursor();

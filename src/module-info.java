@@ -6,6 +6,7 @@ module org.ringbuffer {
     exports org.ringbuffer.classcopy;
     exports org.ringbuffer.concurrent;
     exports org.ringbuffer.java;
+    exports org.ringbuffer.lock;
     exports org.ringbuffer.marshalling;
     exports org.ringbuffer.memory;
     exports org.ringbuffer.object;

@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.Lock;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Long;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -24,9 +24,8 @@ class AtomicWriteDirectMarshallingRingBuffer implements DirectMarshallingRingBuf
     private final long capacity;
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
+    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
-
-    private final Lock writeLock = new Lock();
 
     private long readPosition;
     private final Long writePosition;
@@ -35,6 +34,7 @@ class AtomicWriteDirectMarshallingRingBuffer implements DirectMarshallingRingBuf
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }

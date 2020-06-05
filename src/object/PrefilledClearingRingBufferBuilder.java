@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -53,6 +54,18 @@ public class PrefilledClearingRingBufferBuilder<T> extends AbstractPrefilledRing
     @Override
     public PrefilledClearingRingBufferBuilder<T> manyReaders() {
         super.manyReaders0();
+        return this;
+    }
+
+    @Override
+    public PrefilledClearingRingBufferBuilder<T> withWriteLock(Lock lock) {
+        super.withWriteLock0(lock);
+        return this;
+    }
+
+    @Override
+    public PrefilledClearingRingBufferBuilder<T> withReadLock(Lock lock) {
+        super.withReadLock0(lock);
         return this;
     }
 

@@ -16,7 +16,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.Lock;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -26,9 +26,8 @@ class AtomicReadDiscardingRingBuffer<T> implements EmptyRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
+    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
-
-    private final Lock readLock = new Lock();
 
     private final Integer readPosition;
     private final Integer writePosition;
@@ -37,6 +36,7 @@ class AtomicReadDiscardingRingBuffer<T> implements EmptyRingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         readPosition = builder.newCursor();
         writePosition = builder.newCursor();

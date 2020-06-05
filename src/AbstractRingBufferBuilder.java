@@ -17,6 +17,8 @@
 package org.ringbuffer;
 
 import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.lock.Lock;
+import org.ringbuffer.lock.ReentrantBusyWaitLock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
@@ -27,8 +29,10 @@ public abstract class AbstractRingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
     protected RingBufferType type = RingBufferType.CLEARING;
+    private Lock writeLock;
+    private Lock readLock;
     private BusyWaitStrategy writeBusyWaitStrategy;
-    private BusyWaitStrategy readBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+    private BusyWaitStrategy readBusyWaitStrategy;
     protected MemoryOrder memoryOrder = MemoryOrder.LAZY;
     protected boolean copyClass;
     // All fields are copied in <init>(AbstractRingBufferBuilder<T>)
@@ -39,6 +43,8 @@ public abstract class AbstractRingBufferBuilder<T> {
         oneWriter = builder.oneWriter;
         oneReader = builder.oneReader;
         type = builder.type;
+        writeLock = builder.writeLock;
+        readLock = builder.readLock;
         writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
         readBusyWaitStrategy = builder.readBusyWaitStrategy;
         memoryOrder = builder.memoryOrder;
@@ -67,6 +73,18 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     protected void manyReaders0() {
         oneReader = false;
+    }
+
+    public abstract AbstractRingBufferBuilder<T> withWriteLock(Lock lock);
+
+    protected void withWriteLock0(Lock lock) {
+        writeLock = lock;
+    }
+
+    public abstract AbstractRingBufferBuilder<T> withReadLock(Lock lock);
+
+    protected void withReadLock0(Lock lock) {
+        readLock = lock;
     }
 
     protected abstract AbstractRingBufferBuilder<?> blocking();
@@ -145,11 +163,28 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     protected abstract MethodHandles.Lookup getImplLookup();
 
+    protected Lock getWriteLock() {
+        if (writeLock == null) {
+            return new ReentrantBusyWaitLock();
+        }
+        return writeLock;
+    }
+
+    protected Lock getReadLock() {
+        if (readLock == null) {
+            return new ReentrantBusyWaitLock();
+        }
+        return readLock;
+    }
+
     protected BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;
     }
 
     protected BusyWaitStrategy getReadBusyWaitStrategy() {
+        if (readBusyWaitStrategy == null) {
+            return HintBusyWaitStrategy.getDefault();
+        }
         return readBusyWaitStrategy;
     }
 

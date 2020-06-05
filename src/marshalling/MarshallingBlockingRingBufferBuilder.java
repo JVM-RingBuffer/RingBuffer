@@ -17,6 +17,7 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -46,6 +47,18 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     @Override
     public MarshallingBlockingRingBufferBuilder manyReaders() {
         super.manyReaders0();
+        return this;
+    }
+
+    @Override
+    public MarshallingBlockingRingBufferBuilder withWriteLock(Lock lock) {
+        super.withWriteLock0(lock);
+        return this;
+    }
+
+    @Override
+    public MarshallingBlockingRingBufferBuilder withReadLock(Lock lock) {
+        super.withReadLock0(lock);
         return this;
     }
 

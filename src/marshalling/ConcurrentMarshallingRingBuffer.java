@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.Lock;
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -24,10 +24,9 @@ class ConcurrentMarshallingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
+    private final Lock readLock;
+    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
-
-    private final Lock writeLock = new Lock();
-    private final Lock readLock = new Lock();
 
     private int readPosition;
     private final Integer writePosition;
@@ -36,6 +35,8 @@ class ConcurrentMarshallingRingBuffer implements MarshallingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
+        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }
