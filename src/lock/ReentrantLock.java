@@ -16,6 +16,9 @@
 
 package org.ringbuffer.lock;
 
+/**
+ * Generates garbage.
+ */
 public class ReentrantLock implements Lock {
     private final java.util.concurrent.locks.ReentrantLock lock = new java.util.concurrent.locks.ReentrantLock();
 

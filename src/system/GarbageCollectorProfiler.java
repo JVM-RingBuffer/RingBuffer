@@ -65,9 +65,11 @@ public class GarbageCollectorProfiler {
     private static final ValuesSumAction valuesSumAction = new ValuesSumAction();
 
     public static long sumValues(Map<String, MemoryUsage> memoryUsage) {
-        valuesSumAction.resetTotal();
-        memoryUsage.values().forEach(valuesSumAction); // Should create no garbage
-        return valuesSumAction.getTotal();
+        synchronized (valuesSumAction) {
+            valuesSumAction.resetTotal();
+            memoryUsage.values().forEach(valuesSumAction); // Should create no garbage
+            return valuesSumAction.getTotal();
+        }
     }
 
     public interface Listener {
