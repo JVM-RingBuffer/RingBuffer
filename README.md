@@ -1,6 +1,6 @@
 # RingBuffer
 
-This library supplies ring buffer implementations that are optimized for different use cases and can be configured extensively. The following cases are covered:
+This library supplies FIFO ring buffer implementations that are optimized for different use cases and can be configured extensively. The following cases are covered:
 
 - Single-Producer Single-Consumer
 - Single-Producer Multiple-Consumer
@@ -8,11 +8,11 @@ This library supplies ring buffer implementations that are optimized for differe
 - Multiple-Producer Multiple-Consumer
 
 Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
-If low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
+If ultra low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
 
 **Object ring buffers** work with Java objects.
 
-They can be prefilled, to support garbage-free operation.  
+They can be pre-filled, to support garbage-free operation.  
 They support reading elements in batches, which improves throughput at the cost of reduced granularity.  
 When full, they can either clear all elements, discard incoming elements, or they can block waiting for an element to be read.
 
@@ -25,7 +25,7 @@ When full, they can either clear all elements or block waiting for enough space 
 ## Motivation
 
 This library can be useful when there is a single thread executing the business logic, that has to take instructions from multiple producer threads and send results to multiple consumer threads.  
-An example of this is the implementation of a trading algorithm. When latency must be low, synchronization is too expensive and so this library provides a means to communicate between threads while avoiding locks on the latency-sensitive one.
+When nanoseconds count, synchronization is too expensive and so this library provides a means to communicate between threads while avoiding locks on the latency-sensitive one.
 
 ## Thread priority and affinity
 
@@ -56,7 +56,7 @@ This functionality is available for any class by means of the `CopiedClass` clas
 
 ## Public utilities
 
-To build a Java library for low-latency inter-thread communication, we introduced utilities.
+To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
 
 - `Atomic*` classes expose all the features supported by `VarHandle`s while having better names.
 - `Platform.current()` returns the current OS and JVM architecture.
