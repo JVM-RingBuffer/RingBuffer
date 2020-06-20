@@ -20,7 +20,15 @@ package org.ringbuffer.lock;
  * Generates garbage.
  */
 public class ReentrantLock implements Lock {
-    private final java.util.concurrent.locks.ReentrantLock lock = new java.util.concurrent.locks.ReentrantLock();
+    private final java.util.concurrent.locks.ReentrantLock lock;
+
+    public ReentrantLock() {
+        this(false);
+    }
+
+    public ReentrantLock(boolean fair) {
+        lock = new java.util.concurrent.locks.ReentrantLock(fair);
+    }
 
     @Override
     public void lock() {

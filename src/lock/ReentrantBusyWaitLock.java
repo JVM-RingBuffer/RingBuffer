@@ -23,13 +23,22 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ReentrantBusyWaitLock implements Lock {
     private final BusyWaitStrategy busyWaitStrategy;
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock;
 
     public ReentrantBusyWaitLock() {
-        this(SleepBusyWaitStrategy.DEFAULT_INSTANCE);
+        this(false, SleepBusyWaitStrategy.DEFAULT_INSTANCE);
+    }
+
+    public ReentrantBusyWaitLock(boolean fair) {
+        this(fair, SleepBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     public ReentrantBusyWaitLock(BusyWaitStrategy busyWaitStrategy) {
+        this(false, busyWaitStrategy);
+    }
+
+    public ReentrantBusyWaitLock(boolean fair, BusyWaitStrategy busyWaitStrategy) {
+        lock = new ReentrantLock(fair);
         this.busyWaitStrategy = busyWaitStrategy;
     }
 

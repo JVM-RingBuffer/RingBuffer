@@ -35,7 +35,13 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-i7 8700
+Performance varies wildly depending on the environment if trivial changes are made, and the reason has not been ascertained yet.  
+For example, by storing the current instance in a static field upon construction, throughput for the first scenario below would go up to 30 million on Windows, and remain the same on Linux.
+
+So, if you control all deployments, then you are encouraged to hack on the implementations you are using, and
+run benchmarks in the production environment, since performance gains may be noticeable.
+
+The following is v1.0 on i7 8700.
 
 scenario|msg/sec|latency
 ---|---|---
