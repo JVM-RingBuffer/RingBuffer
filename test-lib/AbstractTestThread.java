@@ -16,7 +16,6 @@
 
 package test;
 
-import org.ringbuffer.AbstractRingBuffer;
 import org.ringbuffer.java.Nullable;
 import org.ringbuffer.system.ThreadSpreader;
 import org.ringbuffer.system.Threads;
@@ -37,12 +36,12 @@ public abstract class AbstractTestThread extends Thread {
 
     private final int numIterations;
     private final Profiler profiler;
-    protected final AbstractRingBuffer ringBuffer;
+    protected final Object ringBuffer;
 
     private final CountDownLatch readyLatch = new CountDownLatch(1);
     private final CountDownLatch commenceLatch = new CountDownLatch(1);
 
-    protected AbstractTestThread(int numIterations, AbstractRingBuffer ringBuffer) {
+    protected AbstractTestThread(int numIterations, Object ringBuffer) {
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
         this.ringBuffer = ringBuffer;

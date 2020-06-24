@@ -17,6 +17,8 @@
 package org.ringbuffer;
 
 import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.Number;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.lock.ReentrantBusyWaitLock;
 import org.ringbuffer.memory.MemoryOrder;
@@ -199,5 +201,12 @@ public abstract class AbstractRingBufferBuilder<T> {
         CLEARING,
         BLOCKING,
         DISCARDING
+    }
+
+    public static void validateCapacity(int capacity) {
+        Assume.notLesser(capacity, 2);
+        if (!Number.isPowerOfTwo(capacity)) {
+            throw new IllegalArgumentException("capacity must be a power of 2.");
+        }
     }
 }

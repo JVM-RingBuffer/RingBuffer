@@ -16,8 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
-import org.ringbuffer.java.Number;
 import org.ringbuffer.memory.Integer;
 
 abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
@@ -26,10 +24,7 @@ abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarsh
     // All fields are copied in <init>(AbstractMarshallingRingBufferBuilder<T>)
 
     AbstractMarshallingRingBufferBuilder(int capacity) {
-        Assume.notLesser(capacity, 2);
-        if (!Number.isPowerOfTwo(capacity)) {
-            throw new IllegalArgumentException("capacity must be a power of 2.");
-        }
+        validateCapacity(capacity);
         this.capacity = capacity;
     }
 
