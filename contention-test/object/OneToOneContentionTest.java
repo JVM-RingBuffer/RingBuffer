@@ -42,7 +42,7 @@ public class OneToOneContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
         Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

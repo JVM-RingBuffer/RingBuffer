@@ -39,7 +39,7 @@ public class FastManyToManyContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
         FastWriter.startGroupAsync(RING_BUFFER, profiler);
         return FastReader.runGroupAsync(RING_BUFFER, profiler);
     }

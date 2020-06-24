@@ -34,7 +34,7 @@ public class PrefilledOneToOneBlockingTest extends PrefilledOneToOneBlockingCont
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
         PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

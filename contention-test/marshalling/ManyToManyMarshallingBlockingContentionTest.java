@@ -44,7 +44,7 @@ public class ManyToManyMarshallingBlockingContentionTest extends RingBufferTest 
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
         BlockingWriter.startGroupAsync(RING_BUFFER, profiler);
         return BlockingReader.runGroupAsync(RING_BUFFER, profiler);
     }

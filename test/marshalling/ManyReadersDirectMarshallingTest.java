@@ -25,7 +25,7 @@ class ManyReadersDirectMarshallingTest extends ManyReadersDirectMarshallingConte
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
         DirectWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return DirectReader.runGroupAsync(RING_BUFFER, profiler);
     }

@@ -42,7 +42,7 @@ public class OneToOneDirectMarshallingContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
         DirectWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return DirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

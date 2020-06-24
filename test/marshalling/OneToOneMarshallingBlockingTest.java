@@ -25,7 +25,7 @@ class OneToOneMarshallingBlockingTest extends OneToOneMarshallingBlockingContent
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
         BlockingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return BlockingReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

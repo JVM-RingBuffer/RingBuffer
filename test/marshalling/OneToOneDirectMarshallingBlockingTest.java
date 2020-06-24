@@ -25,7 +25,7 @@ class OneToOneDirectMarshallingBlockingTest extends OneToOneDirectMarshallingBlo
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, NUM_ITERATIONS);
+        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
         DirectBlockingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return DirectBlockingReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

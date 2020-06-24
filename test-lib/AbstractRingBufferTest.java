@@ -47,6 +47,10 @@ public abstract class AbstractRingBufferTest extends Benchmark {
 
     protected abstract long testSum();
 
+    protected static Profiler createLatencyProfiler(int divideBy) {
+        return new Profiler("Latency", divideBy);
+    }
+
     @Override
     protected final int getNumIterations() {
         return 0;

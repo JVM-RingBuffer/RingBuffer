@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FastManyReadersContentionTest" type="Application" factoryName="Application" folderName="Many Readers">
+    <option name="MAIN_CLASS_NAME" value="test.object.FastManyReadersContentionTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms4g -Xmx4g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

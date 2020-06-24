@@ -51,11 +51,13 @@ scenario|msg/sec|latency
 1 producer → 1 consumer | 145 million | 7ns
 2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
-The following are "Fast"-prefixed versions on Windows i7 8700.
+The following are "Fast"-prefixed implementations on Windows i7 8700.
 
 scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 44 million | 66ns
+3 producers → 1 consumer | 34 million | 29ns
+1 producer → 3 consumers | 47 million | 2ns
 1 producer → 1 consumer | 375 million | 2.5ns
 
 ## Class copying

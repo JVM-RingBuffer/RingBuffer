@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package test.marshalling;
+package test.object;
 
-import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
-import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.object.FastAtomicReadRingBuffer;
+import org.ringbuffer.object.FastEmptyRingBuffer;
 import test.Profiler;
 
-public class ManyReadersDirectMarshallingBlockingContentionTest extends RingBufferTest {
-    public static final DirectMarshallingBlockingRingBuffer RING_BUFFER =
-            DirectMarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .manyReaders()
-                    .oneWriter()
-                    .blocking()
-                    .build();
+public class FastManyReadersContentionTest extends RingBufferTest {
+    public static final FastEmptyRingBuffer<Event> RING_BUFFER = new FastAtomicReadRingBuffer<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
-        new ManyReadersDirectMarshallingBlockingContentionTest().runBenchmark();
+        new FastManyReadersContentionTest().runBenchmark();
     }
 
     @Override
     protected int getRepeatTimes() {
-        return 10;
+        return 40;
     }
 
     @Override
@@ -45,7 +40,7 @@ public class ManyReadersDirectMarshallingBlockingContentionTest extends RingBuff
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        DirectBlockingWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return DirectBlockingReader.runGroupAsync(RING_BUFFER, profiler);
+        FastWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return FastReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

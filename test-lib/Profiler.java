@@ -22,8 +22,12 @@ public class Profiler {
     private long start;
 
     public Profiler(Object object, int divideBy) {
+        this(object.getClass().getSimpleName(), divideBy);
+    }
+
+    public Profiler(String name, int divideBy) {
         this.divideBy = divideBy;
-        result = Benchmark.current().getResult(object.getClass().getSimpleName());
+        result = Benchmark.current().getResult(name);
     }
 
     public void start() {

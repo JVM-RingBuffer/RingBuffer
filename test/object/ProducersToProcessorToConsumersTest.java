@@ -33,7 +33,7 @@ public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToC
 
     @Override
     protected long testSum() {
-        Profiler profiler = new Profiler(this, TOTAL_ELEMENTS);
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
         Writer.runGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.runAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);
