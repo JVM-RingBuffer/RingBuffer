@@ -21,7 +21,7 @@ class IllegalIntStateException extends IllegalStateException {
         super(Integer.toString(value));
     }
 
-    IllegalIntStateException(int value, String operator, int cap) {
-        super(value + operator + cap);
+    IllegalIntStateException(int value, int cap) {
+        super(value + " " + cap);
     }
 }

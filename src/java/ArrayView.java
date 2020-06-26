@@ -33,7 +33,7 @@ public class ArrayView<T> extends AbstractList<T> implements RandomAccess, Seria
 
     public ArrayView(T[] array, int fromIndex) {
         Assume.notNegative(fromIndex);
-        Assume.lesser(fromIndex, array.length);
+        Assume.lesserThan(fromIndex, array.length);
         this.array = array;
         this.fromIndex = fromIndex;
     }

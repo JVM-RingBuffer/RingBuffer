@@ -60,10 +60,9 @@ class FastAtomicWriteRingBuffer<T> extends FastEmptyRingBuffer<T> {
     public T take() {
         Object element;
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while ((element = BUFFER.getAcquire(buffer, readPosition)) == null) {
+        while ((element = BUFFER.getAndSet(buffer, readPosition, null)) == null) {
             Thread.onSpinWait();
         }
-        buffer[readPosition] = null;
         return cast(element);
     }
 

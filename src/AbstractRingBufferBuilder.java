@@ -17,6 +17,7 @@
 package org.ringbuffer;
 
 import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Number;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.lock.ReentrantBusyWaitLock;
@@ -36,7 +37,7 @@ public abstract class AbstractRingBufferBuilder<T> {
     private BusyWaitStrategy readBusyWaitStrategy;
     protected MemoryOrder memoryOrder = MemoryOrder.LAZY;
     protected boolean copyClass;
-    // All fields are copied in <init>(AbstractRingBufferBuilder<T>)
+    // All fields are copied in <init>(AbstractRingBufferBuilder<?>)
 
     protected AbstractRingBufferBuilder() {}
 
@@ -201,6 +202,10 @@ public abstract class AbstractRingBufferBuilder<T> {
         CLEARING_FAST,
         BLOCKING,
         DISCARDING
+    }
+
+    protected static void validateCapacity(int capacity) {
+        Assume.notLesser(capacity, 2);
     }
 
     protected static void validateCapacityPowerOfTwo(int capacity) {

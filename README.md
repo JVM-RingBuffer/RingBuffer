@@ -46,19 +46,19 @@ The following is v1.0 on i7 8700.
 scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 20 million | 140ns
-3 producers → 1 consumer | 25 million | 40ns
-1 producer → 3 consumers | 62 million | 4ns
-1 producer → 1 consumer | 145 million | 7ns
+3 producers → 1 consumer | 20 million | 50ns
+1 producer → 3 consumers | 50 million | 7ns
+1 producer → 1 consumer | 110 million | 9ns
 2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
-The following are `.fast()` implementations on Windows i7 8700.
+The following are `.fast()` implementations on i7 8700.
 
 scenario|msg/sec|latency
 ---|---|---
-3 producers → 3 consumers | 35 million | 84ns
-3 producers → 1 consumer | 33 million | 30ns
-1 producer → 3 consumers | 47 million | 3ns
-1 producer → 1 consumer | 375 million | 2.5ns
+3 producers → 3 consumers | 32 million | 92ns
+3 producers → 1 consumer | 41 million | 24ns
+1 producer → 3 consumers | 43 million | 4ns
+1 producer → 1 consumer | 250 million | 4ns
 
 ## Class copying
 

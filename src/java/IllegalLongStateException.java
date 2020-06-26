@@ -21,7 +21,7 @@ class IllegalLongStateException extends IllegalStateException {
         super(Long.toString(value));
     }
 
-    IllegalLongStateException(long value, String operator, long cap) {
-        super(value + operator + cap);
+    IllegalLongStateException(long value, long cap) {
+        super(value + " " + cap);
     }
 }

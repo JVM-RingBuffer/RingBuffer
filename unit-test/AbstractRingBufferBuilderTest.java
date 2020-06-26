@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer;
 
-class IllegalIntArgumentException extends IllegalArgumentException {
-    IllegalIntArgumentException(int value) {
-        super(Integer.toString(value));
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    IllegalIntArgumentException(int value, int cap) {
-        super(value + " " + cap);
+public abstract class AbstractRingBufferBuilderTest {
+    protected static void expectClass(Class<?> clazz, AbstractRingBuffer... ringBuffers) {
+        for (AbstractRingBuffer ringBuffer : ringBuffers) {
+            assertEquals(clazz, ringBuffer.getClass());
+        }
     }
 }

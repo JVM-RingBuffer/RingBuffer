@@ -31,49 +31,97 @@ public class Assume {
 
     public static void lesser(int value, int cap) {
         if (value >= cap) {
-            throw new IllegalIntArgumentException(value, " >= ", cap);
+            throw new IllegalIntArgumentException(value);
+        }
+    }
+
+    public static void lesserThan(int value, int cap) {
+        if (value >= cap) {
+            throw new IllegalIntArgumentException(value, cap);
         }
     }
 
     public static void lesser(long value, long cap) {
         if (value >= cap) {
-            throw new IllegalLongArgumentException(value, " >= ", cap);
+            throw new IllegalLongArgumentException(value);
+        }
+    }
+
+    public static void lesserThan(long value, long cap) {
+        if (value >= cap) {
+            throw new IllegalLongArgumentException(value, cap);
         }
     }
 
     public static void notLesser(int value, int cap) {
         if (value < cap) {
-            throw new IllegalIntArgumentException(value, " < ", cap);
+            throw new IllegalIntArgumentException(value);
+        }
+    }
+
+    public static void notLesserThan(int value, int cap) {
+        if (value < cap) {
+            throw new IllegalIntArgumentException(value, cap);
         }
     }
 
     public static void notLesser(long value, long cap) {
         if (value < cap) {
-            throw new IllegalLongArgumentException(value, " < ", cap);
+            throw new IllegalLongArgumentException(value);
+        }
+    }
+
+    public static void notLesserThan(long value, long cap) {
+        if (value < cap) {
+            throw new IllegalLongArgumentException(value, cap);
         }
     }
 
     public static void greater(int value, int cap) {
         if (value <= cap) {
-            throw new IllegalIntArgumentException(value, " <= ", cap);
+            throw new IllegalIntArgumentException(value);
+        }
+    }
+
+    public static void greaterThan(int value, int cap) {
+        if (value <= cap) {
+            throw new IllegalIntArgumentException(value, cap);
         }
     }
 
     public static void greater(long value, long cap) {
         if (value <= cap) {
-            throw new IllegalLongArgumentException(value, " <= ", cap);
+            throw new IllegalLongArgumentException(value);
+        }
+    }
+
+    public static void greaterThan(long value, long cap) {
+        if (value <= cap) {
+            throw new IllegalLongArgumentException(value, cap);
         }
     }
 
     public static void notGreater(int value, int cap) {
         if (value > cap) {
-            throw new IllegalIntArgumentException(value, " > ", cap);
+            throw new IllegalIntArgumentException(value);
+        }
+    }
+
+    public static void notGreaterThan(int value, int cap) {
+        if (value > cap) {
+            throw new IllegalIntArgumentException(value, cap);
         }
     }
 
     public static void notGreater(long value, long cap) {
         if (value > cap) {
-            throw new IllegalLongArgumentException(value, " > ", cap);
+            throw new IllegalLongArgumentException(value);
+        }
+    }
+
+    public static void notGreaterThan(long value, long cap) {
+        if (value > cap) {
+            throw new IllegalLongArgumentException(value, cap);
         }
     }
 

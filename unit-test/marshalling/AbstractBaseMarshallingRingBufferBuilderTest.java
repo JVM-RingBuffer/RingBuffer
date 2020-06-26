@@ -17,12 +17,10 @@
 package org.ringbuffer.marshalling;
 
 import org.junit.jupiter.api.Test;
-import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.AbstractRingBufferBuilderTest;
 import test.marshalling.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class RingBufferBuilderTest {
+class AbstractBaseMarshallingRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
     @Test
     void testClasses() {
         expectClass(VolatileMarshallingRingBuffer.class, OneToOneMarshallingContentionTest.RING_BUFFER);
@@ -44,11 +42,5 @@ class RingBufferBuilderTest {
         expectClass(ConcurrentMarshallingBlockingRingBuffer.class, ManyToManyMarshallingBlockingContentionTest.RING_BUFFER);
         expectClass(ConcurrentDirectMarshallingRingBuffer.class, ManyToManyDirectMarshallingContentionTest.RING_BUFFER);
         expectClass(ConcurrentDirectMarshallingBlockingRingBuffer.class, ManyToManyDirectMarshallingBlockingContentionTest.RING_BUFFER);
-    }
-
-    private static void expectClass(Class<?> clazz, AbstractRingBuffer... ringBuffers) {
-        for (AbstractRingBuffer ringBuffer : ringBuffers) {
-            assertEquals(clazz, ringBuffer.getClass());
-        }
     }
 }

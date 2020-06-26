@@ -51,7 +51,7 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T
     @Override
     T[] getBuffer() {
         T[] buffer = super.getBuffer();
-        for (int i = 0; i < capacity; i++) {
+        for (int i = 0; i < buffer.length; i++) {
             buffer[i] = filler.get();
         }
         return buffer;

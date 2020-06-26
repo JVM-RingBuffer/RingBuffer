@@ -21,7 +21,7 @@ class IllegalLongArgumentException extends IllegalArgumentException {
         super(Long.toString(value));
     }
 
-    IllegalLongArgumentException(long value, String operator, long cap) {
-        super(value + operator + cap);
+    IllegalLongArgumentException(long value, long cap) {
+        super(value + " " + cap);
     }
 }

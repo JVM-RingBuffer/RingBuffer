@@ -18,11 +18,11 @@ package org.ringbuffer.java;
 
 public class Assert {
     public static void equal(int left, int right) {
-        assert left == right : left + " != " + right;
+        assert left == right : left + " " + right;
     }
 
     public static void equal(long left, long right) {
-        assert left == right : left + " != " + right;
+        assert left == right : left + " " + right;
     }
 
     public static void notEqual(int left, int right) {
@@ -34,35 +34,67 @@ public class Assert {
     }
 
     public static void lesser(int value, int cap) {
-        assert value < cap : value + " >= " + cap;
+        assert value < cap : value;
+    }
+
+    public static void lesserThan(int value, int cap) {
+        assert value < cap : value + " " + cap;
     }
 
     public static void lesser(long value, long cap) {
-        assert value < cap : value + " >= " + cap;
+        assert value < cap : value;
+    }
+
+    public static void lesserThan(long value, long cap) {
+        assert value < cap : value + " " + cap;
     }
 
     public static void notLesser(int value, int cap) {
-        assert value >= cap : value + " < " + cap;
+        assert value >= cap : value;
+    }
+
+    public static void notLesserThan(int value, int cap) {
+        assert value >= cap : value + " " + cap;
     }
 
     public static void notLesser(long value, long cap) {
-        assert value >= cap : value + " < " + cap;
+        assert value >= cap : value;
+    }
+
+    public static void notLesserThan(long value, long cap) {
+        assert value >= cap : value + " " + cap;
     }
 
     public static void greater(int value, int cap) {
-        assert value > cap : value + " <= " + cap;
+        assert value > cap : value;
+    }
+
+    public static void greaterThan(int value, int cap) {
+        assert value > cap : value + " " + cap;
     }
 
     public static void greater(long value, long cap) {
-        assert value > cap : value + " <= " + cap;
+        assert value > cap : value;
+    }
+
+    public static void greaterThan(long value, long cap) {
+        assert value > cap : value + " " + cap;
     }
 
     public static void notGreater(int value, int cap) {
-        assert value <= cap : value + " > " + cap;
+        assert value <= cap : value;
+    }
+
+    public static void notGreaterThan(int value, int cap) {
+        assert value <= cap : value + " " + cap;
     }
 
     public static void notGreater(long value, long cap) {
-        assert value <= cap : value + " > " + cap;
+        assert value <= cap : value;
+    }
+
+    public static void notGreaterThan(long value, long cap) {
+        assert value <= cap : value + " " + cap;
     }
 
     public static void positive(int value) {

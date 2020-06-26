@@ -64,9 +64,10 @@ class FastConcurrentRingBuffer<T> extends FastEmptyRingBuffer<T> {
     public T take() {
         Object element;
         int readPosition = (int) READ_POSITION.getAndAdd(this, 1) & capacityMinusOne;
-        while ((element = BUFFER.getAndSet(buffer, readPosition, null)) == null) {
+        while ((element = BUFFER.getAcquire(buffer, readPosition)) == null) {
             Thread.onSpinWait();
         }
+        BUFFER.setOpaque(buffer, readPosition, null);
         return cast(element);
     }
 

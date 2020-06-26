@@ -33,7 +33,7 @@ public class IntArrayView extends AbstractList<Integer> implements RandomAccess,
 
     public IntArrayView(int[] array, int fromIndex) {
         Assume.notNegative(fromIndex);
-        Assume.lesser(fromIndex, array.length);
+        Assume.lesserThan(fromIndex, array.length);
         this.array = array;
         this.fromIndex = fromIndex;
     }

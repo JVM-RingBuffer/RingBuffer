@@ -112,7 +112,7 @@ public class ThreadSpreader {
             if (lastCPU == -1) {
                 throw new IllegalStateException("You must call toCPU().");
             }
-            Ensure.notGreater(firstCPU, lastCPU);
+            Ensure.notGreaterThan(firstCPU, lastCPU);
             return new ThreadSpreader(this);
         }
     }

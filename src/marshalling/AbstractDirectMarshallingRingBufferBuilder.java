@@ -23,7 +23,7 @@ import org.ringbuffer.memory.Long;
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
     private final long capacity;
     private DirectByteArray.Factory byteArrayFactory = DirectByteArray.SAFE;
-    // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<T>)
+    // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<?>)
 
     AbstractDirectMarshallingRingBufferBuilder(long capacity) {
         Assume.notLesser(capacity, 2L);

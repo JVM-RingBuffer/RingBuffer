@@ -17,7 +17,6 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
-import org.ringbuffer.java.Assume;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -32,11 +31,11 @@ abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer
         return implLookup;
     }
 
-    final int capacity;
-    // All fields are copied in <init>(RingBufferBuilder<T>)
+    private final int capacity;
+    // All fields are copied in <init>(RingBufferBuilder<?>)
 
     RingBufferBuilder(int capacity) {
-        Assume.notLesser(capacity, 2);
+        validateCapacity(capacity);
         this.capacity = capacity;
     }
 
@@ -52,9 +51,9 @@ abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer
     }
 
     /**
-     * Requires {@code -XX:-RestrictContended}.
+     * Require {@code -XX:-RestrictContended}.
      * <p>
-     * The {@code null} element is not supported.
+     * Do not support the {@code null} element.
      */
     abstract RingBufferBuilder<?> fast();
 

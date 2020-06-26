@@ -19,11 +19,12 @@ package org.ringbuffer.object;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.AbstractRingBufferBuilderTest;
 import test.object.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RingBufferBuilderTest {
+class RingBufferBuilderTest extends AbstractRingBufferBuilderTest {
     private EmptyRingBufferBuilder<?> builder;
 
     @BeforeEach
@@ -107,11 +108,5 @@ class RingBufferBuilderTest {
         expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.RING_BUFFER);
         expectClass(FastAtomicWriteRingBuffer.class, FastManyWritersContentionTest.RING_BUFFER);
         expectClass(FastVolatileRingBuffer.class, FastOneToOneContentionTest.RING_BUFFER);
-    }
-
-    private static void expectClass(Class<?> clazz, RingBuffer<?>... ringBuffers) {
-        for (RingBuffer<?> ringBuffer : ringBuffers) {
-            assertEquals(clazz, ringBuffer.getClass());
-        }
     }
 }

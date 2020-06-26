@@ -16,16 +16,15 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
 import org.ringbuffer.memory.Integer;
 
 abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
     private final int capacity;
     private ByteArray.Factory byteArrayFactory = ByteArray.SAFE;
-    // All fields are copied in <init>(AbstractMarshallingRingBufferBuilder<T>)
+    // All fields are copied in <init>(AbstractMarshallingRingBufferBuilder<?>)
 
     AbstractMarshallingRingBufferBuilder(int capacity) {
-        Assume.notLesser(capacity, 2);
+        validateCapacity(capacity);
         validateCapacityPowerOfTwo(capacity);
         this.capacity = capacity;
     }
