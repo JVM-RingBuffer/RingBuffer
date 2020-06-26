@@ -17,13 +17,11 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.AbstractRingBufferBuilder;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
-public class FastConcurrentRingBuffer<T> implements FastEmptyRingBuffer<T> {
-    private static final VarHandle BUFFER = MethodHandles.arrayElementVarHandle(Object[].class);
+class FastConcurrentRingBuffer<T> extends FastEmptyRingBuffer<T> {
     private static final VarHandle READ_POSITION;
     private static final VarHandle WRITE_POSITION;
 
@@ -47,10 +45,14 @@ public class FastConcurrentRingBuffer<T> implements FastEmptyRingBuffer<T> {
     @Contended
     private int writePosition;
 
-    public FastConcurrentRingBuffer(int capacity) {
-        AbstractRingBufferBuilder.validateCapacity(capacity);
-        buffer = new Object[capacity];
-        capacityMinusOne = capacity - 1;
+    FastConcurrentRingBuffer(EmptyRingBufferBuilder<?> builder) {
+        buffer = builder.getBuffer();
+        capacityMinusOne = builder.getCapacityMinusOne();
+    }
+
+    @Override
+    public int getCapacity() {
+        return buffer.length;
     }
 
     @Override
@@ -65,6 +67,11 @@ public class FastConcurrentRingBuffer<T> implements FastEmptyRingBuffer<T> {
         while ((element = BUFFER.getAndSet(buffer, readPosition, null)) == null) {
             Thread.onSpinWait();
         }
+        return cast(element);
+    }
+
+    @SuppressWarnings("unchecked")
+    private T cast(Object element) {
         return (T) element;
     }
 }

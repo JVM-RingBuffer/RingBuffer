@@ -51,6 +51,18 @@ abstract class RingBufferBuilder<T> extends AbstractRingBufferBuilder<RingBuffer
         type = RingBufferType.DISCARDING;
     }
 
+    /**
+     * Requires {@code -XX:-RestrictContended}.
+     * <p>
+     * The {@code null} element is not supported.
+     */
+    abstract RingBufferBuilder<?> fast();
+
+    void fast0() {
+        validateCapacityPowerOfTwo(capacity);
+        type = RingBufferType.CLEARING_FAST;
+    }
+
     @Override
     protected Lock getWriteLock() {
         return super.getWriteLock();

@@ -21,7 +21,7 @@ import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallingRingBufferBuilder<DirectMarshallingRingBuffer> {
-    public DirectMarshallingRingBufferBuilder(long capacity) {
+    DirectMarshallingRingBufferBuilder(long capacity) {
         super(capacity);
     }
 

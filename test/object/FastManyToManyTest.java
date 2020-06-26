@@ -16,35 +16,17 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
 import test.Profiler;
 
-public class FastManyReadersContentionTest extends RingBufferTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
-                    .manyReaders()
-                    .oneWriter()
-                    .fast()
-                    .build();
-
+class FastManyToManyTest extends FastManyToManyContentionTest {
     public static void main(String[] args) {
-        new FastManyReadersContentionTest().runBenchmark();
-    }
-
-    @Override
-    protected int getRepeatTimes() {
-        return 40;
-    }
-
-    @Override
-    protected long getSum() {
-        return ONE_TO_MANY_SUM;
+        new FastManyToManyTest().runBenchmark();
     }
 
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        Writer.runGroupAsync(RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

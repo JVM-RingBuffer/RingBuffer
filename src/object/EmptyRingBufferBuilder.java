@@ -23,7 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     private boolean gcEnabled;
 
-    public EmptyRingBufferBuilder(int capacity) {
+    EmptyRingBufferBuilder(int capacity) {
         super(capacity);
     }
 
@@ -82,6 +82,12 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
     }
 
     @Override
+    public EmptyRingBufferBuilder<T> fast() {
+        super.fast0();
+        return this;
+    }
+
+    @Override
     public EmptyRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;
@@ -120,6 +126,8 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                             return instantiateCopy(VolatileRingBuffer.class);
                         }
                         return new VolatileRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastVolatileRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -156,6 +164,8 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                             return instantiateCopy(AtomicReadRingBuffer.class);
                         }
                         return new AtomicReadRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicReadRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -192,6 +202,8 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                             return instantiateCopy(AtomicWriteRingBuffer.class);
                         }
                         return new AtomicWriteRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicWriteRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -228,6 +240,8 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
                             return instantiateCopy(ConcurrentRingBuffer.class);
                         }
                         return new ConcurrentRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastConcurrentRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {

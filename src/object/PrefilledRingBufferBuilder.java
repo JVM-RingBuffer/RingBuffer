@@ -86,6 +86,11 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
+    RingBufferBuilder<?> fast() {
+        throw new AssertionError();
+    }
+
+    @Override
     public PrefilledRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;

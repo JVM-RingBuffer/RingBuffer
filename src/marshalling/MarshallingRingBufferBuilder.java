@@ -21,7 +21,7 @@ import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class MarshallingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<MarshallingRingBuffer> {
-    public MarshallingRingBufferBuilder(int capacity) {
+    MarshallingRingBufferBuilder(int capacity) {
         super(capacity);
     }
 

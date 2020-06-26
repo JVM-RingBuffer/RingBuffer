@@ -16,12 +16,59 @@
 
 package org.ringbuffer.object;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ringbuffer.AbstractRingBufferBuilder;
 import test.object.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RingBufferBuilderTest {
+    private EmptyRingBufferBuilder<?> builder;
+
+    @BeforeEach
+    void setUp() {
+        builder = new EmptyRingBufferBuilder<>(2);
+    }
+
+    @Test
+    void testConcurrencyNotSet() {
+        builder.blocking();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void testWriterConcurrencyNotSet() {
+        builder.oneReader();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void testWriterConcurrencyNotSet2() {
+        builder.manyReaders();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void testReaderConcurrencyNotSet() {
+        builder.oneWriter();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void testReaderConcurrencyNotSet2() {
+        builder.manyWriters();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void testFillerNotSet() {
+        AbstractRingBufferBuilder<?> builder = new PrefilledClearingRingBufferBuilder<>(2);
+        builder.oneReader();
+        builder.oneWriter();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
     @Test
     void testClasses() {
         expectClass(ConcurrentBlockingGCRingBuffer.class, ManyToManyBlockingContentionTest.RING_BUFFER);
@@ -55,6 +102,11 @@ class RingBufferBuilderTest {
         expectClass(AtomicWriteBlockingGCRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER);
         expectClass(AtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
+
+        expectClass(FastConcurrentRingBuffer.class, FastManyToManyContentionTest.RING_BUFFER);
+        expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.RING_BUFFER);
+        expectClass(FastAtomicWriteRingBuffer.class, FastManyWritersContentionTest.RING_BUFFER);
+        expectClass(FastVolatileRingBuffer.class, FastOneToOneContentionTest.RING_BUFFER);
     }
 
     private static void expectClass(Class<?> clazz, RingBuffer<?>... ringBuffers) {

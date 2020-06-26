@@ -17,7 +17,6 @@
 package test.object;
 
 import org.ringbuffer.object.EmptyRingBuffer;
-import org.ringbuffer.object.FastEmptyRingBuffer;
 import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.RingBuffer;
@@ -36,11 +35,6 @@ abstract class TestThread extends AbstractTestThread {
     @SuppressWarnings("unchecked")
     EmptyRingBuffer<Event> getEmptyRingBuffer() {
         return (EmptyRingBuffer<Event>) ringBuffer;
-    }
-
-    @SuppressWarnings("unchecked")
-    FastEmptyRingBuffer<Event> getFastEmptyRingBuffer() {
-        return (FastEmptyRingBuffer<Event>) ringBuffer;
     }
 
     @SuppressWarnings("unchecked")

@@ -16,13 +16,53 @@
 
 package org.ringbuffer.object;
 
-/**
- * Requires {@code -XX:-RestrictContended}.
- * <p>
- * The {@code null} element is not supported.
- */
-public interface FastEmptyRingBuffer<T> {
-    void put(T element);
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.util.function.Consumer;
 
-    T take();
+abstract class FastEmptyRingBuffer<T> implements EmptyRingBuffer<T> {
+    static final VarHandle BUFFER = MethodHandles.arrayElementVarHandle(Object[].class);
+
+    @Override
+    public void advance() {}
+
+    @Override
+    public void takeBatch(int size) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T takePlain() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void advanceBatch() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void forEach(Consumer<T> action) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(T element) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int size() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        throw new UnsupportedOperationException();
+    }
 }
