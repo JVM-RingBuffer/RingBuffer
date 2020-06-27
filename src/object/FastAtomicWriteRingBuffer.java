@@ -17,57 +17,41 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.concurrent.AtomicInt;
 
 class FastAtomicWriteRingBuffer<T> extends FastEmptyRingBuffer<T> {
-    private static final VarHandle WRITE_POSITION;
-
-    static {
-        try {
-            WRITE_POSITION = MethodHandles.lookup().findVarHandle(FastAtomicWriteRingBuffer.class, "writePosition", int.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    @Contended
-    private final Object[] buffer;
     private final int capacityMinusOne;
+    @Contended
+    private final AtomicArray<T> buffer;
 
     @Contended
     private int readPosition;
     @Contended
-    private int writePosition;
+    private final AtomicInt writePosition = new AtomicInt();
 
-    FastAtomicWriteRingBuffer(EmptyRingBufferBuilder<?> builder) {
-        buffer = builder.getBuffer();
+    FastAtomicWriteRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = new AtomicArray<>(builder.getBuffer());
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length;
+        return buffer.length();
     }
 
     @Override
     public void put(T element) {
-        BUFFER.setRelease(buffer, (int) WRITE_POSITION.getAndAdd(this, 1) & capacityMinusOne, element);
+        buffer.setRelease(writePosition.getAndIncrementVolatile() & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
-        Object element;
+        T element;
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while ((element = BUFFER.getAndSet(buffer, readPosition, null)) == null) {
+        while ((element = buffer.getAndSetVolatile(readPosition, null)) == null) {
             Thread.onSpinWait();
         }
-        return cast(element);
-    }
-
-    @SuppressWarnings("unchecked")
-    private T cast(Object element) {
-        return (T) element;
+        return element;
     }
 }

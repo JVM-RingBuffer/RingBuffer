@@ -17,62 +17,42 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.concurrent.AtomicInt;
 
 class FastConcurrentRingBuffer<T> extends FastEmptyRingBuffer<T> {
-    private static final VarHandle READ_POSITION;
-    private static final VarHandle WRITE_POSITION;
-
-    static {
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        final Class<?> clazz = FastConcurrentRingBuffer.class;
-        try {
-            READ_POSITION = lookup.findVarHandle(clazz, "readPosition", int.class);
-            WRITE_POSITION = lookup.findVarHandle(clazz, "writePosition", int.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    @Contended
-    private final Object[] buffer;
     private final int capacityMinusOne;
+    @Contended
+    private final AtomicArray<T> buffer;
 
     @Contended
-    private int readPosition;
+    private final AtomicInt readPosition = new AtomicInt();
     @Contended
-    private int writePosition;
+    private final AtomicInt writePosition = new AtomicInt();
 
-    FastConcurrentRingBuffer(EmptyRingBufferBuilder<?> builder) {
-        buffer = builder.getBuffer();
+    FastConcurrentRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = new AtomicArray<>(builder.getBuffer());
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length;
+        return buffer.length();
     }
 
     @Override
     public void put(T element) {
-        BUFFER.setRelease(buffer, (int) WRITE_POSITION.getAndAdd(this, 1) & capacityMinusOne, element);
+        buffer.setRelease(writePosition.getAndIncrementVolatile() & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
-        Object element;
-        int readPosition = (int) READ_POSITION.getAndAdd(this, 1) & capacityMinusOne;
-        while ((element = BUFFER.getAcquire(buffer, readPosition)) == null) {
+        T element;
+        int readPosition = this.readPosition.getAndIncrementVolatile() & capacityMinusOne;
+        while ((element = buffer.getAcquire(readPosition)) == null) {
             Thread.onSpinWait();
         }
-        BUFFER.setOpaque(buffer, readPosition, null);
-        return cast(element);
-    }
-
-    @SuppressWarnings("unchecked")
-    private T cast(Object element) {
-        return (T) element;
+        buffer.setOpaque(readPosition, null);
+        return element;
     }
 }

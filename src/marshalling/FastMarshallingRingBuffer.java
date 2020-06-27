@@ -14,36 +14,13 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.object;
+package org.ringbuffer.marshalling;
 
-import java.util.function.Consumer;
-
-abstract class FastEmptyRingBuffer<T> implements EmptyRingBuffer<T> {
-    @Override
-    public void advance() {}
+public abstract class FastMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
+    public abstract int next(int size);
 
     @Override
-    public void takeBatch(int size) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T takePlain() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void advanceBatch() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void forEach(Consumer<T> action) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean contains(T element) {
+    public int getCapacity() {
         throw new UnsupportedOperationException();
     }
 
@@ -57,8 +34,7 @@ abstract class FastEmptyRingBuffer<T> implements EmptyRingBuffer<T> {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public String toString() {
-        throw new UnsupportedOperationException();
+    public static FastMarshallingRingBufferBuilder withCapacity(int capacity) {
+        return new FastMarshallingRingBufferBuilder(capacity);
     }
 }

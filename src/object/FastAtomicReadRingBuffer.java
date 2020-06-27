@@ -17,57 +17,41 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.concurrent.AtomicInt;
 
 class FastAtomicReadRingBuffer<T> extends FastEmptyRingBuffer<T> {
-    private static final VarHandle READ_POSITION;
-
-    static {
-        try {
-            READ_POSITION = MethodHandles.lookup().findVarHandle(FastAtomicReadRingBuffer.class, "readPosition", int.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    @Contended
-    private final Object[] buffer;
     private final int capacityMinusOne;
+    @Contended
+    private final AtomicArray<T> buffer;
 
     @Contended
-    private int readPosition;
+    private final AtomicInt readPosition = new AtomicInt();
     @Contended
     private int writePosition;
 
-    FastAtomicReadRingBuffer(EmptyRingBufferBuilder<?> builder) {
-        buffer = builder.getBuffer();
+    FastAtomicReadRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = new AtomicArray<>(builder.getBuffer());
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length;
+        return buffer.length();
     }
 
     @Override
     public void put(T element) {
-        BUFFER.setRelease(buffer, writePosition++ & capacityMinusOne, element);
+        buffer.setRelease(writePosition++ & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
-        Object element;
-        int readPosition = (int) READ_POSITION.getAndAdd(this, 1) & capacityMinusOne;
-        while ((element = BUFFER.getAndSet(buffer, readPosition, null)) == null) {
+        T element;
+        int readPosition = this.readPosition.getAndIncrementVolatile() & capacityMinusOne;
+        while ((element = buffer.getAndSetVolatile(readPosition, null)) == null) {
             Thread.onSpinWait();
         }
-        return cast(element);
-    }
-
-    @SuppressWarnings("unchecked")
-    private T cast(Object element) {
-        return (T) element;
+        return element;
     }
 }

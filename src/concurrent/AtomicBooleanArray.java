@@ -152,6 +152,12 @@ public class AtomicBooleanArray {
         return (boolean) VALUE.getAndBitwiseXor(value, index, mask);
     }
 
+    public void fill(boolean value) {
+        for (int i = 0; i < this.value.length; i++) {
+            this.value[i] = value;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

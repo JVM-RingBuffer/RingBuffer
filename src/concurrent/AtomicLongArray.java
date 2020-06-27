@@ -318,6 +318,12 @@ public class AtomicLongArray {
         }
     }
 
+    public void fill(long value) {
+        for (int i = 0; i < this.value.length; i++) {
+            this.value[i] = value;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

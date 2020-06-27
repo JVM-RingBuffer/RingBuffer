@@ -17,45 +17,41 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
+import org.ringbuffer.concurrent.AtomicArray;
 
 class FastVolatileRingBuffer<T> extends FastEmptyRingBuffer<T> {
-    @Contended
-    private final Object[] buffer;
     private final int capacityMinusOne;
+    @Contended
+    private final AtomicArray<T> buffer;
 
     @Contended
     private int readPosition;
     @Contended
     private int writePosition;
 
-    FastVolatileRingBuffer(EmptyRingBufferBuilder<?> builder) {
-        buffer = builder.getBuffer();
+    FastVolatileRingBuffer(EmptyRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = new AtomicArray<>(builder.getBuffer());
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length;
+        return buffer.length();
     }
 
     @Override
     public void put(T element) {
-        BUFFER.setRelease(buffer, writePosition++ & capacityMinusOne, element);
+        buffer.setRelease(writePosition++ & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
-        Object element;
+        T element;
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while ((element = BUFFER.getAcquire(buffer, readPosition)) == null) {
+        while ((element = buffer.getAcquire(readPosition)) == null) {
             Thread.onSpinWait();
         }
-        buffer[readPosition] = null;
-        return cast(element);
-    }
-
-    @SuppressWarnings("unchecked")
-    private T cast(Object element) {
-        return (T) element;
+        buffer.setPlain(readPosition, null);
+        return element;
     }
 }

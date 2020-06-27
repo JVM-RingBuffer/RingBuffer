@@ -17,10 +17,7 @@
 package test.marshalling;
 
 import org.ringbuffer.AbstractRingBuffer;
-import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
-import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
-import org.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
-import org.ringbuffer.marshalling.MarshallingRingBuffer;
+import org.ringbuffer.marshalling.*;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
@@ -34,6 +31,10 @@ abstract class TestThread extends AbstractTestThread {
 
     MarshallingBlockingRingBuffer getMarshallingBlockingRingBuffer() {
         return (MarshallingBlockingRingBuffer) ringBuffer;
+    }
+
+    FastMarshallingRingBuffer getFastMarshallingRingBuffer() {
+        return (FastMarshallingRingBuffer) ringBuffer;
     }
 
     DirectMarshallingRingBuffer getDirectMarshallingRingBuffer() {

@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.memory.Integer;
 
 abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
@@ -55,5 +56,11 @@ abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarsh
 
     Integer newCursor() {
         return memoryOrder.newInteger();
+    }
+
+    AtomicBooleanArray getFlags() {
+        AtomicBooleanArray flags = new AtomicBooleanArray(capacity);
+        flags.fill(true);
+        return flags;
     }
 }

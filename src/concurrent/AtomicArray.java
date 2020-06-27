@@ -173,6 +173,12 @@ public class AtomicArray<T> {
         }
     }
 
+    public void fill(T value) {
+        for (int i = 0; i < this.value.length; i++) {
+            this.value[i] = value;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
