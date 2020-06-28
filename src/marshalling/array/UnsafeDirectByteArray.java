@@ -17,8 +17,8 @@
 package org.ringbuffer.marshalling.array;
 
 import org.ringbuffer.java.Assume;
-import org.ringbuffer.java.CleanerService;
 import org.ringbuffer.marshalling.DirectByteArray;
+import org.ringbuffer.system.CleanerService;
 import org.ringbuffer.system.Unsafe;
 
 public class UnsafeDirectByteArray implements DirectByteArray {

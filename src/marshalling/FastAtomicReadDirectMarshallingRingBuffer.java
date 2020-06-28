@@ -24,7 +24,6 @@ class FastAtomicReadDirectMarshallingRingBuffer extends FastDirectMarshallingRin
     private final long capacityMinusOne;
     @Contended
     private final DirectByteArray buffer;
-    @Contended
     private final DirectAtomicBooleanArray flags;
 
     @Contended

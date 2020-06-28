@@ -17,7 +17,7 @@
 package org.ringbuffer.concurrent;
 
 import org.ringbuffer.java.Assume;
-import org.ringbuffer.java.CleanerService;
+import org.ringbuffer.system.CleanerService;
 
 import static org.ringbuffer.system.InternalUnsafe.*;
 

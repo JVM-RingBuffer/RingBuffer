@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
-
-import org.ringbuffer.system.Unsafe;
+package org.ringbuffer.system;
 
 import java.lang.ref.Cleaner;
 

@@ -18,6 +18,9 @@ package org.ringbuffer.system;
 
 import jdk.internal.misc.Unsafe;
 
+/**
+ * Requires {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}.
+ */
 public class InternalUnsafe {
     public static final Unsafe UNSAFE = Unsafe.getUnsafe();
 }

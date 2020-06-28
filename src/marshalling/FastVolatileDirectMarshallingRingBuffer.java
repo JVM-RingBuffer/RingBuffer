@@ -23,7 +23,6 @@ class FastVolatileDirectMarshallingRingBuffer extends FastDirectMarshallingRingB
     private final long capacityMinusOne;
     @Contended
     private final DirectByteArray buffer;
-    @Contended
     private final DirectAtomicBooleanArray flags;
 
     @Contended

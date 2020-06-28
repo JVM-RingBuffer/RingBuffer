@@ -22,11 +22,6 @@ They produce no garbage, and their capacity must be a power of 2 (`Numbers.getNe
 The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.  
 When full, they can either clear all elements or block waiting for enough space to become available.
 
-## Motivation
-
-This library can be useful when there is a single thread executing the business logic, that has to take instructions from multiple producer threads and send results to multiple consumer threads.  
-When nanoseconds count, synchronization is too expensive and so this library provides a means to communicate between threads while avoiding locks on the latency-sensitive one.
-
 ## Thread priority and affinity
 
 First, load the native library for the current platform: `Threads.loadNativeLibrary()`
@@ -35,15 +30,9 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-Performance varies wildly depending on the environment if trivial changes are made, and the reason has not been ascertained yet.  
-For example, by storing the current instance in a static field upon construction, throughput for the first scenario below would go up to 30 million on Windows, and remain the same on Linux.
+i7 8700, Linux
 
-So, if you control all deployments, then you are encouraged to hack on the implementations you are using, and
-run benchmarks in the production environment, since performance gains may be noticeable.
-
-The following is v1.0 on i7 8700.
-
-scenario|msg/sec|latency
+v1.0|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 20 million | 140ns
 3 producers → 1 consumer | 20 million | 50ns
@@ -51,9 +40,7 @@ scenario|msg/sec|latency
 1 producer → 1 consumer | 110 million | 9ns
 2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
-The following are `.fast()` implementations on i7 8700.
-
-scenario|msg/sec|latency
+`.fast()`|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 32 million | 92ns
 3 producers → 1 consumer | 41 million | 24ns
