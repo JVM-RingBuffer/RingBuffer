@@ -75,7 +75,8 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 
 - `Atomic*` classes expose all the features supported by `VarHandle`s while having better names.
 - `Platform.current()` returns the current OS and JVM architecture.
-- `Unsafe.UNSAFE` exposes the `sun.misc.Unsafe`.
+- `Unsafe.UNSAFE` and `InternalUnsafe.UNSAFE` expose the `sun.misc.Unsafe` and `jdk.internal.misc.Unsafe`, respectively.
+- `CleanerService` supports freeing off-heap memory on object GC.
 - `GarbageCollectorProfiler` supports listening to GC events and logging them.
 - `Assert`, `Assume` and `Ensure` allow for performant clean condition checking.
 - `*ArrayView`s allow to view an array as `List`.

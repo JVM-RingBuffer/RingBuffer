@@ -17,6 +17,7 @@
 package org.ringbuffer.marshalling.array;
 
 import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.CleanerService;
 import org.ringbuffer.marshalling.DirectByteArray;
 import org.ringbuffer.system.Unsafe;
 
@@ -26,6 +27,7 @@ public class UnsafeDirectByteArray implements DirectByteArray {
     public UnsafeDirectByteArray(long length) {
         Assume.notGreater(length, Long.MAX_VALUE - 8L);
         address = Unsafe.UNSAFE.allocateMemory(length + 8L);
+        CleanerService.freeMemory(this, address);
     }
 
     @Override

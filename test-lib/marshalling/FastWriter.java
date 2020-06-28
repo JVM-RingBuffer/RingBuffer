@@ -20,7 +20,7 @@ import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.INT;
+import static org.ringbuffer.marshalling.Offsets.*;
 
 class FastWriter extends TestThread {
     static TestThreadGroup startGroupAsync(FastMarshallingRingBuffer ringBuffer, Profiler profiler) {

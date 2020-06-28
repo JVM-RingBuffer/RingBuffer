@@ -17,8 +17,9 @@
 package org.ringbuffer.concurrent;
 
 import org.ringbuffer.java.Assume;
+import org.ringbuffer.java.CleanerService;
 
-import static org.ringbuffer.system.InternalUnsafe.UNSAFE;
+import static org.ringbuffer.system.InternalUnsafe.*;
 
 public class DirectAtomicBooleanArray {
     private final long address;
@@ -26,6 +27,7 @@ public class DirectAtomicBooleanArray {
     public DirectAtomicBooleanArray(long length) {
         Assume.notLesser(length, 1L);
         address = UNSAFE.allocateMemory(length);
+        CleanerService.freeMemory(this, address);
     }
 
     public void setPlain(long index, boolean value) {

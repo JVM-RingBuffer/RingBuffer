@@ -73,6 +73,11 @@ public class DirectMarshallingBlockingRingBufferBuilder extends AbstractDirectMa
     }
 
     @Override
+    protected AbstractDirectMarshallingRingBufferBuilder<?> fast() {
+        throw new AssertionError();
+    }
+
+    @Override
     public DirectMarshallingBlockingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;

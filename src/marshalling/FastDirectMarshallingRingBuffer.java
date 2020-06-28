@@ -33,8 +33,4 @@ public abstract class FastDirectMarshallingRingBuffer implements AbstractDirectM
     public boolean isEmpty() {
         throw new UnsupportedOperationException();
     }
-
-    public static FastDirectMarshallingRingBufferBuilder withCapacity(long capacity) {
-        return new FastDirectMarshallingRingBufferBuilder(capacity);
-    }
 }

@@ -81,6 +81,11 @@ public class EmptyRingBufferBuilder<T> extends RingBufferBuilder<T> {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Do not support the {@code null} element.
+     */
     @Override
     public EmptyRingBufferBuilder<T> fast() {
         super.fast0();

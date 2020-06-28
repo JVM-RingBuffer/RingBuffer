@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.marshalling;
+package org.ringbuffer.java;
 
-public abstract class FastMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
-    public abstract int next(int size);
+import org.ringbuffer.system.Unsafe;
 
-    @Override
-    public int getCapacity() {
-        throw new UnsupportedOperationException();
+import java.lang.ref.Cleaner;
+
+public class CleanerService {
+    private static final Cleaner cleaner = Cleaner.create();
+
+    public static void freeMemory(Object object, long address) {
+        cleaner.register(object, new FreeMemory(address));
     }
 
-    @Override
-    public int size() {
-        throw new UnsupportedOperationException();
-    }
+    private static class FreeMemory implements Runnable {
+        private final long address;
 
-    @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException();
+        FreeMemory(long address) {
+            this.address = address;
+        }
+
+        @Override
+        public void run() {
+            Unsafe.UNSAFE.freeMemory(address);
+        }
     }
 }

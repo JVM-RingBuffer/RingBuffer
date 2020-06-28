@@ -17,13 +17,15 @@
 package test.marshalling;
 
 import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.MarshallingRingBuffer;
 import test.Profiler;
 
 public class FastManyReadersMarshallingContentionTest extends RingBufferTest {
     public static final FastMarshallingRingBuffer RING_BUFFER =
-            FastMarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
+            MarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .manyReaders()
                     .oneWriter()
+                    .fast()
                     .build();
 
     public static void main(String[] args) {

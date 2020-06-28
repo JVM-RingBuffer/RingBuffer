@@ -21,7 +21,7 @@ import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.INT;
+import static org.ringbuffer.marshalling.Offsets.*;
 
 class FastReader extends TestThread implements AbstractReader {
     static long runGroupAsync(FastMarshallingRingBuffer ringBuffer, Profiler profiler) {

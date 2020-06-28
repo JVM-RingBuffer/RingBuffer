@@ -36,6 +36,14 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
         byteArrayFactory = builder.byteArrayFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Require {@code --add-opens java.base/jdk.internal.misc=ALL-UNNAMED}.
+     */
+    @Override
+    protected abstract AbstractDirectMarshallingRingBufferBuilder<?> fast();
+
     public abstract AbstractDirectMarshallingRingBufferBuilder<T> withByteArray(DirectByteArray.Factory factory);
 
     void withByteArray0(DirectByteArray.Factory factory) {

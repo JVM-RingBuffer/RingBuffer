@@ -73,6 +73,11 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     }
 
     @Override
+    protected AbstractRingBufferBuilder<?> fast() {
+        throw new AssertionError();
+    }
+
+    @Override
     public MarshallingBlockingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;

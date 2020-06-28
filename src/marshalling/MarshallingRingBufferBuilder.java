@@ -74,6 +74,12 @@ public class MarshallingRingBufferBuilder extends AbstractMarshallingRingBufferB
     }
 
     @Override
+    public FastMarshallingRingBufferBuilder fast() {
+        super.fast0();
+        return new FastMarshallingRingBufferBuilder(this);
+    }
+
+    @Override
     public MarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;

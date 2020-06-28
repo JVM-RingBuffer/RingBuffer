@@ -74,6 +74,12 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
     }
 
     @Override
+    public FastDirectMarshallingRingBufferBuilder fast() {
+        super.fast0();
+        return new FastDirectMarshallingRingBufferBuilder(this);
+    }
+
+    @Override
     public DirectMarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;

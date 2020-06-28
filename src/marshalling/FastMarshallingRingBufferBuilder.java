@@ -16,13 +16,14 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<FastMarshallingRingBuffer> {
-    FastMarshallingRingBufferBuilder(int capacity) {
-        super(capacity);
+    FastMarshallingRingBufferBuilder(MarshallingRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override
@@ -60,13 +61,18 @@ public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBuf
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder blocking() {
-        return this;
+    protected AbstractRingBufferBuilder<?> blocking() {
+        throw new AssertionError();
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder blocking(BusyWaitStrategy busyWaitStrategy) {
-        return this;
+    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
+        throw new AssertionError();
+    }
+
+    @Override
+    protected AbstractRingBufferBuilder<?> fast() {
+        throw new AssertionError();
     }
 
     @Override
@@ -94,19 +100,19 @@ public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBuf
     protected FastMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.CLEARING) {
+                if (type == RingBufferType.CLEARING_FAST) {
                     return new FastVolatileMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.CLEARING) {
+                if (type == RingBufferType.CLEARING_FAST) {
                     return new FastAtomicReadMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.CLEARING) {
+                if (type == RingBufferType.CLEARING_FAST) {
                     return new FastAtomicWriteMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.CLEARING) {
+                if (type == RingBufferType.CLEARING_FAST) {
                     return new FastConcurrentMarshallingRingBuffer(this);
                 }
         }
