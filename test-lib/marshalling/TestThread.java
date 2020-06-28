@@ -44,4 +44,8 @@ abstract class TestThread extends AbstractTestThread {
     DirectMarshallingBlockingRingBuffer getDirectMarshallingBlockingRingBuffer() {
         return (DirectMarshallingBlockingRingBuffer) ringBuffer;
     }
+
+    FastDirectMarshallingRingBuffer getFastDirectMarshallingRingBuffer() {
+        return (FastDirectMarshallingRingBuffer) ringBuffer;
+    }
 }

@@ -16,7 +16,7 @@
 
 package org.ringbuffer.java;
 
-public class Number {
+public class Numbers {
     public static int ceilDiv(int dividend, int divisor) {
         return (dividend - 1) / divisor + 1;
     }

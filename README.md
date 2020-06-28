@@ -18,7 +18,7 @@ When full, they can either clear all elements, discard incoming elements, or the
 
 **Marshalling ring buffers** are backed by a byte array and allow to transfer any primitive type.
 
-They produce no garbage, and their capacity must be a power of 2 (`Number.getNextPowerOfTwo()` can help).  
+They produce no garbage, and their capacity must be a power of 2 (`Numbers.getNextPowerOfTwo()` can help).  
 The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.  
 When full, they can either clear all elements or block waiting for enough space to become available.
 

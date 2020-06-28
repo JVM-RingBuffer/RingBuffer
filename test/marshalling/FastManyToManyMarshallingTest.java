@@ -16,12 +16,17 @@
 
 package test.marshalling;
 
-import org.ringbuffer.java.Numbers;
-import org.ringbuffer.marshalling.Offsets;
-import test.AbstractRingBufferTest;
+import test.Profiler;
 
-abstract class RingBufferTest extends AbstractRingBufferTest {
-    static final int BLOCKING_SIZE = Numbers.getNextPowerOfTwo(5 * Offsets.INT);
-    static final int ONE_TO_ONE_SIZE = Numbers.getNextPowerOfTwo(NUM_ITERATIONS * Offsets.INT + 1);
-    static final int NOT_ONE_TO_ONE_SIZE = Numbers.getNextPowerOfTwo(TOTAL_ELEMENTS * Offsets.INT + 1);
+class FastManyToManyMarshallingTest extends FastManyToManyMarshallingContentionTest {
+    public static void main(String[] args) {
+        new FastManyToManyMarshallingTest().runBenchmark();
+    }
+
+    @Override
+    protected long testSum() {
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        FastWriter.runGroupAsync(RING_BUFFER, profiler);
+        return FastReader.runGroupAsync(RING_BUFFER, profiler);
+    }
 }

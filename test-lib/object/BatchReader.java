@@ -16,7 +16,7 @@
 
 package test.object;
 
-import org.ringbuffer.java.Number;
+import org.ringbuffer.java.Numbers;
 import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
@@ -39,7 +39,7 @@ class BatchReader extends Reader {
     private final int batchSize;
 
     private BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
-        super(Number.ceilDiv(numIterations, batchSize), ringBuffer);
+        super(Numbers.ceilDiv(numIterations, batchSize), ringBuffer);
         this.batchSize = batchSize;
     }
 

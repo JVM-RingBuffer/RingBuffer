@@ -16,8 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
-import org.ringbuffer.java.Number;
+import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.memory.Long;
 
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
@@ -26,10 +25,8 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
     // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<?>)
 
     AbstractDirectMarshallingRingBufferBuilder(long capacity) {
-        Assume.notLesser(capacity, 2L);
-        if (!Number.isPowerOfTwo(capacity)) {
-            throw new IllegalArgumentException("capacity must be a power of 2.");
-        }
+        validateCapacity(capacity);
+        validateCapacityPowerOfTwo(capacity);
         this.capacity = capacity;
     }
 
@@ -59,5 +56,11 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
 
     Long newCursor() {
         return memoryOrder.newLong();
+    }
+
+    DirectAtomicBooleanArray getFlags() {
+        DirectAtomicBooleanArray flags = new DirectAtomicBooleanArray(capacity);
+        flags.fill(true, capacity);
+        return flags;
     }
 }

@@ -16,34 +16,34 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.FastDirectMarshallingRingBuffer;
 import test.Profiler;
 
-public class FastManyToManyMarshallingContentionTest extends RingBufferTest {
-    public static final FastMarshallingRingBuffer RING_BUFFER =
-            FastMarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
+public class FastManyReadersDirectMarshallingContentionTest extends RingBufferTest {
+    public static final FastDirectMarshallingRingBuffer RING_BUFFER =
+            FastDirectMarshallingRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .manyReaders()
-                    .manyWriters()
+                    .oneWriter()
                     .build();
 
     public static void main(String[] args) {
-        new FastManyToManyMarshallingContentionTest().runBenchmark();
+        new FastManyReadersDirectMarshallingContentionTest().runBenchmark();
     }
 
     @Override
     protected int getRepeatTimes() {
-        return 12;
+        return 40;
     }
 
     @Override
     protected long getSum() {
-        return MANY_WRITERS_SUM;
+        return ONE_TO_MANY_SUM;
     }
 
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        FastWriter.startGroupAsync(RING_BUFFER, profiler);
-        return FastReader.runGroupAsync(RING_BUFFER, profiler);
+        FastDirectWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return FastDirectReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

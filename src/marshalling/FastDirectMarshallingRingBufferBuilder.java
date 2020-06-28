@@ -20,94 +20,94 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<FastMarshallingRingBuffer> {
-    FastMarshallingRingBufferBuilder(int capacity) {
+public class FastDirectMarshallingRingBufferBuilder extends AbstractDirectMarshallingRingBufferBuilder<FastDirectMarshallingRingBuffer> {
+    FastDirectMarshallingRingBufferBuilder(long capacity) {
         super(capacity);
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder oneWriter() {
+    public FastDirectMarshallingRingBufferBuilder oneWriter() {
         super.oneWriter0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder manyWriters() {
+    public FastDirectMarshallingRingBufferBuilder manyWriters() {
         super.manyWriters0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder oneReader() {
+    public FastDirectMarshallingRingBufferBuilder oneReader() {
         super.oneReader0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder manyReaders() {
+    public FastDirectMarshallingRingBufferBuilder manyReaders() {
         super.manyReaders0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withWriteLock(Lock lock) {
+    public FastDirectMarshallingRingBufferBuilder withWriteLock(Lock lock) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withReadLock(Lock lock) {
+    public FastDirectMarshallingRingBufferBuilder withReadLock(Lock lock) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder blocking() {
+    public FastDirectMarshallingRingBufferBuilder blocking() {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder blocking(BusyWaitStrategy busyWaitStrategy) {
+    public FastDirectMarshallingRingBufferBuilder blocking(BusyWaitStrategy busyWaitStrategy) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
+    public FastDirectMarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
+    public FastDirectMarshallingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder copyClass() {
+    public FastDirectMarshallingRingBufferBuilder copyClass() {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
+    public FastDirectMarshallingRingBufferBuilder withByteArray(DirectByteArray.Factory factory) {
         super.withByteArray0(factory);
         return this;
     }
 
     @Override
-    protected FastMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected FastDirectMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.CLEARING) {
-                    return new FastVolatileMarshallingRingBuffer(this);
+                    return new FastVolatileDirectMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.CLEARING) {
-                    return new FastAtomicReadMarshallingRingBuffer(this);
+                    return new FastAtomicReadDirectMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.CLEARING) {
-                    return new FastAtomicWriteMarshallingRingBuffer(this);
+                    return new FastAtomicWriteDirectMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.CLEARING) {
-                    return new FastConcurrentMarshallingRingBuffer(this);
+                    return new FastConcurrentDirectMarshallingRingBuffer(this);
                 }
         }
         throw new AssertionError();

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FastOneToOneMarshallingContentionTest" type="Application" factoryName="Application" folderName="Volatile Marshalling">
+    <option name="MAIN_CLASS_NAME" value="test.marshalling.FastOneToOneMarshallingContentionTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms10m -Xmx10m -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
