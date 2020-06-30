@@ -18,13 +18,13 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
+import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 
 class FastAtomicWriteDirectMarshallingRingBuffer extends FastDirectMarshallingRingBuffer {
     private final long capacityMinusOne;
     @Contended
     private final DirectByteArray buffer;
-    private final DirectAtomicBooleanArray flags;
+    private final DirectAtomicBooleanArray writtenPositions;
 
     @Contended
     private long readPosition;
@@ -34,7 +34,7 @@ class FastAtomicWriteDirectMarshallingRingBuffer extends FastDirectMarshallingRi
     FastAtomicWriteDirectMarshallingRingBuffer(FastDirectMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        flags = builder.getFlags();
+        writtenPositions = builder.getWrittenPositions();
     }
 
     @Override
@@ -44,14 +44,14 @@ class FastAtomicWriteDirectMarshallingRingBuffer extends FastDirectMarshallingRi
 
     @Override
     public void put(long offset) {
-        flags.setRelease(offset & capacityMinusOne, false);
+        writtenPositions.setRelease(offset & capacityMinusOne, false);
     }
 
     @Override
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (flags.getAndSetVolatile(readPosition, true)) {
+        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
             Thread.onSpinWait();
         }
         return readPosition;

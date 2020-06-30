@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.concurrent;
+package org.ringbuffer.marshalling.array;
 
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.system.CleanerService;
@@ -145,20 +145,6 @@ public class DirectAtomicBooleanArray {
     public void fill(boolean value, long length) {
         for (long i = 0L; i < length; i++) {
             UNSAFE.putBoolean(null, address + i, value);
-        }
-    }
-
-    public String toString(long length) {
-        StringBuilder builder = new StringBuilder();
-        builder.append('[');
-        length--;
-        for (long i = 0L; ; i++) {
-            builder.append(getVolatile(i));
-            if (i == length) {
-                builder.append(']');
-                return builder.toString();
-            }
-            builder.append(", ");
         }
     }
 }

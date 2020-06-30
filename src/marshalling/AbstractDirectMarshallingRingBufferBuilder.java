@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
+import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 import org.ringbuffer.memory.Long;
 
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
@@ -66,9 +66,9 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBas
         return memoryOrder.newLong();
     }
 
-    DirectAtomicBooleanArray getFlags() {
-        DirectAtomicBooleanArray flags = new DirectAtomicBooleanArray(capacity);
-        flags.fill(true, capacity);
-        return flags;
+    DirectAtomicBooleanArray getWrittenPositions() {
+        DirectAtomicBooleanArray writtenPositions = new DirectAtomicBooleanArray(capacity);
+        writtenPositions.fill(true, capacity);
+        return writtenPositions;
     }
 }
