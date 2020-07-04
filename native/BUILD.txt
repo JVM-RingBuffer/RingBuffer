@@ -1,14 +1,18 @@
-Linux:
+CentOS 7:
 
 yum install gcc glibc-devel.i686 libgcc.i686
 yum install java-11-openjdk-devel
-gcc -I/usr/lib/jvm/java-11-openjdk-11.0.7.10-4.el7_8.x86_64/include -I/usr/lib/jvm/java-11-openjdk-11.0.7.10-4.el7_8.x86_64/include/linux -o libthreadmanipulation.so -shared -fPIC Threads_linux.c
-32-bit: gcc -m32
+./build_linux.sh
 
-Windows:
+Windows 10:
 
-Build Tools for Visual Studio
+Build Tools for Visual Studio 2019
 Workload: C++ build tools
 Optional: MSVC - VS C++ x64/x86 build tools, Windows 10 SDK
-cl /I "%JAVA_HOME%\include" /I "%JAVA_HOME%\include\win32" /FeThreadManipulation /LD Threads_windows.c
-32-bit: x86 Native Tools Command Prompt
+Set environment variable to JDK 11 folder: JAVA_HOME
+build_windows.bat
+
+---
+
+Output directory is '../res'.
+Binaries for all platforms are version-controlled and stored as resources in the JAR. They are then extracted and loaded.
