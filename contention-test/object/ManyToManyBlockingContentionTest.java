@@ -16,12 +16,12 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class ManyToManyBlockingContentionTest extends RingBufferTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
+    public static final RingBuffer<Event> RING_BUFFER =
+            RingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .manyReaders()
                     .manyWriters()
                     .blocking()

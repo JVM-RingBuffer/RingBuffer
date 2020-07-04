@@ -22,7 +22,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
+class ConcurrentGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -33,7 +33,7 @@ class ConcurrentGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private int readPosition;
     private final Integer writePosition;
 
-    ConcurrentGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
+    ConcurrentGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

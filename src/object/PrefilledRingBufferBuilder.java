@@ -81,12 +81,12 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    RingBufferBuilder<?> discarding() {
+    ObjectRingBufferBuilder<?> discarding() {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<?> fast() {
+    protected ObjectRingBufferBuilder<?> fast() {
         throw new AssertionError();
     }
 
@@ -109,7 +109,7 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    protected RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected ObjectRingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 switch (type) {

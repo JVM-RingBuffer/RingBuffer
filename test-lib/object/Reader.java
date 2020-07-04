@@ -16,20 +16,20 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.ObjectRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
 class Reader extends TestThread implements AbstractReader {
-    static long runGroupAsync(RingBuffer<Event> ringBuffer, Profiler profiler) {
+    static long runGroupAsync(ObjectRingBuffer<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, RingBuffer<Event> ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, ObjectRingBuffer<Event> ringBuffer, Profiler profiler) {
         Reader reader = new Reader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
@@ -38,7 +38,7 @@ class Reader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    Reader(int numIterations, RingBuffer<Event> ringBuffer) {
+    Reader(int numIterations, ObjectRingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -53,7 +53,7 @@ class Reader extends TestThread implements AbstractReader {
     }
 
     long collect() {
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        ObjectRingBuffer<Event> ringBuffer = getRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.take().getData();

@@ -17,19 +17,19 @@
 package test.object;
 
 import org.ringbuffer.java.Numbers;
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.ObjectRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
 class BatchReader extends Reader {
-    static long runGroupAsync(int batchSize, RingBuffer<Event> ringBuffer, Profiler profiler) {
+    static long runGroupAsync(int batchSize, ObjectRingBuffer<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new BatchReader(numIterations, batchSize, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, int batchSize, RingBuffer<Event> ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, int batchSize, ObjectRingBuffer<Event> ringBuffer, Profiler profiler) {
         BatchReader reader = new BatchReader(numIterations, batchSize, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
@@ -38,14 +38,14 @@ class BatchReader extends Reader {
 
     private final int batchSize;
 
-    private BatchReader(int numIterations, int batchSize, RingBuffer<Event> ringBuffer) {
+    private BatchReader(int numIterations, int batchSize, ObjectRingBuffer<Event> ringBuffer) {
         super(Numbers.ceilDiv(numIterations, batchSize), ringBuffer);
         this.batchSize = batchSize;
     }
 
     @Override
     long collect() {
-        RingBuffer<Event> ringBuffer = getRingBuffer();
+        ObjectRingBuffer<Event> ringBuffer = getRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

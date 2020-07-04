@@ -16,29 +16,29 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
 import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.ObjectRingBuffer;
 
 import static test.object.ProducersToProcessorToConsumersContentionTest.*;
 
 class Processor extends TestThread {
-    static Processor startAsync(int numIterations, RingBuffer<Event> producersRingBuffer) {
+    static Processor startAsync(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
         Processor processor = new Processor(numIterations, producersRingBuffer);
         processor.startNow(null);
         return processor;
     }
 
-    static void runAsync(int numIterations, RingBuffer<Event> producersRingBuffer) {
+    static void runAsync(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
         startAsync(numIterations, producersRingBuffer).waitForCompletion(null);
     }
 
-    private Processor(int numIterations, RingBuffer<Event> producersRingBuffer) {
+    private Processor(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
         super(numIterations, producersRingBuffer);
     }
 
     @Override
     protected void loop() {
-        EmptyRingBuffer<Event> producersRingBuffer = getEmptyRingBuffer();
+        RingBuffer<Event> producersRingBuffer = getEmptyRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int eventData = producersRingBuffer.take().getData();
             int key = CONSUMERS_RING_BUFFER.nextKey();

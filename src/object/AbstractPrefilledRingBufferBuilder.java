@@ -20,7 +20,7 @@ import org.ringbuffer.java.Assume;
 
 import java.util.function.Supplier;
 
-abstract class AbstractPrefilledRingBufferBuilder<T> extends RingBufferBuilder<T> {
+abstract class AbstractPrefilledRingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
     private Supplier<? extends T> filler;
     // All fields are copied in <init>(AbstractPrefilledRingBufferBuilder<T>)
 

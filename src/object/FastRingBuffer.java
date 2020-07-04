@@ -18,7 +18,7 @@ package org.ringbuffer.object;
 
 import java.util.function.Consumer;
 
-abstract class FastEmptyRingBuffer<T> implements EmptyRingBuffer<T> {
+abstract class FastRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void advance() {}
 

@@ -24,7 +24,10 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
-            .fromFirstCPU().toCPU(2 * 6 - 1).skipHyperthreads().build();
+            .fromFirstCPU()
+            .toLastCPU()
+            .skipHyperthreads()
+            .build();
 
     static void resetThreadSpreader() {
         spreader.reset();

@@ -21,7 +21,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatileDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
+class VolatileDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -30,7 +30,7 @@ class VolatileDiscardingGCRingBuffer<T> implements EmptyRingBuffer<T> {
     private final Integer readPosition;
     private final Integer writePosition;
 
-    VolatileDiscardingGCRingBuffer(EmptyRingBufferBuilder<T> builder) {
+    VolatileDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

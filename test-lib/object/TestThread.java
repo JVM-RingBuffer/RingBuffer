@@ -16,10 +16,10 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.ObjectRingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
@@ -28,13 +28,13 @@ abstract class TestThread extends AbstractTestThread {
     }
 
     @SuppressWarnings("unchecked")
-    RingBuffer<Event> getRingBuffer() {
-        return (RingBuffer<Event>) ringBuffer;
+    ObjectRingBuffer<Event> getRingBuffer() {
+        return (ObjectRingBuffer<Event>) ringBuffer;
     }
 
     @SuppressWarnings("unchecked")
-    EmptyRingBuffer<Event> getEmptyRingBuffer() {
-        return (EmptyRingBuffer<Event>) ringBuffer;
+    RingBuffer<Event> getEmptyRingBuffer() {
+        return (RingBuffer<Event>) ringBuffer;
     }
 
     @SuppressWarnings("unchecked")

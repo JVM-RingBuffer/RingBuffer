@@ -16,12 +16,12 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class OneToOneBlockingTest extends OneToOneBlockingContentionTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
+    public static final RingBuffer<Event> RING_BUFFER =
+            RingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
                     .blocking()

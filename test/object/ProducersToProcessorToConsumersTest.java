@@ -16,12 +16,12 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToConsumersContentionTest {
-    public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
+            RingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .manyWriters()
                     .oneReader()
                     .blocking()

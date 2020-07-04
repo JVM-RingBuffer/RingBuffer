@@ -16,15 +16,15 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.wait.YieldBusyWaitStrategy;
 import test.Profiler;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {
-    public static final EmptyRingBuffer<Event> PRODUCERS_RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
+    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
+            RingBuffer.<Event>withCapacity(BLOCKING_SIZE)
                     .manyWriters()
                     .oneReader()
                     .blocking()

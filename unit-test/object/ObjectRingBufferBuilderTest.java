@@ -24,12 +24,12 @@ import test.object.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RingBufferBuilderTest extends AbstractRingBufferBuilderTest {
-    private EmptyRingBufferBuilder<?> builder;
+class ObjectRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
+    private RingBufferBuilder<?> builder;
 
     @BeforeEach
     void setUp() {
-        builder = new EmptyRingBufferBuilder<>(2);
+        builder = new RingBufferBuilder<>(2);
     }
 
     @Test

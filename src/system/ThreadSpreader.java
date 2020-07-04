@@ -97,6 +97,11 @@ public class ThreadSpreader {
             return this;
         }
 
+        public Builder toLastCPU() {
+            toCPU(Runtime.getRuntime().availableProcessors());
+            return this;
+        }
+
         public Builder cycle() {
             cycle = true;
             return this;

@@ -70,7 +70,7 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 
 ## Download
 
-Download the [latest artifact](https://github.com/JVM-RingBuffer/RingBuffer/releases/download/v1.0/RingBuffer-1.0.jar).
+Please [build from source](BUILD.md).
 
 **Warning.**
 These features of object ring buffers have not yet been tested:
@@ -82,8 +82,8 @@ These features of object ring buffers have not yet been tested:
 ### Object ring buffers
 
 ```java
-EmptyRingBuffer<Integer> producersToProcessor =
-        EmptyRingBuffer.<Integer>withCapacity(5)
+RingBuffer<Integer> producersToProcessor =
+        RingBuffer.<Integer>withCapacity(5)
                 .manyWriters()
                 .oneReader()
                 .blocking()
@@ -137,7 +137,7 @@ new Thread(processor).start();
 
 ```java
 MarshallingBlockingRingBuffer ringBuffer =
-        MarshallingRingBuffer.withCapacity(Number.getNextPowerOfTwo(100))
+        MarshallingRingBuffer.withCapacity(Numbers.getNextPowerOfTwo(100))
                 .oneWriter()
                 .oneReader()
                 .blocking(FailBusyWaitStrategy.readingTooSlow())

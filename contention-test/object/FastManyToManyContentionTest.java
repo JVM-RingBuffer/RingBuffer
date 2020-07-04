@@ -16,12 +16,12 @@
 
 package test.object;
 
-import org.ringbuffer.object.EmptyRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class FastManyToManyContentionTest extends RingBufferTest {
-    public static final EmptyRingBuffer<Event> RING_BUFFER =
-            EmptyRingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
+    public static final RingBuffer<Event> RING_BUFFER =
+            RingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
                     .manyReaders()
                     .manyWriters()
                     .fast()

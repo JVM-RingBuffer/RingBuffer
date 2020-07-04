@@ -20,7 +20,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
 
-class FastAtomicWriteRingBuffer<T> extends FastEmptyRingBuffer<T> {
+class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
     private final int capacityMinusOne;
     @Contended
     private final AtomicArray<T> buffer;
@@ -30,7 +30,7 @@ class FastAtomicWriteRingBuffer<T> extends FastEmptyRingBuffer<T> {
     @Contended
     private final AtomicInt writePosition = new AtomicInt();
 
-    FastAtomicWriteRingBuffer(EmptyRingBufferBuilder<T> builder) {
+    FastAtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = new AtomicArray<>(builder.getBuffer());
     }

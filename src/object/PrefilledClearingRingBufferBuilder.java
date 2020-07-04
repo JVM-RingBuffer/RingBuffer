@@ -112,7 +112,7 @@ public class PrefilledClearingRingBufferBuilder<T> extends AbstractPrefilledRing
     }
 
     @Override
-    protected RingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected ObjectRingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.CLEARING) {
