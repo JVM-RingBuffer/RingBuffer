@@ -43,7 +43,7 @@ public class FastManyToManyMarshallingContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.startGroupAsync(RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }

@@ -17,8 +17,8 @@
 package org.ringbuffer.marshalling;
 
 /**
- * From {@link #next(long)} to {@link #put(long)} is an atomic operation.
- * From {@link #take(long)} to {@link #advance(long)} is an atomic operation.
+ * If the ring buffer is not lock-free, then from {@link #next(long)} to {@link #put(long)} and from
+ * {@link #take(long)} to {@link #advance(long)} is an atomic operation.
  */
 public interface DirectMarshallingRingBuffer extends AbstractDirectMarshallingRingBuffer {
     long next(long size);

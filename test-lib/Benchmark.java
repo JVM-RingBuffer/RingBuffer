@@ -16,8 +16,6 @@
 
 package test;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +32,13 @@ public abstract class Benchmark {
         instance = this;
     }
 
-    final Result getResult(String profilerName) {
+    Result getResult(String profilerName, Formatter averageFormatter) {
         for (Result result : results) {
             if (result.profilerName.equals(profilerName)) {
                 return result;
             }
         }
-        Result result = new Result(profilerName);
+        Result result = new Result(profilerName, averageFormatter);
         results.add(result);
         return result;
     }
@@ -53,7 +51,7 @@ public abstract class Benchmark {
 
     protected abstract int getNumIterations();
 
-    public final void runBenchmark() {
+    public void runBenchmark() {
         int numIterations = getNumIterations();
         for (int i = getWarmupRepeatTimes(); i > 0; i--) {
             test(numIterations);
@@ -70,16 +68,17 @@ public abstract class Benchmark {
     protected abstract void test(int i);
 
     static class Result {
-        private static final NumberFormat formatter = new DecimalFormat("#.##");
-
         final String profilerName;
+        private final Formatter averageFormatter;
+
         private long sum;
         private double count;
         private long minimum = Long.MAX_VALUE;
         private long maximum;
 
-        Result(String profilerName) {
+        Result(String profilerName, Formatter averageFormatter) {
             this.profilerName = profilerName;
+            this.averageFormatter = averageFormatter;
         }
 
         synchronized void update(long value) {
@@ -105,23 +104,17 @@ public abstract class Benchmark {
                 maximum = this.maximum;
             }
             double average = sum / count;
-            String report = profilerName + ": " + formatExecutionTime(average);
+            String report = profilerName + ": " + averageFormatter.format(average);
             if (count > 1D && maximum != 0L) {
                 double absoluteVariance = Math.max(maximum - average, average - minimum);
                 long relativeVariance = Math.round(absoluteVariance / average * 100D);
-                report += " ± " + relativeVariance + "% (" + formatExecutionTime(maximum) + ')';
+                report += " ± " + relativeVariance + '%';
             }
             System.out.println(report);
         }
+    }
 
-        private static String formatExecutionTime(double value) {
-            if (value < 2_000D) {
-                return formatter.format(value) + "ns";
-            }
-            if (value < 2_000_000D) {
-                return formatter.format(value / 1_000D) + "us";
-            }
-            return formatter.format(value / 1_000_000D) + "ms";
-        }
+    interface Formatter {
+        String format(double value);
     }
 }

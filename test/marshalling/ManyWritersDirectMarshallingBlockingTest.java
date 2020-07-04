@@ -25,7 +25,7 @@ class ManyWritersDirectMarshallingBlockingTest extends ManyWritersDirectMarshall
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         DirectWriter.runGroupAsync(RING_BUFFER, profiler);
         return DirectReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }

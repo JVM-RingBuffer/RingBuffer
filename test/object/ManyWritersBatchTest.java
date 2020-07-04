@@ -25,7 +25,7 @@ class ManyWritersBatchTest extends ManyWritersTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.runGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }

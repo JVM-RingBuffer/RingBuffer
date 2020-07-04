@@ -25,7 +25,7 @@ class OneToOneDirectMarshallingTest extends OneToOneDirectMarshallingContentionT
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
         DirectClearingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return DirectClearingReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

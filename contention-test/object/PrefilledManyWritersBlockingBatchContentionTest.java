@@ -25,7 +25,7 @@ class PrefilledManyWritersBlockingBatchContentionTest extends PrefilledManyWrite
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledWriter.startGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runAsync(TOTAL_ELEMENTS, BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
     }

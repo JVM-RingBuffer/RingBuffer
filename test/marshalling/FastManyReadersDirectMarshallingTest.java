@@ -25,7 +25,7 @@ class FastManyReadersDirectMarshallingTest extends FastManyReadersDirectMarshall
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         DirectWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return DirectReader.runGroupAsync(RING_BUFFER, profiler);
     }

@@ -24,7 +24,7 @@ package org.ringbuffer.object;
  * ringBuffer.put(key);
  * }</pre>
  * <p>
- * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
+ * If the ring buffer is not lock-free, then from {@link #nextKey()} to {@link #put(int)} is an atomic operation.
  */
 public interface PrefilledClearingRingBuffer<T> extends ObjectRingBuffer<T> {
     int nextKey();

@@ -25,7 +25,7 @@ class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
         PrefilledClearingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER, profiler);
     }

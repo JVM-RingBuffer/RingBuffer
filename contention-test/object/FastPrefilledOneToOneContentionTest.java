@@ -45,7 +45,7 @@ public class FastPrefilledOneToOneContentionTest extends RingBufferTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
         PrefilledClearingWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }

@@ -17,8 +17,7 @@
 package org.ringbuffer.marshalling;
 
 /**
- * From {@link #next()} to {@link #put(int)} is an atomic operation.
- * From {@link #take(int)} to {@link #advance()} is an atomic operation.
+ * From {@link #next()} to {@link #put(int)} and from {@link #take(int)} to {@link #advance()} is an atomic operation.
  */
 public interface MarshallingClearingRingBuffer extends AbstractMarshallingRingBuffer {
     int next();

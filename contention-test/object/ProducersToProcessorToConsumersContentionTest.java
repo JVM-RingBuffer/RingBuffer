@@ -54,7 +54,7 @@ public class ProducersToProcessorToConsumersContentionTest extends RingBufferTes
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.startGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.startAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
         return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);

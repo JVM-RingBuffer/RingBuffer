@@ -25,7 +25,7 @@ class OneToOneBatchContentionTest extends OneToOneContentionTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
         Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return BatchReader.runAsync(NUM_ITERATIONS, BATCH_SIZE, RING_BUFFER, profiler);
     }

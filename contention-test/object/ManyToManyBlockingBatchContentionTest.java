@@ -25,7 +25,7 @@ class ManyToManyBlockingBatchContentionTest extends ManyToManyBlockingContention
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.startGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runGroupAsync(BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
     }

@@ -25,7 +25,7 @@ class PrefilledManyToManyBlockingBatchTest extends PrefilledManyToManyBlockingTe
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }

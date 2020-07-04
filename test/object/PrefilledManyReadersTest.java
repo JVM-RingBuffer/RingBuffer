@@ -25,7 +25,7 @@ class PrefilledManyReadersTest extends PrefilledManyReadersContentionTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledClearingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }

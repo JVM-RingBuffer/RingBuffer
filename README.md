@@ -30,7 +30,8 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-Benchmarks were run on i7 8700 on Linux.
+Benchmarks were run on i7 8700 on Linux.  
+Latency is the time it takes for a single element to be written or read by latency-sensitive threads.
 
 scenario|msg/sec|latency
 ---|---|---
@@ -40,7 +41,7 @@ scenario|msg/sec|latency
 1 producer → 1 consumer | 110 million | 9ns
 2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
-The following are lock-free implementations. Call `fast()` on the builder.
+The following are lock-free implementations (call `fast()` on the builder).
 
 scenario|msg/sec|latency
 ---|---|---

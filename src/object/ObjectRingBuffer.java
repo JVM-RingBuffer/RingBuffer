@@ -24,8 +24,8 @@ import java.util.function.Consumer;
  * The {@code null} element may be used if the {@link #contains(Object) contains(T)} and {@link #toString()}
  * methods are never called.
  * <p>
- * From {@link #take()} to {@link #advance()} is an atomic operation.
- * From {@link #takeBatch(int)} to {@link #advanceBatch()} is an atomic operation.
+ * If the ring buffer is not lock-free, then from {@link #take()} to {@link #advance()} and from
+ * {@link #takeBatch(int)} to {@link #advanceBatch()} is an atomic operation.
  */
 public interface ObjectRingBuffer<T> extends AbstractRingBuffer {
     int getCapacity();

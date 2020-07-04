@@ -34,7 +34,7 @@ public class PrefilledManyReadersBlockingTest extends PrefilledManyReadersBlocki
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }

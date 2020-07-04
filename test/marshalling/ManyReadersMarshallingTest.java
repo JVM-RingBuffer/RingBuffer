@@ -25,7 +25,7 @@ class ManyReadersMarshallingTest extends ManyReadersMarshallingContentionTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         ClearingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return ClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }

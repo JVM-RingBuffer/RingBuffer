@@ -25,7 +25,7 @@ class PrefilledManyToManyBatchTest extends PrefilledManyToManyTest {
 
     @Override
     protected long testSum() {
-        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledClearingWriter.runGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
