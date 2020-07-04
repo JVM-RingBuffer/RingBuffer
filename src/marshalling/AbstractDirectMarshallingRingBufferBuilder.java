@@ -19,7 +19,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 import org.ringbuffer.memory.Long;
 
-abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
+abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMarshallingRingBufferBuilder<T> {
     private final long capacity;
     private DirectByteArray.Factory byteArrayFactory = DirectByteArray.SAFE;
     // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<?>)

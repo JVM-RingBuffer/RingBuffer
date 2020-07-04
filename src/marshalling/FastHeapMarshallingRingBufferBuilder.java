@@ -21,42 +21,42 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<FastMarshallingRingBuffer> {
-    FastMarshallingRingBufferBuilder(MarshallingRingBufferBuilder builder) {
+public class FastHeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRingBufferBuilder<FastHeapMarshallingRingBuffer> {
+    FastHeapMarshallingRingBufferBuilder(HeapMarshallingRingBufferBuilder builder) {
         super(builder);
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder oneWriter() {
+    public FastHeapMarshallingRingBufferBuilder oneWriter() {
         super.oneWriter0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder manyWriters() {
+    public FastHeapMarshallingRingBufferBuilder manyWriters() {
         super.manyWriters0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder oneReader() {
+    public FastHeapMarshallingRingBufferBuilder oneReader() {
         super.oneReader0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder manyReaders() {
+    public FastHeapMarshallingRingBufferBuilder manyReaders() {
         super.manyReaders0();
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withWriteLock(Lock lock) {
+    public FastHeapMarshallingRingBufferBuilder withWriteLock(Lock lock) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withReadLock(Lock lock) {
+    public FastHeapMarshallingRingBufferBuilder withReadLock(Lock lock) {
         return this;
     }
 
@@ -76,44 +76,44 @@ public class FastMarshallingRingBufferBuilder extends AbstractMarshallingRingBuf
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
+    public FastHeapMarshallingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
+    public FastHeapMarshallingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder copyClass() {
+    public FastHeapMarshallingRingBufferBuilder copyClass() {
         return this;
     }
 
     @Override
-    public FastMarshallingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
+    public FastHeapMarshallingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
         super.withByteArray0(factory);
         return this;
     }
 
     @Override
-    protected FastMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
+    protected FastHeapMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
                 if (type == RingBufferType.CLEARING_FAST) {
-                    return new FastVolatileMarshallingRingBuffer(this);
+                    return new FastVolatileHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.CLEARING_FAST) {
-                    return new FastAtomicReadMarshallingRingBuffer(this);
+                    return new FastAtomicReadHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.CLEARING_FAST) {
-                    return new FastAtomicWriteMarshallingRingBuffer(this);
+                    return new FastAtomicWriteHeapMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.CLEARING_FAST) {
-                    return new FastConcurrentMarshallingRingBuffer(this);
+                    return new FastConcurrentHeapMarshallingRingBuffer(this);
                 }
         }
         throw new AssertionError();

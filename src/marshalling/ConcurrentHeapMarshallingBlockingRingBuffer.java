@@ -20,10 +20,11 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class AtomicWriteMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
+class ConcurrentHeapMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
+    private final Lock readLock;
     private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
@@ -31,10 +32,11 @@ class AtomicWriteMarshallingBlockingRingBuffer implements MarshallingBlockingRin
     private final Integer readPosition;
     private final Integer writePosition;
 
-    AtomicWriteMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+    ConcurrentHeapMarshallingBlockingRingBuffer(HeapMarshallingBlockingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
@@ -74,6 +76,7 @@ class AtomicWriteMarshallingBlockingRingBuffer implements MarshallingBlockingRin
 
     @Override
     public int take(int size) {
+        readLock.lock();
         int readPosition = this.readPosition.getPlain() & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -85,6 +88,7 @@ class AtomicWriteMarshallingBlockingRingBuffer implements MarshallingBlockingRin
     @Override
     public void advance(int offset) {
         readPosition.set(offset);
+        readLock.unlock();
     }
 
     @Override

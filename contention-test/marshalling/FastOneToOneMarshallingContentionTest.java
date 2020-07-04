@@ -16,12 +16,12 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.FastHeapMarshallingRingBuffer;
 import org.ringbuffer.marshalling.MarshallingRingBuffer;
 import test.Profiler;
 
 public class FastOneToOneMarshallingContentionTest extends RingBufferTest {
-    public static final FastMarshallingRingBuffer RING_BUFFER =
+    public static final FastHeapMarshallingRingBuffer RING_BUFFER =
             MarshallingRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()

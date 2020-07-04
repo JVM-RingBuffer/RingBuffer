@@ -20,36 +20,36 @@ import org.junit.jupiter.api.Test;
 import org.ringbuffer.AbstractRingBufferBuilderTest;
 import test.marshalling.*;
 
-class AbstractBaseMarshallingRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
+class AbstractMarshallingRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
     @Test
     void testClasses() {
-        expectClass(ConcurrentMarshallingRingBuffer.class, ManyToManyMarshallingContentionTest.RING_BUFFER);
-        expectClass(ConcurrentMarshallingBlockingRingBuffer.class, ManyToManyMarshallingBlockingContentionTest.RING_BUFFER);
+        expectClass(ConcurrentHeapMarshallingRingBuffer.class, ManyToManyMarshallingContentionTest.RING_BUFFER);
+        expectClass(ConcurrentHeapMarshallingBlockingRingBuffer.class, ManyToManyMarshallingBlockingContentionTest.RING_BUFFER);
         expectClass(ConcurrentDirectMarshallingRingBuffer.class, ManyToManyDirectMarshallingContentionTest.RING_BUFFER);
         expectClass(ConcurrentDirectMarshallingBlockingRingBuffer.class, ManyToManyDirectMarshallingBlockingContentionTest.RING_BUFFER);
 
-        expectClass(AtomicReadMarshallingRingBuffer.class, ManyReadersMarshallingContentionTest.RING_BUFFER);
-        expectClass(AtomicReadMarshallingBlockingRingBuffer.class, ManyReadersMarshallingBlockingContentionTest.RING_BUFFER);
+        expectClass(AtomicReadHeapMarshallingRingBuffer.class, ManyReadersMarshallingContentionTest.RING_BUFFER);
+        expectClass(AtomicReadHeapMarshallingBlockingRingBuffer.class, ManyReadersMarshallingBlockingContentionTest.RING_BUFFER);
         expectClass(AtomicReadDirectMarshallingRingBuffer.class, ManyReadersDirectMarshallingContentionTest.RING_BUFFER);
         expectClass(AtomicReadDirectMarshallingBlockingRingBuffer.class, ManyReadersDirectMarshallingBlockingContentionTest.RING_BUFFER);
 
-        expectClass(AtomicWriteMarshallingRingBuffer.class, ManyWritersMarshallingContentionTest.RING_BUFFER);
-        expectClass(AtomicWriteMarshallingBlockingRingBuffer.class, ManyWritersMarshallingBlockingContentionTest.RING_BUFFER);
+        expectClass(AtomicWriteHeapMarshallingRingBuffer.class, ManyWritersMarshallingContentionTest.RING_BUFFER);
+        expectClass(AtomicWriteHeapMarshallingBlockingRingBuffer.class, ManyWritersMarshallingBlockingContentionTest.RING_BUFFER);
         expectClass(AtomicWriteDirectMarshallingRingBuffer.class, ManyWritersDirectMarshallingContentionTest.RING_BUFFER);
         expectClass(AtomicWriteDirectMarshallingBlockingRingBuffer.class, ManyWritersDirectMarshallingBlockingContentionTest.RING_BUFFER);
 
-        expectClass(VolatileMarshallingRingBuffer.class, OneToOneMarshallingContentionTest.RING_BUFFER);
-        expectClass(VolatileMarshallingBlockingRingBuffer.class, OneToOneMarshallingBlockingContentionTest.RING_BUFFER);
+        expectClass(VolatileHeapMarshallingRingBuffer.class, OneToOneMarshallingContentionTest.RING_BUFFER);
+        expectClass(VolatileHeapMarshallingBlockingRingBuffer.class, OneToOneMarshallingBlockingContentionTest.RING_BUFFER);
         expectClass(VolatileDirectMarshallingRingBuffer.class, OneToOneDirectMarshallingContentionTest.RING_BUFFER);
         expectClass(VolatileDirectMarshallingBlockingRingBuffer.class, OneToOneDirectMarshallingBlockingContentionTest.RING_BUFFER);
 
-        expectClass(FastConcurrentMarshallingRingBuffer.class, FastManyToManyMarshallingContentionTest.RING_BUFFER);
+        expectClass(FastConcurrentHeapMarshallingRingBuffer.class, FastManyToManyMarshallingContentionTest.RING_BUFFER);
         expectClass(FastConcurrentDirectMarshallingRingBuffer.class, FastManyToManyDirectMarshallingContentionTest.RING_BUFFER);
-        expectClass(FastAtomicReadMarshallingRingBuffer.class, FastManyReadersMarshallingContentionTest.RING_BUFFER);
+        expectClass(FastAtomicReadHeapMarshallingRingBuffer.class, FastManyReadersMarshallingContentionTest.RING_BUFFER);
         expectClass(FastAtomicReadDirectMarshallingRingBuffer.class, FastManyReadersDirectMarshallingContentionTest.RING_BUFFER);
-        expectClass(FastAtomicWriteMarshallingRingBuffer.class, FastManyWritersMarshallingContentionTest.RING_BUFFER);
+        expectClass(FastAtomicWriteHeapMarshallingRingBuffer.class, FastManyWritersMarshallingContentionTest.RING_BUFFER);
         expectClass(FastAtomicWriteDirectMarshallingRingBuffer.class, FastManyWritersDirectMarshallingContentionTest.RING_BUFFER);
-        expectClass(FastVolatileMarshallingRingBuffer.class, FastOneToOneMarshallingContentionTest.RING_BUFFER);
+        expectClass(FastVolatileHeapMarshallingRingBuffer.class, FastOneToOneMarshallingContentionTest.RING_BUFFER);
         expectClass(FastVolatileDirectMarshallingRingBuffer.class, FastOneToOneDirectMarshallingContentionTest.RING_BUFFER);
     }
 }

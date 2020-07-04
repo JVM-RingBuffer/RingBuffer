@@ -16,46 +16,88 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.lock.Lock;
+import org.ringbuffer.memory.Integer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
-class FastAtomicReadMarshallingRingBuffer extends FastMarshallingRingBuffer {
+class ConcurrentHeapMarshallingRingBuffer implements MarshallingRingBuffer {
+    private final int capacity;
     private final int capacityMinusOne;
-    @Contended
     private final ByteArray buffer;
-    @Contended
-    private final AtomicBooleanArray flags;
+    private final Lock readLock;
+    private final Lock writeLock;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
-    @Contended
-    private final AtomicInt readPosition = new AtomicInt();
-    @Contended
-    private int writePosition;
+    private int readPosition;
+    private final Integer writePosition;
 
-    FastAtomicReadMarshallingRingBuffer(FastMarshallingRingBufferBuilder builder) {
+    ConcurrentHeapMarshallingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
+        capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        flags = builder.getFlags();
+        readLock = builder.getReadLock();
+        writeLock = builder.getWriteLock();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
+        writePosition = builder.newCursor();
     }
 
     @Override
-    public int next(int size) {
-        int writePosition = this.writePosition;
-        this.writePosition += size;
-        return writePosition;
+    public int getCapacity() {
+        return capacity;
+    }
+
+    @Override
+    public int next() {
+        writeLock.lock();
+        return writePosition.getPlain();
     }
 
     @Override
     public void put(int offset) {
-        flags.setRelease(offset & capacityMinusOne, false);
+        writePosition.set(offset);
+        writeLock.unlock();
     }
 
     @Override
     public int take(int size) {
-        int readPosition = this.readPosition.getAndAddVolatile(size) & capacityMinusOne;
-        while (flags.getAndSetVolatile(readPosition, true)) {
-            Thread.onSpinWait();
+        readLock.lock();
+        int readPosition = this.readPosition & capacityMinusOne;
+        readBusyWaitStrategy.reset();
+        while (size(readPosition) < size) {
+            readBusyWaitStrategy.tick();
         }
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
+    }
+
+    @Override
+    public void advance() {
+        readLock.unlock();
+    }
+
+    @Override
+    public int size() {
+        return size(getReadPosition() & capacityMinusOne);
+    }
+
+    private int size(int readPosition) {
+        int writePosition = this.writePosition.get() & capacityMinusOne;
+        if (writePosition >= readPosition) {
+            return writePosition - readPosition;
+        }
+        return capacity - (readPosition - writePosition);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (writePosition.get() & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
+    }
+
+    private int getReadPosition() {
+        readLock.lock();
+        int readPosition = this.readPosition;
+        readLock.unlock();
         return readPosition;
     }
 

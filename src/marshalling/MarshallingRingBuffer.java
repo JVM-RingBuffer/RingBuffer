@@ -25,7 +25,7 @@ public interface MarshallingRingBuffer extends AbstractMarshallingRingBuffer {
 
     void advance();
 
-    static MarshallingRingBufferBuilder withCapacity(int capacity) {
-        return new MarshallingRingBufferBuilder(capacity);
+    static HeapMarshallingRingBufferBuilder withCapacity(int capacity) {
+        return new HeapMarshallingRingBufferBuilder(capacity);
     }
 }

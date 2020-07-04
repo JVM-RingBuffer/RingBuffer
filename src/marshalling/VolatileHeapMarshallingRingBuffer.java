@@ -16,25 +16,22 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class AtomicWriteMarshallingRingBuffer implements MarshallingRingBuffer {
+class VolatileHeapMarshallingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     private int readPosition;
     private final Integer writePosition;
 
-    AtomicWriteMarshallingRingBuffer(MarshallingRingBufferBuilder builder) {
+    VolatileHeapMarshallingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePosition = builder.newCursor();
     }
@@ -46,14 +43,12 @@ class AtomicWriteMarshallingRingBuffer implements MarshallingRingBuffer {
 
     @Override
     public int next() {
-        writeLock.lock();
         return writePosition.getPlain();
     }
 
     @Override
     public void put(int offset) {
         writePosition.set(offset);
-        writeLock.unlock();
     }
 
     @Override

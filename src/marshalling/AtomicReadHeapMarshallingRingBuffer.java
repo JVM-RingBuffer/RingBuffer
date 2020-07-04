@@ -16,26 +16,26 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
+class AtomicReadHeapMarshallingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
+    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
-    private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final Integer readPosition;
+    private int readPosition;
     private final Integer writePosition;
 
-    VolatileMarshallingBlockingRingBuffer(MarshallingBlockingRingBufferBuilder builder) {
+    AtomicReadHeapMarshallingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        readPosition = builder.newCursor();
         writePosition = builder.newCursor();
     }
 
@@ -45,21 +45,8 @@ class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBu
     }
 
     @Override
-    public int next(int size) {
-        int writePosition = this.writePosition.getPlain() & capacityMinusOne;
-        writeBusyWaitStrategy.reset();
-        while (freeSpace(writePosition) <= size) {
-            writeBusyWaitStrategy.tick();
-        }
-        return this.writePosition.getPlain();
-    }
-
-    private int freeSpace(int writePosition) {
-        int readPosition = this.readPosition.get() & capacityMinusOne;
-        if (writePosition >= readPosition) {
-            return capacity - (writePosition - readPosition);
-        }
-        return readPosition - writePosition;
+    public int next() {
+        return writePosition.getPlain();
     }
 
     @Override
@@ -69,22 +56,25 @@ class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBu
 
     @Override
     public int take(int size) {
-        int readPosition = this.readPosition.getPlain() & capacityMinusOne;
+        readLock.lock();
+        int readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
-        return this.readPosition.getPlain();
+        readPosition = this.readPosition;
+        this.readPosition += size;
+        return readPosition;
     }
 
     @Override
-    public void advance(int offset) {
-        readPosition.set(offset);
+    public void advance() {
+        readLock.unlock();
     }
 
     @Override
     public int size() {
-        return size(readPosition.get() & capacityMinusOne);
+        return size(getReadPosition() & capacityMinusOne);
     }
 
     private int size(int readPosition) {
@@ -97,7 +87,14 @@ class VolatileMarshallingBlockingRingBuffer implements MarshallingBlockingRingBu
 
     @Override
     public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
+        return (writePosition.get() & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
+    }
+
+    private int getReadPosition() {
+        readLock.lock();
+        int readPosition = this.readPosition;
+        readLock.unlock();
+        return readPosition;
     }
 
     @Override

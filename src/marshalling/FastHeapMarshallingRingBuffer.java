@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-public abstract class FastMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
+public abstract class FastHeapMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
     public abstract int next(int size);
 
     @Override

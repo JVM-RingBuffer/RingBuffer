@@ -20,7 +20,7 @@ import org.ringbuffer.AbstractRingBuffer;
 import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
 import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import org.ringbuffer.marshalling.FastDirectMarshallingRingBuffer;
-import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.FastHeapMarshallingRingBuffer;
 import org.ringbuffer.marshalling.MarshallingBlockingRingBuffer;
 import org.ringbuffer.marshalling.MarshallingRingBuffer;
 import test.AbstractTestThread;
@@ -38,8 +38,8 @@ abstract class TestThread extends AbstractTestThread {
         return (MarshallingBlockingRingBuffer) ringBuffer;
     }
 
-    FastMarshallingRingBuffer getFastMarshallingRingBuffer() {
-        return (FastMarshallingRingBuffer) ringBuffer;
+    FastHeapMarshallingRingBuffer getFastMarshallingRingBuffer() {
+        return (FastHeapMarshallingRingBuffer) ringBuffer;
     }
 
     DirectMarshallingRingBuffer getDirectMarshallingRingBuffer() {

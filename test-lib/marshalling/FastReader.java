@@ -16,7 +16,7 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.FastHeapMarshallingRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
@@ -24,14 +24,14 @@ import test.TestThreadGroup;
 import static org.ringbuffer.marshalling.Offsets.*;
 
 class FastReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static long runGroupAsync(FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new FastReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         FastReader reader = new FastReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
@@ -40,7 +40,7 @@ class FastReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    FastReader(int numIterations, FastMarshallingRingBuffer ringBuffer) {
+    FastReader(int numIterations, FastHeapMarshallingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -55,7 +55,7 @@ class FastReader extends TestThread implements AbstractReader {
     }
 
     long collect() {
-        FastMarshallingRingBuffer ringBuffer = getFastMarshallingRingBuffer();
+        FastHeapMarshallingRingBuffer ringBuffer = getFastMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));

@@ -16,40 +16,40 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.FastMarshallingRingBuffer;
+import org.ringbuffer.marshalling.FastHeapMarshallingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.Offsets.*;
 
 class FastWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static TestThreadGroup startGroupAsync(FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new FastWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runGroupAsync(FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static FastWriter startAsync(int numIterations, FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static FastWriter startAsync(int numIterations, FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         FastWriter writer = new FastWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, FastMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runAsync(int numIterations, FastHeapMarshallingRingBuffer ringBuffer, Profiler profiler) {
         startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
-    private FastWriter(int numIterations, FastMarshallingRingBuffer ringBuffer) {
+    private FastWriter(int numIterations, FastHeapMarshallingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     protected void loop() {
-        FastMarshallingRingBuffer ringBuffer = getFastMarshallingRingBuffer();
+        FastHeapMarshallingRingBuffer ringBuffer = getFastMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);

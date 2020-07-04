@@ -21,43 +21,43 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRingBufferBuilder<MarshallingBlockingRingBuffer> {
-    MarshallingBlockingRingBufferBuilder(MarshallingRingBufferBuilder builder) {
+public class HeapMarshallingBlockingRingBufferBuilder extends AbstractHeapMarshallingRingBufferBuilder<MarshallingBlockingRingBuffer> {
+    HeapMarshallingBlockingRingBufferBuilder(HeapMarshallingRingBufferBuilder builder) {
         super(builder);
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder oneWriter() {
+    public HeapMarshallingBlockingRingBufferBuilder oneWriter() {
         super.oneWriter0();
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder manyWriters() {
+    public HeapMarshallingBlockingRingBufferBuilder manyWriters() {
         super.manyWriters0();
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder oneReader() {
+    public HeapMarshallingBlockingRingBufferBuilder oneReader() {
         super.oneReader0();
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder manyReaders() {
+    public HeapMarshallingBlockingRingBufferBuilder manyReaders() {
         super.manyReaders0();
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder withWriteLock(Lock lock) {
+    public HeapMarshallingBlockingRingBufferBuilder withWriteLock(Lock lock) {
         super.withWriteLock0(lock);
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder withReadLock(Lock lock) {
+    public HeapMarshallingBlockingRingBufferBuilder withReadLock(Lock lock) {
         super.withReadLock0(lock);
         return this;
     }
@@ -78,25 +78,25 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
+    public HeapMarshallingBlockingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
+    public HeapMarshallingBlockingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
         super.withMemoryOrder0(memoryOrder);
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder copyClass() {
+    public HeapMarshallingBlockingRingBufferBuilder copyClass() {
         super.copyClass0();
         return this;
     }
 
     @Override
-    public MarshallingBlockingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
+    public HeapMarshallingBlockingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
         super.withByteArray0(factory);
         return this;
     }
@@ -107,30 +107,30 @@ public class MarshallingBlockingRingBufferBuilder extends AbstractMarshallingRin
             case VOLATILE:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(VolatileMarshallingBlockingRingBuffer.class);
+                        return instantiateCopy(VolatileHeapMarshallingBlockingRingBuffer.class);
                     }
-                    return new VolatileMarshallingBlockingRingBuffer(this);
+                    return new VolatileHeapMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_READ:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(AtomicReadMarshallingBlockingRingBuffer.class);
+                        return instantiateCopy(AtomicReadHeapMarshallingBlockingRingBuffer.class);
                     }
-                    return new AtomicReadMarshallingBlockingRingBuffer(this);
+                    return new AtomicReadHeapMarshallingBlockingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(AtomicWriteMarshallingBlockingRingBuffer.class);
+                        return instantiateCopy(AtomicWriteHeapMarshallingBlockingRingBuffer.class);
                     }
-                    return new AtomicWriteMarshallingBlockingRingBuffer(this);
+                    return new AtomicWriteHeapMarshallingBlockingRingBuffer(this);
                 }
             case CONCURRENT:
                 if (type == RingBufferType.BLOCKING) {
                     if (copyClass) {
-                        return instantiateCopy(ConcurrentMarshallingBlockingRingBuffer.class);
+                        return instantiateCopy(ConcurrentHeapMarshallingBlockingRingBuffer.class);
                     }
-                    return new ConcurrentMarshallingBlockingRingBuffer(this);
+                    return new ConcurrentHeapMarshallingBlockingRingBuffer(this);
                 }
         }
         throw new AssertionError();

@@ -16,51 +16,43 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.lock.Lock;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
-abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractBaseMarshallingRingBufferBuilder<T> {
-    private final int capacity;
-    private ByteArray.Factory byteArrayFactory = ByteArray.SAFE;
-    // All fields are copied in <init>(AbstractMarshallingRingBufferBuilder<?>)
+import java.lang.invoke.MethodHandles;
 
-    AbstractMarshallingRingBufferBuilder(int capacity) {
-        validateCapacity(capacity);
-        validateCapacityPowerOfTwo(capacity);
-        this.capacity = capacity;
+abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
+    private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
+
+    @Override
+    protected MethodHandles.Lookup getImplLookup() {
+        return implLookup;
     }
+
+    AbstractMarshallingRingBufferBuilder() {}
 
     AbstractMarshallingRingBufferBuilder(AbstractMarshallingRingBufferBuilder<?> builder) {
         super(builder);
-        capacity = builder.capacity;
-        byteArrayFactory = builder.byteArrayFactory;
     }
 
-    public abstract AbstractMarshallingRingBufferBuilder<T> withByteArray(ByteArray.Factory factory);
-
-    void withByteArray0(ByteArray.Factory factory) {
-        byteArrayFactory = factory;
+    @Override
+    protected Lock getWriteLock() {
+        return super.getWriteLock();
     }
 
-    int getCapacity() {
-        return capacity;
+    @Override
+    protected Lock getReadLock() {
+        return super.getReadLock();
     }
 
-    int getCapacityMinusOne() {
-        return capacity - 1;
+    @Override
+    protected BusyWaitStrategy getWriteBusyWaitStrategy() {
+        return super.getWriteBusyWaitStrategy();
     }
 
-    ByteArray getBuffer() {
-        return byteArrayFactory.newInstance(capacity);
-    }
-
-    Integer newCursor() {
-        return memoryOrder.newInteger();
-    }
-
-    AtomicBooleanArray getFlags() {
-        AtomicBooleanArray flags = new AtomicBooleanArray(capacity);
-        flags.fill(true);
-        return flags;
+    @Override
+    protected BusyWaitStrategy getReadBusyWaitStrategy() {
+        return super.getReadBusyWaitStrategy();
     }
 }
