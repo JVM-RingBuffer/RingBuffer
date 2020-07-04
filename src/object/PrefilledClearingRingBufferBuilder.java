@@ -115,32 +115,44 @@ public class PrefilledClearingRingBufferBuilder<T> extends AbstractPrefilledRing
     protected ObjectRingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(VolatilePrefilledRingBuffer.class);
-                    }
-                    return new VolatilePrefilledRingBuffer<>(this);
+                switch (type) {
+                    case CLEARING:
+                        if (copyClass) {
+                            return instantiateCopy(VolatilePrefilledRingBuffer.class);
+                        }
+                        return new VolatilePrefilledRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastVolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
-                    }
-                    return new AtomicReadPrefilledRingBuffer<>(this);
+                switch (type) {
+                    case CLEARING:
+                        if (copyClass) {
+                            return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
+                        }
+                        return new AtomicReadPrefilledRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
-                    }
-                    return new AtomicWritePrefilledRingBuffer<>(this);
+                switch (type) {
+                    case CLEARING:
+                        if (copyClass) {
+                            return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
+                        }
+                        return new AtomicWritePrefilledRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
-                    }
-                    return new ConcurrentPrefilledRingBuffer<>(this);
+                switch (type) {
+                    case CLEARING:
+                        if (copyClass) {
+                            return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
+                        }
+                        return new ConcurrentPrefilledRingBuffer<>(this);
+                    case CLEARING_FAST:
+                        return new FastConcurrentPrefilledRingBuffer<>(this);
                 }
         }
         throw new AssertionError();

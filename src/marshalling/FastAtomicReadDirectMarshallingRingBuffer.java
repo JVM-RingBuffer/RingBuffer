@@ -38,6 +38,11 @@ class FastAtomicReadDirectMarshallingRingBuffer extends FastDirectMarshallingRin
     }
 
     @Override
+    public long getCapacity() {
+        return capacityMinusOne + 1L;
+    }
+
+    @Override
     public long next(long size) {
         long writePosition = this.writePosition;
         this.writePosition += size;

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.marshalling;
+package test.object;
 
-public abstract class FastHeapMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
-    public abstract int next(int size);
+import test.Profiler;
 
-    @Override
-    public int size() {
-        throw new UnsupportedOperationException();
+class FastPrefilledManyWritersTest extends FastPrefilledManyWritersContentionTest {
+    public static void main(String[] args) {
+        new FastPrefilledManyWritersTest().runBenchmark();
     }
 
     @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException();
+    protected long testSum() {
+        Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
+        PrefilledClearingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

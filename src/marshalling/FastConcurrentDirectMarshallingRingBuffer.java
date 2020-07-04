@@ -38,6 +38,11 @@ class FastConcurrentDirectMarshallingRingBuffer extends FastDirectMarshallingRin
     }
 
     @Override
+    public long getCapacity() {
+        return capacityMinusOne + 1L;
+    }
+
+    @Override
     public long next(long size) {
         return writePosition.getAndAddVolatile(size);
     }

@@ -20,11 +20,6 @@ public abstract class FastDirectMarshallingRingBuffer implements AbstractDirectM
     public abstract long next(long size);
 
     @Override
-    public long getCapacity() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public long size() {
         throw new UnsupportedOperationException();
     }

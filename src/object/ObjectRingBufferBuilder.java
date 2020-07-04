@@ -17,6 +17,7 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -91,5 +92,11 @@ abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<Obje
 
     Integer newCursor() {
         return memoryOrder.newInteger();
+    }
+
+    AtomicBooleanArray getWrittenPositions() {
+        AtomicBooleanArray writtenPositions = new AtomicBooleanArray(capacity);
+        writtenPositions.fill(true);
+        return writtenPositions;
     }
 }

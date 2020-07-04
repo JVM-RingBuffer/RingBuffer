@@ -16,8 +16,8 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import org.ringbuffer.object.ObjectRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 

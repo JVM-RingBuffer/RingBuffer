@@ -30,9 +30,10 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-i7 8700, Linux
+CPU: i7 8700  
+OS: Linux
 
-v1.0|msg/sec|latency
+scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 20 million | 140ns
 3 producers → 1 consumer | 20 million | 50ns
@@ -40,7 +41,9 @@ v1.0|msg/sec|latency
 1 producer → 1 consumer | 110 million | 9ns
 2 producers → 1 processor → 2 consumers | 20 million | 47ns
 
-`.fast()`|msg/sec|latency
+The following are lock-free implementations. Call `fast()` on the builder.
+
+scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 32 million | 92ns
 3 producers → 1 consumer | 41 million | 24ns
@@ -71,6 +74,8 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 ## Download
 
 Please [build from source](BUILD.md).
+
+The module name is `org.ringbuffer`.
 
 **Warning.**
 These features of object ring buffers have not yet been tested:
@@ -155,7 +160,7 @@ System.out.println(ringBuffer.readChar(offset + INT));
 ringBuffer.advance(offset + INT + CHAR);
 
 DirectMarshallingRingBuffer ringBuffer =
-        DirectMarshallingRingBuffer.withCapacity(2048)
+        DirectMarshallingRingBuffer.withCapacity(2048L)
                 .manyWriters()
                 .manyReaders()
                 .copyClass()

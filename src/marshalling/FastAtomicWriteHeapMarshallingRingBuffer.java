@@ -25,7 +25,7 @@ class FastAtomicWriteHeapMarshallingRingBuffer extends FastHeapMarshallingRingBu
     @Contended
     private final ByteArray buffer;
     @Contended
-    private final AtomicBooleanArray flags;
+    private final AtomicBooleanArray writtenPositions;
 
     @Contended
     private int readPosition;
@@ -35,7 +35,12 @@ class FastAtomicWriteHeapMarshallingRingBuffer extends FastHeapMarshallingRingBu
     FastAtomicWriteHeapMarshallingRingBuffer(FastHeapMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        flags = builder.getFlags();
+        writtenPositions = builder.getWrittenPositions();
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacityMinusOne + 1;
     }
 
     @Override
@@ -45,14 +50,14 @@ class FastAtomicWriteHeapMarshallingRingBuffer extends FastHeapMarshallingRingBu
 
     @Override
     public void put(int offset) {
-        flags.setRelease(offset & capacityMinusOne, false);
+        writtenPositions.setRelease(offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (flags.getAndSetVolatile(readPosition, true)) {
+        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
             Thread.onSpinWait();
         }
         return readPosition;

@@ -16,10 +16,10 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.ObjectRingBuffer;
 import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
-import org.ringbuffer.object.ObjectRingBuffer;
+import org.ringbuffer.object.RingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {

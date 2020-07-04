@@ -58,9 +58,9 @@ abstract class AbstractHeapMarshallingRingBufferBuilder<T> extends AbstractMarsh
         return memoryOrder.newInteger();
     }
 
-    AtomicBooleanArray getFlags() {
-        AtomicBooleanArray flags = new AtomicBooleanArray(capacity);
-        flags.fill(true);
-        return flags;
+    AtomicBooleanArray getWrittenPositions() {
+        AtomicBooleanArray writtenPositions = new AtomicBooleanArray(capacity);
+        writtenPositions.fill(true);
+        return writtenPositions;
     }
 }
