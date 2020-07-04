@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AgronaOneToOneTest" type="Application" factoryName="Application" folderName="Competitors">
+    <option name="MAIN_CLASS_NAME" value="test.competitors.AgronaOneToOneTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms1792m -Xmx1792m -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

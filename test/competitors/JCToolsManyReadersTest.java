@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-import org.ringbuffer.object.RingBuffer;
-import test.Profiler;
+import test.object.FastManyReadersTest;
 
-public class FastManyReadersTest extends FastManyReadersContentionTest {
+class JCToolsManyReadersTest extends FastManyReadersTest {
     public static void main(String[] args) {
-        new FastManyReadersTest().runBenchmark();
+        new JCToolsManyReadersTest().runBenchmark();
     }
 
-    private FastManyReadersTest() {}
-
-    protected FastManyReadersTest(RingBuffer<Event> ringBuffer) {
-        super(ringBuffer);
-    }
-
-    @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runAsync(TOTAL_ELEMENTS, ringBuffer, profiler);
-        return Reader.runGroupAsync(ringBuffer, profiler);
+    private JCToolsManyReadersTest() {
+        super(JCToolsManyReadersContentionTest.ADAPTER);
     }
 }

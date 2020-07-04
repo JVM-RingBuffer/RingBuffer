@@ -31,6 +31,16 @@ public class FastManyWritersContentionTest extends RingBufferTest {
         new FastManyWritersContentionTest().runBenchmark();
     }
 
+    final RingBuffer<Event> ringBuffer;
+
+    FastManyWritersContentionTest() {
+        this(RING_BUFFER);
+    }
+
+    protected FastManyWritersContentionTest(RingBuffer<Event> ringBuffer) {
+        this.ringBuffer = ringBuffer;
+    }
+
     @Override
     protected int getRepeatTimes() {
         return 12;
@@ -44,7 +54,7 @@ public class FastManyWritersContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startGroupAsync(RING_BUFFER, profiler);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        Writer.startGroupAsync(ringBuffer, profiler);
+        return Reader.runAsync(TOTAL_ELEMENTS, ringBuffer, profiler);
     }
 }

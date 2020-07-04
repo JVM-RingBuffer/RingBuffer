@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Agrona" type="repository">
+    <properties maven-id="org.agrona:agrona:1.5.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/Agrona/agrona-1.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/Agrona/agrona-1.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

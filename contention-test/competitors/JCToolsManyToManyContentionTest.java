@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-public class Event {
-    private int data;
+import org.jctools.queues.MpmcArrayQueue;
+import test.object.FastManyToManyContentionTest;
 
-    Event(int data) {
-        this.data = data;
+class JCToolsManyToManyContentionTest extends FastManyToManyContentionTest {
+    static final Adapter ADAPTER = new QueueAdapter(
+            new MpmcArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE));
+
+    public static void main(String[] args) {
+        new JCToolsManyToManyContentionTest().runBenchmark();
     }
 
-    int getData() {
-        return data;
-    }
-
-    void setData(int data) {
-        this.data = data;
+    private JCToolsManyToManyContentionTest() {
+        super(ADAPTER);
     }
 }

@@ -16,17 +16,24 @@
 
 package test.object;
 
+import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
-class FastManyWritersTest extends FastManyWritersContentionTest {
+public class FastManyWritersTest extends FastManyWritersContentionTest {
     public static void main(String[] args) {
         new FastManyWritersTest().runBenchmark();
+    }
+
+    private FastManyWritersTest() {}
+
+    protected FastManyWritersTest(RingBuffer<Event> ringBuffer) {
+        super(ringBuffer);
     }
 
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        Writer.runGroupAsync(ringBuffer, profiler);
+        return Reader.runAsync(TOTAL_ELEMENTS, ringBuffer, profiler);
     }
 }

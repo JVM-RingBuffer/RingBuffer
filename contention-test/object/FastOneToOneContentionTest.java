@@ -31,6 +31,16 @@ public class FastOneToOneContentionTest extends RingBufferTest {
         new FastOneToOneContentionTest().runBenchmark();
     }
 
+    final RingBuffer<Event> ringBuffer;
+
+    FastOneToOneContentionTest() {
+        this(RING_BUFFER);
+    }
+
+    protected FastOneToOneContentionTest(RingBuffer<Event> ringBuffer) {
+        this.ringBuffer = ringBuffer;
+    }
+
     @Override
     protected int getRepeatTimes() {
         return 50;
@@ -44,7 +54,7 @@ public class FastOneToOneContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        Writer.startAsync(NUM_ITERATIONS, ringBuffer, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, ringBuffer, profiler);
     }
 }

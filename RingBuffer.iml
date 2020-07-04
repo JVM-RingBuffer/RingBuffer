@@ -15,5 +15,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="JUnit" level="project" />
     <orderEntry type="library" name="Byte Buddy" level="project" />
+    <orderEntry type="library" scope="TEST" name="Agrona" level="project" />
+    <orderEntry type="library" scope="TEST" name="JCTools" level="project" />
   </component>
 </module>

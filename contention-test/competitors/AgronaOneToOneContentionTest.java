@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-public class Event {
-    private int data;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
+import test.object.FastOneToOneContentionTest;
 
-    Event(int data) {
-        this.data = data;
+class AgronaOneToOneContentionTest extends FastOneToOneContentionTest {
+    static final Adapter ADAPTER = new QueueAdapter(
+            new OneToOneConcurrentArrayQueue<>(FAST_ONE_TO_ONE_SIZE));
+
+    public static void main(String[] args) {
+        new AgronaOneToOneContentionTest().runBenchmark();
     }
 
-    int getData() {
-        return data;
-    }
-
-    void setData(int data) {
-        this.data = data;
+    private AgronaOneToOneContentionTest() {
+        super(ADAPTER);
     }
 }

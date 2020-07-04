@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-public class Event {
-    private int data;
+import org.jctools.queues.SpmcArrayQueue;
+import test.object.FastManyReadersContentionTest;
 
-    Event(int data) {
-        this.data = data;
+class JCToolsManyReadersContentionTest extends FastManyReadersContentionTest {
+    static final Adapter ADAPTER = new QueueAdapter(
+            new SpmcArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE));
+
+    public static void main(String[] args) {
+        new JCToolsManyReadersContentionTest().runBenchmark();
     }
 
-    int getData() {
-        return data;
-    }
-
-    void setData(int data) {
-        this.data = data;
+    private JCToolsManyReadersContentionTest() {
+        super(ADAPTER);
     }
 }

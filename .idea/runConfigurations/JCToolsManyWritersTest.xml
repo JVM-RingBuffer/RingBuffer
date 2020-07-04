@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JCToolsManyWritersTest" type="Application" factoryName="Application" folderName="Competitors">
+    <option name="MAIN_CLASS_NAME" value="test.competitors.JCToolsManyWritersTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms1312m -Xmx1312m -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

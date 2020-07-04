@@ -50,6 +50,21 @@ scenario|msg/sec|latency
 1 producer → 3 consumers | 43 million | 4ns
 1 producer → 1 consumer | 250 million | 4ns
 
+The following are competitors: [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.
+
+scenario|msg/sec|latency
+---|---|---
+3 producers → 3 consumers | 13 million | 210ns
+3 producers → 1 consumer | 15 million | 67ns
+1 producer → 1 consumer | 200 million | 5ns
+
+scenario|msg/sec|latency
+---|---|---
+3 producers → 3 consumers | 13 million | 220ns
+3 producers → 1 consumer | 17 million | 57ns
+1 producer → 3 consumers | 16 million | 5ns
+1 producer → 1 consumer | 200 million | 5ns
+
 ## Class copying
 
 To allow inlining of polymorphic calls, a class can be copied. This is similar to what happens with C++ templates.  

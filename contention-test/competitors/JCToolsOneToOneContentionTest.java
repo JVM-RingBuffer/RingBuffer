@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-public class Event {
-    private int data;
+import org.jctools.queues.SpscArrayQueue;
+import test.object.FastOneToOneContentionTest;
 
-    Event(int data) {
-        this.data = data;
+class JCToolsOneToOneContentionTest extends FastOneToOneContentionTest {
+    static final Adapter ADAPTER = new QueueAdapter(
+            new SpscArrayQueue<>(FAST_ONE_TO_ONE_SIZE));
+
+    public static void main(String[] args) {
+        new JCToolsOneToOneContentionTest().runBenchmark();
     }
 
-    int getData() {
-        return data;
-    }
-
-    void setData(int data) {
-        this.data = data;
+    private JCToolsOneToOneContentionTest() {
+        super(ADAPTER);
     }
 }

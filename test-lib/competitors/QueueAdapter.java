@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.competitors;
 
-import org.ringbuffer.object.RingBuffer;
-import test.Profiler;
+import test.object.Event;
 
-public class FastManyReadersTest extends FastManyReadersContentionTest {
-    public static void main(String[] args) {
-        new FastManyReadersTest().runBenchmark();
-    }
+import java.util.Queue;
 
-    private FastManyReadersTest() {}
+class QueueAdapter extends Adapter {
+    private final Queue<Event> queue;
 
-    protected FastManyReadersTest(RingBuffer<Event> ringBuffer) {
-        super(ringBuffer);
+    QueueAdapter(Queue<Event> queue) {
+        this.queue = queue;
     }
 
     @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runAsync(TOTAL_ELEMENTS, ringBuffer, profiler);
-        return Reader.runGroupAsync(ringBuffer, profiler);
+    public void put(Event element) {
+        queue.offer(element);
+    }
+
+    @Override
+    public Event take() {
+        Event element;
+        while ((element = queue.poll()) == null) {
+            Thread.onSpinWait();
+        }
+        return element;
     }
 }
