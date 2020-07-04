@@ -44,6 +44,12 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
     @Override
     protected abstract AbstractDirectMarshallingRingBufferBuilder<?> fast();
 
+    @Override
+    protected void fast0() {
+        super.fast0();
+        validateCapacityPowerOfTwo(capacity);
+    }
+
     public abstract AbstractDirectMarshallingRingBufferBuilder<T> withByteArray(DirectByteArray.Factory factory);
 
     void withByteArray0(DirectByteArray.Factory factory) {

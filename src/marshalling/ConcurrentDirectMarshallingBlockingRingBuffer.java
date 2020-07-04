@@ -20,7 +20,7 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Long;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class ConcurrentDirectMarshallingBlockingRingBuffer implements DirectMarshallingBlockingRingBuffer {
+class ConcurrentDirectMarshallingBlockingRingBuffer implements DirectMarshallingRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
@@ -32,7 +32,7 @@ class ConcurrentDirectMarshallingBlockingRingBuffer implements DirectMarshalling
     private final Long readPosition;
     private final Long writePosition;
 
-    ConcurrentDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+    ConcurrentDirectMarshallingBlockingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

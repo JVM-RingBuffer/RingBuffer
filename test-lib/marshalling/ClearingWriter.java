@@ -16,44 +16,44 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.FastDirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.MarshallingClearingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.*;
+import static org.ringbuffer.marshalling.Offsets.*;
 
-class FastDirectWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(FastDirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new FastDirectWriter(numIterations, ringBuffer));
+class ClearingWriter extends TestThread {
+    static TestThreadGroup startGroupAsync(MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new ClearingWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(FastDirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runGroupAsync(MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static FastDirectWriter startAsync(int numIterations, FastDirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
-        FastDirectWriter writer = new FastDirectWriter(numIterations, ringBuffer);
+    static ClearingWriter startAsync(int numIterations, MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+        ClearingWriter writer = new ClearingWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, FastDirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runAsync(int numIterations, MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
         startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
-    private FastDirectWriter(int numIterations, FastDirectMarshallingRingBuffer ringBuffer) {
+    private ClearingWriter(int numIterations, MarshallingClearingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     protected void loop() {
-        FastDirectMarshallingRingBuffer ringBuffer = getFastDirectMarshallingRingBuffer();
+        MarshallingClearingRingBuffer ringBuffer = getMarshallingClearingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            long offset = ringBuffer.next(INT);
+            int offset = ringBuffer.next();
             ringBuffer.writeInt(offset, numIterations);
-            ringBuffer.put(offset);
+            ringBuffer.put(offset + INT);
         }
     }
 }

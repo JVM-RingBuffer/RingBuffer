@@ -16,13 +16,14 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRingBufferBuilder<MarshallingRingBuffer> {
-    HeapMarshallingRingBufferBuilder(int capacity) {
-        super(capacity);
+    HeapMarshallingRingBufferBuilder(HeapMarshallingClearingRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override
@@ -62,21 +63,18 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
     }
 
     @Override
-    public HeapMarshallingBlockingRingBufferBuilder blocking() {
-        super.blocking0();
-        return new HeapMarshallingBlockingRingBufferBuilder(this);
+    protected AbstractRingBufferBuilder<?> blocking() {
+        throw new AssertionError();
     }
 
     @Override
-    public HeapMarshallingBlockingRingBufferBuilder blocking(BusyWaitStrategy busyWaitStrategy) {
-        super.blocking0(busyWaitStrategy);
-        return new HeapMarshallingBlockingRingBufferBuilder(this);
+    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
+        throw new AssertionError();
     }
 
     @Override
-    public FastHeapMarshallingRingBufferBuilder fast() {
-        super.fast0();
-        return new FastHeapMarshallingRingBufferBuilder(this);
+    protected AbstractRingBufferBuilder<?> fast() {
+        throw new AssertionError();
     }
 
     @Override
@@ -107,32 +105,44 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
     protected MarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(VolatileHeapMarshallingRingBuffer.class);
-                    }
-                    return new VolatileHeapMarshallingRingBuffer(this);
+                switch (type) {
+                    case BLOCKING:
+                        if (copyClass) {
+                            return instantiateCopy(VolatileHeapMarshallingBlockingRingBuffer.class);
+                        }
+                        return new VolatileHeapMarshallingBlockingRingBuffer(this);
+                    case CLEARING_FAST:
+                        return new FastVolatileHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(AtomicReadHeapMarshallingRingBuffer.class);
-                    }
-                    return new AtomicReadHeapMarshallingRingBuffer(this);
+                switch (type) {
+                    case BLOCKING:
+                        if (copyClass) {
+                            return instantiateCopy(AtomicReadHeapMarshallingBlockingRingBuffer.class);
+                        }
+                        return new AtomicReadHeapMarshallingBlockingRingBuffer(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicReadHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(AtomicWriteHeapMarshallingRingBuffer.class);
-                    }
-                    return new AtomicWriteHeapMarshallingRingBuffer(this);
+                switch (type) {
+                    case BLOCKING:
+                        if (copyClass) {
+                            return instantiateCopy(AtomicWriteHeapMarshallingBlockingRingBuffer.class);
+                        }
+                        return new AtomicWriteHeapMarshallingBlockingRingBuffer(this);
+                    case CLEARING_FAST:
+                        return new FastAtomicWriteHeapMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
-                if (type == RingBufferType.CLEARING) {
-                    if (copyClass) {
-                        return instantiateCopy(ConcurrentHeapMarshallingRingBuffer.class);
-                    }
-                    return new ConcurrentHeapMarshallingRingBuffer(this);
+                switch (type) {
+                    case BLOCKING:
+                        if (copyClass) {
+                            return instantiateCopy(ConcurrentHeapMarshallingBlockingRingBuffer.class);
+                        }
+                        return new ConcurrentHeapMarshallingBlockingRingBuffer(this);
+                    case CLEARING_FAST:
+                        return new FastConcurrentHeapMarshallingRingBuffer(this);
                 }
         }
         throw new AssertionError();

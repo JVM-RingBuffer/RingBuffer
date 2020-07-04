@@ -58,8 +58,9 @@ class Reader extends TestThread implements AbstractReader {
         MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            sum += ringBuffer.readInt(ringBuffer.take(INT));
-            ringBuffer.advance();
+            int offset = ringBuffer.take(INT);
+            sum += ringBuffer.readInt(offset);
+            ringBuffer.advance(offset + INT);
         }
         return sum;
     }

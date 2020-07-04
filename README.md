@@ -30,8 +30,7 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-CPU: i7 8700  
-OS: Linux
+Benchmarks were run on i7 8700 on Linux.
 
 scenario|msg/sec|latency
 ---|---|---
@@ -141,7 +140,7 @@ new Thread(processor).start();
 ### Marshalling ring buffers
 
 ```java
-MarshallingBlockingRingBuffer ringBuffer =
+MarshallingRingBuffer ringBuffer =
         MarshallingRingBuffer.withCapacity(Numbers.getNextPowerOfTwo(100))
                 .oneWriter()
                 .oneReader()
@@ -159,7 +158,7 @@ System.out.println(ringBuffer.readInt(offset));
 System.out.println(ringBuffer.readChar(offset + INT));
 ringBuffer.advance(offset + INT + CHAR);
 
-DirectMarshallingRingBuffer ringBuffer =
+DirectMarshallingClearingRingBuffer ringBuffer =
         DirectMarshallingRingBuffer.withCapacity(2048L)
                 .manyWriters()
                 .manyReaders()

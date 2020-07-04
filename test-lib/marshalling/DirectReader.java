@@ -58,8 +58,9 @@ class DirectReader extends TestThread implements AbstractReader {
         DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            sum += ringBuffer.readInt(ringBuffer.take(INT));
-            ringBuffer.advance();
+            long offset = ringBuffer.take(INT);
+            sum += ringBuffer.readInt(offset);
+            ringBuffer.advance(offset + INT);
         }
         return sum;
     }

@@ -19,7 +19,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.memory.Long;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBlockingRingBuffer {
+class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
@@ -29,7 +29,7 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingBl
     private final Long readPosition;
     private final Long writePosition;
 
-    VolatileDirectMarshallingBlockingRingBuffer(DirectMarshallingBlockingRingBufferBuilder builder) {
+    VolatileDirectMarshallingBlockingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

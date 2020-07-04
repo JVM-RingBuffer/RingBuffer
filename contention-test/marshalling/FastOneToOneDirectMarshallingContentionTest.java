@@ -17,11 +17,10 @@
 package test.marshalling;
 
 import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
-import org.ringbuffer.marshalling.FastDirectMarshallingRingBuffer;
 import test.Profiler;
 
 public class FastOneToOneDirectMarshallingContentionTest extends RingBufferTest {
-    public static final FastDirectMarshallingRingBuffer RING_BUFFER =
+    public static final DirectMarshallingRingBuffer RING_BUFFER =
             DirectMarshallingRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
@@ -45,7 +44,7 @@ public class FastOneToOneDirectMarshallingContentionTest extends RingBufferTest 
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
-        FastDirectWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return FastDirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        DirectWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return DirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

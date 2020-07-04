@@ -30,7 +30,7 @@ class FastVolatileDirectMarshallingRingBuffer extends FastDirectMarshallingRingB
     @Contended
     private long writePosition;
 
-    FastVolatileDirectMarshallingRingBuffer(FastDirectMarshallingRingBufferBuilder builder) {
+    FastVolatileDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();

@@ -16,23 +16,23 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingBlockingRingBuffer;
+import org.ringbuffer.marshalling.MarshallingClearingRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.*;
+import static org.ringbuffer.marshalling.Offsets.*;
 
-class DirectBlockingReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectBlockingReader(numIterations, ringBuffer));
+class ClearingReader extends TestThread implements AbstractReader {
+    static long runGroupAsync(MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new ClearingReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectMarshallingBlockingRingBuffer ringBuffer, Profiler profiler) {
-        DirectBlockingReader reader = new DirectBlockingReader(numIterations, ringBuffer);
+    static long runAsync(int numIterations, MarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+        ClearingReader reader = new ClearingReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
         return reader.getSum();
@@ -40,7 +40,7 @@ class DirectBlockingReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    DirectBlockingReader(int numIterations, DirectMarshallingBlockingRingBuffer ringBuffer) {
+    ClearingReader(int numIterations, MarshallingClearingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -55,12 +55,11 @@ class DirectBlockingReader extends TestThread implements AbstractReader {
     }
 
     long collect() {
-        DirectMarshallingBlockingRingBuffer ringBuffer = getDirectMarshallingBlockingRingBuffer();
+        MarshallingClearingRingBuffer ringBuffer = getMarshallingClearingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            long offset = ringBuffer.take(INT);
-            sum += ringBuffer.readInt(offset);
-            ringBuffer.advance(offset + INT);
+            sum += ringBuffer.readInt(ringBuffer.take(INT));
+            ringBuffer.advance();
         }
         return sum;
     }

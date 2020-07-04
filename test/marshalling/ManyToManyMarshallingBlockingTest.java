@@ -26,7 +26,7 @@ class ManyToManyMarshallingBlockingTest extends ManyToManyMarshallingBlockingCon
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        BlockingWriter.runGroupAsync(RING_BUFFER, profiler);
-        return BlockingReader.runGroupAsync(RING_BUFFER, profiler);
+        Writer.runGroupAsync(RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

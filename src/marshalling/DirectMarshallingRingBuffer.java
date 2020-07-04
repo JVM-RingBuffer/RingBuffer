@@ -17,15 +17,15 @@
 package org.ringbuffer.marshalling;
 
 /**
- * From {@link #next()} to {@link #put(long)} is an atomic operation.
- * From {@link #take(long)} to {@link #advance()} is an atomic operation.
+ * From {@link #next(long)} to {@link #put(long)} is an atomic operation.
+ * From {@link #take(long)} to {@link #advance(long)} is an atomic operation.
  */
 public interface DirectMarshallingRingBuffer extends AbstractDirectMarshallingRingBuffer {
-    long next();
+    long next(long size);
 
-    void advance();
+    void advance(long offset);
 
-    static DirectMarshallingRingBufferBuilder withCapacity(long capacity) {
-        return new DirectMarshallingRingBufferBuilder(capacity);
+    static DirectMarshallingClearingRingBufferBuilder withCapacity(long capacity) {
+        return new DirectMarshallingClearingRingBufferBuilder(capacity);
     }
 }

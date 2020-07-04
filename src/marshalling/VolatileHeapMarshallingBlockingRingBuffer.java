@@ -19,7 +19,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class VolatileHeapMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
+class VolatileHeapMarshallingBlockingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
@@ -29,7 +29,7 @@ class VolatileHeapMarshallingBlockingRingBuffer implements MarshallingBlockingRi
     private final Integer readPosition;
     private final Integer writePosition;
 
-    VolatileHeapMarshallingBlockingRingBuffer(HeapMarshallingBlockingRingBufferBuilder builder) {
+    VolatileHeapMarshallingBlockingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

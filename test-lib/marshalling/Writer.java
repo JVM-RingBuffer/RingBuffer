@@ -51,7 +51,7 @@ class Writer extends TestThread {
     protected void loop() {
         MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            int offset = ringBuffer.next();
+            int offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);
             ringBuffer.put(offset + INT);
         }

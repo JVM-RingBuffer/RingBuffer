@@ -51,7 +51,7 @@ class DirectWriter extends TestThread {
     protected void loop() {
         DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            long offset = ringBuffer.next();
+            long offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);
             ringBuffer.put(offset + INT);
         }

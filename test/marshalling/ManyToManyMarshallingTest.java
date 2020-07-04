@@ -26,7 +26,7 @@ class ManyToManyMarshallingTest extends ManyToManyMarshallingContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        ClearingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return ClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

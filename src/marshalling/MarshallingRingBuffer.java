@@ -17,15 +17,15 @@
 package org.ringbuffer.marshalling;
 
 /**
- * From {@link #next()} to {@link #put(int)} is an atomic operation.
- * From {@link #take(int)} to {@link #advance()} is an atomic operation.
+ * From {@link #next(int)} to {@link #put(int)} is an atomic operation.
+ * From {@link #take(int)} to {@link #advance(int)} is an atomic operation.
  */
 public interface MarshallingRingBuffer extends AbstractMarshallingRingBuffer {
-    int next();
+    int next(int size);
 
-    void advance();
+    void advance(int offset);
 
-    static HeapMarshallingRingBufferBuilder withCapacity(int capacity) {
-        return new HeapMarshallingRingBufferBuilder(capacity);
+    static HeapMarshallingClearingRingBufferBuilder withCapacity(int capacity) {
+        return new HeapMarshallingClearingRingBufferBuilder(capacity);
     }
 }

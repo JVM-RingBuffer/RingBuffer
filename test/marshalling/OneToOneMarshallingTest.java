@@ -26,7 +26,7 @@ class OneToOneMarshallingTest extends OneToOneMarshallingContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
-        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        ClearingWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return ClearingReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

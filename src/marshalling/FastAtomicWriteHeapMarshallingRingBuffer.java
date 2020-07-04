@@ -32,7 +32,7 @@ class FastAtomicWriteHeapMarshallingRingBuffer extends FastHeapMarshallingRingBu
     @Contended
     private final AtomicInt writePosition = new AtomicInt();
 
-    FastAtomicWriteHeapMarshallingRingBuffer(FastHeapMarshallingRingBufferBuilder builder) {
+    FastAtomicWriteHeapMarshallingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();

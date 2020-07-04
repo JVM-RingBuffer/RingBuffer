@@ -16,8 +16,11 @@
 
 package org.ringbuffer.marshalling;
 
-public abstract class FastHeapMarshallingRingBuffer implements AbstractMarshallingRingBuffer {
-    public abstract int next(int size);
+abstract class FastHeapMarshallingRingBuffer implements MarshallingRingBuffer {
+    @Override
+    public void advance(int offset) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public int size() {

@@ -26,7 +26,7 @@ class ManyToManyDirectMarshallingBlockingTest extends ManyToManyDirectMarshallin
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        DirectBlockingWriter.runGroupAsync(RING_BUFFER, profiler);
-        return DirectBlockingReader.runGroupAsync(RING_BUFFER, profiler);
+        DirectWriter.runGroupAsync(RING_BUFFER, profiler);
+        return DirectReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

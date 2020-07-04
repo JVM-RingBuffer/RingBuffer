@@ -36,6 +36,12 @@ abstract class AbstractHeapMarshallingRingBufferBuilder<T> extends AbstractMarsh
         byteArrayFactory = builder.byteArrayFactory;
     }
 
+    @Override
+    protected void fast0() {
+        super.fast0();
+        validateCapacityPowerOfTwo(capacity);
+    }
+
     public abstract AbstractHeapMarshallingRingBufferBuilder<T> withByteArray(ByteArray.Factory factory);
 
     void withByteArray0(ByteArray.Factory factory) {

@@ -17,11 +17,11 @@
 package org.ringbuffer.marshalling;
 
 /**
- * From {@link #next(int)} to {@link #put(int)} is an atomic operation.
- * From {@link #take(int)} to {@link #advance(int)} is an atomic operation.
+ * From {@link #next()} to {@link #put(long)} is an atomic operation.
+ * From {@link #take(long)} to {@link #advance()} is an atomic operation.
  */
-public interface MarshallingBlockingRingBuffer extends AbstractMarshallingRingBuffer {
-    int next(int size);
+public interface DirectMarshallingClearingRingBuffer extends AbstractDirectMarshallingRingBuffer {
+    long next();
 
-    void advance(int offset);
+    void advance();
 }

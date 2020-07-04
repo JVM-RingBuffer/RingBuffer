@@ -16,8 +16,11 @@
 
 package org.ringbuffer.marshalling;
 
-public abstract class FastDirectMarshallingRingBuffer implements AbstractDirectMarshallingRingBuffer {
-    public abstract long next(long size);
+abstract class FastDirectMarshallingRingBuffer implements DirectMarshallingRingBuffer {
+    @Override
+    public void advance(long offset) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public long size() {

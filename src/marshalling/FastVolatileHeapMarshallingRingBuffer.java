@@ -31,7 +31,7 @@ class FastVolatileHeapMarshallingRingBuffer extends FastHeapMarshallingRingBuffe
     @Contended
     private int writePosition;
 
-    FastVolatileHeapMarshallingRingBuffer(FastHeapMarshallingRingBufferBuilder builder) {
+    FastVolatileHeapMarshallingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();

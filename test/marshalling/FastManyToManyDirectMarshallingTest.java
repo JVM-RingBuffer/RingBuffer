@@ -26,7 +26,7 @@ class FastManyToManyDirectMarshallingTest extends FastManyToManyDirectMarshallin
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        FastDirectWriter.runGroupAsync(RING_BUFFER, profiler);
-        return FastDirectReader.runGroupAsync(RING_BUFFER, profiler);
+        DirectWriter.runGroupAsync(RING_BUFFER, profiler);
+        return DirectReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

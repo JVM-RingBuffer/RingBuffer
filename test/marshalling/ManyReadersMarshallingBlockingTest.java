@@ -26,7 +26,7 @@ class ManyReadersMarshallingBlockingTest extends ManyReadersMarshallingBlockingC
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(TOTAL_ELEMENTS);
-        BlockingWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return BlockingReader.runGroupAsync(RING_BUFFER, profiler);
+        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

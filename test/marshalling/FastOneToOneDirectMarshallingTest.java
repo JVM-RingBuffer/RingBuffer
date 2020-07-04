@@ -26,7 +26,7 @@ class FastOneToOneDirectMarshallingTest extends FastOneToOneDirectMarshallingCon
     @Override
     protected long testSum() {
         Profiler profiler = createLatencyProfiler(NUM_ITERATIONS);
-        FastDirectWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return FastDirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        DirectWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return DirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

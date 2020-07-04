@@ -20,7 +20,7 @@ import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-class AtomicWriteHeapMarshallingBlockingRingBuffer implements MarshallingBlockingRingBuffer {
+class AtomicWriteHeapMarshallingBlockingRingBuffer implements MarshallingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
@@ -31,7 +31,7 @@ class AtomicWriteHeapMarshallingBlockingRingBuffer implements MarshallingBlockin
     private final Integer readPosition;
     private final Integer writePosition;
 
-    AtomicWriteHeapMarshallingBlockingRingBuffer(HeapMarshallingBlockingRingBufferBuilder builder) {
+    AtomicWriteHeapMarshallingBlockingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

@@ -31,7 +31,7 @@ class FastConcurrentDirectMarshallingRingBuffer extends FastDirectMarshallingRin
     @Contended
     private final AtomicLong writePosition = new AtomicLong();
 
-    FastConcurrentDirectMarshallingRingBuffer(FastDirectMarshallingRingBufferBuilder builder) {
+    FastConcurrentDirectMarshallingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
