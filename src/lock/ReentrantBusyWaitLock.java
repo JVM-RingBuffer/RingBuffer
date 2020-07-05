@@ -16,9 +16,11 @@
 
 package org.ringbuffer.lock;
 
+import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.SleepBusyWaitStrategy;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ReentrantBusyWaitLock implements Lock {
@@ -53,5 +55,16 @@ public class ReentrantBusyWaitLock implements Lock {
     @Override
     public void unlock() {
         lock.unlock();
+    }
+
+    private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
+
+    /**
+     * Supports creating a separate implementation to allow inlining of polymorphic calls.
+     *
+     * @see CopiedClass
+     */
+    public static CopiedClass<Lock> copyClass() {
+        return CopiedClass.of(ReentrantBusyWaitLock.class, implLookup);
     }
 }

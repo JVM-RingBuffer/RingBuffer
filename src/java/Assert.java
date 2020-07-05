@@ -33,6 +33,10 @@ public class Assert {
         assert left != right : left;
     }
 
+    public static void notEqual(Object left, Object right) {
+        assert !left.equals(right) : left;
+    }
+
     public static void lesser(int value, int cap) {
         assert value < cap : value;
     }

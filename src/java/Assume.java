@@ -29,6 +29,12 @@ public class Assume {
         }
     }
 
+    public static void notEqual(Object left, Object right) {
+        if (left.equals(right)) {
+            throw new IllegalObjectArgumentException(left);
+        }
+    }
+
     public static void lesser(int value, int cap) {
         if (value >= cap) {
             throw new IllegalIntArgumentException(value);

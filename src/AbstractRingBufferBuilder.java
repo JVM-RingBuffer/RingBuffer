@@ -124,7 +124,7 @@ public abstract class AbstractRingBufferBuilder<T> {
     }
 
     /**
-     * A separate implementation will be created to allow inlining of polymorphic calls.
+     * A separate ring buffer implementation will be created to allow inlining of polymorphic calls.
      *
      * @see CopiedClass
      */
@@ -199,6 +199,16 @@ public abstract class AbstractRingBufferBuilder<T> {
         return readBusyWaitStrategy;
     }
 
+    protected static void validateCapacity(long capacity) {
+        Assume.notLesser(capacity, 2L);
+    }
+
+    protected static void validateCapacityPowerOfTwo(long capacity) {
+        if (!Numbers.isPowerOfTwo(capacity)) {
+            throw new IllegalArgumentException("capacity must be a power of 2.");
+        }
+    }
+
     protected enum RingBufferConcurrency {
         VOLATILE,
         ATOMIC_READ,
@@ -211,15 +221,5 @@ public abstract class AbstractRingBufferBuilder<T> {
         CLEARING_FAST,
         BLOCKING,
         DISCARDING
-    }
-
-    protected static void validateCapacity(long capacity) {
-        Assume.notLesser(capacity, 2L);
-    }
-
-    protected static void validateCapacityPowerOfTwo(long capacity) {
-        if (!Numbers.isPowerOfTwo(capacity)) {
-            throw new IllegalArgumentException("capacity must be a power of 2.");
-        }
     }
 }

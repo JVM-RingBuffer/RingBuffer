@@ -29,6 +29,12 @@ public class Ensure {
         }
     }
 
+    public static void notEqual(Object left, Object right) {
+        if (left.equals(right)) {
+            throw new IllegalObjectStateException(left);
+        }
+    }
+
     public static void lesser(int value, int cap) {
         if (value >= cap) {
             throw new IllegalIntStateException(value);

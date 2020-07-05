@@ -37,7 +37,7 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
         return new Builder().endWith(finalStrategy);
     }
 
-    private LinkedMultiStepBusyWaitStrategy(Builder builder) {
+    LinkedMultiStepBusyWaitStrategy(Builder builder) {
         initialStrategy = builder.getInitialStrategy();
     }
 
@@ -120,6 +120,11 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
         }
 
         @Override
+        public MultiStepBusyWaitStrategy.Builder copyClass() {
+            return this;
+        }
+
+        @Override
         public MultiStepBusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {
@@ -128,7 +133,7 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
             return new LinkedMultiStepBusyWaitStrategy(this);
         }
 
-        private Node getInitialStrategy() {
+        Node getInitialStrategy() {
             Iterator<BusyWaitStrategy> strategies = this.strategies.iterator();
             Iterator<Integer> strategiesTicks = this.strategiesTicks.iterator();
             Node initialStrategy = new Node(strategies.next(), strategiesTicks.next(), new Node(finalStrategy, 0, null));

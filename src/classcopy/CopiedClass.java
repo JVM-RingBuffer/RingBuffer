@@ -19,6 +19,7 @@ package org.ringbuffer.classcopy;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.java.Assert;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
@@ -81,7 +82,7 @@ public class CopiedClass<T> {
         }
         return new CopiedClass<>(byteBuddy
                 .redefine(original)
-                .name(original.getCanonicalName() + "$Copy" + ids.getAndIncrementVolatile())
+                .name(original.getName() + "$Copy" + ids.getAndIncrementVolatile())
                 .make()
                 .load(original.getClassLoader(), ClassLoadingStrategy.UsingLookup.of(lookup))
                 .getLoaded(), original);
@@ -89,7 +90,7 @@ public class CopiedClass<T> {
 
     @SuppressWarnings("unchecked")
     private CopiedClass(Class<?> copy, Class<?> original) {
-        assert !copy.equals(original);
+        Assert.notEqual(copy, original);
         this.copy = (Class<T>) copy;
         this.original = original;
     }

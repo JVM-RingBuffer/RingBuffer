@@ -115,7 +115,7 @@ public class ThreadSpreader {
                 throw new IllegalStateException("You must call increment(), skipHyperthreads() or skipFourWayHyperthreads().");
             }
             if (lastCPU == -1) {
-                throw new IllegalStateException("You must call toCPU().");
+                throw new IllegalStateException("You must call toCPU() or toLastCPU().");
             }
             Ensure.notGreaterThan(firstCPU, lastCPU);
             return new ThreadSpreader(this);
