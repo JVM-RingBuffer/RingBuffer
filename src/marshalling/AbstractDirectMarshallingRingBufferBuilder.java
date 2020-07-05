@@ -74,7 +74,7 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
 
     DirectAtomicBooleanArray getWrittenPositions() {
         DirectAtomicBooleanArray writtenPositions = new DirectAtomicBooleanArray(capacity);
-        writtenPositions.fill(true, capacity);
+        writtenPositions.fill(true);
         return writtenPositions;
     }
 }

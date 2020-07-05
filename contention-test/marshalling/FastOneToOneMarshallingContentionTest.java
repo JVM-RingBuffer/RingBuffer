@@ -39,7 +39,7 @@ public class FastOneToOneMarshallingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        FastWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return FastReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

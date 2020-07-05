@@ -51,16 +51,12 @@ class ClearingReader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        sum = collect();
-    }
-
-    long collect() {
         MarshallingClearingRingBuffer ringBuffer = getMarshallingClearingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));
             ringBuffer.advance();
         }
-        return sum;
+        this.sum = sum;
     }
 }

@@ -26,7 +26,7 @@ class FastOneToOneMarshallingTest extends FastOneToOneMarshallingContentionTest 
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        FastWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return FastReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

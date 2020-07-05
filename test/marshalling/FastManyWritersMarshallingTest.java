@@ -26,7 +26,7 @@ class FastManyWritersMarshallingTest extends FastManyWritersMarshallingContentio
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        FastWriter.runGroupAsync(RING_BUFFER, profiler);
+        return FastReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

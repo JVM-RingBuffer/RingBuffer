@@ -16,23 +16,23 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingClearingRingBuffer;
+import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.DirectOffsets.*;
 
-class DirectClearingReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectClearingReader(numIterations, ringBuffer));
+class FastDirectReader extends TestThread implements AbstractReader {
+    static long runGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new FastDirectReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
-        DirectClearingReader reader = new DirectClearingReader(numIterations, ringBuffer);
+    static long runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+        FastDirectReader reader = new FastDirectReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
         return reader.getSum();
@@ -40,7 +40,7 @@ class DirectClearingReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    DirectClearingReader(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer) {
+    FastDirectReader(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -51,11 +51,10 @@ class DirectClearingReader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        DirectMarshallingClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
+        DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));
-            ringBuffer.advance();
         }
         this.sum = sum;
     }

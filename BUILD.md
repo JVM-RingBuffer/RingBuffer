@@ -1,6 +1,6 @@
 ## Build
 
-1. Open the project in IntelliJ IDEA
+1. Open the project in IntelliJ IDEA (launch with `idea.no.launcher=true`)
 2. Set project JDK to at least JDK 11
 3. Build Artifact: RingBuffer
 
