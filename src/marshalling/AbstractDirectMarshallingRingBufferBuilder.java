@@ -16,12 +16,12 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 import org.ringbuffer.memory.Long;
 
 abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMarshallingRingBufferBuilder<T> {
     private final long capacity;
     private DirectByteArray.Factory byteArrayFactory = DirectByteArray.SAFE;
+    private DirectAtomicBooleanArray.Factory writtenPositionsFactory = DirectAtomicBooleanArray.SAFE;
     // All fields are copied in <init>(AbstractDirectMarshallingRingBufferBuilder<?>)
 
     AbstractDirectMarshallingRingBufferBuilder(long capacity) {
@@ -34,6 +34,7 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
         super(builder);
         capacity = builder.capacity;
         byteArrayFactory = builder.byteArrayFactory;
+        writtenPositionsFactory = builder.writtenPositionsFactory;
     }
 
     /**
@@ -56,6 +57,12 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
         byteArrayFactory = factory;
     }
 
+    public abstract AbstractDirectMarshallingRingBufferBuilder<T> withWrittenPositions(DirectAtomicBooleanArray.Factory factory);
+
+    void withWrittenPositions0(DirectAtomicBooleanArray.Factory factory) {
+        writtenPositionsFactory = factory;
+    }
+
     long getCapacity() {
         return capacity;
     }
@@ -73,8 +80,8 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
     }
 
     DirectAtomicBooleanArray getWrittenPositions() {
-        DirectAtomicBooleanArray writtenPositions = new DirectAtomicBooleanArray(capacity);
-        writtenPositions.fill(true);
+        DirectAtomicBooleanArray writtenPositions = writtenPositionsFactory.newInstance(capacity);
+        writtenPositions.fill(true, capacity);
         return writtenPositions;
     }
 }

@@ -104,6 +104,12 @@ public class DirectMarshallingClearingRingBufferBuilder extends AbstractDirectMa
     }
 
     @Override
+    public DirectMarshallingClearingRingBufferBuilder withWrittenPositions(DirectAtomicBooleanArray.Factory factory) {
+        super.withWrittenPositions0(factory);
+        return this;
+    }
+
+    @Override
     protected DirectMarshallingClearingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:

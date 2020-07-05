@@ -16,172 +16,195 @@
 
 package org.ringbuffer.marshalling.array;
 
-import org.ringbuffer.java.Assume;
-import org.ringbuffer.marshalling.DirectByteArrayIndexOutOfBoundsException;
-import org.ringbuffer.system.CleanerService;
+import org.ringbuffer.marshalling.DirectArrayIndexOutOfBoundsException;
 
-import static org.ringbuffer.system.InternalUnsafe.*;
-
-public class DirectAtomicBooleanArray {
-    private final long address;
+public class SafeDirectAtomicBooleanArray extends UnsafeDirectAtomicBooleanArray {
     private final long length;
 
-    public DirectAtomicBooleanArray(long length) {
-        Assume.notLesser(length, 1L);
-        address = UNSAFE.allocateMemory(length);
-        CleanerService.freeMemory(this, address);
+    public SafeDirectAtomicBooleanArray(long length) {
+        super(length);
         this.length = length;
     }
 
     private void checkBounds(long index) {
         if (index < 0L || index >= length) {
-            throw new DirectByteArrayIndexOutOfBoundsException(index);
+            throw new DirectArrayIndexOutOfBoundsException(index);
         }
     }
 
+    @Override
     public void setPlain(long index, boolean value) {
         checkBounds(index);
-        UNSAFE.putBoolean(null, address + index, value);
+        super.setPlain(index, value);
     }
 
+    @Override
     public void setOpaque(long index, boolean value) {
         checkBounds(index);
-        UNSAFE.putBooleanOpaque(null, address + index, value);
+        super.setOpaque(index, value);
     }
 
+    @Override
     public void setRelease(long index, boolean value) {
         checkBounds(index);
-        UNSAFE.putBooleanRelease(null, address + index, value);
+        super.setRelease(index, value);
     }
 
+    @Override
     public void setVolatile(long index, boolean value) {
         checkBounds(index);
-        UNSAFE.putBooleanVolatile(null, address + index, value);
+        super.setVolatile(index, value);
     }
 
+    @Override
     public boolean getPlain(long index) {
         checkBounds(index);
-        return UNSAFE.getBoolean(null, address + index);
+        return super.getPlain(index);
     }
 
+    @Override
     public boolean getOpaque(long index) {
         checkBounds(index);
-        return UNSAFE.getBooleanOpaque(null, address + index);
+        return super.getOpaque(index);
     }
 
+    @Override
     public boolean getAcquire(long index) {
         checkBounds(index);
-        return UNSAFE.getBooleanAcquire(null, address + index);
+        return super.getAcquire(index);
     }
 
+    @Override
     public boolean getVolatile(long index) {
         checkBounds(index);
-        return UNSAFE.getBooleanVolatile(null, address + index);
+        return super.getVolatile(index);
     }
 
+    @Override
     public boolean compareAndSetVolatile(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.compareAndSetBoolean(null, address + index, oldValue, newValue);
+        return super.compareAndSetVolatile(index, oldValue, newValue);
     }
 
+    @Override
     public boolean weakComparePlainAndSetPlain(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.weakCompareAndSetBooleanPlain(null, address + index, oldValue, newValue);
+        return super.weakComparePlainAndSetPlain(index, oldValue, newValue);
     }
 
+    @Override
     public boolean weakComparePlainAndSetRelease(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.weakCompareAndSetBooleanRelease(null, address + index, oldValue, newValue);
+        return super.weakComparePlainAndSetRelease(index, oldValue, newValue);
     }
 
+    @Override
     public boolean weakCompareAcquireAndSetPlain(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.weakCompareAndSetBooleanAcquire(null, address + index, oldValue, newValue);
+        return super.weakCompareAcquireAndSetPlain(index, oldValue, newValue);
     }
 
+    @Override
     public boolean weakCompareAndSetVolatile(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.weakCompareAndSetBoolean(null, address + index, oldValue, newValue);
+        return super.weakCompareAndSetVolatile(index, oldValue, newValue);
     }
 
+    @Override
     public boolean getPlainAndSetRelease(long index, boolean value) {
         checkBounds(index);
-        return UNSAFE.getAndSetBooleanRelease(null, address + index, value);
+        return super.getPlainAndSetRelease(index, value);
     }
 
+    @Override
     public boolean getAcquireAndSetPlain(long index, boolean value) {
         checkBounds(index);
-        return UNSAFE.getAndSetBooleanAcquire(null, address + index, value);
+        return super.getAcquireAndSetPlain(index, value);
     }
 
+    @Override
     public boolean getAndSetVolatile(long index, boolean value) {
         checkBounds(index);
-        return UNSAFE.getAndSetBoolean(null, address + index, value);
+        return super.getAndSetVolatile(index, value);
     }
 
+    @Override
     public boolean comparePlainAndExchangeRelease(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.compareAndExchangeBooleanRelease(null, address + index, oldValue, newValue);
+        return super.comparePlainAndExchangeRelease(index, oldValue, newValue);
     }
 
+    @Override
     public boolean compareAcquireAndExchangePlain(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.compareAndExchangeBooleanAcquire(null, address + index, oldValue, newValue);
+        return super.compareAcquireAndExchangePlain(index, oldValue, newValue);
     }
 
+    @Override
     public boolean compareAndExchangeVolatile(long index, boolean oldValue, boolean newValue) {
         checkBounds(index);
-        return UNSAFE.compareAndExchangeBoolean(null, address + index, oldValue, newValue);
+        return super.compareAndExchangeVolatile(index, oldValue, newValue);
     }
 
+    @Override
     public boolean getPlainAndBitwiseAndRelease(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseAndBooleanRelease(null, address + index, mask);
+        return super.getPlainAndBitwiseAndRelease(index, mask);
     }
 
+    @Override
     public boolean getAcquireAndBitwiseAndPlain(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseAndBooleanAcquire(null, address + index, mask);
+        return super.getAcquireAndBitwiseAndPlain(index, mask);
     }
 
+    @Override
     public boolean getAndBitwiseAndVolatile(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseAndBoolean(null, address + index, mask);
+        return super.getAndBitwiseAndVolatile(index, mask);
     }
 
+    @Override
     public boolean getPlainAndBitwiseOrRelease(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseOrBooleanRelease(null, address + index, mask);
+        return super.getPlainAndBitwiseOrRelease(index, mask);
     }
 
+    @Override
     public boolean getAcquireAndBitwiseOrPlain(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseOrBooleanAcquire(null, address + index, mask);
+        return super.getAcquireAndBitwiseOrPlain(index, mask);
     }
 
+    @Override
     public boolean getAndBitwiseOrVolatile(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseOrBoolean(null, address + index, mask);
+        return super.getAndBitwiseOrVolatile(index, mask);
     }
 
+    @Override
     public boolean getPlainAndBitwiseXorRelease(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseXorBooleanRelease(null, address + index, mask);
+        return super.getPlainAndBitwiseXorRelease(index, mask);
     }
 
+    @Override
     public boolean getAcquireAndBitwiseXorPlain(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseXorBooleanAcquire(null, address + index, mask);
+        return super.getAcquireAndBitwiseXorPlain(index, mask);
     }
 
+    @Override
     public boolean getAndBitwiseXorVolatile(long index, boolean mask) {
         checkBounds(index);
-        return UNSAFE.getAndBitwiseXorBoolean(null, address + index, mask);
+        return super.getAndBitwiseXorVolatile(index, mask);
     }
 
-    public void fill(boolean value) {
-        for (long i = 0L; i < length; i++) {
-            setPlain(i, value);
+    @Override
+    public void fill(boolean value, long length) {
+        if (length != this.length) {
+            throw new DirectArrayIndexOutOfBoundsException(length);
         }
+        super.fill(value, length);
     }
 }

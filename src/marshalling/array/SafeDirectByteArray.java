@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling.array;
 
-import org.ringbuffer.marshalling.DirectByteArrayIndexOutOfBoundsException;
+import org.ringbuffer.marshalling.DirectArrayIndexOutOfBoundsException;
 
 public class SafeDirectByteArray extends UnsafeDirectByteArray {
     private final long length;
@@ -28,7 +28,7 @@ public class SafeDirectByteArray extends UnsafeDirectByteArray {
 
     private void checkBounds(long index) {
         if (index < 0L || index >= length) {
-            throw new DirectByteArrayIndexOutOfBoundsException(index);
+            throw new DirectArrayIndexOutOfBoundsException(index);
         }
     }
 

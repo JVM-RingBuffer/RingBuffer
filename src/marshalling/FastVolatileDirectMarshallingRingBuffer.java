@@ -17,7 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 
 class FastVolatileDirectMarshallingRingBuffer extends FastDirectMarshallingRingBuffer {
     private final long capacityMinusOne;

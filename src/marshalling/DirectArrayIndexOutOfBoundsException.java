@@ -16,10 +16,10 @@
 
 package org.ringbuffer.marshalling;
 
-public class DirectByteArrayIndexOutOfBoundsException extends IndexOutOfBoundsException {
+public class DirectArrayIndexOutOfBoundsException extends IndexOutOfBoundsException {
     private final long index;
 
-    public DirectByteArrayIndexOutOfBoundsException(long index) {
+    public DirectArrayIndexOutOfBoundsException(long index) {
         super(Long.toString(index));
         this.index = index;
     }

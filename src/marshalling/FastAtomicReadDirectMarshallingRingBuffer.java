@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.marshalling.array.DirectAtomicBooleanArray;
 
 class FastAtomicReadDirectMarshallingRingBuffer extends FastDirectMarshallingRingBuffer {
     private final long capacityMinusOne;

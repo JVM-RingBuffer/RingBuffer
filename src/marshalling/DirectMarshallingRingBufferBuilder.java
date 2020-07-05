@@ -102,6 +102,12 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
     }
 
     @Override
+    public DirectMarshallingRingBufferBuilder withWrittenPositions(DirectAtomicBooleanArray.Factory factory) {
+        super.withWrittenPositions0(factory);
+        return this;
+    }
+
+    @Override
     protected DirectMarshallingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
