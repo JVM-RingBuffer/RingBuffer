@@ -16,28 +16,18 @@
 
 package test.competitors;
 
+import test.AbstractTestThread;
 import test.object.Event;
 
 import java.util.Queue;
 
-class QueueAdapter extends Adapter {
-    private final Queue<Event> queue;
-
-    QueueAdapter(Queue<Event> queue) {
-        this.queue = queue;
+abstract class TestThread extends AbstractTestThread {
+    TestThread(int numIterations, Queue<Event> queue) {
+        super(numIterations, queue);
     }
 
-    @Override
-    public void put(Event element) {
-        queue.offer(element);
-    }
-
-    @Override
-    public Event take() {
-        Event element;
-        while ((element = queue.poll()) == null) {
-            Thread.onSpinWait();
-        }
-        return element;
+    @SuppressWarnings("unchecked")
+    Queue<Event> getQueue() {
+        return (Queue<Event>) dataStructure;
     }
 }

@@ -16,14 +16,17 @@
 
 package test.competitors;
 
-import test.object.FastManyWritersTest;
+import test.Profiler;
 
-class AgronaManyWritersTest extends FastManyWritersTest {
+class AgronaManyWritersTest extends AgronaManyWritersContentionTest {
     public static void main(String[] args) {
         new AgronaManyWritersTest().runBenchmark();
     }
 
-    private AgronaManyWritersTest() {
-        super(AgronaManyWritersContentionTest.ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        Writer.runGroupAsync(QUEUE, profiler);
+        return Reader.runAsync(TOTAL_ELEMENTS, QUEUE, profiler);
     }
 }

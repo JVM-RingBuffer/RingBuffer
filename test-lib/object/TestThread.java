@@ -23,27 +23,27 @@ import org.ringbuffer.object.RingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
-    TestThread(int numIterations, Object ringBuffer) {
+    TestThread(int numIterations, ObjectRingBuffer<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @SuppressWarnings("unchecked")
-    ObjectRingBuffer<Event> getRingBuffer() {
-        return (ObjectRingBuffer<Event>) ringBuffer;
+    ObjectRingBuffer<Event> getObjectRingBuffer() {
+        return (ObjectRingBuffer<Event>) dataStructure;
     }
 
     @SuppressWarnings("unchecked")
-    RingBuffer<Event> getEmptyRingBuffer() {
-        return (RingBuffer<Event>) ringBuffer;
+    RingBuffer<Event> getRingBuffer() {
+        return (RingBuffer<Event>) dataStructure;
     }
 
     @SuppressWarnings("unchecked")
-    PrefilledClearingRingBuffer<Event> getPrefilledOverwritingRingBuffer() {
-        return (PrefilledClearingRingBuffer<Event>) ringBuffer;
+    PrefilledClearingRingBuffer<Event> getPrefilledClearingRingBuffer() {
+        return (PrefilledClearingRingBuffer<Event>) dataStructure;
     }
 
     @SuppressWarnings("unchecked")
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
-        return (PrefilledRingBuffer<Event>) ringBuffer;
+        return (PrefilledRingBuffer<Event>) dataStructure;
     }
 }

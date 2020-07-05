@@ -17,17 +17,23 @@
 package test.competitors;
 
 import org.jctools.queues.SpscArrayQueue;
+import test.Profiler;
+import test.object.Event;
 import test.object.FastOneToOneContentionTest;
 
+import java.util.Queue;
+
 class JCToolsOneToOneContentionTest extends FastOneToOneContentionTest {
-    static final Adapter ADAPTER = new QueueAdapter(
-            new SpscArrayQueue<>(FAST_ONE_TO_ONE_SIZE));
+    static final Queue<Event> QUEUE = new SpscArrayQueue<>(FAST_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
         new JCToolsOneToOneContentionTest().runBenchmark();
     }
 
-    private JCToolsOneToOneContentionTest() {
-        super(ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
+        Writer.startAsync(NUM_ITERATIONS, QUEUE, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, QUEUE, profiler);
     }
 }

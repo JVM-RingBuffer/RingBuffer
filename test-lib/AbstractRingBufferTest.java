@@ -48,7 +48,7 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     protected abstract long testSum();
 
     protected static Profiler createThroughputProfiler(int divideBy) {
-        return new Profiler("Throughput", divideBy, value -> Profiler.NUMBER_FORMAT.format(1_000D / value) + "M msg/sec");
+        return new Profiler("Throughput", divideBy, Profiler.ResultFormat.THROUGHPUT);
     }
 
     @Override

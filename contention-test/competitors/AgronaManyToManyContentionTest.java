@@ -17,17 +17,23 @@
 package test.competitors;
 
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
+import test.Profiler;
+import test.object.Event;
 import test.object.FastManyToManyContentionTest;
 
+import java.util.Queue;
+
 class AgronaManyToManyContentionTest extends FastManyToManyContentionTest {
-    static final Adapter ADAPTER = new QueueAdapter(
-            new ManyToManyConcurrentArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE));
+    static final Queue<Event> QUEUE = new ManyToManyConcurrentArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
         new AgronaManyToManyContentionTest().runBenchmark();
     }
 
-    private AgronaManyToManyContentionTest() {
-        super(ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        Writer.startGroupAsync(QUEUE, profiler);
+        return Reader.runGroupAsync(QUEUE, profiler);
     }
 }

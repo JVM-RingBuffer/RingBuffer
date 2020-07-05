@@ -16,24 +16,17 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
-public class FastOneToOneTest extends FastOneToOneContentionTest {
+class FastOneToOneTest extends FastOneToOneContentionTest {
     public static void main(String[] args) {
         new FastOneToOneTest().runBenchmark();
-    }
-
-    private FastOneToOneTest() {}
-
-    protected FastOneToOneTest(RingBuffer<Event> ringBuffer) {
-        super(ringBuffer);
     }
 
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.runAsync(NUM_ITERATIONS, ringBuffer, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, ringBuffer, profiler);
+        Writer.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

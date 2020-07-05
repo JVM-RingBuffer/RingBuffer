@@ -45,7 +45,7 @@ class BatchReader extends Reader {
 
     @Override
     long collect() {
-        ObjectRingBuffer<Event> ringBuffer = getRingBuffer();
+        ObjectRingBuffer<Event> ringBuffer = getObjectRingBuffer();
         int batchSize = this.batchSize;
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {

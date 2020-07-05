@@ -29,18 +29,18 @@ abstract class TestThread extends AbstractTestThread {
     }
 
     MarshallingClearingRingBuffer getMarshallingClearingRingBuffer() {
-        return (MarshallingClearingRingBuffer) ringBuffer;
+        return (MarshallingClearingRingBuffer) dataStructure;
     }
 
     MarshallingRingBuffer getMarshallingRingBuffer() {
-        return (MarshallingRingBuffer) ringBuffer;
+        return (MarshallingRingBuffer) dataStructure;
     }
 
     DirectMarshallingClearingRingBuffer getDirectMarshallingClearingRingBuffer() {
-        return (DirectMarshallingClearingRingBuffer) ringBuffer;
+        return (DirectMarshallingClearingRingBuffer) dataStructure;
     }
 
     DirectMarshallingRingBuffer getDirectMarshallingRingBuffer() {
-        return (DirectMarshallingRingBuffer) ringBuffer;
+        return (DirectMarshallingRingBuffer) dataStructure;
     }
 }

@@ -38,7 +38,7 @@ class Processor extends TestThread {
 
     @Override
     protected void loop() {
-        RingBuffer<Event> producersRingBuffer = getEmptyRingBuffer();
+        RingBuffer<Event> producersRingBuffer = getRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int eventData = producersRingBuffer.take().getData();
             int key = CONSUMERS_RING_BUFFER.nextKey();

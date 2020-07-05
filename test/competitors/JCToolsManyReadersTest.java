@@ -16,14 +16,17 @@
 
 package test.competitors;
 
-import test.object.FastManyReadersTest;
+import test.Profiler;
 
-class JCToolsManyReadersTest extends FastManyReadersTest {
+class JCToolsManyReadersTest extends JCToolsManyReadersContentionTest {
     public static void main(String[] args) {
         new JCToolsManyReadersTest().runBenchmark();
     }
 
-    private JCToolsManyReadersTest() {
-        super(JCToolsManyReadersContentionTest.ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        Writer.runAsync(TOTAL_ELEMENTS, QUEUE, profiler);
+        return Reader.runGroupAsync(QUEUE, profiler);
     }
 }

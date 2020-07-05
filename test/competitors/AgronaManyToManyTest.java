@@ -16,14 +16,17 @@
 
 package test.competitors;
 
-import test.object.FastManyToManyTest;
+import test.Profiler;
 
-class AgronaManyToManyTest extends FastManyToManyTest {
+class AgronaManyToManyTest extends AgronaManyToManyContentionTest {
     public static void main(String[] args) {
         new AgronaManyToManyTest().runBenchmark();
     }
 
-    private AgronaManyToManyTest() {
-        super(AgronaManyToManyContentionTest.ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        Writer.runGroupAsync(QUEUE, profiler);
+        return Reader.runGroupAsync(QUEUE, profiler);
     }
 }

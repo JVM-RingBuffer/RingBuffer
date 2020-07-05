@@ -39,15 +39,15 @@ public abstract class AbstractTestThread extends Thread {
 
     private final int numIterations;
     private final Profiler profiler;
-    protected final Object ringBuffer;
+    protected final Object dataStructure;
 
     private final CountDownLatch readyLatch = new CountDownLatch(1);
     private final CountDownLatch commenceLatch = new CountDownLatch(1);
 
-    protected AbstractTestThread(int numIterations, Object ringBuffer) {
+    protected AbstractTestThread(int numIterations, Object dataStructure) {
         this.numIterations = numIterations;
         profiler = new Profiler(this, numIterations);
-        this.ringBuffer = ringBuffer;
+        this.dataStructure = dataStructure;
     }
 
     protected void startNow(@Nullable Profiler profiler) {

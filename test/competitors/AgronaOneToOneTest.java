@@ -16,14 +16,17 @@
 
 package test.competitors;
 
-import test.object.FastOneToOneTest;
+import test.Profiler;
 
-class AgronaOneToOneTest extends FastOneToOneTest {
+class AgronaOneToOneTest extends AgronaOneToOneContentionTest {
     public static void main(String[] args) {
         new AgronaOneToOneTest().runBenchmark();
     }
 
-    private AgronaOneToOneTest() {
-        super(AgronaOneToOneContentionTest.ADAPTER);
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
+        Writer.runAsync(NUM_ITERATIONS, QUEUE, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, QUEUE, profiler);
     }
 }

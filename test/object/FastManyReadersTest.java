@@ -16,24 +16,17 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
-public class FastManyReadersTest extends FastManyReadersContentionTest {
+class FastManyReadersTest extends FastManyReadersContentionTest {
     public static void main(String[] args) {
         new FastManyReadersTest().runBenchmark();
-    }
-
-    private FastManyReadersTest() {}
-
-    protected FastManyReadersTest(RingBuffer<Event> ringBuffer) {
-        super(ringBuffer);
     }
 
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runAsync(TOTAL_ELEMENTS, ringBuffer, profiler);
-        return Reader.runGroupAsync(ringBuffer, profiler);
+        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

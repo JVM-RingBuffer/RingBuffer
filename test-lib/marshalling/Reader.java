@@ -51,10 +51,6 @@ class Reader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        sum = collect();
-    }
-
-    long collect() {
         MarshallingRingBuffer ringBuffer = getMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
@@ -62,6 +58,6 @@ class Reader extends TestThread implements AbstractReader {
             sum += ringBuffer.readInt(offset);
             ringBuffer.advance(offset + INT);
         }
-        return sum;
+        this.sum = sum;
     }
 }

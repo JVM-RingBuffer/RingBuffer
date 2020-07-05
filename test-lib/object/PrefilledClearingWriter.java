@@ -47,7 +47,7 @@ class PrefilledClearingWriter extends TestThread {
 
     @Override
     protected void loop() {
-        PrefilledClearingRingBuffer<Event> ringBuffer = getPrefilledOverwritingRingBuffer();
+        PrefilledClearingRingBuffer<Event> ringBuffer = getPrefilledClearingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();
             ringBuffer.next(key).setData(numIterations);

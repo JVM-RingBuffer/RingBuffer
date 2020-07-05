@@ -19,11 +19,11 @@ package test.object;
 public class Event {
     private int data;
 
-    Event(int data) {
+    public Event(int data) {
         this.data = data;
     }
 
-    int getData() {
+    public int getData() {
         return data;
     }
 
