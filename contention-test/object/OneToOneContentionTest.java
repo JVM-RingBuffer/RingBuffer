@@ -31,11 +31,6 @@ public class OneToOneContentionTest extends RingBufferTest {
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 50;
-    }
-
-    @Override
     protected long getSum() {
         return ONE_TO_ONE_SUM;
     }

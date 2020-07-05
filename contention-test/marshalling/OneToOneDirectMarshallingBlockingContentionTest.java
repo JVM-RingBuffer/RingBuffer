@@ -32,11 +32,6 @@ public class OneToOneDirectMarshallingBlockingContentionTest extends RingBufferT
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 50;
-    }
-
-    @Override
     protected long getSum() {
         return ONE_TO_ONE_SUM;
     }

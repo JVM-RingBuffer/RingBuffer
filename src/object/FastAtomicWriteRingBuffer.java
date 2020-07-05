@@ -32,7 +32,7 @@ class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
 
     FastAtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = new AtomicArray<>(builder.getBuffer());
+        buffer = builder.getBufferArray();
     }
 
     @Override

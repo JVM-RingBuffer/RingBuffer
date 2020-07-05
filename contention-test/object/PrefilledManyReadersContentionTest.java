@@ -33,11 +33,6 @@ public class PrefilledManyReadersContentionTest extends RingBufferTest {
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 34;
-    }
-
-    @Override
     protected long getSum() {
         return ONE_TO_MANY_SUM;
     }

@@ -32,7 +32,7 @@ class FastConcurrentRingBuffer<T> extends FastRingBuffer<T> {
 
     FastConcurrentRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = new AtomicArray<>(builder.getBuffer());
+        buffer = builder.getBufferArray();
     }
 
     @Override

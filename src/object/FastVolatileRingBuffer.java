@@ -31,7 +31,7 @@ class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
 
     FastVolatileRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = new AtomicArray<>(builder.getBuffer());
+        buffer = builder.getBufferArray();
     }
 
     @Override

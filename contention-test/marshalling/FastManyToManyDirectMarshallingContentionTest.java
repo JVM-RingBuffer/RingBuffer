@@ -32,11 +32,6 @@ public class FastManyToManyDirectMarshallingContentionTest extends RingBufferTes
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 12;
-    }
-
-    @Override
     protected long getSum() {
         return MANY_WRITERS_SUM;
     }

@@ -16,6 +16,7 @@
 
 package test.wait;
 
+import org.ringbuffer.system.Threads;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
@@ -47,24 +48,25 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     }
 
     @Override
-    protected int getWarmupRepeatTimes() {
-        return isPerfTest ? getRepeatTimes() : 0;
-    }
-
-    @Override
-    protected int getRepeatTimes() {
-        return isPerfTest ? 50 : 1;
-    }
-
-    @Override
     public int getNumIterations() {
         return isPerfTest ? 300_000 : 2;
     }
 
     @Override
+    public void runBenchmark() {
+        if (isPerfTest) {
+            Threads.loadNativeLibrary();
+            Threads.bindCurrentThreadToCPU(2);
+            super.runBenchmark();
+        } else {
+            test(getNumIterations());
+        }
+    }
+
+    @Override
     protected void test(int i) {
         BusyWaitStrategy strategy = getStrategy();
-        Profiler profiler = new Profiler(this, getNumIterations());
+        Profiler profiler = new Profiler(this, i);
         profiler.start();
         for (; i > 0; i--) {
             strategy.reset();

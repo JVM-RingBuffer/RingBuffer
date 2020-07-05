@@ -32,11 +32,6 @@ public class ManyReadersDirectMarshallingBlockingContentionTest extends RingBuff
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 10;
-    }
-
-    @Override
     protected long getSum() {
         return ONE_TO_MANY_SUM;
     }

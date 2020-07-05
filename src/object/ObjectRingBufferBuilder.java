@@ -17,6 +17,7 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
@@ -88,6 +89,10 @@ abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<Obje
     @SuppressWarnings("unchecked")
     T[] getBuffer() {
         return (T[]) new Object[capacity];
+    }
+
+    AtomicArray<T> getBufferArray() {
+        return new AtomicArray<>(capacity);
     }
 
     Integer newCursor() {

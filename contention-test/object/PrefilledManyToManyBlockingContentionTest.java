@@ -33,11 +33,6 @@ public class PrefilledManyToManyBlockingContentionTest extends RingBufferTest {
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 10;
-    }
-
-    @Override
     protected long getSum() {
         return MANY_WRITERS_SUM;
     }

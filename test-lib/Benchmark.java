@@ -21,16 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Benchmark {
-    private static Benchmark instance;
-
-    public static Benchmark current() {
-        return instance;
-    }
+    static volatile Benchmark current;
 
     private final List<Result> results = new ArrayList<>(5);
 
     protected Benchmark() {
-        instance = this;
+        current = this;
     }
 
     Result getResult(String profilerName, Profiler.ResultFormat format) {
@@ -44,23 +40,18 @@ public abstract class Benchmark {
         return result;
     }
 
-    protected int getWarmupRepeatTimes() {
-        return getRepeatTimes();
-    }
-
-    protected abstract int getRepeatTimes();
-
     protected abstract int getNumIterations();
 
     public void runBenchmark() {
         int numIterations = getNumIterations();
-        for (int i = getWarmupRepeatTimes(); i > 0; i--) {
+        long start = System.nanoTime();
+        do {
             test(numIterations);
-        }
+        } while (System.nanoTime() - start < 3L * 1_000_000_000L);
         results.clear();
-        for (int i = getRepeatTimes(); i > 0; i--) {
+        do {
             test(numIterations);
-        }
+        } while (System.nanoTime() - start < 6L * 1_000_000_000L);
         for (Result result : results) {
             result.report();
         }

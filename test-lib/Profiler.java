@@ -32,7 +32,7 @@ public class Profiler {
 
     public Profiler(String name, int divideBy, ResultFormat resultFormat) {
         this.divideBy = divideBy;
-        result = Benchmark.current().getResult(name, resultFormat);
+        result = Benchmark.current.getResult(name, resultFormat);
     }
 
     public void start() {

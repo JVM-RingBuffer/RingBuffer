@@ -31,11 +31,6 @@ public class ManyToManyContentionTest extends RingBufferTest {
     }
 
     @Override
-    protected int getRepeatTimes() {
-        return 12;
-    }
-
-    @Override
     protected long getSum() {
         return MANY_WRITERS_SUM;
     }
