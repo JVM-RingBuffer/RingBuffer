@@ -16,24 +16,17 @@
 
 package test.competitors;
 
-import test.AbstractTestThread;
-import test.object.Event;
+import test.Profiler;
 
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-
-abstract class TestThread extends AbstractTestThread {
-    TestThread(int numIterations, Queue<Event> queue) {
-        super(numIterations, queue);
+class ArrayManyToManyTest extends ArrayManyToManyContentionTest {
+    public static void main(String[] args) {
+        new ArrayManyToManyTest().runBenchmark();
     }
 
-    @SuppressWarnings("unchecked")
-    Queue<Event> getQueue() {
-        return (Queue<Event>) dataStructure;
-    }
-
-    @SuppressWarnings("unchecked")
-    BlockingQueue<Event> getBlockingQueue() {
-        return (BlockingQueue<Event>) dataStructure;
+    @Override
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        BlockingWriter.runGroupAsync(QUEUE, profiler);
+        return BlockingReader.runGroupAsync(QUEUE, profiler);
     }
 }
