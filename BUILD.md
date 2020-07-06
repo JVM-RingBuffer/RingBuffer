@@ -1,6 +1,6 @@
 ## Build
 
-1. Open the project in IntelliJ IDEA (launch with `idea.no.launcher=true`)
+1. Open the project in IntelliJ IDEA
 2. Set project JDK to at least JDK 11
 3. Build Artifact: RingBuffer
 
@@ -13,3 +13,5 @@
 
 `AbstractRingBufferTest.CONCURRENCY` is the number of concurrent producers and the number of concurrent consumers where applicable.  
 If simultaneous multithreading is not two-way or not enabled, tweak `AbstractTestThread.spreader`.
+
+Set IntelliJ IDEA property: `idea.no.launcher=true`

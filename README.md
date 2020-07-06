@@ -71,8 +71,7 @@ To allow inlining of polymorphic calls, a class can be copied. This is similar t
 To understand when this can be useful, examine the particular implementation you are using and determine if a virtual call is polymorphic (for example this is the case when different busy-wait strategies are used in different instances of the same ring buffer).
 
 First, add [Byte Buddy](https://bytebuddy.net/#/) to the classpath.  
-Then, call `copyClass()` on the ring buffer builder.  
-This functionality is available for any class by means of the `CopiedClass` class.
+Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 ## Public utilities
 
