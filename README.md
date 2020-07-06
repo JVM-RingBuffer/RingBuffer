@@ -35,11 +35,11 @@ Latency is the time it takes for a single element to be written or read by laten
 
 scenario|msg/sec|latency
 ---|---|---
-3 producers → 3 consumers | 20 million | 140ns
-3 producers → 1 consumer | 20 million | 50ns
-1 producer → 3 consumers | 50 million | 7ns
-1 producer → 1 consumer | 110 million | 9ns
-2 producers → 1 processor → 2 consumers | 20 million | 47ns
+3 producers → 3 consumers | 15 million | 200ns
+3 producers → 1 consumer | 12 million | 85ns
+1 producer → 3 consumers | 32 million | 4ns
+1 producer → 1 consumer | 125 million | 8ns
+2 producers → 1 processor → 2 consumers | 6 million | 160ns
 
 The following are lock-free implementations (call `fast()` on the builder).
 

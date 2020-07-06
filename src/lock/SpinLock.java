@@ -16,44 +16,41 @@
 
 package org.ringbuffer.lock;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import java.util.concurrent.locks.ReentrantLock;
-
-public class ReentrantBusyWaitLock implements Lock {
+/**
+ * Requires {@code -XX:-RestrictContended}.
+ */
+@Contended
+public class SpinLock implements Lock {
+    private final AtomicBoolean state = new AtomicBoolean();
     private final BusyWaitStrategy busyWaitStrategy;
-    private final ReentrantLock lock;
 
-    public ReentrantBusyWaitLock() {
-        this(false, HintBusyWaitStrategy.DEFAULT_INSTANCE);
+    public SpinLock() {
+        this(HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
-    public ReentrantBusyWaitLock(boolean fair) {
-        this(fair, HintBusyWaitStrategy.DEFAULT_INSTANCE);
-    }
-
-    public ReentrantBusyWaitLock(BusyWaitStrategy busyWaitStrategy) {
-        this(false, busyWaitStrategy);
-    }
-
-    public ReentrantBusyWaitLock(boolean fair, BusyWaitStrategy busyWaitStrategy) {
-        lock = new ReentrantLock(fair);
+    public SpinLock(BusyWaitStrategy busyWaitStrategy) {
         this.busyWaitStrategy = busyWaitStrategy;
     }
 
     @Override
     public void lock() {
-        busyWaitStrategy.reset();
-        while (!lock.tryLock()) {
-            busyWaitStrategy.tick();
+        while (state.getAcquireAndSetPlain(true)) {
+            busyWaitStrategy.reset();
+            while (state.getOpaque()) {
+                busyWaitStrategy.tick();
+            }
         }
     }
 
     @Override
     public void unlock() {
-        lock.unlock();
+        state.setRelease(false);
     }
 
     /**
@@ -62,6 +59,6 @@ public class ReentrantBusyWaitLock implements Lock {
      * @see CopiedClass
      */
     public static CopiedClass<Lock> copyClass() {
-        return ClassCopy.copyClass(ReentrantBusyWaitLock.class);
+        return ClassCopy.copyClass(SpinLock.class);
     }
 }

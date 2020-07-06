@@ -6,7 +6,7 @@
 
 ## Benchmarks
 
-1 million elements per producer are written, and 1 million elements per consumer are read.
+1 million elements per concurrent thread are written/read.
 
 `test` folder: write all elements _then_ read all elements  
 `contention-test` folder: write and read at the same time all elements

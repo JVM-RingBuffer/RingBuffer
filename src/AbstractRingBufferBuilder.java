@@ -20,7 +20,7 @@ import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Numbers;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.lock.ReentrantBusyWaitLock;
+import org.ringbuffer.lock.ReentrantLock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
@@ -176,14 +176,14 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     protected Lock getWriteLock() {
         if (writeLock == null) {
-            return new ReentrantBusyWaitLock();
+            return new ReentrantLock();
         }
         return writeLock;
     }
 
     protected Lock getReadLock() {
         if (readLock == null) {
-            return new ReentrantBusyWaitLock();
+            return new ReentrantLock();
         }
         return readLock;
     }

@@ -18,8 +18,8 @@ package org.ringbuffer.wait;
 
 import java.util.concurrent.locks.LockSupport;
 
-public class SleepBusyWaitStrategy implements BusyWaitStrategy {
-    public static final SleepBusyWaitStrategy DEFAULT_INSTANCE = new SleepBusyWaitStrategy(1L);
+public class ParkBusyWaitStrategy implements BusyWaitStrategy {
+    public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();
 
     public static BusyWaitStrategy getDefault() {
         return ArrayMultiStepBusyWaitStrategy.endWith(DEFAULT_INSTANCE)
@@ -27,17 +27,11 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
                 .build();
     }
 
-    private final long sleepTime;
-
-    public SleepBusyWaitStrategy(long sleepTime) {
-        this.sleepTime = sleepTime;
-    }
-
     @Override
     public void reset() {}
 
     @Override
     public void tick() {
-        LockSupport.parkNanos(sleepTime);
+        LockSupport.parkNanos(1L);
     }
 }
