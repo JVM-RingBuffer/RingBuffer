@@ -17,6 +17,8 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.java.Assume;
+import org.ringbuffer.lock.Lock;
+import org.ringbuffer.lock.SpinLock;
 
 import java.util.function.Supplier;
 
@@ -46,6 +48,11 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends ObjectRingBufferBui
         if (filler == null) {
             throw new IllegalStateException("You must call fillWith().");
         }
+    }
+
+    @Override
+    protected Lock defaultLock() {
+        return new SpinLock();
     }
 
     @Override

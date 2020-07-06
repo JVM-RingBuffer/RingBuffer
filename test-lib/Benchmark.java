@@ -43,15 +43,22 @@ public abstract class Benchmark {
     protected abstract int getNumIterations();
 
     public void runBenchmark() {
+        Runtime runtime = Runtime.getRuntime();
         int numIterations = getNumIterations();
-        long start = System.nanoTime();
+
+        long start = runtime.freeMemory();
+        test(numIterations);
+        long testMemoryCap = (start - runtime.freeMemory()) * 3L;
+
+        long warmupMemoryCap = runtime.totalMemory() / 2L;
+        start = System.nanoTime();
         do {
             test(numIterations);
-        } while (System.nanoTime() - start < 3L * 1_000_000_000L);
+        } while (System.nanoTime() - start < 3L * 1_000_000_000L && runtime.freeMemory() > warmupMemoryCap);
         results.clear();
         do {
             test(numIterations);
-        } while (System.nanoTime() - start < 6L * 1_000_000_000L);
+        } while (System.nanoTime() - start < 6L * 1_000_000_000L && runtime.freeMemory() > testMemoryCap);
         for (Result result : results) {
             result.report();
         }

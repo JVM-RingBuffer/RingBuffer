@@ -16,10 +16,13 @@
 
 package org.ringbuffer.lock;
 
+import jdk.internal.vm.annotation.Contended;
+
 /**
  * Generates garbage.
  */
 public class ReentrantLock implements Lock {
+    @Contended
     private final java.util.concurrent.locks.ReentrantLock lock;
 
     public ReentrantLock() {

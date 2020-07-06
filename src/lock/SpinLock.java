@@ -22,11 +22,8 @@ import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-/**
- * Requires {@code -XX:-RestrictContended}.
- */
-@Contended
 public class SpinLock implements Lock {
+    @Contended
     private final AtomicBoolean state = new AtomicBoolean();
     private final BusyWaitStrategy busyWaitStrategy;
 

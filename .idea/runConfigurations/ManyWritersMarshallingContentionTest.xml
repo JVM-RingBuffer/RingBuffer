@@ -2,7 +2,7 @@
   <configuration default="false" name="ManyWritersMarshallingContentionTest" type="Application" factoryName="Application" folderName="Many Writers Marshalling">
     <option name="MAIN_CLASS_NAME" value="test.marshalling.ManyWritersMarshallingContentionTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

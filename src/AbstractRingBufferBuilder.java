@@ -176,16 +176,20 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     protected Lock getWriteLock() {
         if (writeLock == null) {
-            return new ReentrantLock();
+            return defaultLock();
         }
         return writeLock;
     }
 
     protected Lock getReadLock() {
         if (readLock == null) {
-            return new ReentrantLock();
+            return defaultLock();
         }
         return readLock;
+    }
+
+    protected Lock defaultLock() {
+        return new ReentrantLock();
     }
 
     protected BusyWaitStrategy getWriteBusyWaitStrategy() {
