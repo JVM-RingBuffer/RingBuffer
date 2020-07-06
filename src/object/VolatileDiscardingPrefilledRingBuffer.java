@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -28,8 +29,11 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
+    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     VolatileDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -76,7 +80,7 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     public T take() {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (writePosition.get() == readPosition) {
+        while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
@@ -85,6 +89,14 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
             this.readPosition.set(readPosition - 1);
         }
         return buffer[readPosition];
+    }
+
+    private boolean isEmptyCached(int readPosition) {
+        if (cachedWritePosition == readPosition) {
+            cachedWritePosition = writePosition.get();
+            return cachedWritePosition == readPosition;
+        }
+        return false;
     }
 
     @Override

@@ -19,23 +19,21 @@ package test.object;
 import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.RingBuffer;
-import org.ringbuffer.wait.YieldBusyWaitStrategy;
 import test.Profiler;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {
     public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
-            RingBuffer.<Event>withCapacity(BLOCKING_SIZE)
+            RingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
                     .manyWriters()
                     .oneReader()
-                    .blocking()
-                    .withGC()
+                    .fast()
                     .build();
     public static final PrefilledClearingRingBuffer<Event> CONSUMERS_RING_BUFFER =
-            PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+            PrefilledRingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneWriter()
                     .manyReaders()
-                    .waitingWith(YieldBusyWaitStrategy.getDefault())
+                    .fast()
                     .build();
 
     public static void main(String[] args) {
@@ -52,6 +50,6 @@ public class ProducersToProcessorToConsumersContentionTest extends RingBufferTes
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.startGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.startAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);
+        return Reader.runGroupAsync(CONSUMERS_RING_BUFFER, profiler);
     }
 }

@@ -16,17 +16,9 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToConsumersContentionTest {
-    public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
-            RingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .manyWriters()
-                    .oneReader()
-                    .blocking()
-                    .build();
-
     public static void main(String[] args) {
         new ProducersToProcessorToConsumersTest().runBenchmark();
     }
@@ -36,6 +28,6 @@ public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToC
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.runGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.runAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
-        return BatchReader.runGroupAsync(BATCH_SIZE, CONSUMERS_RING_BUFFER, profiler);
+        return Reader.runGroupAsync(CONSUMERS_RING_BUFFER, profiler);
     }
 }

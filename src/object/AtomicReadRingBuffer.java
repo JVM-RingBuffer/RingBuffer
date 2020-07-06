@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -29,8 +30,11 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    @Contended("read")
     private int readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     AtomicReadRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -62,7 +66,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (writePosition.get() == readPosition) {
+        while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
@@ -72,6 +76,14 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         }
         readLock.unlock();
         return buffer[readPosition];
+    }
+
+    private boolean isEmptyCached(int readPosition) {
+        if (cachedWritePosition == readPosition) {
+            cachedWritePosition = writePosition.get();
+            return cachedWritePosition == readPosition;
+        }
+        return false;
     }
 
     @Override

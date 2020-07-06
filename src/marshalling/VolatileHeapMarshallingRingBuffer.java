@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -25,8 +26,11 @@ class VolatileHeapMarshallingRingBuffer implements MarshallingClearingRingBuffer
     private final ByteArray buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    @Contended("read")
     private int readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     VolatileHeapMarshallingRingBuffer(HeapMarshallingClearingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
@@ -55,7 +59,7 @@ class VolatileHeapMarshallingRingBuffer implements MarshallingClearingRingBuffer
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
+        while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();
         }
         readPosition = this.readPosition;
@@ -63,16 +67,23 @@ class VolatileHeapMarshallingRingBuffer implements MarshallingClearingRingBuffer
         return readPosition;
     }
 
+    private boolean isNotFullEnoughCached(int readPosition, int size) {
+        if (size(readPosition, cachedWritePosition) < size) {
+            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            return size(readPosition, cachedWritePosition) < size;
+        }
+        return false;
+    }
+
     @Override
     public void advance() {}
 
     @Override
     public int size() {
-        return size(readPosition & capacityMinusOne);
+        return size(readPosition & capacityMinusOne, writePosition.get() & capacityMinusOne);
     }
 
-    private int size(int readPosition) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+    private int size(int readPosition, int writePosition) {
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }

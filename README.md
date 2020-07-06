@@ -35,20 +35,20 @@ Latency is the time it takes for a single element to be written or read by laten
 
 scenario|msg/sec|latency
 ---|---|---
-3 producers → 3 consumers | 15 million | 200ns
-3 producers → 1 consumer | 12 million | 85ns
-1 producer → 3 consumers | 32 million | 4ns
-1 producer → 1 consumer | 125 million | 8ns
-2 producers → 1 processor → 2 consumers | 6 million | 160ns
+3 producers → 3 consumers | 19 million | 150ns
+3 producers → 1 consumer | 26 million | 38ns
+1 producer → 3 consumers | 36 million | 3ns
+1 producer → 1 consumer | 333 million | 3ns
 
 The following are lock-free implementations (call `fast()` on the builder).
 
 scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 32 million | 92ns
-3 producers → 1 consumer | 41 million | 24ns
-1 producer → 3 consumers | 43 million | 4ns
-1 producer → 1 consumer | 250 million | 4ns
+3 producers → 1 consumer | 44 million | 22ns
+1 producer → 3 consumers | 47 million | 2ns
+1 producer → 1 consumer | 333 million | 3ns
+2 producers → 1 processor → 2 consumers | 26 million | 37ns
 
 The following are competitors: [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.
 
@@ -89,7 +89,8 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 
 Please [build from source](BUILD.md).
 
-The module name is `org.ringbuffer`.
+The module name is `org.ringbuffer`.  
+`-XX:-RestrictContended` is recommended.
 
 **Warning.**
 These features of object ring buffers have not yet been tested:

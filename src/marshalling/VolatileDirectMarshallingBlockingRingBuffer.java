@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.Long;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -26,8 +27,11 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingRi
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    @Contended("read")
     private final Long readPosition;
     private final Long writePosition;
+    @Contended("read")
+    private long cachedWritePosition;
 
     VolatileDirectMarshallingBlockingRingBuffer(DirectMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
@@ -71,10 +75,18 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingRi
     public long take(long size) {
         long readPosition = this.readPosition.getPlain() & capacityMinusOne;
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
+        while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();
         }
         return this.readPosition.getPlain();
+    }
+
+    private boolean isNotFullEnoughCached(long readPosition, long size) {
+        if (size(readPosition, cachedWritePosition) < size) {
+            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            return size(readPosition, cachedWritePosition) < size;
+        }
+        return false;
     }
 
     @Override
@@ -84,11 +96,10 @@ class VolatileDirectMarshallingBlockingRingBuffer implements DirectMarshallingRi
 
     @Override
     public long size() {
-        return size(readPosition.get() & capacityMinusOne);
+        return size(readPosition.get() & capacityMinusOne, writePosition.get() & capacityMinusOne);
     }
 
-    private long size(long readPosition) {
-        long writePosition = this.writePosition.get() & capacityMinusOne;
+    private long size(long readPosition, long writePosition) {
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }

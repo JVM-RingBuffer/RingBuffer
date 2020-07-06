@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="JCToolsManyReadersTest" type="Application" factoryName="Application" folderName="Competitors">
+  <configuration default="false" name="JCToolsManyReadersTest" type="Application" factoryName="Application" folderName="JCTools">
     <option name="MAIN_CLASS_NAME" value="test.competitors.JCToolsManyReadersTest" />
     <module name="RingBuffer" />
     <option name="VM_PARAMETERS" value="-Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />

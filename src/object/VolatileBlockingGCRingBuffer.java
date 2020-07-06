@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -28,8 +29,11 @@ class VolatileBlockingGCRingBuffer<T> implements RingBuffer<T> {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     VolatileBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -67,7 +71,7 @@ class VolatileBlockingGCRingBuffer<T> implements RingBuffer<T> {
     public T take() {
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (writePosition.get() == readPosition) {
+        while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
@@ -78,6 +82,14 @@ class VolatileBlockingGCRingBuffer<T> implements RingBuffer<T> {
         T element = buffer[readPosition];
         buffer[readPosition] = null;
         return element;
+    }
+
+    private boolean isEmptyCached(int readPosition) {
+        if (cachedWritePosition == readPosition) {
+            cachedWritePosition = writePosition.get();
+            return cachedWritePosition == readPosition;
+        }
+        return false;
     }
 
     @Override

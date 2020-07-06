@@ -102,9 +102,6 @@ public abstract class AbstractRingBufferBuilder<T> {
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    /**
-     * Require {@code -XX:-RestrictContended}.
-     */
     protected abstract AbstractRingBufferBuilder<?> fast();
 
     protected void fast0() {

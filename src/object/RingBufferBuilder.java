@@ -82,8 +82,6 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Do not support the {@code null} element.
      */
     @Override

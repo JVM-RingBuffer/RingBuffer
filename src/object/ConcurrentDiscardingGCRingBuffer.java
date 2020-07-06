@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -30,8 +31,11 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     ConcurrentDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
@@ -71,7 +75,7 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         readLock.lock();
         int readPosition = this.readPosition.getPlain();
         readBusyWaitStrategy.reset();
-        while (writePosition.get() == readPosition) {
+        while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
@@ -83,6 +87,14 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         buffer[readPosition] = null;
         readLock.unlock();
         return element;
+    }
+
+    private boolean isEmptyCached(int readPosition) {
+        if (cachedWritePosition == readPosition) {
+            cachedWritePosition = writePosition.get();
+            return cachedWritePosition == readPosition;
+        }
+        return false;
     }
 
     @Override

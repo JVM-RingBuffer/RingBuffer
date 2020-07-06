@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.Integer;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -29,8 +30,11 @@ class ConcurrentHeapMarshallingBlockingRingBuffer implements MarshallingRingBuff
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
+    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
+    @Contended("read")
+    private int cachedWritePosition;
 
     ConcurrentHeapMarshallingBlockingRingBuffer(HeapMarshallingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
@@ -79,10 +83,18 @@ class ConcurrentHeapMarshallingBlockingRingBuffer implements MarshallingRingBuff
         readLock.lock();
         int readPosition = this.readPosition.getPlain() & capacityMinusOne;
         readBusyWaitStrategy.reset();
-        while (size(readPosition) < size) {
+        while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();
         }
         return this.readPosition.getPlain();
+    }
+
+    private boolean isNotFullEnoughCached(int readPosition, int size) {
+        if (size(readPosition, cachedWritePosition) < size) {
+            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            return size(readPosition, cachedWritePosition) < size;
+        }
+        return false;
     }
 
     @Override
@@ -93,11 +105,10 @@ class ConcurrentHeapMarshallingBlockingRingBuffer implements MarshallingRingBuff
 
     @Override
     public int size() {
-        return size(readPosition.get() & capacityMinusOne);
+        return size(readPosition.get() & capacityMinusOne, writePosition.get() & capacityMinusOne);
     }
 
-    private int size(int readPosition) {
-        int writePosition = this.writePosition.get() & capacityMinusOne;
+    private int size(int readPosition, int writePosition) {
         if (writePosition >= readPosition) {
             return writePosition - readPosition;
         }

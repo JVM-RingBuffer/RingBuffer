@@ -38,8 +38,6 @@ abstract class AbstractDirectMarshallingRingBufferBuilder<T> extends AbstractMar
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Require {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}.
      */
     @Override
