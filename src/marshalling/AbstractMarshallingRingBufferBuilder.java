@@ -18,6 +18,7 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.lock.Lock;
+import org.ringbuffer.lock.SpinLock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
@@ -44,6 +45,11 @@ abstract class AbstractMarshallingRingBufferBuilder<T> extends AbstractRingBuffe
     @Override
     protected Lock getReadLock() {
         return super.getReadLock();
+    }
+
+    @Override
+    protected Lock defaultLock() {
+        return new SpinLock();
     }
 
     @Override

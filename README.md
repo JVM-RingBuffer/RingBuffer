@@ -36,9 +36,9 @@ Latency is the time it takes for a single element to be written or read by laten
 scenario|msg/sec|latency
 ---|---|---
 3 producers → 3 consumers | 19 million | 150ns
-3 producers → 1 consumer | 26 million | 38ns
-1 producer → 3 consumers | 36 million | 3ns
-1 producer → 1 consumer | 333 million | 3ns
+3 producers → 1 consumer | 27 million | 37ns
+1 producer → 3 consumers | 41 million | 2ns
+1 producer → 1 consumer | 350 million | 3ns
 
 The following are lock-free implementations (call `fast()` on the builder).
 
@@ -47,7 +47,7 @@ scenario|msg/sec|latency
 3 producers → 3 consumers | 32 million | 92ns
 3 producers → 1 consumer | 44 million | 22ns
 1 producer → 3 consumers | 47 million | 2ns
-1 producer → 1 consumer | 333 million | 3ns
+1 producer → 1 consumer | 365 million | 3ns
 2 producers → 1 processor → 2 consumers | 26 million | 37ns
 
 The following are competitors: [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.

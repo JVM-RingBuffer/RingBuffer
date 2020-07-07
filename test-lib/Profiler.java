@@ -41,7 +41,7 @@ public class Profiler {
 
     public void stop() {
         final long end = System.nanoTime();
-        result.update(Math.round((end - start) / divideBy));
+        result.update((end - start) / divideBy);
     }
 
     public enum ResultFormat {

@@ -72,17 +72,17 @@ public abstract class Benchmark {
         final String profilerName;
         private final Profiler.ResultFormat format;
 
-        private long sum;
+        private double sum;
         private double count;
-        private long minimum = Long.MAX_VALUE;
-        private long maximum;
+        private double minimum = Double.MAX_VALUE;
+        private double maximum;
 
         Result(String profilerName, Profiler.ResultFormat format) {
             this.profilerName = profilerName;
             this.format = format;
         }
 
-        synchronized void update(long value) {
+        synchronized void update(double value) {
             sum += value;
             count++;
             if (value < minimum) {
@@ -94,10 +94,10 @@ public abstract class Benchmark {
         }
 
         void report() {
-            long sum;
+            double sum;
             double count;
-            long minimum;
-            long maximum;
+            double minimum;
+            double maximum;
             synchronized (this) {
                 sum = this.sum;
                 count = this.count;
@@ -106,7 +106,7 @@ public abstract class Benchmark {
             }
             double average = sum / count;
             String report = profilerName + ": " + formatDouble(average);
-            if (count > 1D && maximum != 0L) {
+            if (count > 1D && maximum != 0D) {
                 double absoluteVariance = Math.max(maximum - average, average - minimum);
                 long relativeVariance = Math.round(absoluteVariance / average * 100D);
                 report += " ± " + relativeVariance + '%';
