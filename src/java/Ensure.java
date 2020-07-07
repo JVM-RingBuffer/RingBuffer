@@ -196,4 +196,6 @@ public class Ensure {
             throw new IllegalStateException();
         }
     }
+
+    static final String EXCEPTION_CLASS_NAME = IllegalStateException.class.getName() + ": ";
 }

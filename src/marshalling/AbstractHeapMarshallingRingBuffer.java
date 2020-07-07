@@ -21,6 +21,16 @@ import org.ringbuffer.AbstractRingBuffer;
 interface AbstractHeapMarshallingRingBuffer extends AbstractRingBuffer {
     int getCapacity();
 
+    /**
+     * If the ring buffer is lock-free, then {@code offset} is the value returned by
+     * {@link MarshallingRingBuffer#next(int)}.
+     */
+    void put(int offset);
+
+    int take(int size);
+
+    int size();
+
     void writeByte(int offset, byte value);
 
     void writeChar(int offset, char value);
@@ -37,14 +47,6 @@ interface AbstractHeapMarshallingRingBuffer extends AbstractRingBuffer {
 
     void writeDouble(int offset, double value);
 
-    /**
-     * If the ring buffer is lock-free, then {@code offset} is the value returned by
-     * {@link MarshallingRingBuffer#next(int)}.
-     */
-    void put(int offset);
-
-    int take(int size);
-
     byte readByte(int offset);
 
     char readChar(int offset);
@@ -60,6 +62,4 @@ interface AbstractHeapMarshallingRingBuffer extends AbstractRingBuffer {
     float readFloat(int offset);
 
     double readDouble(int offset);
-
-    int size();
 }

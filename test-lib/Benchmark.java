@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Benchmark {
-    static volatile Benchmark current;
+    static Benchmark current;
 
     private final List<Result> results = new ArrayList<>(5);
 

@@ -18,6 +18,11 @@ package org.ringbuffer.java;
 
 class IllegalObjectArgumentException extends IllegalArgumentException {
     IllegalObjectArgumentException(Object value) {
-        super(value.toString());
+        super(Assume.EXCEPTION_CLASS_NAME + value);
+    }
+
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

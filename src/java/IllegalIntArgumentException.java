@@ -18,10 +18,15 @@ package org.ringbuffer.java;
 
 class IllegalIntArgumentException extends IllegalArgumentException {
     IllegalIntArgumentException(int value) {
-        super(Integer.toString(value));
+        super(Assume.EXCEPTION_CLASS_NAME + value);
     }
 
     IllegalIntArgumentException(int value, int cap) {
-        super(value + " " + cap);
+        super(Assume.EXCEPTION_CLASS_NAME + value + " " + cap);
+    }
+
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

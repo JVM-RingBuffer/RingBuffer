@@ -196,4 +196,6 @@ public class Assume {
             throw new IllegalArgumentException();
         }
     }
+
+    static final String EXCEPTION_CLASS_NAME = IllegalArgumentException.class.getName() + ": ";
 }

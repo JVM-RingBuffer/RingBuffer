@@ -18,6 +18,11 @@ package org.ringbuffer.java;
 
 class IllegalObjectStateException extends IllegalStateException {
     IllegalObjectStateException(Object value) {
-        super(value.toString());
+        super(Ensure.EXCEPTION_CLASS_NAME + value);
+    }
+
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

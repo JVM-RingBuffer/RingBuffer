@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ringbuffer.java;
 
-class IllegalLongStateException extends IllegalStateException {
-    IllegalLongStateException(long value) {
-        super(Ensure.EXCEPTION_CLASS_NAME + value);
+import java.util.Objects;
+
+@FunctionalInterface
+public interface FloatUnaryOperator {
+    float applyAsFloat(float operand);
+
+    default FloatUnaryOperator compose(FloatUnaryOperator before) {
+        Objects.requireNonNull(before);
+        return (float v) -> applyAsFloat(before.applyAsFloat(v));
     }
 
-    IllegalLongStateException(long value, long cap) {
-        super(Ensure.EXCEPTION_CLASS_NAME + value + " " + cap);
+    default FloatUnaryOperator andThen(FloatUnaryOperator after) {
+        Objects.requireNonNull(after);
+        return (float t) -> after.applyAsFloat(applyAsFloat(t));
     }
 
-    @Override
-    public String toString() {
-        return getMessage();
+    static FloatUnaryOperator identity() {
+        return t -> t;
     }
 }

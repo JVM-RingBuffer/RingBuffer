@@ -18,10 +18,15 @@ package org.ringbuffer.java;
 
 class IllegalIntStateException extends IllegalStateException {
     IllegalIntStateException(int value) {
-        super(Integer.toString(value));
+        super(Ensure.EXCEPTION_CLASS_NAME + value);
     }
 
     IllegalIntStateException(int value, int cap) {
-        super(value + " " + cap);
+        super(Ensure.EXCEPTION_CLASS_NAME + value + " " + cap);
+    }
+
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

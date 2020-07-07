@@ -21,22 +21,6 @@ import org.ringbuffer.AbstractRingBuffer;
 interface AbstractDirectMarshallingRingBuffer extends AbstractRingBuffer {
     long getCapacity();
 
-    void writeByte(long offset, byte value);
-
-    void writeChar(long offset, char value);
-
-    void writeShort(long offset, short value);
-
-    void writeInt(long offset, int value);
-
-    void writeLong(long offset, long value);
-
-    void writeBoolean(long offset, boolean value);
-
-    void writeFloat(long offset, float value);
-
-    void writeDouble(long offset, double value);
-
     /**
      * If the ring buffer is lock-free, then {@code offset} is the value returned by
      * {@link DirectMarshallingRingBuffer#next(long)}.
@@ -44,6 +28,8 @@ interface AbstractDirectMarshallingRingBuffer extends AbstractRingBuffer {
     void put(long offset);
 
     long take(long size);
+
+    long size();
 
     byte readByte(long offset);
 
@@ -61,5 +47,19 @@ interface AbstractDirectMarshallingRingBuffer extends AbstractRingBuffer {
 
     double readDouble(long offset);
 
-    long size();
+    void writeByte(long offset, byte value);
+
+    void writeChar(long offset, char value);
+
+    void writeShort(long offset, short value);
+
+    void writeInt(long offset, int value);
+
+    void writeLong(long offset, long value);
+
+    void writeBoolean(long offset, boolean value);
+
+    void writeFloat(long offset, float value);
+
+    void writeDouble(long offset, double value);
 }
