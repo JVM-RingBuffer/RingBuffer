@@ -75,7 +75,7 @@ Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 ## Public utilities
 
-To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
+To build a Java library for ultra low latency inter-thread communication, we introduced utilities.
 
 - `Atomic*` classes expose all the features supported by `VarHandle`s while having better names.
 - `Platform.current()` returns the current OS and JVM architecture.

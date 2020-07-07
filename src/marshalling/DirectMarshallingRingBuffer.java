@@ -23,6 +23,9 @@ package org.ringbuffer.marshalling;
 public interface DirectMarshallingRingBuffer extends AbstractDirectMarshallingRingBuffer {
     long next(long size);
 
+    /**
+     * If the ring buffer is lock-free, then this method must not be called.
+     */
     void advance(long offset);
 
     static DirectMarshallingClearingRingBufferBuilder withCapacity(long capacity) {

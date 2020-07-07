@@ -20,9 +20,12 @@ package org.ringbuffer.marshalling;
  * If the ring buffer is not lock-free, then from {@link #next(int)} to {@link #put(int)} and from
  * {@link #take(int)} to {@link #advance(int)} is an atomic operation.
  */
-public interface MarshallingRingBuffer extends AbstractMarshallingRingBuffer {
+public interface MarshallingRingBuffer extends AbstractHeapMarshallingRingBuffer {
     int next(int size);
 
+    /**
+     * If the ring buffer is lock-free, then this method must not be called.
+     */
     void advance(int offset);
 
     static HeapMarshallingClearingRingBufferBuilder withCapacity(int capacity) {

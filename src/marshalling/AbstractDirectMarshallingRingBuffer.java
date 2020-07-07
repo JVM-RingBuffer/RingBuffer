@@ -37,6 +37,10 @@ interface AbstractDirectMarshallingRingBuffer extends AbstractRingBuffer {
 
     void writeDouble(long offset, double value);
 
+    /**
+     * If the ring buffer is lock-free, then {@code offset} is the value returned by
+     * {@link DirectMarshallingRingBuffer#next(long)}.
+     */
     void put(long offset);
 
     long take(long size);

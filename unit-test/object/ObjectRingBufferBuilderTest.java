@@ -100,9 +100,8 @@ class ObjectRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
         expectClass(VolatileBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingContentionTest.RING_BUFFER, PrefilledOneToOneBlockingTest.RING_BUFFER);
         expectClass(VolatilePrefilledRingBuffer.class, PrefilledOneToOneContentionTest.RING_BUFFER);
 
-        expectClass(AtomicWriteBlockingGCRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
-        expectClass(AtomicWriteBlockingRingBuffer.class, ProducersToProcessorToConsumersTest.PRODUCERS_RING_BUFFER);
-        expectClass(AtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
+        expectClass(FastAtomicWriteRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
+        expectClass(FastAtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
 
         expectClass(FastConcurrentRingBuffer.class, FastManyToManyContentionTest.RING_BUFFER);
         expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.RING_BUFFER);

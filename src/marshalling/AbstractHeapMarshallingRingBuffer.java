@@ -18,7 +18,7 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBuffer;
 
-interface AbstractMarshallingRingBuffer extends AbstractRingBuffer {
+interface AbstractHeapMarshallingRingBuffer extends AbstractRingBuffer {
     int getCapacity();
 
     void writeByte(int offset, byte value);
@@ -37,6 +37,10 @@ interface AbstractMarshallingRingBuffer extends AbstractRingBuffer {
 
     void writeDouble(int offset, double value);
 
+    /**
+     * If the ring buffer is lock-free, then {@code offset} is the value returned by
+     * {@link MarshallingRingBuffer#next(int)}.
+     */
     void put(int offset);
 
     int take(int size);
