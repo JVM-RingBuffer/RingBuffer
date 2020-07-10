@@ -23,7 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
+class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -38,7 +38,7 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer<T>
     @Contended("read")
     private int cachedWritePosition;
 
-    ConcurrentBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    ConcurrentBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder2<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

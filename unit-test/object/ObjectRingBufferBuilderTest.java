@@ -64,7 +64,7 @@ class ObjectRingBufferBuilderTest extends AbstractRingBufferBuilderTest {
 
     @Test
     void testFillerNotSet() {
-        AbstractRingBufferBuilder<?> builder = new PrefilledClearingRingBufferBuilder<>(2);
+        AbstractRingBufferBuilder<?> builder = new PrefilledRingBufferBuilder<>(2);
         builder.oneReader();
         builder.oneWriter();
         assertThrows(IllegalStateException.class, builder::build);

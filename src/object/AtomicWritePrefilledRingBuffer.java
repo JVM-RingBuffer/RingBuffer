@@ -23,7 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class AtomicWritePrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T> {
+class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -36,7 +36,7 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T
     @Contended("read")
     private int cachedWritePosition;
 
-    AtomicWritePrefilledRingBuffer(PrefilledClearingRingBufferBuilder<T> builder) {
+    AtomicWritePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

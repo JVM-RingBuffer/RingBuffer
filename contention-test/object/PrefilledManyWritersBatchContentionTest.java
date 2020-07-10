@@ -26,7 +26,7 @@ class PrefilledManyWritersBatchContentionTest extends PrefilledManyWritersConten
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledClearingWriter.startGroupAsync(RING_BUFFER, profiler);
+        PrefilledWriter.startGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

@@ -117,7 +117,7 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
                             return instantiateCopy(VolatileDirectMarshallingBlockingRingBuffer.class);
                         }
                         return new VolatileDirectMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastVolatileDirectMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
@@ -127,7 +127,7 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
                             return instantiateCopy(AtomicReadDirectMarshallingBlockingRingBuffer.class);
                         }
                         return new AtomicReadDirectMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastAtomicReadDirectMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
@@ -137,7 +137,7 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
                             return instantiateCopy(AtomicWriteDirectMarshallingBlockingRingBuffer.class);
                         }
                         return new AtomicWriteDirectMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastAtomicWriteDirectMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
@@ -147,7 +147,7 @@ public class DirectMarshallingRingBufferBuilder extends AbstractDirectMarshallin
                             return instantiateCopy(ConcurrentDirectMarshallingBlockingRingBuffer.class);
                         }
                         return new ConcurrentDirectMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastConcurrentDirectMarshallingRingBuffer(this);
                 }
         }

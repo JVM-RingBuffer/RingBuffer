@@ -17,10 +17,11 @@
 package test.object;
 
 import org.ringbuffer.object.PrefilledRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer2;
 import test.Profiler;
 
 public class PrefilledManyReadersBlockingTest extends PrefilledManyReadersBlockingContentionTest {
-    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+    public static final PrefilledRingBuffer2<Event> RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .manyReaders()
@@ -35,7 +36,7 @@ public class PrefilledManyReadersBlockingTest extends PrefilledManyReadersBlocki
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        PrefilledWriter2.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

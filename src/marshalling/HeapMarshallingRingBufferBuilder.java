@@ -111,7 +111,7 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
                             return instantiateCopy(VolatileHeapMarshallingBlockingRingBuffer.class);
                         }
                         return new VolatileHeapMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastVolatileHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_READ:
@@ -121,7 +121,7 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
                             return instantiateCopy(AtomicReadHeapMarshallingBlockingRingBuffer.class);
                         }
                         return new AtomicReadHeapMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastAtomicReadHeapMarshallingRingBuffer(this);
                 }
             case ATOMIC_WRITE:
@@ -131,7 +131,7 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
                             return instantiateCopy(AtomicWriteHeapMarshallingBlockingRingBuffer.class);
                         }
                         return new AtomicWriteHeapMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastAtomicWriteHeapMarshallingRingBuffer(this);
                 }
             case CONCURRENT:
@@ -141,7 +141,7 @@ public class HeapMarshallingRingBufferBuilder extends AbstractHeapMarshallingRin
                             return instantiateCopy(ConcurrentHeapMarshallingBlockingRingBuffer.class);
                         }
                         return new ConcurrentHeapMarshallingBlockingRingBuffer(this);
-                    case CLEARING_FAST:
+                    case FAST:
                         return new FastConcurrentHeapMarshallingRingBuffer(this);
                 }
         }

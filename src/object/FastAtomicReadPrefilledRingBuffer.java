@@ -32,7 +32,7 @@ class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     @Contended
     private int writePosition;
 
-    FastAtomicReadPrefilledRingBuffer(PrefilledClearingRingBufferBuilder<T> builder) {
+    FastAtomicReadPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();

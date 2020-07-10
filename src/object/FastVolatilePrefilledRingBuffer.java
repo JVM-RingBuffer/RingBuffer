@@ -31,7 +31,7 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     @Contended
     private int writePosition;
 
-    FastVolatilePrefilledRingBuffer(PrefilledClearingRingBufferBuilder<T> builder) {
+    FastVolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();

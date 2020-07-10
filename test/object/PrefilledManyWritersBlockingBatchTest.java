@@ -26,7 +26,7 @@ class PrefilledManyWritersBlockingBatchTest extends PrefilledManyWritersBlocking
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
+        PrefilledWriter2.runGroupAsync(RING_BUFFER, profiler);
         return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

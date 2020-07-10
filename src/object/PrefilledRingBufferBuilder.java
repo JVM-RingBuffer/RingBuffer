@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
@@ -24,8 +23,8 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 import java.util.function.Supplier;
 
 public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
-    PrefilledRingBufferBuilder(PrefilledClearingRingBufferBuilder<T> builder) {
-        super(builder);
+    PrefilledRingBufferBuilder(int capacity) {
+        super(capacity);
     }
 
     @Override
@@ -71,23 +70,27 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    protected AbstractRingBufferBuilder<?> blocking() {
-        throw new AssertionError();
+    public PrefilledRingBufferBuilder2<T> blocking() {
+        super.blocking0();
+        return new PrefilledRingBufferBuilder2<>(this);
     }
 
     @Override
-    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
-        throw new AssertionError();
+    public PrefilledRingBufferBuilder2<T> blocking(BusyWaitStrategy busyWaitStrategy) {
+        super.blocking0(busyWaitStrategy);
+        return new PrefilledRingBufferBuilder2<>(this);
     }
 
     @Override
-    ObjectRingBufferBuilder<?> discarding() {
-        throw new AssertionError();
+    public PrefilledRingBufferBuilder2<T> discarding() {
+        super.discarding0();
+        return new PrefilledRingBufferBuilder2<>(this);
     }
 
     @Override
-    protected AbstractRingBufferBuilder<?> fast() {
-        throw new AssertionError();
+    public PrefilledRingBufferBuilder<T> fast() {
+        super.fast0();
+        return this;
     }
 
     @Override
@@ -113,55 +116,43 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
         switch (concurrency) {
             case VOLATILE:
                 switch (type) {
-                    case BLOCKING:
+                    case CLEARING:
                         if (copyClass) {
-                            return instantiateCopy(VolatileBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(VolatilePrefilledRingBuffer.class);
                         }
-                        return new VolatileBlockingPrefilledRingBuffer<>(this);
-                    case DISCARDING:
-                        if (copyClass) {
-                            return instantiateCopy(VolatileDiscardingPrefilledRingBuffer.class);
-                        }
-                        return new VolatileDiscardingPrefilledRingBuffer<>(this);
+                        return new VolatilePrefilledRingBuffer<>(this);
+                    case FAST:
+                        return new FastVolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
-                    case BLOCKING:
+                    case CLEARING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicReadBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
                         }
-                        return new AtomicReadBlockingPrefilledRingBuffer<>(this);
-                    case DISCARDING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicReadDiscardingPrefilledRingBuffer.class);
-                        }
-                        return new AtomicReadDiscardingPrefilledRingBuffer<>(this);
+                        return new AtomicReadPrefilledRingBuffer<>(this);
+                    case FAST:
+                        return new FastAtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
-                    case BLOCKING:
+                    case CLEARING:
                         if (copyClass) {
-                            return instantiateCopy(AtomicWriteBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
                         }
-                        return new AtomicWriteBlockingPrefilledRingBuffer<>(this);
-                    case DISCARDING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicWriteDiscardingPrefilledRingBuffer.class);
-                        }
-                        return new AtomicWriteDiscardingPrefilledRingBuffer<>(this);
+                        return new AtomicWritePrefilledRingBuffer<>(this);
+                    case FAST:
+                        return new FastAtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
                 switch (type) {
-                    case BLOCKING:
+                    case CLEARING:
                         if (copyClass) {
-                            return instantiateCopy(ConcurrentBlockingPrefilledRingBuffer.class);
+                            return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
                         }
-                        return new ConcurrentBlockingPrefilledRingBuffer<>(this);
-                    case DISCARDING:
-                        if (copyClass) {
-                            return instantiateCopy(ConcurrentDiscardingPrefilledRingBuffer.class);
-                        }
-                        return new ConcurrentDiscardingPrefilledRingBuffer<>(this);
+                        return new ConcurrentPrefilledRingBuffer<>(this);
+                    case FAST:
+                        return new FastConcurrentPrefilledRingBuffer<>(this);
                 }
         }
         throw new AssertionError();

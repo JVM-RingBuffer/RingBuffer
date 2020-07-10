@@ -50,9 +50,8 @@ class PrefilledWriter extends TestThread {
         PrefilledRingBuffer<Event> ringBuffer = getPrefilledRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();
-            int putKey = ringBuffer.nextPutKey(key);
-            ringBuffer.next(key, putKey).setData(numIterations);
-            ringBuffer.put(putKey);
+            ringBuffer.next(key).setData(numIterations);
+            ringBuffer.put(key);
         }
     }
 }

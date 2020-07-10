@@ -22,7 +22,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-class VolatilePrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T> {
+class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -34,7 +34,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T> {
     @Contended("read")
     private int cachedWritePosition;
 
-    VolatilePrefilledRingBuffer(PrefilledClearingRingBufferBuilder<T> builder) {
+    VolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();

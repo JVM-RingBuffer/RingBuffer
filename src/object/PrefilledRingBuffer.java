@@ -19,24 +19,21 @@ package org.ringbuffer.object;
 /**
  * <pre>{@code
  * int key = ringBuffer.nextKey();
- * int putKey = ringBuffer.nextPutKey(key);
- * T element = ringBuffer.next(key, putKey);
+ * T element = ringBuffer.next(key);
  * // Populate element
- * ringBuffer.put(putKey);
+ * ringBuffer.put(key);
  * }</pre>
  * <p>
- * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
+ * If the ring buffer is not lock-free, then from {@link #nextKey()} to {@link #put(int)} is an atomic operation.
  */
 public interface PrefilledRingBuffer<T> extends ObjectRingBuffer<T> {
     int nextKey();
 
-    int nextPutKey(int key);
+    T next(int key);
 
-    T next(int key, int putKey);
+    void put(int key);
 
-    void put(int putKey);
-
-    static <T> PrefilledClearingRingBufferBuilder<T> withCapacity(int capacity) {
-        return new PrefilledClearingRingBufferBuilder<>(capacity);
+    static <T> PrefilledRingBufferBuilder<T> withCapacity(int capacity) {
+        return new PrefilledRingBufferBuilder<>(capacity);
     }
 }

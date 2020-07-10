@@ -20,7 +20,7 @@ When full, they can either clear all elements, discard incoming elements, or the
 
 They produce no garbage, and their capacity must be a power of 2 (`Numbers.getNextPowerOfTwo()` can help).  
 The byte array can reside on or off the heap. In the latter case, more than ~2GB can be allocated.  
-When full, they can either clear all elements or block waiting for enough space to become available.
+When full, they can either clear all contents or block waiting for enough space to become available.
 
 ## Thread priority and affinity
 
@@ -40,7 +40,8 @@ scenario|msg/sec|latency
 1 producer → 3 consumers | 41 million | 2ns
 1 producer → 1 consumer | 350 million | 3ns
 
-The following are lock-free implementations (call `fast()` on the builder).
+The following are lock-free implementations (call `fast()` on the builder).  
+When full, they overwrite the element or content that's closest to be read.
 
 scenario|msg/sec|latency
 ---|---|---
@@ -109,7 +110,7 @@ RingBuffer<Integer> producersToProcessor =
                 .blocking()
                 .withGC()
                 .build();
-PrefilledClearingRingBuffer<Event> processorToConsumers =
+PrefilledRingBuffer<Event> processorToConsumers =
         PrefilledRingBuffer.<Event>withCapacity(300 + 1)
                 .fillWith(Event::new)
                 .oneWriter()

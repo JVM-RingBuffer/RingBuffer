@@ -16,12 +16,11 @@
 
 package test.object;
 
-import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import test.Profiler;
 
 public class PrefilledOneToOneContentionTest extends RingBufferTest {
-    public static final PrefilledClearingRingBuffer<Event> RING_BUFFER =
+    public static final PrefilledRingBuffer<Event> RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneReader()
@@ -40,7 +39,7 @@ public class PrefilledOneToOneContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        PrefilledClearingWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        PrefilledWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
         return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

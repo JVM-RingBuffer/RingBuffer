@@ -18,7 +18,7 @@ package org.ringbuffer.object;
 
 import java.util.function.Consumer;
 
-abstract class FastPrefilledRingBuffer<T> implements PrefilledClearingRingBuffer<T> {
+abstract class FastPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     @Override
     public void advance() {}
 

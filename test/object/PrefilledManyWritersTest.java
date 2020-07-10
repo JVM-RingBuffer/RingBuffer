@@ -26,7 +26,7 @@ class PrefilledManyWritersTest extends PrefilledManyWritersContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledClearingWriter.runGroupAsync(RING_BUFFER, profiler);
+        PrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
         return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

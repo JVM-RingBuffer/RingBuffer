@@ -105,7 +105,7 @@ public abstract class AbstractRingBufferBuilder<T> {
     protected abstract AbstractRingBufferBuilder<?> fast();
 
     protected void fast0() {
-        type = RingBufferType.CLEARING_FAST;
+        type = RingBufferType.FAST;
     }
 
     public abstract AbstractRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
@@ -219,8 +219,9 @@ public abstract class AbstractRingBufferBuilder<T> {
 
     protected enum RingBufferType {
         CLEARING,
-        CLEARING_FAST,
         BLOCKING,
-        DISCARDING
+        DISCARDING,
+
+        FAST
     }
 }

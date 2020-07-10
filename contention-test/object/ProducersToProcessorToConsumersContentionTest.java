@@ -16,7 +16,6 @@
 
 package test.object;
 
-import org.ringbuffer.object.PrefilledClearingRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
@@ -28,7 +27,7 @@ public class ProducersToProcessorToConsumersContentionTest extends RingBufferTes
                     .oneReader()
                     .fast()
                     .build();
-    public static final PrefilledClearingRingBuffer<Event> CONSUMERS_RING_BUFFER =
+    public static final PrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneWriter()

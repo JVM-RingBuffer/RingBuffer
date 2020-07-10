@@ -16,42 +16,43 @@
 
 package test.object;
 
-import org.ringbuffer.object.PrefilledClearingRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer2;
 import test.Profiler;
 import test.TestThreadGroup;
 
-class PrefilledClearingWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(PrefilledClearingRingBuffer<Event> ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledClearingWriter(numIterations, ringBuffer));
+class PrefilledWriter2 extends TestThread {
+    static TestThreadGroup startGroupAsync(PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledWriter2(numIterations, ringBuffer));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(PrefilledClearingRingBuffer<Event> ringBuffer, Profiler profiler) {
+    static void runGroupAsync(PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static PrefilledClearingWriter startAsync(int numIterations, PrefilledClearingRingBuffer<Event> ringBuffer, Profiler profiler) {
-        PrefilledClearingWriter writer = new PrefilledClearingWriter(numIterations, ringBuffer);
+    static PrefilledWriter2 startAsync(int numIterations, PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
+        PrefilledWriter2 writer = new PrefilledWriter2(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, PrefilledClearingRingBuffer<Event> ringBuffer, Profiler profiler) {
+    static void runAsync(int numIterations, PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
         startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
-    private PrefilledClearingWriter(int numIterations, PrefilledClearingRingBuffer<Event> ringBuffer) {
+    private PrefilledWriter2(int numIterations, PrefilledRingBuffer2<Event> ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     protected void loop() {
-        PrefilledClearingRingBuffer<Event> ringBuffer = getPrefilledClearingRingBuffer();
+        PrefilledRingBuffer2<Event> ringBuffer = getPrefilledRingBuffer2();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int key = ringBuffer.nextKey();
-            ringBuffer.next(key).setData(numIterations);
-            ringBuffer.put(key);
+            int putKey = ringBuffer.nextPutKey(key);
+            ringBuffer.next(key, putKey).setData(numIterations);
+            ringBuffer.put(putKey);
         }
     }
 }
