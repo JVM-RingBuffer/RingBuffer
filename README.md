@@ -41,7 +41,7 @@ scenario|msg/sec|latency
 1 producer → 1 consumer | 350 million | 3ns
 
 The following are lock-free implementations (call `fast()` on the builder).  
-When full, they overwrite the element or content that's closest to be read.
+They must never become full.
 
 scenario|msg/sec|latency
 ---|---|---

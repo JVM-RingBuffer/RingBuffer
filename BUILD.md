@@ -13,4 +13,4 @@
 
 Set IntelliJ IDEA property: `idea.no.launcher=true`  
 `AbstractRingBufferTest.CONCURRENCY` is the number of concurrent producers and the number of concurrent consumers where applicable.  
-If simultaneous multithreading is not two-way or not enabled, tweak `AbstractTestThread.spreader`.
+If hyper-threading is not two-way or not enabled, tweak `AbstractTestThread.spreader`.
