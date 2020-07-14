@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$</output-path>
     <root id="archive" name="RingBuffer.jar">
       <element id="module-output" name="RingBuffer" />
-      <element id="module-source" name="RingBuffer" />
     </root>
   </artifact>
 </component>
