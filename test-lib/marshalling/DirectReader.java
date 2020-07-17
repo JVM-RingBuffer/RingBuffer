@@ -16,7 +16,7 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.DirectRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
@@ -24,14 +24,14 @@ import test.TestThreadGroup;
 import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static long runGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
         DirectReader reader = new DirectReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
@@ -40,7 +40,7 @@ class DirectReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    DirectReader(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
+    DirectReader(int numIterations, DirectRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -51,7 +51,7 @@ class DirectReader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
+        DirectRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             long offset = ringBuffer.take(INT);

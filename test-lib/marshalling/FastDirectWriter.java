@@ -16,40 +16,40 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
+import org.ringbuffer.marshalling.DirectRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class FastDirectWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static TestThreadGroup startGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new FastDirectWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static FastDirectWriter startAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static FastDirectWriter startAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
         FastDirectWriter writer = new FastDirectWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, DirectMarshallingRingBuffer ringBuffer, Profiler profiler) {
+    static void runAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
         startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
-    private FastDirectWriter(int numIterations, DirectMarshallingRingBuffer ringBuffer) {
+    private FastDirectWriter(int numIterations, DirectRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     protected void loop() {
-        DirectMarshallingRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
+        DirectRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             long offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);

@@ -17,10 +17,10 @@
 package test.marshalling;
 
 import org.ringbuffer.AbstractRingBuffer;
-import org.ringbuffer.marshalling.DirectMarshallingClearingRingBuffer;
-import org.ringbuffer.marshalling.DirectMarshallingRingBuffer;
-import org.ringbuffer.marshalling.MarshallingClearingRingBuffer;
-import org.ringbuffer.marshalling.MarshallingRingBuffer;
+import org.ringbuffer.marshalling.DirectClearingRingBuffer;
+import org.ringbuffer.marshalling.DirectRingBuffer;
+import org.ringbuffer.marshalling.HeapClearingRingBuffer;
+import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
@@ -28,19 +28,19 @@ abstract class TestThread extends AbstractTestThread {
         super(numIterations, ringBuffer);
     }
 
-    MarshallingClearingRingBuffer getMarshallingClearingRingBuffer() {
-        return (MarshallingClearingRingBuffer) dataStructure;
+    HeapClearingRingBuffer getMarshallingClearingRingBuffer() {
+        return (HeapClearingRingBuffer) dataStructure;
     }
 
-    MarshallingRingBuffer getMarshallingRingBuffer() {
-        return (MarshallingRingBuffer) dataStructure;
+    HeapRingBuffer getMarshallingRingBuffer() {
+        return (HeapRingBuffer) dataStructure;
     }
 
-    DirectMarshallingClearingRingBuffer getDirectMarshallingClearingRingBuffer() {
-        return (DirectMarshallingClearingRingBuffer) dataStructure;
+    DirectClearingRingBuffer getDirectMarshallingClearingRingBuffer() {
+        return (DirectClearingRingBuffer) dataStructure;
     }
 
-    DirectMarshallingRingBuffer getDirectMarshallingRingBuffer() {
-        return (DirectMarshallingRingBuffer) dataStructure;
+    DirectRingBuffer getDirectMarshallingRingBuffer() {
+        return (DirectRingBuffer) dataStructure;
     }
 }

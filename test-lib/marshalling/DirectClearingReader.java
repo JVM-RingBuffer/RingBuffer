@@ -16,7 +16,7 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingClearingRingBuffer;
+import org.ringbuffer.marshalling.DirectClearingRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
@@ -24,14 +24,14 @@ import test.TestThreadGroup;
 import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectClearingReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static long runGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectClearingReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         DirectClearingReader reader = new DirectClearingReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
@@ -40,7 +40,7 @@ class DirectClearingReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    DirectClearingReader(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer) {
+    DirectClearingReader(int numIterations, DirectClearingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -51,7 +51,7 @@ class DirectClearingReader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        DirectMarshallingClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
+        DirectClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));

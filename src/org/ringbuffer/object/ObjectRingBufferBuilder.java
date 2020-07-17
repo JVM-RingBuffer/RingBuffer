@@ -16,7 +16,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.AbstractRingBufferBuilder;
+import org.ringbuffer.RingBufferBuilder;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.lock.Lock;
@@ -25,7 +25,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 
-abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
+abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBuffer<T>> {
     private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
 
     @Override

@@ -16,40 +16,40 @@
 
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectMarshallingClearingRingBuffer;
+import org.ringbuffer.marshalling.DirectClearingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.DirectOffsets.*;
 
 class DirectClearingWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static TestThreadGroup startGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectClearingWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static void runGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static DirectClearingWriter startAsync(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static DirectClearingWriter startAsync(int numIterations, DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         DirectClearingWriter writer = new DirectClearingWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer, Profiler profiler) {
+    static void runAsync(int numIterations, DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
     }
 
-    private DirectClearingWriter(int numIterations, DirectMarshallingClearingRingBuffer ringBuffer) {
+    private DirectClearingWriter(int numIterations, DirectClearingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     protected void loop() {
-        DirectMarshallingClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
+        DirectClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             long offset = ringBuffer.next();
             ringBuffer.writeInt(offset, numIterations);
