@@ -73,7 +73,7 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
     }
 
     @Override
-    protected AbstractDirectRingBufferBuilder<?> fast() {
+    protected AbstractDirectRingBufferBuilder<?> withoutLocks() {
         throw new AssertionError();
     }
 

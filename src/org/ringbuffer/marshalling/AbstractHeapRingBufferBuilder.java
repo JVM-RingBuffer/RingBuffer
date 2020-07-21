@@ -37,8 +37,8 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
     }
 
     @Override
-    protected void fast0() {
-        super.fast0();
+    protected void withoutLocks0() {
+        super.withoutLocks0();
         validateCapacityPowerOfTwo(capacity);
     }
 

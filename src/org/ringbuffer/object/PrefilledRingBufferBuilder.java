@@ -88,8 +88,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    public PrefilledRingBufferBuilder<T> fast() {
-        super.fast0();
+    public PrefilledRingBufferBuilder<T> withoutLocks() {
+        super.withoutLocks0();
         return this;
     }
 

@@ -24,7 +24,7 @@ public class FastOneToOneContentionTest extends RingBufferTest {
             RingBuffer.<Event>withCapacity(FAST_ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {

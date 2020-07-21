@@ -85,8 +85,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
      * Do not support the {@code null} element.
      */
     @Override
-    public RingBufferBuilder<T> fast() {
-        super.fast0();
+    public RingBufferBuilder<T> withoutLocks() {
+        super.withoutLocks0();
         return this;
     }
 

@@ -25,7 +25,7 @@ public class FastPrefilledOneToOneContentionTest extends RingBufferTest {
                     .fillWith(FILLER)
                     .oneReader()
                     .oneWriter()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {

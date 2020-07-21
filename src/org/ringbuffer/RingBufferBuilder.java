@@ -103,9 +103,9 @@ public abstract class RingBufferBuilder<T> {
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    protected abstract RingBufferBuilder<?> fast();
+    protected abstract RingBufferBuilder<?> withoutLocks();
 
-    protected void fast0() {
+    protected void withoutLocks0() {
         type = RingBufferType.FAST;
     }
 

@@ -86,7 +86,7 @@ public class PrefilledRingBufferBuilder2<T> extends AbstractPrefilledRingBufferB
     }
 
     @Override
-    protected RingBufferBuilder<?> fast() {
+    protected RingBufferBuilder<?> withoutLocks() {
         throw new AssertionError();
     }
 

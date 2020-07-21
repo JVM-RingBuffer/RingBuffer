@@ -74,8 +74,8 @@ public class DirectClearingRingBufferBuilder extends AbstractDirectRingBufferBui
     }
 
     @Override
-    public DirectRingBufferBuilder fast() {
-        super.fast0();
+    public DirectRingBufferBuilder withoutLocks() {
+        super.withoutLocks0();
         return new DirectRingBufferBuilder(this);
     }
 

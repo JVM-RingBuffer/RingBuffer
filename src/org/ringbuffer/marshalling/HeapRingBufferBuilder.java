@@ -73,7 +73,7 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
     }
 
     @Override
-    protected RingBufferBuilder<?> fast() {
+    protected RingBufferBuilder<?> withoutLocks() {
         throw new AssertionError();
     }
 

@@ -24,7 +24,7 @@ public class FastManyToManyHeapContentionTest extends RingBufferTest {
             HeapRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .manyReaders()
                     .manyWriters()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {

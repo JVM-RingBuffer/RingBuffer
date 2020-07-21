@@ -41,11 +41,11 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
      * Require {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}.
      */
     @Override
-    protected abstract AbstractDirectRingBufferBuilder<?> fast();
+    protected abstract AbstractDirectRingBufferBuilder<?> withoutLocks();
 
     @Override
-    protected void fast0() {
-        super.fast0();
+    protected void withoutLocks0() {
+        super.withoutLocks0();
         validateCapacityPowerOfTwo(capacity);
     }
 

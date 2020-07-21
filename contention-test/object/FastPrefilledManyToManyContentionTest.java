@@ -25,7 +25,7 @@ public class FastPrefilledManyToManyContentionTest extends RingBufferTest {
                     .fillWith(FILLER)
                     .manyReaders()
                     .manyWriters()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {

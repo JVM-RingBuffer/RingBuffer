@@ -24,7 +24,7 @@ public class FastOneToOneDirectContentionTest extends RingBufferTest {
             DirectRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {

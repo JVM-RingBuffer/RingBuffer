@@ -53,8 +53,8 @@ abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBu
     }
 
     @Override
-    protected void fast0() {
-        super.fast0();
+    protected void withoutLocks0() {
+        super.withoutLocks0();
         validateCapacityPowerOfTwo(capacity);
     }
 

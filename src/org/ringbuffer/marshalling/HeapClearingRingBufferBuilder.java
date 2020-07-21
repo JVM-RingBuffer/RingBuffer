@@ -74,8 +74,8 @@ public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder
     }
 
     @Override
-    public HeapRingBufferBuilder fast() {
-        super.fast0();
+    public HeapRingBufferBuilder withoutLocks() {
+        super.withoutLocks0();
         return new HeapRingBufferBuilder(this);
     }
 

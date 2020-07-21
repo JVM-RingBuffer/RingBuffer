@@ -24,7 +24,7 @@ public class FastManyWritersDirectContentionTest extends RingBufferTest {
             DirectRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
                     .oneReader()
                     .manyWriters()
-                    .fast()
+                    .withoutLocks()
                     .build();
 
     public static void main(String[] args) {
