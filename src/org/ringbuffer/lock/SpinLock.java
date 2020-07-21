@@ -18,13 +18,13 @@ package org.ringbuffer.lock;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 public class SpinLock implements Lock {
     @Contended
-    private final AtomicInt state = new AtomicInt();
+    private final AtomicBoolean state = new AtomicBoolean();
     private final BusyWaitStrategy busyWaitStrategy;
 
     public SpinLock() {
@@ -37,9 +37,9 @@ public class SpinLock implements Lock {
 
     @Override
     public void lock() {
-        while (state.getAcquireAndSetPlain(1) == 1) {
+        while (state.getAcquireAndSetPlain(true)) {
             busyWaitStrategy.reset();
-            while (state.getOpaque() == 1) {
+            while (state.getOpaque()) {
                 busyWaitStrategy.tick();
             }
         }
@@ -47,7 +47,7 @@ public class SpinLock implements Lock {
 
     @Override
     public void unlock() {
-        state.setRelease(0);
+        state.setRelease(false);
     }
 
     /**
