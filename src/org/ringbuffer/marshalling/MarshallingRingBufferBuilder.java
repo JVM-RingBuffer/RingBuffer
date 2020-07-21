@@ -31,7 +31,8 @@ abstract class MarshallingRingBufferBuilder<T> extends RingBufferBuilder<T> {
         return implLookup;
     }
 
-    MarshallingRingBufferBuilder() {}
+    MarshallingRingBufferBuilder() {
+    }
 
     MarshallingRingBufferBuilder(MarshallingRingBufferBuilder<?> builder) {
         super(builder);

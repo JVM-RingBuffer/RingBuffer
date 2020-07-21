@@ -20,7 +20,7 @@ import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.*;
+import static org.ringbuffer.marshalling.Offsets.INT;
 
 class FastHeapWriter extends TestThread {
     static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {

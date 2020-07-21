@@ -34,7 +34,8 @@ public class AtomicLong {
 
     private long value;
 
-    public AtomicLong() {}
+    public AtomicLong() {
+    }
 
     public AtomicLong(long value) {
         this.value = value;

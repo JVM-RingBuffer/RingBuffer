@@ -32,7 +32,8 @@ public class AtomicBoolean {
 
     private boolean value;
 
-    public AtomicBoolean() {}
+    public AtomicBoolean() {
+    }
 
     public AtomicBoolean(boolean value) {
         this.value = value;

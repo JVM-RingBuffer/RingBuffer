@@ -110,7 +110,8 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public void takeBatch(int size) {

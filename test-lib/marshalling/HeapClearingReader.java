@@ -21,7 +21,7 @@ import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.*;
+import static org.ringbuffer.marshalling.Offsets.INT;
 
 class HeapClearingReader extends TestThread implements AbstractReader {
     static long runGroupAsync(HeapClearingRingBuffer ringBuffer, Profiler profiler) {

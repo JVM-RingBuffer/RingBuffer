@@ -35,7 +35,8 @@ public class AtomicFloat {
 
     private float value;
 
-    public AtomicFloat() {}
+    public AtomicFloat() {
+    }
 
     public AtomicFloat(float value) {
         this.value = value;

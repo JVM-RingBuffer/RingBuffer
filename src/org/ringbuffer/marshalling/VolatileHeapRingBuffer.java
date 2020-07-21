@@ -76,7 +76,8 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public int size() {

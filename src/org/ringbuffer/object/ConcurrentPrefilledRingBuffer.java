@@ -99,7 +99,8 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public void takeBatch(int size) {

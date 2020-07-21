@@ -76,7 +76,8 @@ class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public long size() {

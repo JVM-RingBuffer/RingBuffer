@@ -34,7 +34,8 @@ public class AtomicInt {
 
     private int value;
 
-    public AtomicInt() {}
+    public AtomicInt() {
+    }
 
     public AtomicInt(int value) {
         this.value = value;

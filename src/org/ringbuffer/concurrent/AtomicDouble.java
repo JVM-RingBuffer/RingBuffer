@@ -34,7 +34,8 @@ public class AtomicDouble {
 
     private double value;
 
-    public AtomicDouble() {}
+    public AtomicDouble() {
+    }
 
     public AtomicDouble(double value) {
         this.value = value;

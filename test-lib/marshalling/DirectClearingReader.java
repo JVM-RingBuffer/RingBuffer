@@ -21,7 +21,7 @@ import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.*;
+import static org.ringbuffer.marshalling.DirectOffsets.INT;
 
 class DirectClearingReader extends TestThread implements AbstractReader {
     static long runGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {

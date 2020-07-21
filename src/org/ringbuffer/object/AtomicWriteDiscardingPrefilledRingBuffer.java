@@ -105,7 +105,8 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public void takeBatch(int size) {
@@ -128,7 +129,8 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     }
 
     @Override
-    public void advanceBatch() {}
+    public void advanceBatch() {
+    }
 
     @Override
     public void forEach(Consumer<T> action) {

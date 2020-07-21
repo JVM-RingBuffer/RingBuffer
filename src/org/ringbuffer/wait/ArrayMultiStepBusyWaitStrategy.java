@@ -25,7 +25,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.*;
+import static org.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.throwNoIntermediateStepsAdded;
+import static org.ringbuffer.wait.MultiStepBusyWaitStrategyBuilderHelper.validateStrategyTicks;
 
 public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy {
     private final int initialStrategyIndex;

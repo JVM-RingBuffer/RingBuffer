@@ -19,7 +19,7 @@ package test.object;
 import org.ringbuffer.object.ObjectRingBuffer;
 import org.ringbuffer.object.RingBuffer;
 
-import static test.object.ProducersToProcessorToConsumersContentionTest.*;
+import static test.object.ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER;
 
 class Processor extends TestThread {
     static Processor startAsync(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {

@@ -43,7 +43,8 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     @Override
-    public void reset() {}
+    public void reset() {
+    }
 
     @Override
     public void tick() {

@@ -24,8 +24,10 @@ public class NoopBusyWaitStrategy implements BusyWaitStrategy {
     }
 
     @Override
-    public void reset() {}
+    public void reset() {
+    }
 
     @Override
-    public void tick() {}
+    public void tick() {
+    }
 }

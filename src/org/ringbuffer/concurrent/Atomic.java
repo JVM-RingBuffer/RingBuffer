@@ -34,7 +34,8 @@ public class Atomic<T> {
 
     private T value;
 
-    public Atomic() {}
+    public Atomic() {
+    }
 
     public Atomic(T value) {
         this.value = value;

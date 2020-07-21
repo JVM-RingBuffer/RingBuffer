@@ -101,7 +101,8 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public void takeBatch(int size) {
@@ -124,7 +125,8 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
     }
 
     @Override
-    public void advanceBatch() {}
+    public void advanceBatch() {
+    }
 
     @Override
     public void forEach(Consumer<T> action) {

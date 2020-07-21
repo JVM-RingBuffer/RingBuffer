@@ -16,7 +16,7 @@
 
 package org.ringbuffer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class RingBufferBuilderTest {
     protected static void expectClass(Class<?> clazz, AbstractRingBuffer... ringBuffers) {

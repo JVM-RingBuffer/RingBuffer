@@ -99,7 +99,7 @@ These features of object ring buffers have not yet been tested:
 - Discarding elements when full
 - `forEach()`, `contains()` and `toString()`
 
-You can [build from source and run the benchmarks](BUILD.md).
+You can [run the benchmarks and build from source](BUILD.md).
 
 ## Examples
 

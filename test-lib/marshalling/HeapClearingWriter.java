@@ -20,7 +20,7 @@ import org.ringbuffer.marshalling.HeapClearingRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.*;
+import static org.ringbuffer.marshalling.Offsets.INT;
 
 class HeapClearingWriter extends TestThread {
     static TestThreadGroup startGroupAsync(HeapClearingRingBuffer ringBuffer, Profiler profiler) {

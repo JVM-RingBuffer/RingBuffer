@@ -77,7 +77,8 @@ public class GarbageCollectorProfiler {
     }
 
     private static class Logger implements Listener {
-        Logger() {}
+        Logger() {
+        }
 
         @Override
         public void onEvent(GarbageCollectionNotificationInfo notification, GcInfo info) {
@@ -101,7 +102,8 @@ public class GarbageCollectorProfiler {
     private static class JVMListener implements NotificationListener {
         private final List<Listener> userListeners = new CopyOnWriteArrayList<>();
 
-        JVMListener() {}
+        JVMListener() {
+        }
 
         void addUserListener(Listener userListener) {
             userListeners.add(userListener);
@@ -120,7 +122,8 @@ public class GarbageCollectorProfiler {
     private static class ValuesSumAction implements Consumer<MemoryUsage> {
         private long total;
 
-        ValuesSumAction() {}
+        ValuesSumAction() {
+        }
 
         void resetTotal() {
             total = 0L;

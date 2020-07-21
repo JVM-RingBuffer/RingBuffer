@@ -93,7 +93,8 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {}
+    public void advance() {
+    }
 
     @Override
     public void takeBatch(int size) {

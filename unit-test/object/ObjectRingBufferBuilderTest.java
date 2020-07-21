@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.ringbuffer.RingBufferBuilderTest;
 import test.object.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
     private RingBufferBuilder<?> builder;

@@ -16,7 +16,7 @@
 
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractRingBufferTest extends Benchmark {
     protected static final int NUM_ITERATIONS = 1_000_000;

@@ -39,7 +39,8 @@ public abstract class RingBufferBuilder<T> {
     protected boolean copyClass;
     // All fields are copied in <init>(RingBufferBuilder<?>)
 
-    protected RingBufferBuilder() {}
+    protected RingBufferBuilder() {
+    }
 
     protected RingBufferBuilder(RingBufferBuilder<?> builder) {
         oneWriter = builder.oneWriter;
