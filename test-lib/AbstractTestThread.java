@@ -20,8 +20,6 @@ import org.ringbuffer.java.Nullable;
 import org.ringbuffer.system.ThreadSpreader;
 import org.ringbuffer.system.Threads;
 
-import java.util.concurrent.CountDownLatch;
-
 public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU()
@@ -38,15 +36,11 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     private final int numIterations;
-    private final Profiler profiler;
     protected final Object dataStructure;
-
-    private final CountDownLatch readyLatch = new CountDownLatch(1);
-    private final CountDownLatch commenceLatch = new CountDownLatch(1);
+    private final ThreadSynchronizer synchronizer = new ThreadSynchronizer();
 
     protected AbstractTestThread(int numIterations, Object dataStructure) {
         this.numIterations = numIterations;
-        profiler = new Profiler(this, numIterations);
         this.dataStructure = dataStructure;
     }
 
@@ -60,23 +54,15 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     void waitUntilReady() {
-        try {
-            readyLatch.await();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
+        synchronizer.waitUntilReady();
     }
 
     void commenceExecution() {
-        commenceLatch.countDown();
+        synchronizer.commenceExecution();
     }
 
     void waitForCompletion() {
-        try {
-            join();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
+        ThreadSynchronizer.waitForCompletion(this);
     }
 
     protected void waitForCompletion(@Nullable Profiler profiler) {
@@ -94,13 +80,8 @@ public abstract class AbstractTestThread extends Thread {
     public void run() {
         spreader.bindCurrentThreadToNextCPU();
         Threads.setCurrentThreadPriorityToRealtime();
-
-        readyLatch.countDown();
-        try {
-            commenceLatch.await();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
+        Profiler profiler = new Profiler(this, numIterations);
+        synchronizer.synchronize();
 
         profiler.start();
         loop();

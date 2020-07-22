@@ -23,7 +23,11 @@ public class Profiler {
     private long start;
 
     public Profiler(Object object, int divideBy) {
-        this(object.getClass().getSimpleName(), divideBy);
+        this(object.getClass(), divideBy);
+    }
+
+    public Profiler(Class<?> clazz, int divideBy) {
+        this(clazz.getSimpleName(), divideBy);
     }
 
     public Profiler(String name, int divideBy) {

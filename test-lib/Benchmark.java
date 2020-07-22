@@ -29,7 +29,7 @@ public abstract class Benchmark {
         current = this;
     }
 
-    Result getResult(String profilerName, Profiler.ResultFormat format) {
+    synchronized Result getResult(String profilerName, Profiler.ResultFormat format) {
         for (Result result : results) {
             if (result.profilerName.equals(profilerName)) {
                 return result;
@@ -40,7 +40,9 @@ public abstract class Benchmark {
         return result;
     }
 
-    protected abstract int getNumIterations();
+    protected int getNumIterations() {
+        return 0;
+    }
 
     public void runBenchmark() {
         Runtime runtime = Runtime.getRuntime();
@@ -55,12 +57,16 @@ public abstract class Benchmark {
         do {
             test(numIterations);
         } while (System.nanoTime() - start < 3L * 1_000_000_000L && runtime.freeMemory() > warmupMemoryCap);
-        results.clear();
+        synchronized (this) {
+            results.clear();
+        }
         do {
             test(numIterations);
         } while (System.nanoTime() - start < 6L * 1_000_000_000L && runtime.freeMemory() > testMemoryCap);
-        for (Result result : results) {
-            result.report();
+        synchronized (this) {
+            for (Result result : results) {
+                result.report();
+            }
         }
     }
 

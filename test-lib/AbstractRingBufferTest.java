@@ -52,12 +52,7 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     }
 
     @Override
-    protected final int getNumIterations() {
-        return 0;
-    }
-
-    @Override
-    protected final void test(int i) {
+    protected void test(int i) {
         AbstractTestThread.resetThreadSpreader();
 
         assertEquals(getSum(), testSum());
