@@ -20,27 +20,28 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.wait.BusyWaitStrategy;
-import org.ringbuffer.wait.HintBusyWaitStrategy;
+import org.ringbuffer.wait.NoopBusyWaitStrategy;
 
 public class SpinLock implements Lock {
     @Contended
     private final AtomicBoolean state = new AtomicBoolean();
-    private final BusyWaitStrategy busyWaitStrategy;
+    private final BusyWaitStrategy additionalBusyWaitStrategy;
 
     public SpinLock() {
-        this(HintBusyWaitStrategy.DEFAULT_INSTANCE);
+        this(NoopBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
-    public SpinLock(BusyWaitStrategy busyWaitStrategy) {
-        this.busyWaitStrategy = busyWaitStrategy;
+    public SpinLock(BusyWaitStrategy additionalBusyWaitStrategy) {
+        this.additionalBusyWaitStrategy = additionalBusyWaitStrategy;
     }
 
     @Override
     public void lock() {
         while (state.getAcquireAndSetPlain(true)) {
-            busyWaitStrategy.reset();
-            while (state.getOpaque()) {
-                busyWaitStrategy.tick();
+            additionalBusyWaitStrategy.reset();
+            while (state.getPlain()) {
+                Thread.onSpinWait();
+                additionalBusyWaitStrategy.tick();
             }
         }
     }
