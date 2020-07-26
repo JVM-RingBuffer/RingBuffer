@@ -32,10 +32,9 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
-    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
-    @Contended("read")
+    @Contended
     private int cachedWritePosition;
 
     ConcurrentDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder2<T> builder) {

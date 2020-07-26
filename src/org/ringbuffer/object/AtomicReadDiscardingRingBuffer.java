@@ -30,10 +30,9 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
-    @Contended("read")
+    @Contended
     private int cachedWritePosition;
 
     AtomicReadDiscardingRingBuffer(RingBufferBuilder<T> builder) {

@@ -31,10 +31,9 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
-    @Contended("read")
+    @Contended
     private int cachedWritePosition;
 
     ConcurrentDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {

@@ -18,17 +18,14 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.concurrent.PaddedAtomicInt;
 
 class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private final int capacityMinusOne;
-    @Contended
     private final T[] buffer;
-    @Contended
     private final AtomicBooleanArray writtenPositions;
 
-    @Contended
-    private final AtomicInt readPosition = new AtomicInt();
+    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
     @Contended
     private int writePosition;
 

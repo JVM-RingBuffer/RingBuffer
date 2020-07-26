@@ -20,7 +20,6 @@ import jdk.internal.vm.annotation.Contended;
 
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
     private final long capacityMinusOne;
-    @Contended
     private final DirectByteArray buffer;
     private final DirectAtomicBooleanArray writtenPositions;
 

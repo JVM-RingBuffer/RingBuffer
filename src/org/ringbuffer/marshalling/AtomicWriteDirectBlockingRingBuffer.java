@@ -29,10 +29,9 @@ class AtomicWriteDirectBlockingRingBuffer implements DirectRingBuffer {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    @Contended("read")
     private final Long readPosition;
     private final Long writePosition;
-    @Contended("read")
+    @Contended
     private long cachedWritePosition;
 
     AtomicWriteDirectBlockingRingBuffer(DirectRingBufferBuilder builder) {

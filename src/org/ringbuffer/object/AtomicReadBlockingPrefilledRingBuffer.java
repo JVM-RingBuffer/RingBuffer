@@ -31,10 +31,9 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
-    @Contended("read")
+    @Contended
     private int cachedWritePosition;
 
     AtomicReadBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder2<T> builder) {

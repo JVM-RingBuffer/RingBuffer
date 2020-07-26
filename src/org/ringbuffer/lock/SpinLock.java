@@ -16,15 +16,13 @@
 
 package org.ringbuffer.lock;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.AtomicBoolean;
+import org.ringbuffer.concurrent.PaddedAtomicBoolean;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
 
 public class SpinLock implements Lock {
-    @Contended
-    private final AtomicBoolean state = new AtomicBoolean();
+    private final PaddedAtomicBoolean state = new PaddedAtomicBoolean();
     private final BusyWaitStrategy additionalBusyWaitStrategy;
 
     public SpinLock() {

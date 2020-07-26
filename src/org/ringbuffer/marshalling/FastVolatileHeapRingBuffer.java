@@ -21,9 +21,7 @@ import org.ringbuffer.concurrent.AtomicBooleanArray;
 
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     private final int capacityMinusOne;
-    @Contended
     private final ByteArray buffer;
-    @Contended
     private final AtomicBooleanArray writtenPositions;
 
     @Contended

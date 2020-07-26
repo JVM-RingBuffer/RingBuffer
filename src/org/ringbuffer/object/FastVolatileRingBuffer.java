@@ -21,7 +21,6 @@ import org.ringbuffer.concurrent.AtomicArray;
 
 class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
     private final int capacityMinusOne;
-    @Contended
     private final AtomicArray<T> buffer;
 
     @Contended

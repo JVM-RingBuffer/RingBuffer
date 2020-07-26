@@ -16,7 +16,6 @@
 
 package org.ringbuffer.lock;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
@@ -25,7 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ReentrantBusyWaitLock implements Lock {
     private final BusyWaitStrategy busyWaitStrategy;
-    @Contended
     private final ReentrantLock lock;
 
     public ReentrantBusyWaitLock() {

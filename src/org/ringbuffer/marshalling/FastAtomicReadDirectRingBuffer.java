@@ -17,16 +17,14 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.AtomicLong;
+import org.ringbuffer.concurrent.PaddedAtomicLong;
 
 class FastAtomicReadDirectRingBuffer extends FastDirectRingBuffer {
     private final long capacityMinusOne;
-    @Contended
     private final DirectByteArray buffer;
     private final DirectAtomicBooleanArray writtenPositions;
 
-    @Contended
-    private final AtomicLong readPosition = new AtomicLong();
+    private final PaddedAtomicLong readPosition = new PaddedAtomicLong();
     @Contended
     private long writePosition;
 

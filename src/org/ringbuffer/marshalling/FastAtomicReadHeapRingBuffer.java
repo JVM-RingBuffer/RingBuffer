@@ -18,17 +18,14 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.concurrent.PaddedAtomicInt;
 
 class FastAtomicReadHeapRingBuffer extends FastHeapRingBuffer {
     private final int capacityMinusOne;
-    @Contended
     private final ByteArray buffer;
-    @Contended
     private final AtomicBooleanArray writtenPositions;
 
-    @Contended
-    private final AtomicInt readPosition = new AtomicInt();
+    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
     @Contended
     private int writePosition;
 

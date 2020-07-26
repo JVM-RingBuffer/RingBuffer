@@ -31,10 +31,9 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
-    @Contended("read")
     private final Integer readPosition;
     private final Integer writePosition;
-    @Contended("read")
+    @Contended
     private int cachedWritePosition;
 
     AtomicWriteDiscardingPrefilledRingBuffer(PrefilledRingBufferBuilder2<T> builder) {
