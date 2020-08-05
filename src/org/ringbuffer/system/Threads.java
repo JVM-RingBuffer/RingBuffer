@@ -16,22 +16,22 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.concurrent.Atomic;
 import org.ringbuffer.java.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
  */
 public class Threads {
-    private static final Atomic<Path> libraryPath = new Atomic<>();
+    private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
     public static @Nullable Path getLibraryPath() {
-        return libraryPath.getVolatile();
+        return libraryPath.get();
     }
 
     public static void loadNativeLibrary() {
@@ -41,7 +41,7 @@ public class Threads {
     public static void loadNativeLibrary(Platform platform, Path libraryDirectory) {
         String libraryName = libraryNameFor(platform);
         Path libraryPath = libraryDirectory.resolve(libraryName);
-        if (!Threads.libraryPath.compareAndSetVolatile(null, libraryPath)) {
+        if (!Threads.libraryPath.compareAndSet(null, libraryPath)) {
             throw new IllegalStateException("A native library has already been loaded.");
         }
         if (Files.notExists(libraryPath)) {

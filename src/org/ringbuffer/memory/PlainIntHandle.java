@@ -16,21 +16,16 @@
 
 package org.ringbuffer.memory;
 
-class PlainInteger implements Integer {
-    private int value;
+import org.ringbuffer.concurrent.AtomicInt;
 
+class PlainIntHandle implements IntHandle {
     @Override
-    public void set(int value) {
-        this.value = value;
+    public void set(Object instance, long offset, int value) {
+        AtomicInt.setPlain(instance, offset, value);
     }
 
     @Override
-    public int get() {
-        return value;
-    }
-
-    @Override
-    public int getPlain() {
-        return value;
+    public int get(Object instance, long offset) {
+        return AtomicInt.getPlain(instance, offset);
     }
 }

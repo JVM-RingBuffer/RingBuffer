@@ -2,7 +2,7 @@
  * Copyright 2020 Francesco Menzani
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use instance file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -16,143 +16,118 @@
 
 package org.ringbuffer.concurrent;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicBoolean {
-    private static final VarHandle VALUE;
-
-    static {
-        try {
-            VALUE = MethodHandles.lookup().findVarHandle(AtomicBoolean.class, "value", boolean.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+    public static void setPlain(Object instance, long offset, boolean value) {
+        UNSAFE.putBoolean(instance, offset, value);
     }
 
-    private boolean value;
-
-    public AtomicBoolean() {
+    public static void setOpaque(Object instance, long offset, boolean value) {
+        UNSAFE.putBooleanOpaque(instance, offset, value);
     }
 
-    public AtomicBoolean(boolean value) {
-        this.value = value;
+    public static void setRelease(Object instance, long offset, boolean value) {
+        UNSAFE.putBooleanRelease(instance, offset, value);
     }
 
-    public void setPlain(boolean value) {
-        this.value = value;
+    public static void setVolatile(Object instance, long offset, boolean value) {
+        UNSAFE.putBooleanVolatile(instance, offset, value);
     }
 
-    public void setOpaque(boolean value) {
-        VALUE.setOpaque(this, value);
+    public static boolean getPlain(Object instance, long offset) {
+        return UNSAFE.getBoolean(instance, offset);
     }
 
-    public void setRelease(boolean value) {
-        VALUE.setRelease(this, value);
+    public static boolean getOpaque(Object instance, long offset) {
+        return UNSAFE.getBooleanOpaque(instance, offset);
     }
 
-    public void setVolatile(boolean value) {
-        VALUE.setVolatile(this, value);
+    public static boolean getAcquire(Object instance, long offset) {
+        return UNSAFE.getBooleanAcquire(instance, offset);
     }
 
-    public boolean getPlain() {
-        return value;
+    public static boolean getVolatile(Object instance, long offset) {
+        return UNSAFE.getBooleanVolatile(instance, offset);
     }
 
-    public boolean getOpaque() {
-        return (boolean) VALUE.getOpaque(this);
+    public static boolean compareAndSetVolatile(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndSetBoolean(instance, offset, oldValue, newValue);
     }
 
-    public boolean getAcquire() {
-        return (boolean) VALUE.getAcquire(this);
+    public static boolean weakComparePlainAndSetPlain(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanPlain(instance, offset, oldValue, newValue);
     }
 
-    public boolean getVolatile() {
-        return (boolean) VALUE.getVolatile(this);
+    public static boolean weakComparePlainAndSetRelease(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanRelease(instance, offset, oldValue, newValue);
     }
 
-    public boolean compareAndSetVolatile(boolean oldValue, boolean newValue) {
-        return VALUE.compareAndSet(this, oldValue, newValue);
+    public static boolean weakCompareAcquireAndSetPlain(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanAcquire(instance, offset, oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetPlain(boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetPlain(this, oldValue, newValue);
+    public static boolean weakCompareAndSetVolatile(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBoolean(instance, offset, oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetRelease(boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetRelease(this, oldValue, newValue);
+    public static boolean getPlainAndSetRelease(Object instance, long offset, boolean value) {
+        return UNSAFE.getAndSetBooleanRelease(instance, offset, value);
     }
 
-    public boolean weakCompareAcquireAndSetPlain(boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetAcquire(this, oldValue, newValue);
+    public static boolean getAcquireAndSetPlain(Object instance, long offset, boolean value) {
+        return UNSAFE.getAndSetBooleanAcquire(instance, offset, value);
     }
 
-    public boolean weakCompareAndSetVolatile(boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSet(this, oldValue, newValue);
+    public static boolean getAndSetVolatile(Object instance, long offset, boolean value) {
+        return UNSAFE.getAndSetBoolean(instance, offset, value);
     }
 
-    public boolean getPlainAndSetRelease(boolean value) {
-        return (boolean) VALUE.getAndSetRelease(this, value);
+    public static boolean comparePlainAndExchangeRelease(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanRelease(instance, offset, oldValue, newValue);
     }
 
-    public boolean getAcquireAndSetPlain(boolean value) {
-        return (boolean) VALUE.getAndSetAcquire(this, value);
+    public static boolean compareAcquireAndExchangePlain(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanAcquire(instance, offset, oldValue, newValue);
     }
 
-    public boolean getAndSetVolatile(boolean value) {
-        return (boolean) VALUE.getAndSet(this, value);
+    public static boolean compareAndExchangeVolatile(Object instance, long offset, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBoolean(instance, offset, oldValue, newValue);
     }
 
-    public boolean comparePlainAndExchangeRelease(boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchangeRelease(this, oldValue, newValue);
+    public static boolean getPlainAndBitwiseAndRelease(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanRelease(instance, offset, mask);
     }
 
-    public boolean compareAcquireAndExchangePlain(boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchangeAcquire(this, oldValue, newValue);
+    public static boolean getAcquireAndBitwiseAndPlain(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanAcquire(instance, offset, mask);
     }
 
-    public boolean compareAndExchangeVolatile(boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchange(this, oldValue, newValue);
+    public static boolean getAndBitwiseAndVolatile(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBoolean(instance, offset, mask);
     }
 
-    public boolean getPlainAndBitwiseAndRelease(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAndRelease(this, mask);
+    public static boolean getPlainAndBitwiseOrRelease(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanRelease(instance, offset, mask);
     }
 
-    public boolean getAcquireAndBitwiseAndPlain(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAndAcquire(this, mask);
+    public static boolean getAcquireAndBitwiseOrPlain(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanAcquire(instance, offset, mask);
     }
 
-    public boolean getAndBitwiseAndVolatile(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAnd(this, mask);
+    public static boolean getAndBitwiseOrVolatile(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBoolean(instance, offset, mask);
     }
 
-    public boolean getPlainAndBitwiseOrRelease(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOrRelease(this, mask);
+    public static boolean getPlainAndBitwiseXorRelease(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanRelease(instance, offset, mask);
     }
 
-    public boolean getAcquireAndBitwiseOrPlain(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOrAcquire(this, mask);
+    public static boolean getAcquireAndBitwiseXorPlain(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanAcquire(instance, offset, mask);
     }
 
-    public boolean getAndBitwiseOrVolatile(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOr(this, mask);
-    }
-
-    public boolean getPlainAndBitwiseXorRelease(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXorRelease(this, mask);
-    }
-
-    public boolean getAcquireAndBitwiseXorPlain(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXorAcquire(this, mask);
-    }
-
-    public boolean getAndBitwiseXorVolatile(boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXor(this, mask);
-    }
-
-    @Override
-    public String toString() {
-        return Boolean.toString(getVolatile());
+    public static boolean getAndBitwiseXorVolatile(Object instance, long offset, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBoolean(instance, offset, mask);
     }
 }

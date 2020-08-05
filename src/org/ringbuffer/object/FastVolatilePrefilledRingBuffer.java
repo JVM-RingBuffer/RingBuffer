@@ -22,7 +22,7 @@ import org.ringbuffer.concurrent.AtomicBooleanArray;
 class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
     @Contended
     private int readPosition;
@@ -52,16 +52,16 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public void put(int key) {
-        writtenPositions.setRelease(key, false);
+        AtomicBooleanArray.setRelease(writtenPositions, key, false);
     }
 
     @Override
     public T take() {
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while (writtenPositions.getAcquire(readPosition)) {
+        while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
             Thread.onSpinWait();
         }
-        writtenPositions.setPlain(readPosition, true);
+        writtenPositions[readPosition] = true;
         return buffer[readPosition];
     }
 }

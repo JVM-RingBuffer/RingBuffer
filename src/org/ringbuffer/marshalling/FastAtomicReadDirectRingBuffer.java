@@ -17,14 +17,18 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.PaddedAtomicLong;
+import org.ringbuffer.concurrent.AtomicLong;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicReadDirectRingBuffer extends FastDirectRingBuffer {
+    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadDirectRingBuffer.class, "readPosition");
+
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
     private final DirectAtomicBooleanArray writtenPositions;
 
-    private final PaddedAtomicLong readPosition = new PaddedAtomicLong();
+    @Contended
+    private long readPosition;
     @Contended
     private long writePosition;
 
@@ -53,7 +57,7 @@ class FastAtomicReadDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long take(long size) {
-        long readPosition = this.readPosition.getAndAddVolatile(size) & capacityMinusOne;
+        long readPosition = AtomicLong.getAndAddVolatile(this, READ_POSITION, size) & capacityMinusOne;
         while (writtenPositions.getAndSetVolatile(readPosition, true)) {
             Thread.onSpinWait();
         }

@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.memory;
+package org.ringbuffer.concurrent;
 
-class LazyMemoryOrder implements MemoryOrder {
-    @Override
-    public IntHandle newIntHandle() {
-        return new LazyIntHandle();
-    }
-
-    @Override
-    public LongHandle newLongHandle() {
-        return new LazyLongHandle();
+public class AtomicShortArray {
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_SHORT_INDEX_SCALE * index;
     }
 }

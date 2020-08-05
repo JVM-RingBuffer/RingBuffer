@@ -16,14 +16,17 @@
 
 package org.ringbuffer.memory;
 
-class LazyMemoryOrder implements MemoryOrder {
+import org.ringbuffer.concurrent.AtomicInt;
+
+class OpaqueIntHandle implements IntHandle {
     @Override
-    public IntHandle newIntHandle() {
-        return new LazyIntHandle();
+    public void set(Object instance, long offset, int value) {
+        AtomicInt.setOpaque(instance, offset, value);
     }
 
     @Override
-    public LongHandle newLongHandle() {
-        return new LazyLongHandle();
+    public int get(Object instance, long offset) {
+        return AtomicInt.getOpaque(instance, offset);
     }
+
 }

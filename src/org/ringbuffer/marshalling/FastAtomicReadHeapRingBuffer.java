@@ -18,14 +18,18 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicReadHeapRingBuffer extends FastHeapRingBuffer {
+    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadHeapRingBuffer.class, "readPosition");
+
     private final int capacityMinusOne;
     private final ByteArray buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
-    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
+    @Contended
+    private int readPosition;
     @Contended
     private int writePosition;
 
@@ -49,13 +53,13 @@ class FastAtomicReadHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public void put(int offset) {
-        writtenPositions.setRelease(offset & capacityMinusOne, false);
+        AtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
-        int readPosition = this.readPosition.getAndAddVolatile(size) & capacityMinusOne;
-        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
+        int readPosition = AtomicInt.getAndAddVolatile(this, READ_POSITION, size) & capacityMinusOne;
+        while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
             Thread.onSpinWait();
         }
         return readPosition;

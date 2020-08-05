@@ -18,16 +18,20 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicWriteHeapRingBuffer extends FastHeapRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteHeapRingBuffer.class, "writePosition");
+
     private final int capacityMinusOne;
     private final ByteArray buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
     @Contended
     private int readPosition;
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    @Contended
+    private int writePosition;
 
     FastAtomicWriteHeapRingBuffer(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
@@ -42,19 +46,19 @@ class FastAtomicWriteHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public int next(int size) {
-        return writePosition.getAndAddVolatile(size);
+        return AtomicInt.getAndAddVolatile(this, WRITE_POSITION, size);
     }
 
     @Override
     public void put(int offset) {
-        writtenPositions.setRelease(offset & capacityMinusOne, false);
+        AtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
+        while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
             Thread.onSpinWait();
         }
         return readPosition;

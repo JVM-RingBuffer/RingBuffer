@@ -17,18 +17,22 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.memory.IntHandle;
+import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileHeapRingBuffer.class, "writePosition");
+
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
-    private final Integer writePosition;
+    private int writePosition;
     @Contended("read")
     private int cachedWritePosition;
 
@@ -37,7 +41,7 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePosition = builder.newCursor();
+        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -47,12 +51,12 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public int next() {
-        return writePosition.getPlain();
+        return writePosition;
     }
 
     @Override
     public void put(int offset) {
-        writePosition.set(offset);
+        writePositionHandle.set(this, WRITE_POSITION, offset);
     }
 
     @Override
@@ -69,7 +73,7 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
 
     private boolean isNotFullEnoughCached(int readPosition, int size) {
         if (size(readPosition, cachedWritePosition) < size) {
-            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne;
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
@@ -81,7 +85,7 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public int size() {
-        return size(readPosition & capacityMinusOne, writePosition.get() & capacityMinusOne);
+        return size(readPosition & capacityMinusOne, writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne);
     }
 
     private int size(int readPosition, int writePosition) {
@@ -93,7 +97,7 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition & capacityMinusOne);
+        return (writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne) == (readPosition & capacityMinusOne);
     }
 
     @Override

@@ -18,12 +18,12 @@ package org.ringbuffer.classcopy;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.java.Assert;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Copies a class to allow inlining of polymorphic calls.
@@ -44,7 +44,7 @@ import java.lang.reflect.Modifier;
  */
 public class CopiedClass<T> {
     private static final ByteBuddy byteBuddy = new ByteBuddy();
-    private static final AtomicInt ids = new AtomicInt(1);
+    private static final AtomicInteger ids = new AtomicInteger(1);
 
     private final Class<T> copy;
     private final Class<?> original;
@@ -82,7 +82,7 @@ public class CopiedClass<T> {
         }
         return new CopiedClass<>(byteBuddy
                 .redefine(original)
-                .name(original.getName() + "$Copy" + ids.getAndIncrementVolatile())
+                .name(original.getName() + "$Copy" + ids.getAndIncrement())
                 .make()
                 .load(original.getClassLoader(), ClassLoadingStrategy.UsingLookup.of(lookup))
                 .getLoaded(), original);

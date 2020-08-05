@@ -18,16 +18,20 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
+
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
     @Contended
     private int readPosition;
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    @Contended
+    private int writePosition;
 
     FastAtomicWritePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
@@ -42,7 +46,7 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public int nextKey() {
-        return writePosition.getAndIncrementVolatile() & capacityMinusOne;
+        return AtomicInt.getAndIncrementVolatile(this, WRITE_POSITION) & capacityMinusOne;
     }
 
     @Override
@@ -52,13 +56,13 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public void put(int key) {
-        writtenPositions.setRelease(key, false);
+        AtomicBooleanArray.setRelease(writtenPositions, key, false);
     }
 
     @Override
     public T take() {
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
+        while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
             Thread.onSpinWait();
         }
         return buffer[readPosition];

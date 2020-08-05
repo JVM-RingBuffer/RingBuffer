@@ -16,159 +16,171 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.java.Assume;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicBooleanArray {
-    private static final VarHandle VALUE = MethodHandles.arrayElementVarHandle(boolean[].class);
-
-    private final boolean[] value;
-
-    public AtomicBooleanArray(int length) {
-        Assume.notLesser(length, 1);
-        value = new boolean[length];
+    public static void setOpaque(boolean[] array, int index, boolean value) {
+        UNSAFE.putBooleanOpaque(array, elementOffset(index), value);
     }
 
-    public AtomicBooleanArray(boolean[] value) {
-        Assume.notLesser(value.length, 1);
-        this.value = value;
+    public static void setRelease(boolean[] array, int index, boolean value) {
+        UNSAFE.putBooleanRelease(array, elementOffset(index), value);
     }
 
-    public int length() {
-        return value.length;
+    public static void setVolatile(boolean[] array, int index, boolean value) {
+        UNSAFE.putBooleanVolatile(array, elementOffset(index), value);
     }
 
-    public void setPlain(int index, boolean value) {
-        this.value[index] = value;
+    public static boolean getOpaque(boolean[] array, int index) {
+        return UNSAFE.getBooleanOpaque(array, elementOffset(index));
     }
 
-    public void setOpaque(int index, boolean value) {
-        VALUE.setOpaque(this.value, index, value);
+    public static boolean getAcquire(boolean[] array, int index) {
+        return UNSAFE.getBooleanAcquire(array, elementOffset(index));
     }
 
-    public void setRelease(int index, boolean value) {
-        VALUE.setRelease(this.value, index, value);
+    public static boolean getVolatile(boolean[] array, int index) {
+        return UNSAFE.getBooleanVolatile(array, elementOffset(index));
     }
 
-    public void setVolatile(int index, boolean value) {
-        VALUE.setVolatile(this.value, index, value);
+    public static boolean compareAndSetVolatile(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndSetBoolean(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getPlain(int index) {
-        return value[index];
+    public static boolean weakComparePlainAndSetPlain(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanPlain(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getOpaque(int index) {
-        return (boolean) VALUE.getOpaque(value, index);
+    public static boolean weakComparePlainAndSetRelease(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanRelease(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getAcquire(int index) {
-        return (boolean) VALUE.getAcquire(value, index);
+    public static boolean weakCompareAcquireAndSetPlain(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getVolatile(int index) {
-        return (boolean) VALUE.getVolatile(value, index);
+    public static boolean weakCompareAndSetVolatile(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBoolean(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean compareAndSetVolatile(int index, boolean oldValue, boolean newValue) {
-        return VALUE.compareAndSet(value, index, oldValue, newValue);
+    public static boolean getPlainAndSetRelease(boolean[] array, int index, boolean value) {
+        return UNSAFE.getAndSetBooleanRelease(array, elementOffset(index), value);
     }
 
-    public boolean weakComparePlainAndSetPlain(int index, boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetPlain(value, index, oldValue, newValue);
+    public static boolean getAcquireAndSetPlain(boolean[] array, int index, boolean value) {
+        return UNSAFE.getAndSetBooleanAcquire(array, elementOffset(index), value);
     }
 
-    public boolean weakComparePlainAndSetRelease(int index, boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetRelease(value, index, oldValue, newValue);
+    public static boolean getAndSetVolatile(boolean[] array, int index, boolean value) {
+        return UNSAFE.getAndSetBoolean(array, elementOffset(index), value);
     }
 
-    public boolean weakCompareAcquireAndSetPlain(int index, boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSetAcquire(value, index, oldValue, newValue);
+    public static boolean comparePlainAndExchangeRelease(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanRelease(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean weakCompareAndSetVolatile(int index, boolean oldValue, boolean newValue) {
-        return VALUE.weakCompareAndSet(value, index, oldValue, newValue);
+    public static boolean compareAcquireAndExchangePlain(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getPlainAndSetRelease(int index, boolean value) {
-        return (boolean) VALUE.getAndSetRelease(this.value, index, value);
+    public static boolean compareAndExchangeVolatile(boolean[] array, int index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBoolean(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean getAcquireAndSetPlain(int index, boolean value) {
-        return (boolean) VALUE.getAndSetAcquire(this.value, index, value);
+    public static boolean getPlainAndBitwiseAndRelease(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanRelease(array, elementOffset(index), mask);
     }
 
-    public boolean getAndSetVolatile(int index, boolean value) {
-        return (boolean) VALUE.getAndSet(this.value, index, value);
+    public static boolean getAcquireAndBitwiseAndPlain(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanAcquire(array, elementOffset(index), mask);
     }
 
-    public boolean comparePlainAndExchangeRelease(int index, boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchangeRelease(value, index, oldValue, newValue);
+    public static boolean getAndBitwiseAndVolatile(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBoolean(array, elementOffset(index), mask);
     }
 
-    public boolean compareAcquireAndExchangePlain(int index, boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchangeAcquire(value, index, oldValue, newValue);
+    public static boolean getPlainAndBitwiseOrRelease(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanRelease(array, elementOffset(index), mask);
     }
 
-    public boolean compareAndExchangeVolatile(int index, boolean oldValue, boolean newValue) {
-        return (boolean) VALUE.compareAndExchange(value, index, oldValue, newValue);
+    public static boolean getAcquireAndBitwiseOrPlain(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanAcquire(array, elementOffset(index), mask);
     }
 
-    public boolean getPlainAndBitwiseAndRelease(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAndRelease(value, index, mask);
+    public static boolean getAndBitwiseOrVolatile(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBoolean(array, elementOffset(index), mask);
     }
 
-    public boolean getAcquireAndBitwiseAndPlain(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAndAcquire(value, index, mask);
+    public static boolean getPlainAndBitwiseXorRelease(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanRelease(array, elementOffset(index), mask);
     }
 
-    public boolean getAndBitwiseAndVolatile(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseAnd(value, index, mask);
+    public static boolean getAcquireAndBitwiseXorPlain(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanAcquire(array, elementOffset(index), mask);
     }
 
-    public boolean getPlainAndBitwiseOrRelease(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOrRelease(value, index, mask);
+    public static boolean getAndBitwiseXorVolatile(boolean[] array, int index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBoolean(array, elementOffset(index), mask);
     }
 
-    public boolean getAcquireAndBitwiseOrPlain(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOrAcquire(value, index, mask);
-    }
-
-    public boolean getAndBitwiseOrVolatile(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseOr(value, index, mask);
-    }
-
-    public boolean getPlainAndBitwiseXorRelease(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXorRelease(value, index, mask);
-    }
-
-    public boolean getAcquireAndBitwiseXorPlain(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXorAcquire(value, index, mask);
-    }
-
-    public boolean getAndBitwiseXorVolatile(int index, boolean mask) {
-        return (boolean) VALUE.getAndBitwiseXor(value, index, mask);
-    }
-
-    public void fill(boolean value) {
-        for (int i = 0; i < this.value.length; i++) {
-            this.value[i] = value;
+    public static void fillOpaque(boolean[] array, boolean value) {
+        for (int i = 0; i < array.length; i++) {
+            setOpaque(array, i, value);
         }
     }
 
-    @Override
-    public String toString() {
+    public static void fillRelease(boolean[] array, boolean value) {
+        for (int i = 0; i < array.length; i++) {
+            setRelease(array, i, value);
+        }
+    }
+
+    public static void fillVolatile(boolean[] array, boolean value) {
+        for (int i = 0; i < array.length; i++) {
+            setVolatile(array, i, value);
+        }
+    }
+
+    public static String toStringOpaque(boolean[] array) {
         StringBuilder builder = new StringBuilder();
         builder.append('[');
-        for (int i = 0, iMax = value.length - 1; ; i++) {
-            builder.append(getVolatile(i));
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getOpaque(array, i));
             if (i == iMax) {
                 builder.append(']');
                 return builder.toString();
             }
             builder.append(", ");
         }
+    }
+
+    public static String toStringAcquire(boolean[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getAcquire(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static String toStringVolatile(boolean[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getVolatile(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_INDEX_SCALE * index;
     }
 }

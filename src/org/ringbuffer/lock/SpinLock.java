@@ -16,14 +16,20 @@
 
 package org.ringbuffer.lock;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.PaddedAtomicBoolean;
+import org.ringbuffer.concurrent.AtomicBoolean;
+import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
 
 public class SpinLock implements Lock {
-    private final PaddedAtomicBoolean state = new PaddedAtomicBoolean();
+    private static final long STATE = Unsafe.objectFieldOffset(SpinLock.class, "state");
+
     private final BusyWaitStrategy additionalBusyWaitStrategy;
+
+    @Contended
+    private boolean state;
 
     public SpinLock() {
         this(NoopBusyWaitStrategy.DEFAULT_INSTANCE);
@@ -35,9 +41,9 @@ public class SpinLock implements Lock {
 
     @Override
     public void lock() {
-        while (state.getAcquireAndSetPlain(true)) {
+        while (AtomicBoolean.getAcquireAndSetPlain(this, STATE, true)) {
             additionalBusyWaitStrategy.reset();
-            while (state.getPlain()) {
+            while (state) {
                 Thread.onSpinWait();
                 additionalBusyWaitStrategy.tick();
             }
@@ -46,7 +52,7 @@ public class SpinLock implements Lock {
 
     @Override
     public void unlock() {
-        state.setRelease(false);
+        AtomicBoolean.setRelease(this, STATE, false);
     }
 
     /**

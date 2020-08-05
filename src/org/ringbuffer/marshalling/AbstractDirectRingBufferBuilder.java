@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.memory.Long;
+import org.ringbuffer.memory.LongHandle;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final long capacity;
@@ -37,9 +37,6 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         writtenPositionsFactory = builder.writtenPositionsFactory;
     }
 
-    /**
-     * It is recommended to add the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
-     */
     @Override
     protected abstract AbstractDirectRingBufferBuilder<?> withoutLocks();
 
@@ -73,8 +70,8 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         return byteArrayFactory.newInstance(capacity);
     }
 
-    Long newCursor() {
-        return memoryOrder.newLong();
+    LongHandle newHandle() {
+        return memoryOrder.newLongHandle();
     }
 
     DirectAtomicBooleanArray getWrittenPositions() {

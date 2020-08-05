@@ -18,19 +18,23 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.Long;
+import org.ringbuffer.memory.LongHandle;
+import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadDirectRingBuffer.class, "writePosition");
+
     private final long capacity;
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
     private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
+    private final LongHandle writePositionHandle;
     @Contended("read")
     private long readPosition;
-    private final Long writePosition;
+    private long writePosition;
     @Contended("read")
     private long cachedWritePosition;
 
@@ -40,7 +44,7 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
         buffer = builder.getBuffer();
         readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePosition = builder.newCursor();
+        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -50,12 +54,12 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
 
     @Override
     public long next() {
-        return writePosition.getPlain();
+        return writePosition;
     }
 
     @Override
     public void put(long offset) {
-        writePosition.set(offset);
+        writePositionHandle.set(this, WRITE_POSITION, offset);
     }
 
     @Override
@@ -73,7 +77,7 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
 
     private boolean isNotFullEnoughCached(long readPosition, long size) {
         if (size(readPosition, cachedWritePosition) < size) {
-            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne;
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
@@ -86,7 +90,7 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
 
     @Override
     public long size() {
-        return size(getReadPosition() & capacityMinusOne, writePosition.get() & capacityMinusOne);
+        return size(getReadPosition() & capacityMinusOne, writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne);
     }
 
     private long size(long readPosition, long writePosition) {
@@ -98,7 +102,7 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
 
     @Override
     public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
+        return (writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
     private long getReadPosition() {

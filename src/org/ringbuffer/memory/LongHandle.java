@@ -16,21 +16,8 @@
 
 package org.ringbuffer.memory;
 
-class PlainLong implements Long {
-    private long value;
+public interface LongHandle {
+    void set(Object instance, long offset, long value);
 
-    @Override
-    public void set(long value) {
-        this.value = value;
-    }
-
-    @Override
-    public long get() {
-        return value;
-    }
-
-    @Override
-    public long getPlain() {
-        return value;
-    }
+    long get(Object instance, long offset);
 }

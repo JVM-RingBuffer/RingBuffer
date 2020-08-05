@@ -18,21 +18,15 @@ package org.ringbuffer.memory;
 
 import org.ringbuffer.concurrent.AtomicLong;
 
-class LazyLong implements Long {
-    private final AtomicLong value = new AtomicLong();
-
+class OpaqueLongHandle implements LongHandle {
     @Override
-    public void set(long value) {
-        this.value.setRelease(value);
+    public void set(Object instance, long offset, long value) {
+        AtomicLong.setOpaque(instance, offset, value);
     }
 
     @Override
-    public long get() {
-        return value.getAcquire();
+    public long get(Object instance, long offset) {
+        return AtomicLong.getOpaque(instance, offset);
     }
 
-    @Override
-    public long getPlain() {
-        return value.getPlain();
-    }
 }

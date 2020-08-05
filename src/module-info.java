@@ -1,6 +1,7 @@
 module org.ringbuffer {
+    requires jdk.unsupported;
+
     requires static net.bytebuddy;
-    requires static jdk.unsupported;
     requires static jdk.management;
 
     exports org.ringbuffer.classcopy;

@@ -16,325 +16,290 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.java.Assume;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
+import static org.ringbuffer.system.Unsafe.UNSAFE;
+
 public class AtomicDoubleArray {
-    private static final VarHandle VALUE = MethodHandles.arrayElementVarHandle(double[].class);
-
-    private final double[] value;
-
-    public AtomicDoubleArray(int length) {
-        Assume.notLesser(length, 1);
-        value = new double[length];
+    public static void setOpaque(double[] array, int index, double value) {
+        UNSAFE.putDoubleOpaque(array, elementOffset(index), value);
     }
 
-    public AtomicDoubleArray(double[] value) {
-        Assume.notLesser(value.length, 1);
-        this.value = value;
+    public static void setRelease(double[] array, int index, double value) {
+        UNSAFE.putDoubleRelease(array, elementOffset(index), value);
     }
 
-    public int length() {
-        return value.length;
+    public static void setVolatile(double[] array, int index, double value) {
+        UNSAFE.putDoubleVolatile(array, elementOffset(index), value);
     }
 
-    public void setPlain(int index, double value) {
-        this.value[index] = value;
+    public static double getOpaque(double[] array, int index) {
+        return UNSAFE.getDoubleOpaque(array, elementOffset(index));
     }
 
-    public void setOpaque(int index, double value) {
-        VALUE.setOpaque(this.value, index, value);
+    public static double getAcquire(double[] array, int index) {
+        return UNSAFE.getDoubleAcquire(array, elementOffset(index));
     }
 
-    public void setRelease(int index, double value) {
-        VALUE.setRelease(this.value, index, value);
+    public static double getVolatile(double[] array, int index) {
+        return UNSAFE.getDoubleVolatile(array, elementOffset(index));
     }
 
-    public void setVolatile(int index, double value) {
-        VALUE.setVolatile(this.value, index, value);
+    public static boolean compareAndSetVolatile(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.compareAndSetDouble(array, elementOffset(index), oldValue, newValue);
     }
 
-    public double getPlain(int index) {
-        return value[index];
+    public static boolean weakComparePlainAndSetPlain(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.weakCompareAndSetDoublePlain(array, elementOffset(index), oldValue, newValue);
     }
 
-    public double getOpaque(int index) {
-        return (double) VALUE.getOpaque(value, index);
+    public static boolean weakComparePlainAndSetRelease(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.weakCompareAndSetDoubleRelease(array, elementOffset(index), oldValue, newValue);
     }
 
-    public double getAcquire(int index) {
-        return (double) VALUE.getAcquire(value, index);
+    public static boolean weakCompareAcquireAndSetPlain(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.weakCompareAndSetDoubleAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public double getVolatile(int index) {
-        return (double) VALUE.getVolatile(value, index);
+    public static boolean weakCompareAndSetVolatile(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.weakCompareAndSetDouble(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean compareAndSetVolatile(int index, double oldValue, double newValue) {
-        return VALUE.compareAndSet(value, index, oldValue, newValue);
+    public static double getPlainAndIncrementRelease(double[] array, int index) {
+        return getPlainAndAddRelease(array, index, 1D);
     }
 
-    public boolean weakComparePlainAndSetPlain(int index, double oldValue, double newValue) {
-        return VALUE.weakCompareAndSetPlain(value, index, oldValue, newValue);
+    public static double getAcquireAndIncrementPlain(double[] array, int index) {
+        return getAcquireAndAddPlain(array, index, 1D);
     }
 
-    public boolean weakComparePlainAndSetRelease(int index, double oldValue, double newValue) {
-        return VALUE.weakCompareAndSetRelease(value, index, oldValue, newValue);
+    public static double getAndIncrementVolatile(double[] array, int index) {
+        return getAndAddVolatile(array, index, 1D);
     }
 
-    public boolean weakCompareAcquireAndSetPlain(int index, double oldValue, double newValue) {
-        return VALUE.weakCompareAndSetAcquire(value, index, oldValue, newValue);
+    public static double getPlainAndDecrementRelease(double[] array, int index) {
+        return getPlainAndAddRelease(array, index, -1D);
     }
 
-    public boolean weakCompareAndSetVolatile(int index, double oldValue, double newValue) {
-        return VALUE.weakCompareAndSet(value, index, oldValue, newValue);
+    public static double getAcquireAndDecrementPlain(double[] array, int index) {
+        return getAcquireAndAddPlain(array, index, -1D);
     }
 
-    public double getPlainAndIncrementRelease(int index) {
-        return getPlainAndAddRelease(index, 1D);
+    public static double getAndDecrementVolatile(double[] array, int index) {
+        return getAndAddVolatile(array, index, -1D);
     }
 
-    public double getAcquireAndIncrementPlain(int index) {
-        return getAcquireAndAddPlain(index, 1D);
+    public static double incrementReleaseAndGetPlain(double[] array, int index) {
+        return addReleaseAndGetPlain(array, index, 1D);
     }
 
-    public double getAndIncrementVolatile(int index) {
-        return getAndAddVolatile(index, 1D);
+    public static double incrementPlainAndGetAcquire(double[] array, int index) {
+        return addPlainAndGetAcquire(array, index, 1D);
     }
 
-    public double getPlainAndDecrementRelease(int index) {
-        return getPlainAndAddRelease(index, -1D);
+    public static double incrementAndGetVolatile(double[] array, int index) {
+        return addAndGetVolatile(array, index, 1D);
     }
 
-    public double getAcquireAndDecrementPlain(int index) {
-        return getAcquireAndAddPlain(index, -1D);
+    public static void incrementPlainRelease(double[] array, int index) {
+        addPlainRelease(array, index, 1D);
     }
 
-    public double getAndDecrementVolatile(int index) {
-        return getAndAddVolatile(index, -1D);
+    public static void incrementAcquirePlain(double[] array, int index) {
+        addAcquirePlain(array, index, 1D);
     }
 
-    public double incrementReleaseAndGetPlain(int index) {
-        return addReleaseAndGetPlain(index, 1D);
+    public static void incrementVolatile(double[] array, int index) {
+        addVolatile(array, index, 1D);
     }
 
-    public double incrementPlainAndGetAcquire(int index) {
-        return addPlainAndGetAcquire(index, 1D);
+    public static double decrementReleaseAndGetPlain(double[] array, int index) {
+        return addReleaseAndGetPlain(array, index, -1D);
     }
 
-    public double incrementAndGetVolatile(int index) {
-        return addAndGetVolatile(index, 1D);
+    public static double decrementPlainAndGetAcquire(double[] array, int index) {
+        return addPlainAndGetAcquire(array, index, -1D);
     }
 
-    public void incrementVolatile(int index) {
-        addVolatile(index, 1D);
+    public static double decrementAndGetVolatile(double[] array, int index) {
+        return addAndGetVolatile(array, index, -1D);
     }
 
-    public void incrementPlainRelease(int index) {
-        addPlainRelease(index, 1D);
+    public static void decrementPlainRelease(double[] array, int index) {
+        addPlainRelease(array, index, -1D);
     }
 
-    public void incrementAcquirePlain(int index) {
-        addAcquirePlain(index, 1D);
+    public static void decrementAcquirePlain(double[] array, int index) {
+        addAcquirePlain(array, index, -1D);
     }
 
-    public void incrementPlain(int index) {
-        value[index]++;
+    public static void decrementVolatile(double[] array, int index) {
+        addVolatile(array, index, -1D);
     }
 
-    public double decrementReleaseAndGetPlain(int index) {
-        return addReleaseAndGetPlain(index, -1D);
+    public static double getPlainAndAddRelease(double[] array, int index, double value) {
+        return UNSAFE.getAndAddDoubleRelease(array, elementOffset(index), value);
     }
 
-    public double decrementPlainAndGetAcquire(int index) {
-        return addPlainAndGetAcquire(index, -1D);
+    public static double getAcquireAndAddPlain(double[] array, int index, double value) {
+        return UNSAFE.getAndAddDoubleAcquire(array, elementOffset(index), value);
     }
 
-    public double decrementAndGetVolatile(int index) {
-        return addAndGetVolatile(index, -1D);
+    public static double getAndAddVolatile(double[] array, int index, double value) {
+        return UNSAFE.getAndAddDouble(array, elementOffset(index), value);
     }
 
-    public void decrementVolatile(int index) {
-        addVolatile(index, -1D);
+    public static double addReleaseAndGetPlain(double[] array, int index, double value) {
+        return getPlainAndAddRelease(array, index, value) + value;
     }
 
-    public void decrementPlainRelease(int index) {
-        addPlainRelease(index, -1D);
+    public static double addPlainAndGetAcquire(double[] array, int index, double value) {
+        return getAcquireAndAddPlain(array, index, value) + value;
     }
 
-    public void decrementAcquirePlain(int index) {
-        addAcquirePlain(index, -1D);
+    public static double addAndGetVolatile(double[] array, int index, double value) {
+        return getAndAddVolatile(array, index, value) + value;
     }
 
-    public void decrementPlain(int index) {
-        value[index]--;
+    public static void addPlainRelease(double[] array, int index, double value) {
+        UNSAFE.getAndAddDoubleRelease(array, elementOffset(index), value);
     }
 
-    public double getPlainAndAddRelease(int index, double value) {
-        return (double) VALUE.getAndAddRelease(this.value, index, value);
+    public static void addAcquirePlain(double[] array, int index, double value) {
+        UNSAFE.getAndAddDoubleAcquire(array, elementOffset(index), value);
     }
 
-    public double getAcquireAndAddPlain(int index, double value) {
-        return (double) VALUE.getAndAddAcquire(this.value, index, value);
+    public static void addVolatile(double[] array, int index, double value) {
+        UNSAFE.getAndAddDouble(array, elementOffset(index), value);
     }
 
-    public double getAndAddVolatile(int index, double value) {
-        return (double) VALUE.getAndAdd(this.value, index, value);
+    public static double getPlainAndSetRelease(double[] array, int index, double value) {
+        return UNSAFE.getAndSetDoubleRelease(array, elementOffset(index), value);
     }
 
-    public double addReleaseAndGetPlain(int index, double value) {
-        return (double) VALUE.getAndAddRelease(this.value, index, value) + value;
+    public static double getAcquireAndSetPlain(double[] array, int index, double value) {
+        return UNSAFE.getAndSetDoubleAcquire(array, elementOffset(index), value);
     }
 
-    public double addPlainAndGetAcquire(int index, double value) {
-        return (double) VALUE.getAndAddAcquire(this.value, index, value) + value;
+    public static double getAndSetVolatile(double[] array, int index, double value) {
+        return UNSAFE.getAndSetDouble(array, elementOffset(index), value);
     }
 
-    public double addAndGetVolatile(int index, double value) {
-        return (double) VALUE.getAndAdd(this.value, index, value) + value;
+    public static double comparePlainAndExchangeRelease(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.compareAndExchangeDoubleRelease(array, elementOffset(index), oldValue, newValue);
     }
 
-    public void addVolatile(int index, double value) {
-        VALUE.getAndAdd(this.value, index, value);
+    public static double compareAcquireAndExchangePlain(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.compareAndExchangeDoubleAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public void addPlainRelease(int index, double value) {
-        VALUE.getAndAddRelease(this.value, index, value);
+    public static double compareAndExchangeVolatile(double[] array, int index, double oldValue, double newValue) {
+        return UNSAFE.compareAndExchangeDouble(array, elementOffset(index), oldValue, newValue);
     }
 
-    public void addAcquirePlain(int index, double value) {
-        VALUE.getAndAddAcquire(this.value, index, value);
-    }
-
-    public void addPlain(int index, double value) {
-        this.value[index] += value;
-    }
-
-    public double getPlainAndSetRelease(int index, double value) {
-        return (double) VALUE.getAndSetRelease(this.value, index, value);
-    }
-
-    public double getAcquireAndSetPlain(int index, double value) {
-        return (double) VALUE.getAndSetAcquire(this.value, index, value);
-    }
-
-    public double getAndSetVolatile(int index, double value) {
-        return (double) VALUE.getAndSet(this.value, index, value);
-    }
-
-    public double comparePlainAndExchangeRelease(int index, double oldValue, double newValue) {
-        return (double) VALUE.compareAndExchangeRelease(value, index, oldValue, newValue);
-    }
-
-    public double compareAcquireAndExchangePlain(int index, double oldValue, double newValue) {
-        return (double) VALUE.compareAndExchangeAcquire(value, index, oldValue, newValue);
-    }
-
-    public double compareAndExchangeVolatile(int index, double oldValue, double newValue) {
-        return (double) VALUE.compareAndExchange(value, index, oldValue, newValue);
-    }
-
-    public double getPlainAndBitwiseAndRelease(int index, double mask) {
-        return (double) VALUE.getAndBitwiseAndRelease(value, index, mask);
-    }
-
-    public double getAcquireAndBitwiseAndPlain(int index, double mask) {
-        return (double) VALUE.getAndBitwiseAndAcquire(value, index, mask);
-    }
-
-    public double getAndBitwiseAndVolatile(int index, double mask) {
-        return (double) VALUE.getAndBitwiseAnd(value, index, mask);
-    }
-
-    public double getPlainAndBitwiseOrRelease(int index, double mask) {
-        return (double) VALUE.getAndBitwiseOrRelease(value, index, mask);
-    }
-
-    public double getAcquireAndBitwiseOrPlain(int index, double mask) {
-        return (double) VALUE.getAndBitwiseOrAcquire(value, index, mask);
-    }
-
-    public double getAndBitwiseOrVolatile(int index, double mask) {
-        return (double) VALUE.getAndBitwiseOr(value, index, mask);
-    }
-
-    public double getPlainAndBitwiseXorRelease(int index, double mask) {
-        return (double) VALUE.getAndBitwiseXorRelease(value, index, mask);
-    }
-
-    public double getAcquireAndBitwiseXorPlain(int index, double mask) {
-        return (double) VALUE.getAndBitwiseXorAcquire(value, index, mask);
-    }
-
-    public double getAndBitwiseXorVolatile(int index, double mask) {
-        return (double) VALUE.getAndBitwiseXor(value, index, mask);
-    }
-
-    public double getAndUpdate(int index, DoubleUnaryOperator updateFunction) {
-        double prev = getVolatile(index), next = 0D;
+    public static double getAndUpdate(double[] array, int index, DoubleUnaryOperator updateFunction) {
+        double prev = getVolatile(array, index), next = 0D;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.applyAsDouble(prev);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public double updateAndGet(int index, DoubleUnaryOperator updateFunction) {
-        double prev = getVolatile(index), next = 0D;
+    public static double updateAndGet(double[] array, int index, DoubleUnaryOperator updateFunction) {
+        double prev = getVolatile(array, index), next = 0D;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.applyAsDouble(prev);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public double getAndAccumulate(int index, double constant, DoubleBinaryOperator accumulatorFunction) {
-        double prev = getVolatile(index), next = 0D;
+    public static double getAndAccumulate(double[] array, int index, double constant, DoubleBinaryOperator accumulatorFunction) {
+        double prev = getVolatile(array, index), next = 0D;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.applyAsDouble(prev, constant);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public double accumulateAndGet(int index, double constant, DoubleBinaryOperator accumulatorFunction) {
-        double prev = getVolatile(index), next = 0D;
+    public static double accumulateAndGet(double[] array, int index, double constant, DoubleBinaryOperator accumulatorFunction) {
+        double prev = getVolatile(array, index), next = 0D;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.applyAsDouble(prev, constant);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public void fill(double value) {
-        for (int i = 0; i < this.value.length; i++) {
-            this.value[i] = value;
+    public static void fillOpaque(double[] array, double value) {
+        for (int i = 0; i < array.length; i++) {
+            setOpaque(array, i, value);
         }
     }
 
-    @Override
-    public String toString() {
+    public static void fillRelease(double[] array, double value) {
+        for (int i = 0; i < array.length; i++) {
+            setRelease(array, i, value);
+        }
+    }
+
+    public static void fillVolatile(double[] array, double value) {
+        for (int i = 0; i < array.length; i++) {
+            setVolatile(array, i, value);
+        }
+    }
+
+    public static String toStringOpaque(double[] array) {
         StringBuilder builder = new StringBuilder();
         builder.append('[');
-        for (int i = 0, iMax = value.length - 1; ; i++) {
-            builder.append(getVolatile(i));
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getOpaque(array, i));
             if (i == iMax) {
                 builder.append(']');
                 return builder.toString();
             }
             builder.append(", ");
         }
+    }
+
+    public static String toStringAcquire(double[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getAcquire(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static String toStringVolatile(double[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getVolatile(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_DOUBLE_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index;
     }
 }

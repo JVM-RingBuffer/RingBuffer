@@ -21,7 +21,7 @@ import org.ringbuffer.concurrent.AtomicArray;
 
 class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
     private final int capacityMinusOne;
-    private final AtomicArray<T> buffer;
+    private final T[] buffer;
 
     @Contended
     private int readPosition;
@@ -30,27 +30,27 @@ class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
 
     FastVolatileRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBufferArray();
+        buffer = builder.getBuffer();
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length();
+        return buffer.length;
     }
 
     @Override
     public void put(T element) {
-        buffer.setRelease(writePosition++ & capacityMinusOne, element);
+        AtomicArray.setRelease(buffer, writePosition++ & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
         T element;
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while ((element = buffer.getAcquire(readPosition)) == null) {
+        while ((element = AtomicArray.getAcquire(buffer, readPosition)) == null) {
             Thread.onSpinWait();
         }
-        buffer.setPlain(readPosition, null);
+        buffer[readPosition] = null;
         return element;
     }
 }

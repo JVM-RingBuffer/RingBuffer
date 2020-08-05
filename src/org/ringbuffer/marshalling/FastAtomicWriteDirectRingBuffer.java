@@ -17,16 +17,20 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.PaddedAtomicLong;
+import org.ringbuffer.concurrent.AtomicLong;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteDirectRingBuffer.class, "writePosition");
+
     private final long capacityMinusOne;
     private final DirectByteArray buffer;
     private final DirectAtomicBooleanArray writtenPositions;
 
     @Contended
     private long readPosition;
-    private final PaddedAtomicLong writePosition = new PaddedAtomicLong();
+    @Contended
+    private long writePosition;
 
     FastAtomicWriteDirectRingBuffer(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
@@ -41,7 +45,7 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long next(long size) {
-        return writePosition.getAndAddVolatile(size);
+        return AtomicLong.getAndAddVolatile(this, WRITE_POSITION, size);
     }
 
     @Override

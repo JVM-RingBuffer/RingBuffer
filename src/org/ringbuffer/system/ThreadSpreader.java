@@ -16,23 +16,24 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Ensure;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadSpreader {
     private final int firstCPU;
     private final int lastCPU;
     private final int increment;
     private final boolean cycle;
-    private final AtomicInt nextCPU;
+    private final AtomicInteger nextCPU;
 
     ThreadSpreader(Builder builder) {
         firstCPU = builder.firstCPU;
         lastCPU = builder.lastCPU;
         increment = builder.increment;
         cycle = builder.cycle;
-        nextCPU = new AtomicInt(firstCPU);
+        nextCPU = new AtomicInteger(firstCPU);
     }
 
     public int bindCurrentThreadToNextCPU() {
@@ -55,7 +56,7 @@ public class ThreadSpreader {
     }
 
     public void reset() {
-        nextCPU.setVolatile(firstCPU);
+        nextCPU.set(firstCPU);
     }
 
     public static class Builder {

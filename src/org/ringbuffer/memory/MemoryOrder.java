@@ -17,9 +17,9 @@
 package org.ringbuffer.memory;
 
 public interface MemoryOrder {
-    Integer newInteger();
+    IntHandle newIntHandle();
 
-    Long newLong();
+    LongHandle newLongHandle();
 
     MemoryOrder PLAIN = new PlainMemoryOrder();
     MemoryOrder OPAQUE = new OpaqueMemoryOrder();

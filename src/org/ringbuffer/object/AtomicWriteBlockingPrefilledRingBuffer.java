@@ -18,12 +18,21 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.memory.IntHandle;
+import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
 class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        final Class<?> clazz = AtomicWriteBlockingPrefilledRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
+
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -31,9 +40,12 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final Integer readPosition;
-    private final Integer writePosition;
-    @Contended
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    private int writePosition;
+    @Contended("read")
     private int cachedWritePosition;
 
     AtomicWriteBlockingPrefilledRingBuffer(PrefilledRingBufferBuilder2<T> builder) {
@@ -43,8 +55,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        readPosition = builder.newCursor();
-        writePosition = builder.newCursor();
+        readPositionHandle = builder.newHandle();
+        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -55,7 +67,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     @Override
     public int nextKey() {
         writeLock.lock();
-        return writePosition.getPlain();
+        return writePosition;
     }
 
     @Override
@@ -69,7 +81,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     @Override
     public T next(int key, int putKey) {
         writeBusyWaitStrategy.reset();
-        while (readPosition.get() == putKey) {
+        while (readPositionHandle.get(this, READ_POSITION) == putKey) {
             writeBusyWaitStrategy.tick();
         }
         return buffer[key];
@@ -77,28 +89,28 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public void put(int putKey) {
-        writePosition.set(putKey);
+        writePositionHandle.set(this, WRITE_POSITION, putKey);
         writeLock.unlock();
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getPlain();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
-            this.readPosition.set(capacityMinusOne);
+            readPositionHandle.set(this, READ_POSITION, capacityMinusOne);
         } else {
-            this.readPosition.set(readPosition - 1);
+            readPositionHandle.set(this, READ_POSITION, readPosition - 1);
         }
         return buffer[readPosition];
     }
 
     private boolean isEmptyCached(int readPosition) {
         if (cachedWritePosition == readPosition) {
-            cachedWritePosition = writePosition.get();
+            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION);
             return cachedWritePosition == readPosition;
         }
         return false;
@@ -110,7 +122,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public void takeBatch(int size) {
-        int readPosition = this.readPosition.getPlain();
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -119,11 +131,11 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public T takePlain() {
-        int readPosition = this.readPosition.getPlain();
+        int readPosition = this.readPosition;
         if (readPosition == 0) {
-            this.readPosition.set(capacityMinusOne);
+            readPositionHandle.set(this, READ_POSITION, capacityMinusOne);
         } else {
-            this.readPosition.set(readPosition - 1);
+            readPositionHandle.set(this, READ_POSITION, readPosition - 1);
         }
         return buffer[readPosition];
     }
@@ -134,8 +146,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public void forEach(Consumer<T> action) {
-        int readPosition = this.readPosition.get();
-        int writePosition = this.writePosition.get();
+        int readPosition = readPositionHandle.get(this, READ_POSITION);
+        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (; readPosition > writePosition; readPosition--) {
                 action.accept(buffer[readPosition]);
@@ -156,8 +168,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public boolean contains(T element) {
-        int readPosition = this.readPosition.get();
-        int writePosition = this.writePosition.get();
+        int readPosition = readPositionHandle.get(this, READ_POSITION);
+        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (; readPosition > writePosition; readPosition--) {
                 if (buffer[readPosition].equals(element)) {
@@ -185,11 +197,11 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public int size() {
-        return size(readPosition.get());
+        return size(readPositionHandle.get(this, READ_POSITION));
     }
 
     private int size(int readPosition) {
-        int writePosition = this.writePosition.get();
+        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }
@@ -198,7 +210,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(readPosition.get(), writePosition.get());
+        return isEmpty(readPositionHandle.get(this, READ_POSITION), writePositionHandle.get(this, WRITE_POSITION));
     }
 
     private static boolean isEmpty(int readPosition, int writePosition) {
@@ -207,8 +219,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public String toString() {
-        int readPosition = this.readPosition.get();
-        int writePosition = this.writePosition.get();
+        int readPosition = readPositionHandle.get(this, READ_POSITION);
+        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }

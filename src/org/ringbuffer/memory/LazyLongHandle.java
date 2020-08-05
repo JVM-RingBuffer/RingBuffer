@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.system;
+package org.ringbuffer.memory;
 
-/**
- * It is recommended to add the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
- */
-public class InternalUnsafe {
-    public static final jdk.internal.misc.Unsafe UNSAFE;
+import org.ringbuffer.concurrent.AtomicLong;
 
-    static {
-        Unsafe.addOpensConditionally(Class.class.getModule() /* java.base */, InternalUnsafe.class.getModule(), "jdk.internal.misc");
-        UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
+class LazyLongHandle implements LongHandle {
+    @Override
+    public void set(Object instance, long offset, long value) {
+        AtomicLong.setRelease(instance, offset, value);
     }
+
+    @Override
+    public long get(Object instance, long offset) {
+        return AtomicLong.getAcquire(instance, offset);
+    }
+
 }

@@ -2,7 +2,7 @@
  * Copyright 2020 Francesco Menzani
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use instance file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -16,162 +16,139 @@
 
 package org.ringbuffer.concurrent;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
+import static org.ringbuffer.system.Unsafe.UNSAFE;
+
 public class Atomic<T> {
-    private static final VarHandle VALUE;
-
-    static {
-        try {
-            VALUE = MethodHandles.lookup().findVarHandle(Atomic.class, "value", Object.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+    public static <T> void setPlain(Object instance, long offset, T value) {
+        UNSAFE.putObject(instance, offset, value);
     }
 
-    private T value;
-
-    public Atomic() {
+    public static <T> void setOpaque(Object instance, long offset, T value) {
+        UNSAFE.putObjectOpaque(instance, offset, value);
     }
 
-    public Atomic(T value) {
-        this.value = value;
+    public static <T> void setRelease(Object instance, long offset, T value) {
+        UNSAFE.putObjectRelease(instance, offset, value);
     }
 
-    public void setPlain(T value) {
-        this.value = value;
-    }
-
-    public void setOpaque(T value) {
-        VALUE.setOpaque(this, value);
-    }
-
-    public void setRelease(T value) {
-        VALUE.setRelease(this, value);
-    }
-
-    public void setVolatile(T value) {
-        VALUE.setVolatile(this, value);
-    }
-
-    public T getPlain() {
-        return value;
+    public static <T> void setVolatile(Object instance, long offset, T value) {
+        UNSAFE.putObjectVolatile(instance, offset, value);
     }
 
     @SuppressWarnings("unchecked")
-    public T getOpaque() {
-        return (T) VALUE.getOpaque(this);
+    public static <T> T getPlain(Object instance, long offset) {
+        return (T) UNSAFE.getObject(instance, offset);
     }
 
     @SuppressWarnings("unchecked")
-    public T getAcquire() {
-        return (T) VALUE.getAcquire(this);
+    public static <T> T getOpaque(Object instance, long offset) {
+        return (T) UNSAFE.getObjectOpaque(instance, offset);
     }
 
     @SuppressWarnings("unchecked")
-    public T getVolatile() {
-        return (T) VALUE.getVolatile(this);
-    }
-
-    public boolean compareAndSetVolatile(T oldValue, T newValue) {
-        return VALUE.compareAndSet(this, oldValue, newValue);
-    }
-
-    public boolean weakComparePlainAndSetPlain(T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetPlain(this, oldValue, newValue);
-    }
-
-    public boolean weakComparePlainAndSetRelease(T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetRelease(this, oldValue, newValue);
-    }
-
-    public boolean weakCompareAcquireAndSetPlain(T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetAcquire(this, oldValue, newValue);
-    }
-
-    public boolean weakCompareAndSetVolatile(T oldValue, T newValue) {
-        return VALUE.weakCompareAndSet(this, oldValue, newValue);
+    public static <T> T getAcquire(Object instance, long offset) {
+        return (T) UNSAFE.getObjectAcquire(instance, offset);
     }
 
     @SuppressWarnings("unchecked")
-    public T getPlainAndSetRelease(T value) {
-        return (T) VALUE.getAndSetRelease(this, value);
+    public static <T> T getVolatile(Object instance, long offset) {
+        return (T) UNSAFE.getObjectVolatile(instance, offset);
+    }
+
+    public static <T> boolean compareAndSetVolatile(Object instance, long offset, T oldValue, T newValue) {
+        return UNSAFE.compareAndSetObject(instance, offset, oldValue, newValue);
+    }
+
+    public static <T> boolean weakComparePlainAndSetPlain(Object instance, long offset, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectPlain(instance, offset, oldValue, newValue);
+    }
+
+    public static <T> boolean weakComparePlainAndSetRelease(Object instance, long offset, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectRelease(instance, offset, oldValue, newValue);
+    }
+
+    public static <T> boolean weakCompareAcquireAndSetPlain(Object instance, long offset, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectAcquire(instance, offset, oldValue, newValue);
+    }
+
+    public static <T> boolean weakCompareAndSetVolatile(Object instance, long offset, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObject(instance, offset, oldValue, newValue);
     }
 
     @SuppressWarnings("unchecked")
-    public T getAcquireAndSetPlain(T value) {
-        return (T) VALUE.getAndSetAcquire(this, value);
+    public static <T> T getPlainAndSetRelease(Object instance, long offset, T value) {
+        return (T) UNSAFE.getAndSetObjectRelease(instance, offset, value);
     }
 
     @SuppressWarnings("unchecked")
-    public T getAndSetVolatile(T value) {
-        return (T) VALUE.getAndSet(this, value);
+    public static <T> T getAcquireAndSetPlain(Object instance, long offset, T value) {
+        return (T) UNSAFE.getAndSetObjectAcquire(instance, offset, value);
     }
 
     @SuppressWarnings("unchecked")
-    public T comparePlainAndExchangeRelease(T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchangeRelease(this, oldValue, newValue);
+    public static <T> T getAndSetVolatile(Object instance, long offset, T value) {
+        return (T) UNSAFE.getAndSetObject(instance, offset, value);
     }
 
     @SuppressWarnings("unchecked")
-    public T compareAcquireAndExchangePlain(T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchangeAcquire(this, oldValue, newValue);
+    public static <T> T comparePlainAndExchangeRelease(Object instance, long offset, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObjectRelease(instance, offset, oldValue, newValue);
     }
 
     @SuppressWarnings("unchecked")
-    public T compareAndExchangeVolatile(T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchange(this, oldValue, newValue);
+    public static <T> T compareAcquireAndExchangePlain(Object instance, long offset, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObjectAcquire(instance, offset, oldValue, newValue);
     }
 
-    public T getAndUpdate(UnaryOperator<T> updateFunction) {
-        T prev = getVolatile(), next = null;
+    @SuppressWarnings("unchecked")
+    public static <T> T compareAndExchangeVolatile(Object instance, long offset, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObject(instance, offset, oldValue, newValue);
+    }
+
+    public static <T> T getAndUpdate(Object instance, long offset, UnaryOperator<T> updateFunction) {
+        T prev = getVolatile(instance, offset), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.apply(prev);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public T updateAndGet(UnaryOperator<T> updateFunction) {
-        T prev = getVolatile(), next = null;
+    public static <T> T updateAndGet(Object instance, long offset, UnaryOperator<T> updateFunction) {
+        T prev = getVolatile(instance, offset), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.apply(prev);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public T getAndAccumulate(T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getVolatile(), next = null;
+    public static <T> T getAndAccumulate(Object instance, long offset, T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getVolatile(instance, offset), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.apply(prev, constant);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public T accumulateAndGet(T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getVolatile(), next = null;
+    public static <T> T accumulateAndGet(Object instance, long offset, T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getVolatile(instance, offset), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.apply(prev, constant);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(getVolatile());
     }
 }

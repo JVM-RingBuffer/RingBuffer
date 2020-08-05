@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.memory;
+package org.ringbuffer.concurrent;
 
-public interface Long {
-    void set(long value);
-
-    long get();
-
-    long getPlain();
+public class AtomicCharArray {
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_CHAR_INDEX_SCALE * index;
+    }
 }

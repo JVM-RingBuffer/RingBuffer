@@ -16,16 +16,28 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        final Class<?> clazz = FastConcurrentPrefilledRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
+
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
-    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
 
     FastConcurrentPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
@@ -40,7 +52,7 @@ class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public int nextKey() {
-        return writePosition.getAndIncrementVolatile() & capacityMinusOne;
+        return AtomicInt.getAndIncrementVolatile(this, WRITE_POSITION) & capacityMinusOne;
     }
 
     @Override
@@ -50,16 +62,16 @@ class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public void put(int key) {
-        writtenPositions.setRelease(key, false);
+        AtomicBooleanArray.setRelease(writtenPositions, key, false);
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getAndIncrementVolatile() & capacityMinusOne;
-        while (writtenPositions.getAcquire(readPosition)) {
+        int readPosition = AtomicInt.getAndIncrementVolatile(this, READ_POSITION) & capacityMinusOne;
+        while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
             Thread.onSpinWait();
         }
-        writtenPositions.setOpaque(readPosition, true);
+        AtomicBooleanArray.setOpaque(writtenPositions, readPosition, true);
         return buffer[readPosition];
     }
 }

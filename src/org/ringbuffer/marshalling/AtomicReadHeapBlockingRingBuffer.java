@@ -18,10 +18,19 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.memory.IntHandle;
+import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        final Class<?> clazz = AtomicReadHeapBlockingRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
+
     private final int capacity;
     private final int capacityMinusOne;
     private final ByteArray buffer;
@@ -29,9 +38,12 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final Integer readPosition;
-    private final Integer writePosition;
-    @Contended
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    private int writePosition;
+    @Contended("read")
     private int cachedWritePosition;
 
     AtomicReadHeapBlockingRingBuffer(HeapRingBufferBuilder builder) {
@@ -41,8 +53,8 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
         readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        readPosition = builder.newCursor();
-        writePosition = builder.newCursor();
+        readPositionHandle = builder.newHandle();
+        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -52,16 +64,16 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public int next(int size) {
-        int writePosition = this.writePosition.getPlain() & capacityMinusOne;
+        int writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
         while (freeSpace(writePosition) <= size) {
             writeBusyWaitStrategy.tick();
         }
-        return this.writePosition.getPlain();
+        return writePosition;
     }
 
     private int freeSpace(int writePosition) {
-        int readPosition = this.readPosition.get() & capacityMinusOne;
+        int readPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
         if (writePosition >= readPosition) {
             return capacity - (writePosition - readPosition);
         }
@@ -70,23 +82,23 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public void put(int offset) {
-        writePosition.set(offset);
+        writePositionHandle.set(this, WRITE_POSITION, offset);
     }
 
     @Override
     public int take(int size) {
         readLock.lock();
-        int readPosition = this.readPosition.getPlain() & capacityMinusOne;
+        int readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();
         }
-        return this.readPosition.getPlain();
+        return readPosition;
     }
 
     private boolean isNotFullEnoughCached(int readPosition, int size) {
         if (size(readPosition, cachedWritePosition) < size) {
-            cachedWritePosition = writePosition.get() & capacityMinusOne;
+            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne;
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
@@ -94,13 +106,13 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public void advance(int offset) {
-        readPosition.set(offset);
+        readPositionHandle.set(this, READ_POSITION, offset);
         readLock.unlock();
     }
 
     @Override
     public int size() {
-        return size(readPosition.get() & capacityMinusOne, writePosition.get() & capacityMinusOne);
+        return size(readPositionHandle.get(this, READ_POSITION) & capacityMinusOne, writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne);
     }
 
     private int size(int readPosition, int writePosition) {
@@ -112,7 +124,7 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public boolean isEmpty() {
-        return (writePosition.get() & capacityMinusOne) == (readPosition.get() & capacityMinusOne);
+        return (writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne) == (readPositionHandle.get(this, READ_POSITION) & capacityMinusOne);
     }
 
     @Override

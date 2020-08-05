@@ -18,14 +18,18 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
+    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadPrefilledRingBuffer.class, "readPosition");
+
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
-    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
+    @Contended
+    private int readPosition;
     @Contended
     private int writePosition;
 
@@ -52,13 +56,13 @@ class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public void put(int key) {
-        writtenPositions.setRelease(key, false);
+        AtomicBooleanArray.setRelease(writtenPositions, key, false);
     }
 
     @Override
     public T take() {
-        int readPosition = this.readPosition.getAndIncrementVolatile() & capacityMinusOne;
-        while (writtenPositions.getAndSetVolatile(readPosition, true)) {
+        int readPosition = AtomicInt.getAndIncrementVolatile(this, READ_POSITION) & capacityMinusOne;
+        while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
             Thread.onSpinWait();
         }
         return buffer[readPosition];

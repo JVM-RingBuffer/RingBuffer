@@ -16,39 +16,51 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastConcurrentRingBuffer<T> extends FastRingBuffer<T> {
-    private final int capacityMinusOne;
-    private final AtomicArray<T> buffer;
+    private static final long READ_POSITION, WRITE_POSITION;
 
-    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    static {
+        final Class<?> clazz = FastConcurrentRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
+
+    private final int capacityMinusOne;
+    private final T[] buffer;
+
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
 
     FastConcurrentRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBufferArray();
+        buffer = builder.getBuffer();
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length();
+        return buffer.length;
     }
 
     @Override
     public void put(T element) {
-        buffer.setRelease(writePosition.getAndIncrementVolatile() & capacityMinusOne, element);
+        AtomicArray.setRelease(buffer, AtomicInt.getAndIncrementVolatile(this, WRITE_POSITION) & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
         T element;
-        int readPosition = this.readPosition.getAndIncrementVolatile() & capacityMinusOne;
-        while ((element = buffer.getAcquire(readPosition)) == null) {
+        int readPosition = AtomicInt.getAndIncrementVolatile(this, READ_POSITION) & capacityMinusOne;
+        while ((element = AtomicArray.getAcquire(buffer, readPosition)) == null) {
             Thread.onSpinWait();
         }
-        buffer.setOpaque(readPosition, null);
+        AtomicArray.setOpaque(buffer, readPosition, null);
         return element;
     }
 }

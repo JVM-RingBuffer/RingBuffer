@@ -18,21 +18,14 @@ package org.ringbuffer.memory;
 
 import org.ringbuffer.concurrent.AtomicInt;
 
-class LazyInteger implements Integer {
-    private final AtomicInt value = new AtomicInt();
-
+class LazyIntHandle implements IntHandle {
     @Override
-    public void set(int value) {
-        this.value.setRelease(value);
+    public void set(Object instance, long offset, int value) {
+        AtomicInt.setRelease(instance, offset, value);
     }
 
     @Override
-    public int get() {
-        return value.getAcquire();
-    }
-
-    @Override
-    public int getPlain() {
-        return value.getPlain();
+    public int get(Object instance, long offset) {
+        return AtomicInt.getAcquire(instance, offset);
     }
 }

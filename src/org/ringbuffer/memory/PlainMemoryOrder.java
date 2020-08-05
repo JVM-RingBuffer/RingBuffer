@@ -18,12 +18,12 @@ package org.ringbuffer.memory;
 
 class PlainMemoryOrder implements MemoryOrder {
     @Override
-    public Integer newInteger() {
-        return new PlainInteger();
+    public IntHandle newIntHandle() {
+        return new PlainIntHandle();
     }
 
     @Override
-    public Long newLong() {
-        return new PlainLong();
+    public LongHandle newLongHandle() {
+        return new PlainLongHandle();
     }
 }

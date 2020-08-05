@@ -16,16 +16,28 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        final Class<?> clazz = FastConcurrentHeapRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
+
     private final int capacityMinusOne;
     private final ByteArray buffer;
-    private final AtomicBooleanArray writtenPositions;
+    private final boolean[] writtenPositions;
 
-    private final PaddedAtomicInt readPosition = new PaddedAtomicInt();
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
 
     FastConcurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
@@ -40,21 +52,21 @@ class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public int next(int size) {
-        return writePosition.getAndAddVolatile(size);
+        return AtomicInt.getAndAddVolatile(this, WRITE_POSITION, size);
     }
 
     @Override
     public void put(int offset) {
-        writtenPositions.setRelease(offset & capacityMinusOne, false);
+        AtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
-        int readPosition = this.readPosition.getAndAddVolatile(size) & capacityMinusOne;
-        while (writtenPositions.getAcquire(readPosition)) {
+        int readPosition = AtomicInt.getAndAddVolatile(this, READ_POSITION, size) & capacityMinusOne;
+        while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
             Thread.onSpinWait();
         }
-        writtenPositions.setOpaque(readPosition, true);
+        AtomicBooleanArray.setOpaque(writtenPositions, readPosition, true);
         return readPosition;
     }
 

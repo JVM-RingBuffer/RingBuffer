@@ -16,10 +16,17 @@
 
 package org.ringbuffer.memory;
 
-public interface Integer {
-    void set(int value);
+class PlainLongHandle implements LongHandle {
+    private long value;
 
-    int get();
+    @Override
+    public void set(Object instance, long offset, long value) {
+        this.value = value;
+    }
 
-    int getPlain();
+    @Override
+    public long get(Object instance, long offset) {
+        return value;
+    }
+
 }

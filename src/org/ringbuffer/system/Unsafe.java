@@ -20,47 +20,54 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * To avoid using reflection, consider adding the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
+ */
 public class Unsafe {
-    public static final sun.misc.Unsafe UNSAFE;
+    public static final Module JAVA_BASE_MODULE = Class.class.getModule();
+
+    public static final jdk.internal.misc.Unsafe UNSAFE;
+
+    private static final sun.misc.Unsafe unsafe;
+    private static final long OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
+    private static final Method implAddOpens;
 
     static {
         try {
             Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
-            UNSAFE = (sun.misc.Unsafe) field.get(null);
+            unsafe = (sun.misc.Unsafe) field.get(null);
+
+            final Class<?> clazz = Module.class;
+            implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
+        setAccessible(implAddOpens);
+
+        addOpens(JAVA_BASE_MODULE, Unsafe.class.getModule(), "jdk.internal.misc");
+        UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
     }
 
-    private static final long OVERRIDE;
-
-    static {
+    public static long objectFieldOffset(Class<?> clazz, String fieldName) {
         try {
-            OVERRIDE = UNSAFE.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+            return unsafe.objectFieldOffset(clazz.getDeclaredField(fieldName));
         } catch (NoSuchFieldException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
     public static void setAccessible(AccessibleObject accessibleObject) {
-        UNSAFE.putBoolean(accessibleObject, OVERRIDE, true);
-    }
-
-    public static void addOpensConditionally(Module from, Module to, String packageName) {
-        if (!from.isOpen(packageName, to)) {
-            addOpens(from, to, packageName);
-        }
+        unsafe.putBoolean(accessibleObject, OVERRIDE, true);
     }
 
     public static void addOpens(Module from, Module to, String packageName) {
-        final Class<?> clazz = Module.class;
-        try {
-            Method method = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
-            setAccessible(method);
-            method.invoke(from, packageName, to);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError();
+        if (!from.isOpen(packageName, to)) {
+            try {
+                implAddOpens.invoke(from, packageName, to);
+            } catch (ReflectiveOperationException e) {
+                throw new AssertionError();
+            }
         }
     }
 }

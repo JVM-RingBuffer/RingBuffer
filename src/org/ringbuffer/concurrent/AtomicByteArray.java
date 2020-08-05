@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.memory;
+package org.ringbuffer.concurrent;
 
-import org.ringbuffer.concurrent.AtomicLong;
-
-class VolatileLong implements Long {
-    private final AtomicLong value = new AtomicLong();
-
-    @Override
-    public void set(long value) {
-        this.value.setVolatile(value);
-    }
-
-    @Override
-    public long get() {
-        return value.getVolatile();
-    }
-
-    @Override
-    public long getPlain() {
-        return value.getPlain();
+public class AtomicByteArray {
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_BYTE_INDEX_SCALE * index;
     }
 }

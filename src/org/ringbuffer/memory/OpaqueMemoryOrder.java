@@ -18,12 +18,12 @@ package org.ringbuffer.memory;
 
 class OpaqueMemoryOrder implements MemoryOrder {
     @Override
-    public Integer newInteger() {
-        return new OpaqueInteger();
+    public IntHandle newIntHandle() {
+        return new OpaqueIntHandle();
     }
 
     @Override
-    public Long newLong() {
-        return new OpaqueLong();
+    public LongHandle newLongHandle() {
+        return new OpaqueLongHandle();
     }
 }

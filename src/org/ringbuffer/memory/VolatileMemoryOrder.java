@@ -18,12 +18,12 @@ package org.ringbuffer.memory;
 
 class VolatileMemoryOrder implements MemoryOrder {
     @Override
-    public Integer newInteger() {
-        return new VolatileInteger();
+    public IntHandle newIntHandle() {
+        return new VolatileIntHandle();
     }
 
     @Override
-    public Long newLong() {
-        return new VolatileLong();
+    public LongHandle newLongHandle() {
+        return new VolatileLongHandle();
     }
 }

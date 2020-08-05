@@ -16,23 +16,17 @@
 
 package org.ringbuffer.memory;
 
-import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.concurrent.AtomicLong;
 
-class OpaqueInteger implements Integer {
-    private final AtomicInt value = new AtomicInt();
-
+class VolatileLongHandle implements LongHandle {
     @Override
-    public void set(int value) {
-        this.value.setOpaque(value);
+    public void set(Object instance, long offset, long value) {
+        AtomicLong.setVolatile(instance, offset, value);
     }
 
     @Override
-    public int get() {
-        return value.getOpaque();
+    public long get(Object instance, long offset) {
+        return AtomicLong.getVolatile(instance, offset);
     }
 
-    @Override
-    public int getPlain() {
-        return value.getPlain();
-    }
 }

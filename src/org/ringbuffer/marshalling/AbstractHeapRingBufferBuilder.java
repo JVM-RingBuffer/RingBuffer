@@ -16,8 +16,9 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.concurrent.AtomicBooleanArray;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.memory.IntHandle;
+
+import java.util.Arrays;
 
 abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final int capacity;
@@ -60,13 +61,13 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
         return byteArrayFactory.newInstance(capacity);
     }
 
-    Integer newCursor() {
-        return memoryOrder.newInteger();
+    IntHandle newHandle() {
+        return memoryOrder.newIntHandle();
     }
 
-    AtomicBooleanArray getWrittenPositions() {
-        AtomicBooleanArray writtenPositions = new AtomicBooleanArray(capacity);
-        writtenPositions.fill(true);
+    boolean[] getWrittenPositions() {
+        boolean[] writtenPositions = new boolean[capacity];
+        Arrays.fill(writtenPositions, true);
         return writtenPositions;
     }
 }

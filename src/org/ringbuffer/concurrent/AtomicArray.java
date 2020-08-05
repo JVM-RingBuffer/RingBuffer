@@ -16,180 +16,191 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.java.Assume;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
+import static org.ringbuffer.system.Unsafe.UNSAFE;
+
 public class AtomicArray<T> {
-    private static final VarHandle VALUE = MethodHandles.arrayElementVarHandle(Object[].class);
-
-    private final T[] value;
-
-    public AtomicArray(int length) {
-        Assume.notLesser(length, 1);
-        @SuppressWarnings("unchecked")
-        T[] value = (T[]) new Object[length];
-        this.value = value;
+    public static <T> void setOpaque(T[] array, int index, T value) {
+        UNSAFE.putObjectOpaque(array, elementOffset(index), value);
     }
 
-    public AtomicArray(T[] value) {
-        Assume.notLesser(value.length, 1);
-        this.value = value;
+    public static <T> void setRelease(T[] array, int index, T value) {
+        UNSAFE.putObjectRelease(array, elementOffset(index), value);
     }
 
-    public int length() {
-        return value.length;
-    }
-
-    public void setPlain(int index, T value) {
-        this.value[index] = value;
-    }
-
-    public void setOpaque(int index, T value) {
-        VALUE.setOpaque(this.value, index, value);
-    }
-
-    public void setRelease(int index, T value) {
-        VALUE.setRelease(this.value, index, value);
-    }
-
-    public void setVolatile(int index, T value) {
-        VALUE.setVolatile(this.value, index, value);
-    }
-
-    public T getPlain(int index) {
-        return value[index];
+    public static <T> void setVolatile(T[] array, int index, T value) {
+        UNSAFE.putObjectVolatile(array, elementOffset(index), value);
     }
 
     @SuppressWarnings("unchecked")
-    public T getOpaque(int index) {
-        return (T) VALUE.getOpaque(value, index);
+    public static <T> T getOpaque(T[] array, int index) {
+        return (T) UNSAFE.getObjectOpaque(array, elementOffset(index));
     }
 
     @SuppressWarnings("unchecked")
-    public T getAcquire(int index) {
-        return (T) VALUE.getAcquire(value, index);
+    public static <T> T getAcquire(T[] array, int index) {
+        return (T) UNSAFE.getObjectAcquire(array, elementOffset(index));
     }
 
     @SuppressWarnings("unchecked")
-    public T getVolatile(int index) {
-        return (T) VALUE.getVolatile(value, index);
+    public static <T> T getVolatile(T[] array, int index) {
+        return (T) UNSAFE.getObjectVolatile(array, elementOffset(index));
     }
 
-    public boolean compareAndSetVolatile(int index, T oldValue, T newValue) {
-        return VALUE.compareAndSet(value, index, oldValue, newValue);
+    public static <T> boolean compareAndSetVolatile(T[] array, int index, T oldValue, T newValue) {
+        return UNSAFE.compareAndSetObject(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetPlain(int index, T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetPlain(value, index, oldValue, newValue);
+    public static <T> boolean weakComparePlainAndSetPlain(T[] array, int index, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectPlain(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetRelease(int index, T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetRelease(value, index, oldValue, newValue);
+    public static <T> boolean weakComparePlainAndSetRelease(T[] array, int index, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectRelease(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean weakCompareAcquireAndSetPlain(int index, T oldValue, T newValue) {
-        return VALUE.weakCompareAndSetAcquire(value, index, oldValue, newValue);
+    public static <T> boolean weakCompareAcquireAndSetPlain(T[] array, int index, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObjectAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public boolean weakCompareAndSetVolatile(int index, T oldValue, T newValue) {
-        return VALUE.weakCompareAndSet(value, index, oldValue, newValue);
-    }
-
-    @SuppressWarnings("unchecked")
-    public T getPlainAndSetRelease(int index, T value) {
-        return (T) VALUE.getAndSetRelease(this.value, index, value);
+    public static <T> boolean weakCompareAndSetVolatile(T[] array, int index, T oldValue, T newValue) {
+        return UNSAFE.weakCompareAndSetObject(array, elementOffset(index), oldValue, newValue);
     }
 
     @SuppressWarnings("unchecked")
-    public T getAcquireAndSetPlain(int index, T value) {
-        return (T) VALUE.getAndSetAcquire(this.value, index, value);
+    public static <T> T getPlainAndSetRelease(T[] array, int index, T value) {
+        return (T) UNSAFE.getAndSetObjectRelease(array, elementOffset(index), value);
     }
 
     @SuppressWarnings("unchecked")
-    public T getAndSetVolatile(int index, T value) {
-        return (T) VALUE.getAndSet(this.value, index, value);
+    public static <T> T getAcquireAndSetPlain(T[] array, int index, T value) {
+        return (T) UNSAFE.getAndSetObjectAcquire(array, elementOffset(index), value);
     }
 
     @SuppressWarnings("unchecked")
-    public T comparePlainAndExchangeRelease(int index, T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchangeRelease(value, index, oldValue, newValue);
+    public static <T> T getAndSetVolatile(T[] array, int index, T value) {
+        return (T) UNSAFE.getAndSetObject(array, elementOffset(index), value);
     }
 
     @SuppressWarnings("unchecked")
-    public T compareAcquireAndExchangePlain(int index, T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchangeAcquire(value, index, oldValue, newValue);
+    public static <T> T comparePlainAndExchangeRelease(T[] array, int index, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObjectRelease(array, elementOffset(index), oldValue, newValue);
     }
 
     @SuppressWarnings("unchecked")
-    public T compareAndExchangeVolatile(int index, T oldValue, T newValue) {
-        return (T) VALUE.compareAndExchange(value, index, oldValue, newValue);
+    public static <T> T compareAcquireAndExchangePlain(T[] array, int index, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObjectAcquire(array, elementOffset(index), oldValue, newValue);
     }
 
-    public T getAndUpdate(int index, UnaryOperator<T> updateFunction) {
-        T prev = getVolatile(index), next = null;
+    @SuppressWarnings("unchecked")
+    public static <T> T compareAndExchangeVolatile(T[] array, int index, T oldValue, T newValue) {
+        return (T) UNSAFE.compareAndExchangeObject(array, elementOffset(index), oldValue, newValue);
+    }
+
+    public static <T> T getAndUpdate(T[] array, int index, UnaryOperator<T> updateFunction) {
+        T prev = getVolatile(array, index), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.apply(prev);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public T updateAndGet(int index, UnaryOperator<T> updateFunction) {
-        T prev = getVolatile(index), next = null;
+    public static <T> T updateAndGet(T[] array, int index, UnaryOperator<T> updateFunction) {
+        T prev = getVolatile(array, index), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.apply(prev);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public T getAndAccumulate(int index, T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getVolatile(index), next = null;
+    public static <T> T getAndAccumulate(T[] array, int index, T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getVolatile(array, index), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.apply(prev, constant);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public T accumulateAndGet(int index, T constant, BinaryOperator<T> accumulatorFunction) {
-        T prev = getVolatile(index), next = null;
+    public static <T> T accumulateAndGet(T[] array, int index, T constant, BinaryOperator<T> accumulatorFunction) {
+        T prev = getVolatile(array, index), next = null;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.apply(prev, constant);
-            if (weakCompareAndSetVolatile(index, prev, next))
+            if (weakCompareAndSetVolatile(array, index, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile(index)));
+            haveNext = (prev == (prev = getVolatile(array, index)));
         }
     }
 
-    public void fill(T value) {
-        for (int i = 0; i < this.value.length; i++) {
-            this.value[i] = value;
+    public static <T> void fillOpaque(T[] array, T value) {
+        for (int i = 0; i < array.length; i++) {
+            setOpaque(array, i, value);
         }
     }
 
-    @Override
-    public String toString() {
+    public static <T> void fillRelease(T[] array, T value) {
+        for (int i = 0; i < array.length; i++) {
+            setRelease(array, i, value);
+        }
+    }
+
+    public static <T> void fillVolatile(T[] array, T value) {
+        for (int i = 0; i < array.length; i++) {
+            setVolatile(array, i, value);
+        }
+    }
+
+    public static String toStringOpaque(Object[] array) {
         StringBuilder builder = new StringBuilder();
         builder.append('[');
-        for (int i = 0, iMax = value.length - 1; ; i++) {
-            builder.append(getVolatile(i));
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getOpaque(array, i));
             if (i == iMax) {
                 builder.append(']');
                 return builder.toString();
             }
             builder.append(", ");
         }
+    }
+
+    public static String toStringAcquire(Object[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getAcquire(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static String toStringVolatile(Object[] array) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0, iMax = array.length - 1; ; i++) {
+            builder.append(getVolatile(array, i));
+            if (i == iMax) {
+                builder.append(']');
+                return builder.toString();
+            }
+            builder.append(", ");
+        }
+    }
+
+    public static int elementOffset(int index) {
+        return jdk.internal.misc.Unsafe.ARRAY_OBJECT_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_OBJECT_INDEX_SCALE * index;
     }
 }

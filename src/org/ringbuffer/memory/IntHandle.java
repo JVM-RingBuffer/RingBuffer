@@ -16,23 +16,8 @@
 
 package org.ringbuffer.memory;
 
-import org.ringbuffer.concurrent.AtomicInt;
+public interface IntHandle {
+    void set(Object instance, long offset, int value);
 
-class VolatileInteger implements Integer {
-    private final AtomicInt value = new AtomicInt();
-
-    @Override
-    public void set(int value) {
-        this.value.setVolatile(value);
-    }
-
-    @Override
-    public int get() {
-        return value.getVolatile();
-    }
-
-    @Override
-    public int getPlain() {
-        return value.getPlain();
-    }
+    int get(Object instance, long offset);
 }

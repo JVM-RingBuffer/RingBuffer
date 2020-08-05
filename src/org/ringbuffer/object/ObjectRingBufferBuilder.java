@@ -17,13 +17,12 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.RingBufferBuilder;
-import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.Integer;
+import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 
 abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBuffer<T>> {
     private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
@@ -91,17 +90,13 @@ abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBu
         return (T[]) new Object[capacity];
     }
 
-    AtomicArray<T> getBufferArray() {
-        return new AtomicArray<>(capacity);
+    IntHandle newHandle() {
+        return memoryOrder.newIntHandle();
     }
 
-    Integer newCursor() {
-        return memoryOrder.newInteger();
-    }
-
-    AtomicBooleanArray getWrittenPositions() {
-        AtomicBooleanArray writtenPositions = new AtomicBooleanArray(capacity);
-        writtenPositions.fill(true);
+    boolean[] getWrittenPositions() {
+        boolean[] writtenPositions = new boolean[capacity];
+        Arrays.fill(writtenPositions, true);
         return writtenPositions;
     }
 }

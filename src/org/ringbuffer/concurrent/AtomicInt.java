@@ -2,7 +2,7 @@
  * Copyright 2020 Francesco Menzani
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use instance file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -16,309 +16,313 @@
 
 package org.ringbuffer.concurrent;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
+import static org.ringbuffer.system.Unsafe.UNSAFE;
+
 public class AtomicInt {
-    private static final VarHandle VALUE;
-
-    static {
-        try {
-            VALUE = MethodHandles.lookup().findVarHandle(AtomicInt.class, "value", int.class);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+    public static void setPlain(Object instance, long offset, int value) {
+        UNSAFE.putInt(instance, offset, value);
     }
 
-    private int value;
-
-    public AtomicInt() {
+    public static void setOpaque(Object instance, long offset, int value) {
+        UNSAFE.putIntOpaque(instance, offset, value);
     }
 
-    public AtomicInt(int value) {
-        this.value = value;
+    public static void setRelease(Object instance, long offset, int value) {
+        UNSAFE.putIntRelease(instance, offset, value);
     }
 
-    public void setPlain(int value) {
-        this.value = value;
+    public static void setVolatile(Object instance, long offset, int value) {
+        UNSAFE.putIntVolatile(instance, offset, value);
     }
 
-    public void setOpaque(int value) {
-        VALUE.setOpaque(this, value);
+    public static int getPlain(Object instance, long offset) {
+        return UNSAFE.getInt(instance, offset);
     }
 
-    public void setRelease(int value) {
-        VALUE.setRelease(this, value);
+    public static int getOpaque(Object instance, long offset) {
+        return UNSAFE.getIntOpaque(instance, offset);
     }
 
-    public void setVolatile(int value) {
-        VALUE.setVolatile(this, value);
+    public static int getAcquire(Object instance, long offset) {
+        return UNSAFE.getIntAcquire(instance, offset);
     }
 
-    public int getPlain() {
-        return value;
+    public static int getVolatile(Object instance, long offset) {
+        return UNSAFE.getIntVolatile(instance, offset);
     }
 
-    public int getOpaque() {
-        return (int) VALUE.getOpaque(this);
+    public static boolean compareAndSetVolatile(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.compareAndSetInt(instance, offset, oldValue, newValue);
     }
 
-    public int getAcquire() {
-        return (int) VALUE.getAcquire(this);
+    public static boolean weakComparePlainAndSetPlain(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.weakCompareAndSetIntPlain(instance, offset, oldValue, newValue);
     }
 
-    public int getVolatile() {
-        return (int) VALUE.getVolatile(this);
+    public static boolean weakComparePlainAndSetRelease(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.weakCompareAndSetIntRelease(instance, offset, oldValue, newValue);
     }
 
-    public boolean compareAndSetVolatile(int oldValue, int newValue) {
-        return VALUE.compareAndSet(this, oldValue, newValue);
+    public static boolean weakCompareAcquireAndSetPlain(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.weakCompareAndSetIntAcquire(instance, offset, oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetPlain(int oldValue, int newValue) {
-        return VALUE.weakCompareAndSetPlain(this, oldValue, newValue);
+    public static boolean weakCompareAndSetVolatile(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.weakCompareAndSetInt(instance, offset, oldValue, newValue);
     }
 
-    public boolean weakComparePlainAndSetRelease(int oldValue, int newValue) {
-        return VALUE.weakCompareAndSetRelease(this, oldValue, newValue);
+    public static int getAndIncrementPlain(Object instance, long offset) {
+        return getAndAddPlain(instance, offset, 1);
     }
 
-    public boolean weakCompareAcquireAndSetPlain(int oldValue, int newValue) {
-        return VALUE.weakCompareAndSetAcquire(this, oldValue, newValue);
+    public static int getPlainAndIncrementRelease(Object instance, long offset) {
+        return getPlainAndAddRelease(instance, offset, 1);
     }
 
-    public boolean weakCompareAndSetVolatile(int oldValue, int newValue) {
-        return VALUE.weakCompareAndSet(this, oldValue, newValue);
+    public static int getAcquireAndIncrementPlain(Object instance, long offset) {
+        return getAcquireAndAddPlain(instance, offset, 1);
     }
 
-    public int getPlainAndIncrementRelease() {
-        return getPlainAndAddRelease(1);
+    public static int getAndIncrementVolatile(Object instance, long offset) {
+        return getAndAddVolatile(instance, offset, 1);
     }
 
-    public int getAcquireAndIncrementPlain() {
-        return getAcquireAndAddPlain(1);
+    public static int getAndDecrementPlain(Object instance, long offset) {
+        return getAndAddPlain(instance, offset, -1);
     }
 
-    public int getAndIncrementVolatile() {
-        return getAndAddVolatile(1);
+    public static int getPlainAndDecrementRelease(Object instance, long offset) {
+        return getPlainAndAddRelease(instance, offset, -1);
     }
 
-    public int getPlainAndDecrementRelease() {
-        return getPlainAndAddRelease(-1);
+    public static int getAcquireAndDecrementPlain(Object instance, long offset) {
+        return getAcquireAndAddPlain(instance, offset, -1);
     }
 
-    public int getAcquireAndDecrementPlain() {
-        return getAcquireAndAddPlain(-1);
+    public static int getAndDecrementVolatile(Object instance, long offset) {
+        return getAndAddVolatile(instance, offset, -1);
     }
 
-    public int getAndDecrementVolatile() {
-        return getAndAddVolatile(-1);
+    public static int incrementAndGetPlain(Object instance, long offset) {
+        return addAndGetPlain(instance, offset, 1);
     }
 
-    public int incrementReleaseAndGetPlain() {
-        return addReleaseAndGetPlain(1);
+    public static int incrementReleaseAndGetPlain(Object instance, long offset) {
+        return addReleaseAndGetPlain(instance, offset, 1);
     }
 
-    public int incrementPlainAndGetAcquire() {
-        return addPlainAndGetAcquire(1);
+    public static int incrementPlainAndGetAcquire(Object instance, long offset) {
+        return addPlainAndGetAcquire(instance, offset, 1);
     }
 
-    public int incrementAndGetVolatile() {
-        return addAndGetVolatile(1);
+    public static int incrementAndGetVolatile(Object instance, long offset) {
+        return addAndGetVolatile(instance, offset, 1);
     }
 
-    public void incrementVolatile() {
-        addVolatile(1);
+    public static void incrementPlain(Object instance, long offset) {
+        addPlain(instance, offset, 1);
     }
 
-    public void incrementPlainRelease() {
-        addPlainRelease(1);
+    public static void incrementPlainRelease(Object instance, long offset) {
+        addPlainRelease(instance, offset, 1);
     }
 
-    public void incrementAcquirePlain() {
-        addAcquirePlain(1);
+    public static void incrementAcquirePlain(Object instance, long offset) {
+        addAcquirePlain(instance, offset, 1);
     }
 
-    public void incrementPlain() {
-        value++;
+    public static void incrementVolatile(Object instance, long offset) {
+        addVolatile(instance, offset, 1);
     }
 
-    public int decrementReleaseAndGetPlain() {
-        return addReleaseAndGetPlain(-1);
+    public static int decrementAndGetPlain(Object instance, long offset) {
+        return addAndGetPlain(instance, offset, -1);
     }
 
-    public int decrementPlainAndGetAcquire() {
-        return addPlainAndGetAcquire(-1);
+    public static int decrementReleaseAndGetPlain(Object instance, long offset) {
+        return addReleaseAndGetPlain(instance, offset, -1);
     }
 
-    public int decrementAndGetVolatile() {
-        return addAndGetVolatile(-1);
+    public static int decrementPlainAndGetAcquire(Object instance, long offset) {
+        return addPlainAndGetAcquire(instance, offset, -1);
     }
 
-    public void decrementVolatile() {
-        addVolatile(-1);
+    public static int decrementAndGetVolatile(Object instance, long offset) {
+        return addAndGetVolatile(instance, offset, -1);
     }
 
-    public void decrementPlainRelease() {
-        addPlainRelease(-1);
+    public static void decrementPlain(Object instance, long offset) {
+        addPlain(instance, offset, -1);
     }
 
-    public void decrementAcquirePlain() {
-        addAcquirePlain(-1);
+    public static void decrementPlainRelease(Object instance, long offset) {
+        addPlainRelease(instance, offset, -1);
     }
 
-    public void decrementPlain() {
-        value--;
+    public static void decrementAcquirePlain(Object instance, long offset) {
+        addAcquirePlain(instance, offset, -1);
     }
 
-    public int getPlainAndAddRelease(int value) {
-        return (int) VALUE.getAndAddRelease(this, value);
+    public static void decrementVolatile(Object instance, long offset) {
+        addVolatile(instance, offset, -1);
     }
 
-    public int getAcquireAndAddPlain(int value) {
-        return (int) VALUE.getAndAddAcquire(this, value);
+    public static int getAndAddPlain(Object instance, long offset, int value) {
+        int oldValue = getPlain(instance, offset);
+        setPlain(instance, offset, oldValue + value);
+        return oldValue;
     }
 
-    public int getAndAddVolatile(int value) {
-        return (int) VALUE.getAndAdd(this, value);
+    public static int getPlainAndAddRelease(Object instance, long offset, int value) {
+        return UNSAFE.getAndAddIntRelease(instance, offset, value);
     }
 
-    public int addReleaseAndGetPlain(int value) {
-        return (int) VALUE.getAndAddRelease(this, value) + value;
+    public static int getAcquireAndAddPlain(Object instance, long offset, int value) {
+        return UNSAFE.getAndAddIntAcquire(instance, offset, value);
     }
 
-    public int addPlainAndGetAcquire(int value) {
-        return (int) VALUE.getAndAddAcquire(this, value) + value;
+    public static int getAndAddVolatile(Object instance, long offset, int value) {
+        return UNSAFE.getAndAddInt(instance, offset, value);
     }
 
-    public int addAndGetVolatile(int value) {
-        return (int) VALUE.getAndAdd(this, value) + value;
+    public static int addAndGetPlain(Object instance, long offset, int value) {
+        int newValue = getPlain(instance, offset) + value;
+        setPlain(instance, offset, newValue);
+        return newValue;
     }
 
-    public void addVolatile(int value) {
-        VALUE.getAndAdd(this, value);
+    public static int addReleaseAndGetPlain(Object instance, long offset, int value) {
+        return getPlainAndAddRelease(instance, offset, value) + value;
     }
 
-    public void addPlainRelease(int value) {
-        VALUE.getAndAddRelease(this, value);
+    public static int addPlainAndGetAcquire(Object instance, long offset, int value) {
+        return getAcquireAndAddPlain(instance, offset, value) + value;
     }
 
-    public void addAcquirePlain(int value) {
-        VALUE.getAndAddAcquire(this, value);
+    public static int addAndGetVolatile(Object instance, long offset, int value) {
+        return getAndAddVolatile(instance, offset, value) + value;
     }
 
-    public void addPlain(int value) {
-        this.value += value;
+    public static void addPlain(Object instance, long offset, int value) {
+        setPlain(instance, offset, getPlain(instance, offset) + value);
     }
 
-    public int getPlainAndSetRelease(int value) {
-        return (int) VALUE.getAndSetRelease(this, value);
+    public static void addPlainRelease(Object instance, long offset, int value) {
+        UNSAFE.getAndAddIntRelease(instance, offset, value);
     }
 
-    public int getAcquireAndSetPlain(int value) {
-        return (int) VALUE.getAndSetAcquire(this, value);
+    public static void addAcquirePlain(Object instance, long offset, int value) {
+        UNSAFE.getAndAddIntAcquire(instance, offset, value);
     }
 
-    public int getAndSetVolatile(int value) {
-        return (int) VALUE.getAndSet(this, value);
+    public static void addVolatile(Object instance, long offset, int value) {
+        UNSAFE.getAndAddInt(instance, offset, value);
     }
 
-    public int comparePlainAndExchangeRelease(int oldValue, int newValue) {
-        return (int) VALUE.compareAndExchangeRelease(this, oldValue, newValue);
+    public static int getPlainAndSetRelease(Object instance, long offset, int value) {
+        return UNSAFE.getAndSetIntRelease(instance, offset, value);
     }
 
-    public int compareAcquireAndExchangePlain(int oldValue, int newValue) {
-        return (int) VALUE.compareAndExchangeAcquire(this, oldValue, newValue);
+    public static int getAcquireAndSetPlain(Object instance, long offset, int value) {
+        return UNSAFE.getAndSetIntAcquire(instance, offset, value);
     }
 
-    public int compareAndExchangeVolatile(int oldValue, int newValue) {
-        return (int) VALUE.compareAndExchange(this, oldValue, newValue);
+    public static int getAndSetVolatile(Object instance, long offset, int value) {
+        return UNSAFE.getAndSetInt(instance, offset, value);
     }
 
-    public int getPlainAndBitwiseAndRelease(int mask) {
-        return (int) VALUE.getAndBitwiseAndRelease(this, mask);
+    public static int comparePlainAndExchangeRelease(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.compareAndExchangeIntRelease(instance, offset, oldValue, newValue);
     }
 
-    public int getAcquireAndBitwiseAndPlain(int mask) {
-        return (int) VALUE.getAndBitwiseAndAcquire(this, mask);
+    public static int compareAcquireAndExchangePlain(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.compareAndExchangeIntAcquire(instance, offset, oldValue, newValue);
     }
 
-    public int getAndBitwiseAndVolatile(int mask) {
-        return (int) VALUE.getAndBitwiseAnd(this, mask);
+    public static int compareAndExchangeVolatile(Object instance, long offset, int oldValue, int newValue) {
+        return UNSAFE.compareAndExchangeInt(instance, offset, oldValue, newValue);
     }
 
-    public int getPlainAndBitwiseOrRelease(int mask) {
-        return (int) VALUE.getAndBitwiseOrRelease(this, mask);
+    public static int getPlainAndBitwiseAndRelease(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseAndIntRelease(instance, offset, mask);
     }
 
-    public int getAcquireAndBitwiseOrPlain(int mask) {
-        return (int) VALUE.getAndBitwiseOrAcquire(this, mask);
+    public static int getAcquireAndBitwiseAndPlain(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseAndIntAcquire(instance, offset, mask);
     }
 
-    public int getAndBitwiseOrVolatile(int mask) {
-        return (int) VALUE.getAndBitwiseOr(this, mask);
+    public static int getAndBitwiseAndVolatile(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseAndInt(instance, offset, mask);
     }
 
-    public int getPlainAndBitwiseXorRelease(int mask) {
-        return (int) VALUE.getAndBitwiseXorRelease(this, mask);
+    public static int getPlainAndBitwiseOrRelease(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseOrIntRelease(instance, offset, mask);
     }
 
-    public int getAcquireAndBitwiseXorPlain(int mask) {
-        return (int) VALUE.getAndBitwiseXorAcquire(this, mask);
+    public static int getAcquireAndBitwiseOrPlain(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseOrIntAcquire(instance, offset, mask);
     }
 
-    public int getAndBitwiseXorVolatile(int mask) {
-        return (int) VALUE.getAndBitwiseXor(this, mask);
+    public static int getAndBitwiseOrVolatile(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseOrInt(instance, offset, mask);
     }
 
-    public int getAndUpdate(IntUnaryOperator updateFunction) {
-        int prev = getVolatile(), next = 0;
+    public static int getPlainAndBitwiseXorRelease(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseXorIntRelease(instance, offset, mask);
+    }
+
+    public static int getAcquireAndBitwiseXorPlain(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseXorIntAcquire(instance, offset, mask);
+    }
+
+    public static int getAndBitwiseXorVolatile(Object instance, long offset, int mask) {
+        return UNSAFE.getAndBitwiseXorInt(instance, offset, mask);
+    }
+
+    public static int getAndUpdate(Object instance, long offset, IntUnaryOperator updateFunction) {
+        int prev = getVolatile(instance, offset), next = 0;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.applyAsInt(prev);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public int updateAndGet(IntUnaryOperator updateFunction) {
-        int prev = getVolatile(), next = 0;
+    public static int updateAndGet(Object instance, long offset, IntUnaryOperator updateFunction) {
+        int prev = getVolatile(instance, offset), next = 0;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = updateFunction.applyAsInt(prev);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public int getAndAccumulate(int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getVolatile(), next = 0;
+    public static int getAndAccumulate(Object instance, long offset, int constant, IntBinaryOperator accumulatorFunction) {
+        int prev = getVolatile(instance, offset), next = 0;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return prev;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
     }
 
-    public int accumulateAndGet(int constant, IntBinaryOperator accumulatorFunction) {
-        int prev = getVolatile(), next = 0;
+    public static int accumulateAndGet(Object instance, long offset, int constant, IntBinaryOperator accumulatorFunction) {
+        int prev = getVolatile(instance, offset), next = 0;
         for (boolean haveNext = false; ; ) {
             if (!haveNext)
                 next = accumulatorFunction.applyAsInt(prev, constant);
-            if (weakCompareAndSetVolatile(prev, next))
+            if (weakCompareAndSetVolatile(instance, offset, prev, next))
                 return next;
-            haveNext = (prev == (prev = getVolatile()));
+            haveNext = (prev == (prev = getVolatile(instance, offset)));
         }
-    }
-
-    @Override
-    public String toString() {
-        return Integer.toString(getVolatile());
     }
 }

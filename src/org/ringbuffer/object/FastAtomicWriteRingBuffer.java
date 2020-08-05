@@ -18,36 +18,40 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.concurrent.PaddedAtomicInt;
+import org.ringbuffer.concurrent.AtomicInt;
+import org.ringbuffer.system.Unsafe;
 
 class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteRingBuffer.class, "writePosition");
+
     private final int capacityMinusOne;
-    private final AtomicArray<T> buffer;
+    private final T[] buffer;
 
     @Contended
     private int readPosition;
-    private final PaddedAtomicInt writePosition = new PaddedAtomicInt();
+    @Contended
+    private int writePosition;
 
     FastAtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBufferArray();
+        buffer = builder.getBuffer();
     }
 
     @Override
     public int getCapacity() {
-        return buffer.length();
+        return buffer.length;
     }
 
     @Override
     public void put(T element) {
-        buffer.setRelease(writePosition.getAndIncrementVolatile() & capacityMinusOne, element);
+        AtomicArray.setRelease(buffer, AtomicInt.getAndIncrementVolatile(this, WRITE_POSITION) & capacityMinusOne, element);
     }
 
     @Override
     public T take() {
         T element;
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while ((element = buffer.getAndSetVolatile(readPosition, null)) == null) {
+        while ((element = AtomicArray.getAndSetVolatile(buffer, readPosition, null)) == null) {
             Thread.onSpinWait();
         }
         return element;
