@@ -16,11 +16,14 @@
 
 package org.ringbuffer.system;
 
-import jdk.internal.misc.Unsafe;
-
 /**
- * Requires {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}.
+ * It is recommended to add the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
  */
 public class InternalUnsafe {
-    public static final Unsafe UNSAFE = Unsafe.getUnsafe();
+    public static final jdk.internal.misc.Unsafe UNSAFE;
+
+    static {
+        Unsafe.addOpensConditionally(Class.class.getModule() /* java.base */, InternalUnsafe.class.getModule(), "jdk.internal.misc");
+        UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
+    }
 }

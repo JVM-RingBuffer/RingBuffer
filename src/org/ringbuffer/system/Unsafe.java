@@ -16,7 +16,9 @@
 
 package org.ringbuffer.system;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class Unsafe {
     public static final sun.misc.Unsafe UNSAFE;
@@ -28,6 +30,37 @@ public class Unsafe {
             UNSAFE = (sun.misc.Unsafe) field.get(null);
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private static final long OVERRIDE;
+
+    static {
+        try {
+            OVERRIDE = UNSAFE.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public static void setAccessible(AccessibleObject accessibleObject) {
+        UNSAFE.putBoolean(accessibleObject, OVERRIDE, true);
+    }
+
+    public static void addOpensConditionally(Module from, Module to, String packageName) {
+        if (!from.isOpen(packageName, to)) {
+            addOpens(from, to, packageName);
+        }
+    }
+
+    public static void addOpens(Module from, Module to, String packageName) {
+        final Class<?> clazz = Module.class;
+        try {
+            Method method = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
+            setAccessible(method);
+            method.invoke(from, packageName, to);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError();
         }
     }
 }

@@ -38,7 +38,7 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     }
 
     /**
-     * Require {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}.
+     * It is recommended to add the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
      */
     @Override
     protected abstract AbstractDirectRingBufferBuilder<?> withoutLocks();
