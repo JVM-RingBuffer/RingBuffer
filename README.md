@@ -8,7 +8,7 @@ This library supplies FIFO ring buffer implementations that are optimized for di
 - Multiple-Producer Multiple-Consumer
 
 Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
-If ultra low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
+If ultra-low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
 
 **Object ring buffers** work with Java objects.
 
@@ -76,14 +76,14 @@ Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 ## Public utilities
 
-To build a Java library for ultra low latency inter-thread communication, we introduced utilities.
+To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
 
-- `Atomic*` classes expose all the features supported by `VarHandle`s while having better names.
+- `Unsafe.UNSAFE` exposes the `jdk.internal.misc.Unsafe` without causing `IllegalAccessError`s.
+- `Atomic*` classes wrap `Unsafe` calls, exposing all the features supported by `VarHandle`s while having better names and reducing indirection.
 - `Platform.current()` returns the current OS and JVM architecture.
-- `Unsafe.UNSAFE` and `InternalUnsafe.UNSAFE` expose the `sun.misc.Unsafe` and `jdk.internal.misc.Unsafe`, respectively.
 - `CleanerService` supports freeing off-heap memory on object GC.
 - `GarbageCollectorProfiler` supports listening to GC events and logging them.
-- `Assert`, `Assume` and `Ensure` allow for performant clean condition checking.
+- `Assert`, `Assume` and `Ensure` perform the bare-minimum work to check conditions, and have better names.
 - `*ArrayView`s allow to view an array as `List`.
 
 ## Download

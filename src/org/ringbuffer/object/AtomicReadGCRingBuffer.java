@@ -17,6 +17,7 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
+import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -57,7 +58,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void put(T element) {
         int writePosition = this.writePosition;
-        buffer[writePosition] = element;
+        AtomicArray.setPlain(buffer, writePosition, element);
         if (writePosition == 0) {
             writePositionHandle.set(this, WRITE_POSITION, capacityMinusOne);
         } else {
@@ -79,8 +80,8 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
             this.readPosition--;
         }
         readLock.unlock();
-        T element = buffer[readPosition];
-        buffer[readPosition] = null;
+        T element = AtomicArray.getPlain(buffer, readPosition);
+        AtomicArray.setPlain(buffer, readPosition, null);
         return element;
     }
 
@@ -108,8 +109,8 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T takePlain() {
-        T element = buffer[readPosition];
-        buffer[readPosition] = null;
+        T element = AtomicArray.getPlain(buffer, readPosition);
+        AtomicArray.setPlain(buffer, readPosition, null);
         if (readPosition == 0) {
             readPosition = capacityMinusOne;
         } else {
@@ -129,7 +130,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
         readLock.lock();
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
-                action.accept(buffer[i]);
+                action.accept(AtomicArray.getPlain(buffer, i));
             }
         } else {
             forEachSplit(action, writePosition);
@@ -139,10 +140,10 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
 
     private void forEachSplit(Consumer<T> action, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            action.accept(buffer[i]);
+            action.accept(AtomicArray.getPlain(buffer, i));
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            action.accept(buffer[i]);
+            action.accept(AtomicArray.getPlain(buffer, i));
         }
     }
 
@@ -153,7 +154,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
         try {
             if (writePosition <= readPosition) {
                 for (int i = readPosition; i > writePosition; i--) {
-                    if (buffer[i].equals(element)) {
+                    if (AtomicArray.getPlain(buffer, i).equals(element)) {
                         return true;
                     }
                 }
@@ -167,12 +168,12 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
 
     private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            if (buffer[i].equals(element)) {
+            if (AtomicArray.getPlain(buffer, i).equals(element)) {
                 return true;
             }
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            if (buffer[i].equals(element)) {
+            if (AtomicArray.getPlain(buffer, i).equals(element)) {
                 return true;
             }
         }
@@ -213,7 +214,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
         builder.append('[');
         if (writePosition < readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
-                builder.append(buffer[i].toString());
+                builder.append(AtomicArray.getPlain(buffer, i).toString());
                 builder.append(", ");
             }
         } else {
@@ -227,11 +228,11 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
 
     private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            builder.append(buffer[i].toString());
+            builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            builder.append(buffer[i].toString());
+            builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
     }

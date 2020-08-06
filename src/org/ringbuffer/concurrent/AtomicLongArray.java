@@ -16,12 +16,18 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongUnaryOperator;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicLongArray {
+    public static void setPlain(long[] array, int index, long value) {
+        UNSAFE.putLong(array, elementOffset(index), value);
+    }
+
     public static void setOpaque(long[] array, int index, long value) {
         UNSAFE.putLongOpaque(array, elementOffset(index), value);
     }
@@ -32,6 +38,10 @@ public class AtomicLongArray {
 
     public static void setVolatile(long[] array, int index, long value) {
         UNSAFE.putLongVolatile(array, elementOffset(index), value);
+    }
+
+    public static long getPlain(long[] array, int index) {
+        return UNSAFE.getLong(array, elementOffset(index));
     }
 
     public static long getOpaque(long[] array, int index) {
@@ -335,7 +345,7 @@ public class AtomicLongArray {
         }
     }
 
-    public static int elementOffset(int index) {
-        return jdk.internal.misc.Unsafe.ARRAY_LONG_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_LONG_INDEX_SCALE * index;
+    public static long elementOffset(int index) {
+        return Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index;
     }
 }

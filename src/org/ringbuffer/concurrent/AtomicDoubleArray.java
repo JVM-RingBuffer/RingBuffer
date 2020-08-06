@@ -16,12 +16,18 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicDoubleArray {
+    public static void setPlain(double[] array, int index, double value) {
+        UNSAFE.putDouble(array, elementOffset(index), value);
+    }
+
     public static void setOpaque(double[] array, int index, double value) {
         UNSAFE.putDoubleOpaque(array, elementOffset(index), value);
     }
@@ -32,6 +38,10 @@ public class AtomicDoubleArray {
 
     public static void setVolatile(double[] array, int index, double value) {
         UNSAFE.putDoubleVolatile(array, elementOffset(index), value);
+    }
+
+    public static double getPlain(double[] array, int index) {
+        return UNSAFE.getDouble(array, elementOffset(index));
     }
 
     public static double getOpaque(double[] array, int index) {
@@ -299,7 +309,7 @@ public class AtomicDoubleArray {
         }
     }
 
-    public static int elementOffset(int index) {
-        return jdk.internal.misc.Unsafe.ARRAY_DOUBLE_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index;
+    public static long elementOffset(int index) {
+        return Unsafe.ARRAY_DOUBLE_BASE_OFFSET + Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index;
     }
 }

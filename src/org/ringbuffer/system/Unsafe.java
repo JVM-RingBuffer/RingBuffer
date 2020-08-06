@@ -28,8 +28,28 @@ public class Unsafe {
 
     public static final jdk.internal.misc.Unsafe UNSAFE;
 
+    public static final long ARRAY_BYTE_BASE_OFFSET;
+    public static final long ARRAY_CHAR_BASE_OFFSET;
+    public static final long ARRAY_SHORT_BASE_OFFSET;
+    public static final long ARRAY_INT_BASE_OFFSET;
+    public static final long ARRAY_LONG_BASE_OFFSET;
+    public static final long ARRAY_FLOAT_BASE_OFFSET;
+    public static final long ARRAY_DOUBLE_BASE_OFFSET;
+    public static final long ARRAY_BOOLEAN_BASE_OFFSET;
+    public static final long ARRAY_OBJECT_BASE_OFFSET;
+
+    public static final long ARRAY_BYTE_INDEX_SCALE;
+    public static final long ARRAY_CHAR_INDEX_SCALE;
+    public static final long ARRAY_SHORT_INDEX_SCALE;
+    public static final long ARRAY_INT_INDEX_SCALE;
+    public static final long ARRAY_LONG_INDEX_SCALE;
+    public static final long ARRAY_FLOAT_INDEX_SCALE;
+    public static final long ARRAY_DOUBLE_INDEX_SCALE;
+    public static final long ARRAY_BOOLEAN_INDEX_SCALE;
+    public static final long ARRAY_OBJECT_INDEX_SCALE;
+
     private static final sun.misc.Unsafe unsafe;
-    private static final long OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
+    private static final long OVERRIDE;
     private static final Method implAddOpens;
 
     static {
@@ -43,10 +63,31 @@ public class Unsafe {
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
+        OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
         setAccessible(implAddOpens);
 
         addOpens(JAVA_BASE_MODULE, Unsafe.class.getModule(), "jdk.internal.misc");
         UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
+
+        ARRAY_BYTE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
+        ARRAY_CHAR_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET;
+        ARRAY_SHORT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;
+        ARRAY_INT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_INT_BASE_OFFSET;
+        ARRAY_LONG_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_LONG_BASE_OFFSET;
+        ARRAY_FLOAT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_FLOAT_BASE_OFFSET;
+        ARRAY_DOUBLE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_DOUBLE_BASE_OFFSET;
+        ARRAY_BOOLEAN_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_BASE_OFFSET;
+        ARRAY_OBJECT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_OBJECT_BASE_OFFSET;
+
+        ARRAY_BYTE_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_BYTE_INDEX_SCALE;
+        ARRAY_CHAR_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_CHAR_INDEX_SCALE;
+        ARRAY_SHORT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_SHORT_INDEX_SCALE;
+        ARRAY_INT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_INT_INDEX_SCALE;
+        ARRAY_LONG_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_LONG_INDEX_SCALE;
+        ARRAY_FLOAT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_FLOAT_INDEX_SCALE;
+        ARRAY_DOUBLE_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_DOUBLE_INDEX_SCALE;
+        ARRAY_BOOLEAN_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_INDEX_SCALE;
+        ARRAY_OBJECT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_OBJECT_INDEX_SCALE;
     }
 
     public static long objectFieldOffset(Class<?> clazz, String fieldName) {

@@ -22,6 +22,8 @@ import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
+import static org.ringbuffer.marshalling.DirectBuffer.*;
+
 class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 
@@ -133,81 +135,81 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
 
     @Override
     public void writeByte(long offset, byte value) {
-        DirectBuffer.putByte(buffer, offset & capacityMinusOne, value);
+        putByte(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeChar(long offset, char value) {
-        DirectBuffer.putChar(buffer, offset & capacityMinusOne, value);
+        putChar(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeShort(long offset, short value) {
-        DirectBuffer.putShort(buffer, offset & capacityMinusOne, value);
+        putShort(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeInt(long offset, int value) {
-        DirectBuffer.putInt(buffer, offset & capacityMinusOne, value);
+        putInt(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeLong(long offset, long value) {
-        DirectBuffer.putLong(buffer, offset & capacityMinusOne, value);
+        putLong(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeBoolean(long offset, boolean value) {
-        DirectBuffer.putBoolean(buffer, offset & capacityMinusOne, value);
+        putBoolean(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeFloat(long offset, float value) {
-        DirectBuffer.putFloat(buffer, offset & capacityMinusOne, value);
+        putFloat(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeDouble(long offset, double value) {
-        DirectBuffer.putDouble(buffer, offset & capacityMinusOne, value);
+        putDouble(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public byte readByte(long offset) {
-        return DirectBuffer.getByte(buffer, offset & capacityMinusOne);
+        return getByte(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public char readChar(long offset) {
-        return DirectBuffer.getChar(buffer, offset & capacityMinusOne);
+        return getChar(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public short readShort(long offset) {
-        return DirectBuffer.getShort(buffer, offset & capacityMinusOne);
+        return getShort(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public int readInt(long offset) {
-        return DirectBuffer.getInt(buffer, offset & capacityMinusOne);
+        return getInt(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public long readLong(long offset) {
-        return DirectBuffer.getLong(buffer, offset & capacityMinusOne);
+        return getLong(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public boolean readBoolean(long offset) {
-        return DirectBuffer.getBoolean(buffer, offset & capacityMinusOne);
+        return getBoolean(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public float readFloat(long offset) {
-        return DirectBuffer.getFloat(buffer, offset & capacityMinusOne);
+        return getFloat(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public double readDouble(long offset) {
-        return DirectBuffer.getDouble(buffer, offset & capacityMinusOne);
+        return getDouble(buffer, offset & capacityMinusOne);
     }
 }

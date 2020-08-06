@@ -16,8 +16,10 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 public class AtomicShortArray {
-    public static int elementOffset(int index) {
-        return jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_SHORT_INDEX_SCALE * index;
+    public static long elementOffset(int index) {
+        return Unsafe.ARRAY_SHORT_BASE_OFFSET + Unsafe.ARRAY_SHORT_INDEX_SCALE * index;
     }
 }

@@ -5,7 +5,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="directory" />
-    <option name="VM_PARAMETERS" value="-ea -Xms2g -Xmx2g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC --add-opens java.base/jdk.internal.misc=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="-ea -Xms2g -Xmx2g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
     <option name="PARAMETERS" value="" />
     <dir value="$PROJECT_DIR$/unit-test" />
     <method v="2">

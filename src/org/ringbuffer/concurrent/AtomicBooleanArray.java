@@ -16,9 +16,15 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicBooleanArray {
+    public static void setPlain(boolean[] array, int index, boolean value) {
+        UNSAFE.putBoolean(array, elementOffset(index), value);
+    }
+
     public static void setOpaque(boolean[] array, int index, boolean value) {
         UNSAFE.putBooleanOpaque(array, elementOffset(index), value);
     }
@@ -29,6 +35,10 @@ public class AtomicBooleanArray {
 
     public static void setVolatile(boolean[] array, int index, boolean value) {
         UNSAFE.putBooleanVolatile(array, elementOffset(index), value);
+    }
+
+    public static boolean getPlain(boolean[] array, int index) {
+        return UNSAFE.getBoolean(array, elementOffset(index));
     }
 
     public static boolean getOpaque(boolean[] array, int index) {
@@ -180,7 +190,7 @@ public class AtomicBooleanArray {
         }
     }
 
-    public static int elementOffset(int index) {
-        return jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_INDEX_SCALE * index;
+    public static long elementOffset(int index) {
+        return Unsafe.ARRAY_BOOLEAN_BASE_OFFSET + Unsafe.ARRAY_BOOLEAN_INDEX_SCALE * index;
     }
 }

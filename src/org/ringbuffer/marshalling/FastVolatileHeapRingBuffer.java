@@ -19,6 +19,8 @@ package org.ringbuffer.marshalling;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 
+import static org.ringbuffer.marshalling.HeapBuffer.*;
+
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     private final int capacityMinusOne;
     private final byte[] buffer;
@@ -59,87 +61,87 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
         while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
             Thread.onSpinWait();
         }
-        writtenPositions[readPosition] = true;
+        AtomicBooleanArray.setPlain(writtenPositions, readPosition, true);
         return readPosition;
     }
 
     @Override
     public void writeByte(int offset, byte value) {
-        HeapBuffer.putByte(buffer, offset & capacityMinusOne, value);
+        putByte(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeChar(int offset, char value) {
-        HeapBuffer.putChar(buffer, offset & capacityMinusOne, value);
+        putChar(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeShort(int offset, short value) {
-        HeapBuffer.putShort(buffer, offset & capacityMinusOne, value);
+        putShort(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeInt(int offset, int value) {
-        HeapBuffer.putInt(buffer, offset & capacityMinusOne, value);
+        putInt(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeLong(int offset, long value) {
-        HeapBuffer.putLong(buffer, offset & capacityMinusOne, value);
+        putLong(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeBoolean(int offset, boolean value) {
-        HeapBuffer.putBoolean(buffer, offset & capacityMinusOne, value);
+        putBoolean(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeFloat(int offset, float value) {
-        HeapBuffer.putFloat(buffer, offset & capacityMinusOne, value);
+        putFloat(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public void writeDouble(int offset, double value) {
-        HeapBuffer.putDouble(buffer, offset & capacityMinusOne, value);
+        putDouble(buffer, offset & capacityMinusOne, value);
     }
 
     @Override
     public byte readByte(int offset) {
-        return HeapBuffer.getByte(buffer, offset & capacityMinusOne);
+        return getByte(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public char readChar(int offset) {
-        return HeapBuffer.getChar(buffer, offset & capacityMinusOne);
+        return getChar(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public short readShort(int offset) {
-        return HeapBuffer.getShort(buffer, offset & capacityMinusOne);
+        return getShort(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public int readInt(int offset) {
-        return HeapBuffer.getInt(buffer, offset & capacityMinusOne);
+        return getInt(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public long readLong(int offset) {
-        return HeapBuffer.getLong(buffer, offset & capacityMinusOne);
+        return getLong(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public boolean readBoolean(int offset) {
-        return HeapBuffer.getBoolean(buffer, offset & capacityMinusOne);
+        return getBoolean(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public float readFloat(int offset) {
-        return HeapBuffer.getFloat(buffer, offset & capacityMinusOne);
+        return getFloat(buffer, offset & capacityMinusOne);
     }
 
     @Override
     public double readDouble(int offset) {
-        return HeapBuffer.getDouble(buffer, offset & capacityMinusOne);
+        return getDouble(buffer, offset & capacityMinusOne);
     }
 }

@@ -16,7 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
 import org.ringbuffer.memory.IntHandle;
 
 import java.util.Arrays;
@@ -28,7 +27,6 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
     AbstractHeapRingBufferBuilder(int capacity) {
         validateCapacity(capacity);
         validateCapacityPowerOfTwo(capacity);
-        Assume.notGreater(capacity, Integer.MAX_VALUE - 8);
         this.capacity = capacity;
     }
 
@@ -52,7 +50,7 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
     }
 
     byte[] getBuffer() {
-        return new byte[capacity + 8];
+        return HeapBuffer.allocate(capacity);
     }
 
     IntHandle newHandle() {

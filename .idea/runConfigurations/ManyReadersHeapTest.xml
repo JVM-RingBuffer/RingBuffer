@@ -2,7 +2,7 @@
   <configuration default="false" name="ManyReadersHeapTest" type="Application" factoryName="Application" folderName="Many Readers Marshalling">
     <option name="MAIN_CLASS_NAME" value="test.marshalling.ManyReadersHeapTest" />
     <module name="RingBuffer" />
-    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended --add-opens java.base/jdk.internal.misc=ALL-UNNAMED" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

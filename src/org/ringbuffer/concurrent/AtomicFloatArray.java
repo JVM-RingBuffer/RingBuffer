@@ -18,10 +18,15 @@ package org.ringbuffer.concurrent;
 
 import org.ringbuffer.java.FloatBinaryOperator;
 import org.ringbuffer.java.FloatUnaryOperator;
+import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class AtomicFloatArray {
+    public static void setPlain(float[] array, int index, float value) {
+        UNSAFE.putFloat(array, elementOffset(index), value);
+    }
+
     public static void setOpaque(float[] array, int index, float value) {
         UNSAFE.putFloatOpaque(array, elementOffset(index), value);
     }
@@ -32,6 +37,10 @@ public class AtomicFloatArray {
 
     public static void setVolatile(float[] array, int index, float value) {
         UNSAFE.putFloatVolatile(array, elementOffset(index), value);
+    }
+
+    public static float getPlain(float[] array, int index) {
+        return UNSAFE.getFloat(array, elementOffset(index));
     }
 
     public static float getOpaque(float[] array, int index) {
@@ -299,7 +308,7 @@ public class AtomicFloatArray {
         }
     }
 
-    public static int elementOffset(int index) {
-        return jdk.internal.misc.Unsafe.ARRAY_FLOAT_BASE_OFFSET + jdk.internal.misc.Unsafe.ARRAY_FLOAT_INDEX_SCALE * index;
+    public static long elementOffset(int index) {
+        return Unsafe.ARRAY_FLOAT_BASE_OFFSET + Unsafe.ARRAY_FLOAT_INDEX_SCALE * index;
     }
 }

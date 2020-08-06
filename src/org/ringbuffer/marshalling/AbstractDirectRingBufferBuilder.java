@@ -16,10 +16,9 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
+import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.CleanerService;
-import org.ringbuffer.system.Unsafe;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final long capacity;
@@ -30,7 +29,6 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     AbstractDirectRingBufferBuilder(long capacity) {
         validateCapacity(capacity);
         validateCapacityPowerOfTwo(capacity);
-        Assume.notGreater(capacity, Long.MAX_VALUE - 8L);
         this.capacity = capacity;
     }
 
@@ -57,7 +55,7 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     }
 
     long getBuffer() {
-        long address = Unsafe.UNSAFE.allocateMemory(capacity + 8L);
+        long address = DirectBuffer.allocate(capacity);
         memoryToFree[0] = address;
         return address;
     }
@@ -67,9 +65,9 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     }
 
     long getWrittenPositions() {
-        long address = Unsafe.UNSAFE.allocateMemory(capacity);
+        long address = DirectAtomicBooleanArray.allocate(capacity);
         memoryToFree[1] = address;
-        Unsafe.UNSAFE.setMemory(address, capacity, (byte) 1); // Initialize all elements to `true`
+        DirectAtomicBooleanArray.fill(address, capacity, true);
         return address;
     }
 

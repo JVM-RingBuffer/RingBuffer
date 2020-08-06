@@ -16,10 +16,17 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.java.Assume;
+
 import static org.ringbuffer.concurrent.AtomicByteArray.elementOffset;
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 class HeapBuffer {
+    static byte[] allocate(int length) {
+        Assume.notGreater(length, Integer.MAX_VALUE - 8);
+        return new byte[length + 8];
+    }
+
     static void putByte(byte[] array, int index, byte value) {
         UNSAFE.putByte(array, elementOffset(index), value);
     }

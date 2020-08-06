@@ -16,9 +16,16 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.java.Assume;
+
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 class DirectBuffer {
+    static long allocate(long length) {
+        Assume.notGreater(length, Long.MAX_VALUE - 8L);
+        return UNSAFE.allocateMemory(length + 8L);
+    }
+
     static void putByte(long address, long index, byte value) {
         UNSAFE.putByte(address + index, value);
     }

@@ -27,7 +27,6 @@ public class SpinLock implements Lock {
     private static final long STATE = Unsafe.objectFieldOffset(SpinLock.class, "state");
 
     private final BusyWaitStrategy additionalBusyWaitStrategy;
-
     @Contended
     private boolean state;
 

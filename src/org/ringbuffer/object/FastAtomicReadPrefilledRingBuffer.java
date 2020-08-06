@@ -17,6 +17,7 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
+import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
@@ -51,7 +52,7 @@ class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T next(int key) {
-        return buffer[key];
+        return AtomicArray.getPlain(buffer, key);
     }
 
     @Override
@@ -65,6 +66,6 @@ class FastAtomicReadPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
         while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
             Thread.onSpinWait();
         }
-        return buffer[readPosition];
+        return AtomicArray.getPlain(buffer, readPosition);
     }
 }

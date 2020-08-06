@@ -50,7 +50,7 @@ class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
         while ((element = AtomicArray.getAcquire(buffer, readPosition)) == null) {
             Thread.onSpinWait();
         }
-        buffer[readPosition] = null;
+        AtomicArray.setPlain(buffer, readPosition, null);
         return element;
     }
 }

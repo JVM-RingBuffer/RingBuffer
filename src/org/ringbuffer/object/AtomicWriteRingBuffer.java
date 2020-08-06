@@ -17,6 +17,7 @@
 package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
+import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -58,7 +59,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
     public void put(T element) {
         writeLock.lock();
         int writePosition = this.writePosition;
-        buffer[writePosition] = element;
+        AtomicArray.setPlain(buffer, writePosition, element);
         if (writePosition == 0) {
             writePositionHandle.set(this, WRITE_POSITION, capacityMinusOne);
         } else {
@@ -79,7 +80,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition--;
         }
-        return buffer[readPosition];
+        return AtomicArray.getPlain(buffer, readPosition);
     }
 
     private boolean isEmptyCached(int readPosition) {
@@ -110,7 +111,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         } else {
             this.readPosition--;
         }
-        return buffer[readPosition];
+        return AtomicArray.getPlain(buffer, readPosition);
     }
 
     @Override
@@ -122,7 +123,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
-                action.accept(buffer[i]);
+                action.accept(AtomicArray.getPlain(buffer, i));
             }
         } else {
             forEachSplit(action, writePosition);
@@ -131,10 +132,10 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     private void forEachSplit(Consumer<T> action, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            action.accept(buffer[i]);
+            action.accept(AtomicArray.getPlain(buffer, i));
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            action.accept(buffer[i]);
+            action.accept(AtomicArray.getPlain(buffer, i));
         }
     }
 
@@ -143,7 +144,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
-                if (buffer[i].equals(element)) {
+                if (AtomicArray.getPlain(buffer, i).equals(element)) {
                     return true;
                 }
             }
@@ -154,12 +155,12 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     private boolean containsSplit(T element, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            if (buffer[i].equals(element)) {
+            if (AtomicArray.getPlain(buffer, i).equals(element)) {
                 return true;
             }
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            if (buffer[i].equals(element)) {
+            if (AtomicArray.getPlain(buffer, i).equals(element)) {
                 return true;
             }
         }
@@ -194,7 +195,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         builder.append('[');
         if (writePosition < readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
-                builder.append(buffer[i].toString());
+                builder.append(AtomicArray.getPlain(buffer, i).toString());
                 builder.append(", ");
             }
         } else {
@@ -207,11 +208,11 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
 
     private void toStringSplit(StringBuilder builder, int writePosition) {
         for (int i = readPosition; i >= 0; i--) {
-            builder.append(buffer[i].toString());
+            builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
         for (int i = capacityMinusOne; i > writePosition; i--) {
-            builder.append(buffer[i].toString());
+            builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
     }
