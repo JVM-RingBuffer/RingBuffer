@@ -16,37 +16,31 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.java.Assume;
 import org.ringbuffer.memory.IntHandle;
 
 import java.util.Arrays;
 
 abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final int capacity;
-    private ByteArray.Factory byteArrayFactory = ByteArray.SAFE;
     // All fields are copied in <init>(AbstractHeapRingBufferBuilder<?>)
 
     AbstractHeapRingBufferBuilder(int capacity) {
         validateCapacity(capacity);
         validateCapacityPowerOfTwo(capacity);
+        Assume.notGreater(capacity, Integer.MAX_VALUE - 8);
         this.capacity = capacity;
     }
 
     AbstractHeapRingBufferBuilder(AbstractHeapRingBufferBuilder<?> builder) {
         super(builder);
         capacity = builder.capacity;
-        byteArrayFactory = builder.byteArrayFactory;
     }
 
     @Override
     protected void withoutLocks0() {
         super.withoutLocks0();
         validateCapacityPowerOfTwo(capacity);
-    }
-
-    public abstract AbstractHeapRingBufferBuilder<T> withByteArray(ByteArray.Factory factory);
-
-    void withByteArray0(ByteArray.Factory factory) {
-        byteArrayFactory = factory;
     }
 
     int getCapacity() {
@@ -57,8 +51,8 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
         return capacity - 1;
     }
 
-    ByteArray getBuffer() {
-        return byteArrayFactory.newInstance(capacity);
+    byte[] getBuffer() {
+        return new byte[capacity + 8];
     }
 
     IntHandle newHandle() {

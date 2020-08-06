@@ -98,18 +98,6 @@ public class DirectClearingRingBufferBuilder extends AbstractDirectRingBufferBui
     }
 
     @Override
-    public DirectClearingRingBufferBuilder withByteArray(DirectByteArray.Factory factory) {
-        super.withByteArray0(factory);
-        return this;
-    }
-
-    @Override
-    public DirectClearingRingBufferBuilder withWrittenPositions(DirectAtomicBooleanArray.Factory factory) {
-        super.withWrittenPositions0(factory);
-        return this;
-    }
-
-    @Override
     protected DirectClearingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:

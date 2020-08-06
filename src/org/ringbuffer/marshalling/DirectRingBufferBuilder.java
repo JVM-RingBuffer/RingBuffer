@@ -96,18 +96,6 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
     }
 
     @Override
-    public DirectRingBufferBuilder withByteArray(DirectByteArray.Factory factory) {
-        super.withByteArray0(factory);
-        return this;
-    }
-
-    @Override
-    public DirectRingBufferBuilder withWrittenPositions(DirectAtomicBooleanArray.Factory factory) {
-        super.withWrittenPositions0(factory);
-        return this;
-    }
-
-    @Override
     protected DirectRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:

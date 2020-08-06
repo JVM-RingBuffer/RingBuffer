@@ -16,25 +16,27 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.java.Assume;
 import org.ringbuffer.memory.LongHandle;
+import org.ringbuffer.system.CleanerService;
+import org.ringbuffer.system.Unsafe;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final long capacity;
-    private DirectByteArray.Factory byteArrayFactory = DirectByteArray.SAFE;
-    private DirectAtomicBooleanArray.Factory writtenPositionsFactory = DirectAtomicBooleanArray.SAFE;
     // All fields are copied in <init>(AbstractDirectRingBufferBuilder<?>)
+
+    private transient final long[] memoryToFree = new long[2];
 
     AbstractDirectRingBufferBuilder(long capacity) {
         validateCapacity(capacity);
         validateCapacityPowerOfTwo(capacity);
+        Assume.notGreater(capacity, Long.MAX_VALUE - 8L);
         this.capacity = capacity;
     }
 
     AbstractDirectRingBufferBuilder(AbstractDirectRingBufferBuilder<?> builder) {
         super(builder);
         capacity = builder.capacity;
-        byteArrayFactory = builder.byteArrayFactory;
-        writtenPositionsFactory = builder.writtenPositionsFactory;
     }
 
     @Override
@@ -46,18 +48,6 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         validateCapacityPowerOfTwo(capacity);
     }
 
-    public abstract AbstractDirectRingBufferBuilder<T> withByteArray(DirectByteArray.Factory factory);
-
-    void withByteArray0(DirectByteArray.Factory factory) {
-        byteArrayFactory = factory;
-    }
-
-    public abstract AbstractDirectRingBufferBuilder<T> withWrittenPositions(DirectAtomicBooleanArray.Factory factory);
-
-    void withWrittenPositions0(DirectAtomicBooleanArray.Factory factory) {
-        writtenPositionsFactory = factory;
-    }
-
     long getCapacity() {
         return capacity;
     }
@@ -66,17 +56,25 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         return capacity - 1L;
     }
 
-    DirectByteArray getBuffer() {
-        return byteArrayFactory.newInstance(capacity);
+    long getBuffer() {
+        long address = Unsafe.UNSAFE.allocateMemory(capacity + 8L);
+        memoryToFree[0] = address;
+        return address;
     }
 
     LongHandle newHandle() {
         return memoryOrder.newLongHandle();
     }
 
-    DirectAtomicBooleanArray getWrittenPositions() {
-        DirectAtomicBooleanArray writtenPositions = writtenPositionsFactory.newInstance(capacity);
-        writtenPositions.fill(true, capacity);
-        return writtenPositions;
+    long getWrittenPositions() {
+        long address = Unsafe.UNSAFE.allocateMemory(capacity);
+        memoryToFree[1] = address;
+        Unsafe.UNSAFE.setMemory(address, capacity, (byte) 1); // Initialize all elements to `true`
+        return address;
+    }
+
+    @Override
+    protected void afterBuild(T ringBuffer) {
+        CleanerService.freeMemory(ringBuffer, memoryToFree);
     }
 }

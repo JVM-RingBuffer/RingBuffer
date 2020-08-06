@@ -16,72 +16,118 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.marshalling.array.SafeDirectAtomicBooleanArray;
-import org.ringbuffer.marshalling.array.UnsafeDirectAtomicBooleanArray;
+import static org.ringbuffer.system.Unsafe.UNSAFE;
 
-public interface DirectAtomicBooleanArray {
-    void setPlain(long index, boolean value);
-
-    void setOpaque(long index, boolean value);
-
-    void setRelease(long index, boolean value);
-
-    void setVolatile(long index, boolean value);
-
-    boolean getPlain(long index);
-
-    boolean getOpaque(long index);
-
-    boolean getAcquire(long index);
-
-    boolean getVolatile(long index);
-
-    boolean compareAndSetVolatile(long index, boolean oldValue, boolean newValue);
-
-    boolean weakComparePlainAndSetPlain(long index, boolean oldValue, boolean newValue);
-
-    boolean weakComparePlainAndSetRelease(long index, boolean oldValue, boolean newValue);
-
-    boolean weakCompareAcquireAndSetPlain(long index, boolean oldValue, boolean newValue);
-
-    boolean weakCompareAndSetVolatile(long index, boolean oldValue, boolean newValue);
-
-    boolean getPlainAndSetRelease(long index, boolean value);
-
-    boolean getAcquireAndSetPlain(long index, boolean value);
-
-    boolean getAndSetVolatile(long index, boolean value);
-
-    boolean comparePlainAndExchangeRelease(long index, boolean oldValue, boolean newValue);
-
-    boolean compareAcquireAndExchangePlain(long index, boolean oldValue, boolean newValue);
-
-    boolean compareAndExchangeVolatile(long index, boolean oldValue, boolean newValue);
-
-    boolean getPlainAndBitwiseAndRelease(long index, boolean mask);
-
-    boolean getAcquireAndBitwiseAndPlain(long index, boolean mask);
-
-    boolean getAndBitwiseAndVolatile(long index, boolean mask);
-
-    boolean getPlainAndBitwiseOrRelease(long index, boolean mask);
-
-    boolean getAcquireAndBitwiseOrPlain(long index, boolean mask);
-
-    boolean getAndBitwiseOrVolatile(long index, boolean mask);
-
-    boolean getPlainAndBitwiseXorRelease(long index, boolean mask);
-
-    boolean getAcquireAndBitwiseXorPlain(long index, boolean mask);
-
-    boolean getAndBitwiseXorVolatile(long index, boolean mask);
-
-    void fill(boolean value, long length);
-
-    interface Factory {
-        DirectAtomicBooleanArray newInstance(long length);
+class DirectAtomicBooleanArray {
+    static void setPlain(long address, long index, boolean value) {
+        UNSAFE.putBoolean(null, address + index, value);
     }
 
-    Factory SAFE = SafeDirectAtomicBooleanArray::new;
-    Factory UNSAFE = UnsafeDirectAtomicBooleanArray::new;
+    static void setOpaque(long address, long index, boolean value) {
+        UNSAFE.putBooleanOpaque(null, address + index, value);
+    }
+
+    static void setRelease(long address, long index, boolean value) {
+        UNSAFE.putBooleanRelease(null, address + index, value);
+    }
+
+    static void setVolatile(long address, long index, boolean value) {
+        UNSAFE.putBooleanVolatile(null, address + index, value);
+    }
+
+    static boolean getPlain(long address, long index) {
+        return UNSAFE.getBoolean(null, address + index);
+    }
+
+    static boolean getOpaque(long address, long index) {
+        return UNSAFE.getBooleanOpaque(null, address + index);
+    }
+
+    static boolean getAcquire(long address, long index) {
+        return UNSAFE.getBooleanAcquire(null, address + index);
+    }
+
+    static boolean getVolatile(long address, long index) {
+        return UNSAFE.getBooleanVolatile(null, address + index);
+    }
+
+    static boolean compareAndSetVolatile(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndSetBoolean(null, address + index, oldValue, newValue);
+    }
+
+    static boolean weakComparePlainAndSetPlain(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanPlain(null, address + index, oldValue, newValue);
+    }
+
+    static boolean weakComparePlainAndSetRelease(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanRelease(null, address + index, oldValue, newValue);
+    }
+
+    static boolean weakCompareAcquireAndSetPlain(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBooleanAcquire(null, address + index, oldValue, newValue);
+    }
+
+    static boolean weakCompareAndSetVolatile(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.weakCompareAndSetBoolean(null, address + index, oldValue, newValue);
+    }
+
+    static boolean getPlainAndSetRelease(long address, long index, boolean value) {
+        return UNSAFE.getAndSetBooleanRelease(null, address + index, value);
+    }
+
+    static boolean getAcquireAndSetPlain(long address, long index, boolean value) {
+        return UNSAFE.getAndSetBooleanAcquire(null, address + index, value);
+    }
+
+    static boolean getAndSetVolatile(long address, long index, boolean value) {
+        return UNSAFE.getAndSetBoolean(null, address + index, value);
+    }
+
+    static boolean comparePlainAndExchangeRelease(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanRelease(null, address + index, oldValue, newValue);
+    }
+
+    static boolean compareAcquireAndExchangePlain(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBooleanAcquire(null, address + index, oldValue, newValue);
+    }
+
+    static boolean compareAndExchangeVolatile(long address, long index, boolean oldValue, boolean newValue) {
+        return UNSAFE.compareAndExchangeBoolean(null, address + index, oldValue, newValue);
+    }
+
+    static boolean getPlainAndBitwiseAndRelease(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanRelease(null, address + index, mask);
+    }
+
+    static boolean getAcquireAndBitwiseAndPlain(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBooleanAcquire(null, address + index, mask);
+    }
+
+    static boolean getAndBitwiseAndVolatile(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseAndBoolean(null, address + index, mask);
+    }
+
+    static boolean getPlainAndBitwiseOrRelease(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanRelease(null, address + index, mask);
+    }
+
+    static boolean getAcquireAndBitwiseOrPlain(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBooleanAcquire(null, address + index, mask);
+    }
+
+    static boolean getAndBitwiseOrVolatile(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseOrBoolean(null, address + index, mask);
+    }
+
+    static boolean getPlainAndBitwiseXorRelease(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanRelease(null, address + index, mask);
+    }
+
+    static boolean getAcquireAndBitwiseXorPlain(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBooleanAcquire(null, address + index, mask);
+    }
+
+    static boolean getAndBitwiseXorVolatile(long address, long index, boolean mask) {
+        return UNSAFE.getAndBitwiseXorBoolean(null, address + index, mask);
+    }
 }

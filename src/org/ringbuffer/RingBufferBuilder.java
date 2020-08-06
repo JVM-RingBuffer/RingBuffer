@@ -147,7 +147,9 @@ public abstract class RingBufferBuilder<T> {
         } else {
             concurrency = RingBufferConcurrency.CONCURRENT;
         }
-        return create(concurrency, type);
+        T ringBuffer = create(concurrency, type);
+        afterBuild(ringBuffer);
+        return ringBuffer;
     }
 
     protected void validate() {
@@ -199,6 +201,9 @@ public abstract class RingBufferBuilder<T> {
             return HintBusyWaitStrategy.getDefault();
         }
         return readBusyWaitStrategy;
+    }
+
+    protected void afterBuild(T ringBuffer) {
     }
 
     protected static void validateCapacity(long capacity) {

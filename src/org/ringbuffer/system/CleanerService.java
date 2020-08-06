@@ -21,20 +21,22 @@ import java.lang.ref.Cleaner;
 public class CleanerService {
     private static final Cleaner cleaner = Cleaner.create();
 
-    public static void freeMemory(Object object, long address) {
-        cleaner.register(object, new FreeMemory(address));
+    public static void freeMemory(Object object, long... addresses) {
+        cleaner.register(object, new FreeMemory(addresses));
     }
 
     private static class FreeMemory implements Runnable {
-        private final long address;
+        private final long[] addresses;
 
-        FreeMemory(long address) {
-            this.address = address;
+        FreeMemory(long[] addresses) {
+            this.addresses = addresses;
         }
 
         @Override
         public void run() {
-            Unsafe.UNSAFE.freeMemory(address);
+            for (long address : addresses) {
+                Unsafe.UNSAFE.freeMemory(address);
+            }
         }
     }
 }

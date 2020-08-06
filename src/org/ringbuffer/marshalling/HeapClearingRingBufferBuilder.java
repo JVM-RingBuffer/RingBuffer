@@ -98,12 +98,6 @@ public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder
     }
 
     @Override
-    public HeapClearingRingBufferBuilder withByteArray(ByteArray.Factory factory) {
-        super.withByteArray0(factory);
-        return this;
-    }
-
-    @Override
     protected HeapClearingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
         switch (concurrency) {
             case VOLATILE:
