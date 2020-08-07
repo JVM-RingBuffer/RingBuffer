@@ -18,7 +18,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class OneToOneDirectBlockingTest extends OneToOneDirectBlockingContentionTest {
+class OneToOneDirectBlockingTest extends OneToOneDirectBlockingContentionPerfTest {
     public static void main(String[] args) {
         new OneToOneDirectBlockingTest().runBenchmark();
     }

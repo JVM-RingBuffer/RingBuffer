@@ -16,17 +16,21 @@
 
 package test.marshalling;
 
-import test.Profiler;
+import org.ringbuffer.marshalling.DirectRingBuffer;
 
-class ManyReadersDirectBlockingTest extends ManyReadersDirectBlockingContentionPerfTest {
+public class ManyReadersDirectBlockingContentionPerfTest extends ManyReadersDirectBlockingContentionTest {
+    public static final DirectRingBuffer RING_BUFFER =
+            DirectRingBuffer.withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .manyReaders()
+                    .oneWriter()
+                    .blocking()
+                    .build();
+
     public static void main(String[] args) {
-        new ManyReadersDirectBlockingTest().runBenchmark();
+        new ManyReadersDirectBlockingContentionPerfTest().runBenchmark();
     }
 
-    @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        DirectWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return DirectReader.runGroupAsync(RING_BUFFER, profiler);
+    DirectRingBuffer getRingBuffer() {
+        return RING_BUFFER;
     }
 }

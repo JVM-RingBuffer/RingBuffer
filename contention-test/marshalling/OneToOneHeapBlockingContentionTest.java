@@ -20,12 +20,14 @@ import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.Profiler;
 
 public class OneToOneHeapBlockingContentionTest extends RingBufferTest {
-    public static final HeapRingBuffer RING_BUFFER =
-            HeapRingBuffer.withCapacity(BLOCKING_SIZE)
-                    .oneReader()
-                    .oneWriter()
-                    .blocking()
-                    .build();
+    public static class Holder {
+        public static final HeapRingBuffer RING_BUFFER =
+                HeapRingBuffer.withCapacity(BLOCKING_SIZE)
+                        .oneReader()
+                        .oneWriter()
+                        .blocking()
+                        .build();
+    }
 
     public static void main(String[] args) {
         new OneToOneHeapBlockingContentionTest().runBenchmark();
@@ -39,7 +41,11 @@ public class OneToOneHeapBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        HeapWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return HeapReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        HeapWriter.startAsync(NUM_ITERATIONS, getRingBuffer(), profiler);
+        return HeapReader.runAsync(NUM_ITERATIONS, getRingBuffer(), profiler);
+    }
+
+    HeapRingBuffer getRingBuffer() {
+        return Holder.RING_BUFFER;
     }
 }

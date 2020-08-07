@@ -18,7 +18,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyToManyDirectBlockingTest extends ManyToManyDirectBlockingContentionTest {
+class ManyToManyDirectBlockingTest extends ManyToManyDirectBlockingContentionPerfTest {
     public static void main(String[] args) {
         new ManyToManyDirectBlockingTest().runBenchmark();
     }

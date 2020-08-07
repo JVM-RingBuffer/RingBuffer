@@ -20,12 +20,14 @@ import org.ringbuffer.marshalling.DirectRingBuffer;
 import test.Profiler;
 
 public class OneToOneDirectBlockingContentionTest extends RingBufferTest {
-    public static final DirectRingBuffer RING_BUFFER =
-            DirectRingBuffer.withCapacity(BLOCKING_SIZE)
-                    .oneReader()
-                    .oneWriter()
-                    .blocking()
-                    .build();
+    public static class Holder {
+        public static final DirectRingBuffer RING_BUFFER =
+                DirectRingBuffer.withCapacity(BLOCKING_SIZE)
+                        .oneReader()
+                        .oneWriter()
+                        .blocking()
+                        .build();
+    }
 
     public static void main(String[] args) {
         new OneToOneDirectBlockingContentionTest().runBenchmark();
@@ -39,7 +41,11 @@ public class OneToOneDirectBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        DirectWriter.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return DirectReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        DirectWriter.startAsync(NUM_ITERATIONS, getRingBuffer(), profiler);
+        return DirectReader.runAsync(NUM_ITERATIONS, getRingBuffer(), profiler);
+    }
+
+    DirectRingBuffer getRingBuffer() {
+        return Holder.RING_BUFFER;
     }
 }

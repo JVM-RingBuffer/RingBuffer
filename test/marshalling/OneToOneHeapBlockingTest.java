@@ -18,7 +18,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class OneToOneHeapBlockingTest extends OneToOneHeapBlockingContentionTest {
+class OneToOneHeapBlockingTest extends OneToOneHeapBlockingContentionPerfTest {
     public static void main(String[] args) {
         new OneToOneHeapBlockingTest().runBenchmark();
     }
