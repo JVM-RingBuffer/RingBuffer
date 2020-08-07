@@ -45,7 +45,10 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended("write")
     private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
     @Contended("read")
     private int cachedWritePosition;
 
@@ -81,10 +84,18 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
 
     @Override
     public T next(int key, int putKey) {
-        if (readPositionHandle.get(this, READ_POSITION) == putKey) {
-            return dummyElement;
+        if (isNotFullCached(putKey)) {
+            return AtomicArray.getPlain(buffer, key);
         }
-        return AtomicArray.getPlain(buffer, key);
+        return dummyElement;
+    }
+
+    private boolean isNotFullCached(int writePosition) {
+        if (cachedReadPosition == writePosition) {
+            cachedReadPosition = readPositionHandle.get(this, READ_POSITION);
+            return cachedReadPosition != writePosition;
+        }
+        return true;
     }
 
     @Override

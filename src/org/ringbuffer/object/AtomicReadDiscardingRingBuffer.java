@@ -44,7 +44,10 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended("write")
     private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
     @Contended("read")
     private int cachedWritePosition;
 
@@ -72,10 +75,18 @@ class AtomicReadDiscardingRingBuffer<T> implements RingBuffer<T> {
         } else {
             newWritePosition = writePosition - 1;
         }
-        if (readPositionHandle.get(this, READ_POSITION) != newWritePosition) {
+        if (isNotFullCached(newWritePosition)) {
             AtomicArray.setPlain(buffer, writePosition, element);
             writePositionHandle.set(this, WRITE_POSITION, newWritePosition);
         }
+    }
+
+    private boolean isNotFullCached(int writePosition) {
+        if (cachedReadPosition == writePosition) {
+            cachedReadPosition = readPositionHandle.get(this, READ_POSITION);
+            return cachedReadPosition != writePosition;
+        }
+        return true;
     }
 
     @Override

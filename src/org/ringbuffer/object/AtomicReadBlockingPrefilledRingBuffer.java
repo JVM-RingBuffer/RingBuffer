@@ -45,7 +45,10 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended("write")
     private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
     @Contended("read")
     private int cachedWritePosition;
 
@@ -81,10 +84,18 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     @Override
     public T next(int key, int putKey) {
         writeBusyWaitStrategy.reset();
-        while (readPositionHandle.get(this, READ_POSITION) == putKey) {
+        while (isFullCached(putKey)) {
             writeBusyWaitStrategy.tick();
         }
         return AtomicArray.getPlain(buffer, key);
+    }
+
+    private boolean isFullCached(int writePosition) {
+        if (cachedReadPosition == writePosition) {
+            cachedReadPosition = readPositionHandle.get(this, READ_POSITION);
+            return cachedReadPosition == writePosition;
+        }
+        return false;
     }
 
     @Override
