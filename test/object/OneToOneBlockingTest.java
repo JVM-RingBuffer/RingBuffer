@@ -16,17 +16,9 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
-public class OneToOneBlockingTest extends OneToOneBlockingContentionTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>withCapacity(ONE_TO_ONE_SIZE)
-                    .oneReader()
-                    .oneWriter()
-                    .blocking()
-                    .build();
-
+class OneToOneBlockingTest extends OneToOneBlockingContentionPerfTest {
     public static void main(String[] args) {
         new OneToOneBlockingTest().runBenchmark();
     }

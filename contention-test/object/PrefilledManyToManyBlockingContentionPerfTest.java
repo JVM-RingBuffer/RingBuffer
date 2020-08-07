@@ -16,17 +16,23 @@
 
 package test.object;
 
-import test.Profiler;
+import org.ringbuffer.object.PrefilledRingBuffer;
+import org.ringbuffer.object.PrefilledRingBuffer2;
 
-class ManyWritersBlockingTest extends ManyWritersBlockingContentionPerfTest {
+public class PrefilledManyToManyBlockingContentionPerfTest extends PrefilledManyToManyBlockingContentionTest {
+    public static final PrefilledRingBuffer2<Event> RING_BUFFER =
+            PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                    .fillWith(FILLER)
+                    .manyReaders()
+                    .manyWriters()
+                    .blocking()
+                    .build();
+
     public static void main(String[] args) {
-        new ManyWritersBlockingTest().runBenchmark();
+        new PrefilledManyToManyBlockingContentionPerfTest().runBenchmark();
     }
 
-    @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+    PrefilledRingBuffer2<Event> getRingBuffer() {
+        return RING_BUFFER;
     }
 }

@@ -26,7 +26,7 @@ class PrefilledOneToOneBlockingBatchContentionTest extends PrefilledOneToOneBloc
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        PrefilledWriter2.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return BatchReader.runAsync(NUM_ITERATIONS, BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
+        PrefilledWriter2.startAsync(NUM_ITERATIONS, getRingBuffer(), profiler);
+        return BatchReader.runAsync(NUM_ITERATIONS, BLOCKING_BATCH_SIZE, getRingBuffer(), profiler);
     }
 }

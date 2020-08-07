@@ -26,7 +26,7 @@ class PrefilledManyToManyBlockingBatchContentionTest extends PrefilledManyToMany
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter2.startGroupAsync(RING_BUFFER, profiler);
-        return BatchReader.runGroupAsync(BLOCKING_BATCH_SIZE, RING_BUFFER, profiler);
+        PrefilledWriter2.startGroupAsync(getRingBuffer(), profiler);
+        return BatchReader.runGroupAsync(BLOCKING_BATCH_SIZE, getRingBuffer(), profiler);
     }
 }

@@ -21,13 +21,15 @@ import org.ringbuffer.object.PrefilledRingBuffer2;
 import test.Profiler;
 
 public class PrefilledManyToManyBlockingContentionTest extends RingBufferTest {
-    public static final PrefilledRingBuffer2<Event> RING_BUFFER =
-            PrefilledRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
-                    .fillWith(FILLER)
-                    .manyReaders()
-                    .manyWriters()
-                    .blocking()
-                    .build();
+    public static class Holder {
+        public static final PrefilledRingBuffer2<Event> RING_BUFFER =
+                PrefilledRingBuffer.<Event>withCapacity(BLOCKING_SIZE)
+                        .fillWith(FILLER)
+                        .manyReaders()
+                        .manyWriters()
+                        .blocking()
+                        .build();
+    }
 
     public static void main(String[] args) {
         new PrefilledManyToManyBlockingContentionTest().runBenchmark();
@@ -41,7 +43,11 @@ public class PrefilledManyToManyBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter2.startGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        PrefilledWriter2.startGroupAsync(getRingBuffer(), profiler);
+        return Reader.runGroupAsync(getRingBuffer(), profiler);
+    }
+
+    PrefilledRingBuffer2<Event> getRingBuffer() {
+        return Holder.RING_BUFFER;
     }
 }

@@ -39,9 +39,7 @@ import java.util.concurrent.locks.Lock;
  * into fair and nonfair versions below. Uses AQS state to
  * represent the number of holds on the lock.
  */
-abstract class AbstractPaddedReentrantLock
-        extends PaddedAbstractQueuedSynchronizer
-        implements Lock, org.ringbuffer.lock.Lock, java.io.Serializable {
+abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchronizer implements Lock, org.ringbuffer.lock.Lock {
     private static final long serialVersionUID = -5179523762034025860L;
 
     /**

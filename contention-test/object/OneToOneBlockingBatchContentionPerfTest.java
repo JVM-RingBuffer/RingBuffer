@@ -16,17 +16,15 @@
 
 package test.object;
 
-import test.Profiler;
+import org.ringbuffer.object.RingBuffer;
 
-class ManyWritersBlockingTest extends ManyWritersBlockingContentionPerfTest {
+class OneToOneBlockingBatchContentionPerfTest extends OneToOneBlockingContentionTest {
     public static void main(String[] args) {
-        new ManyWritersBlockingTest().runBenchmark();
+        new OneToOneBlockingBatchContentionPerfTest().runBenchmark();
     }
 
     @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+    RingBuffer<Event> getRingBuffer() {
+        return OneToOneBlockingContentionPerfTest.RING_BUFFER;
     }
 }

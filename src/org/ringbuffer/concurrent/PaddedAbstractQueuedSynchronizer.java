@@ -30,6 +30,7 @@ package org.ringbuffer.concurrent;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.system.Unsafe;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -192,7 +193,7 @@ import java.util.concurrent.locks.*;
  * It also supports conditions and exposes some instrumentation methods:
  *
  * <pre> {@code
- * class Mutex implements Lock, java.io.Serializable {
+ * class Mutex implements Lock, Serializable {
  *
  *   // Our internal helper class
  *   private static class Sync extends PaddedAbstractQueuedSynchronizer {
@@ -295,10 +296,7 @@ import java.util.concurrent.locks.*;
  * @author Doug Lea
  * @since 1.5
  */
-public abstract class PaddedAbstractQueuedSynchronizer
-        extends AbstractOwnableSynchronizer
-        implements java.io.Serializable {
-
+public abstract class PaddedAbstractQueuedSynchronizer extends AbstractOwnableSynchronizer implements Serializable {
     private static final long serialVersionUID = 7373984972572414691L;
 
     /**
@@ -459,8 +457,8 @@ public abstract class PaddedAbstractQueuedSynchronizer
             return Atomic.weakCompareAndSetVolatile(this, PREV, c, v);
         }
 
-        final boolean casNext(Node c, Node v) {  // for cleanQueue
-            return Atomic.weakCompareAndSetVolatile(this, NEXT, c, v);
+        final void casNext(Node c, Node v) {  // for cleanQueue
+            Atomic.weakCompareAndSetVolatile(this, NEXT, c, v);
         }
 
         final int getAndUnsetStatus(int v) {     // for signalling
@@ -471,8 +469,8 @@ public abstract class PaddedAbstractQueuedSynchronizer
             Atomic.setPlain(this, PREV, p);
         }
 
-        final void setStatusRelaxed(int s) {     // for off-queue assignment
-            AtomicInt.setPlain(this, STATUS, s);
+        final void setStatusRelaxed() {     // for off-queue assignment
+            AtomicInt.setPlain(this, STATUS, COND | WAITING);
         }
 
         final void clearStatus() {               // for reducing unneeded signals
@@ -605,11 +603,11 @@ public abstract class PaddedAbstractQueuedSynchronizer
     /**
      * Returns true if node is found in traversal from tail
      */
-    final boolean isEnqueued(Node node) {
+    final boolean isNotEnqueued(Node node) {
         for (Node t = tail; t != null; t = t.prev)
             if (t == node)
-                return true;
-        return false;
+                return false;
+        return true;
     }
 
     /**
@@ -1447,7 +1445,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * <p>This class is Serializable, but all fields are transient,
      * so deserialized conditions have no waiters.
      */
-    protected class ConditionObject implements Condition, java.io.Serializable {
+    protected class ConditionObject implements Condition, Serializable {
         private static final long serialVersionUID = 1173984872572414699L;
         /**
          * First node of condition queue.
@@ -1525,7 +1523,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
         private int enableWait(ConditionNode node) {
             if (isHeldExclusively()) {
                 node.waiter = Thread.currentThread();
-                node.setStatusRelaxed(COND | WAITING);
+                node.setStatusRelaxed();
                 ConditionNode last = lastWaiter;
                 if (last == null)
                     firstWaiter = node;
@@ -1547,9 +1545,9 @@ public abstract class PaddedAbstractQueuedSynchronizer
          * @param node the node
          * @return true if is reacquiring
          */
-        private boolean canReacquire(ConditionNode node) {
+        private boolean canNotReacquire(ConditionNode node) {
             // check links, not status to avoid enqueue race
-            return node != null && node.prev != null && isEnqueued(node);
+            return node == null || node.prev == null || isNotEnqueued(node);
         }
 
         /**
@@ -1591,7 +1589,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
             ConditionNode node = new ConditionNode();
             int savedState = enableWait(node);
             boolean interrupted = false;
-            while (!canReacquire(node)) {
+            while (canNotReacquire(node)) {
                 if (Thread.interrupted())
                     interrupted = true;
                 else if ((node.status & COND) != 0) {
@@ -1628,7 +1626,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
             ConditionNode node = new ConditionNode();
             int savedState = enableWait(node);
             boolean interrupted = false, cancelled = false;
-            while (!canReacquire(node)) {
+            while (canNotReacquire(node)) {
                 if (interrupted |= Thread.interrupted()) {
                     if (cancelled = (node.getAndUnsetStatus(COND) & COND) != 0)
                         break;              // else interrupted after signal
@@ -1671,10 +1669,10 @@ public abstract class PaddedAbstractQueuedSynchronizer
                 throw new InterruptedException();
             ConditionNode node = new ConditionNode();
             int savedState = enableWait(node);
-            long nanos = (nanosTimeout < 0L) ? 0L : nanosTimeout;
+            long nanos = Math.max(nanosTimeout, 0L);
             long deadline = System.nanoTime() + nanos;
             boolean cancelled = false, interrupted = false;
-            while (!canReacquire(node)) {
+            while (canNotReacquire(node)) {
                 if ((interrupted |= Thread.interrupted()) ||
                         (nanos = deadline - System.nanoTime()) <= 0L) {
                     if (cancelled = (node.getAndUnsetStatus(COND) & COND) != 0)
@@ -1716,7 +1714,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
             ConditionNode node = new ConditionNode();
             int savedState = enableWait(node);
             boolean cancelled = false, interrupted = false;
-            while (!canReacquire(node)) {
+            while (canNotReacquire(node)) {
                 if ((interrupted |= Thread.interrupted()) ||
                         System.currentTimeMillis() >= abstime) {
                     if (cancelled = (node.getAndUnsetStatus(COND) & COND) != 0)
@@ -1756,10 +1754,10 @@ public abstract class PaddedAbstractQueuedSynchronizer
                 throw new InterruptedException();
             ConditionNode node = new ConditionNode();
             int savedState = enableWait(node);
-            long nanos = (nanosTimeout < 0L) ? 0L : nanosTimeout;
+            long nanos = Math.max(nanosTimeout, 0L);
             long deadline = System.nanoTime() + nanos;
             boolean cancelled = false, interrupted = false;
-            while (!canReacquire(node)) {
+            while (canNotReacquire(node)) {
                 if ((interrupted |= Thread.interrupted()) ||
                         (nanos = deadline - System.nanoTime()) <= 0L) {
                     if (cancelled = (node.getAndUnsetStatus(COND) & COND) != 0)

@@ -16,19 +16,9 @@
 
 package test.object;
 
-import org.ringbuffer.object.PrefilledRingBuffer;
-import org.ringbuffer.object.PrefilledRingBuffer2;
 import test.Profiler;
 
-public class PrefilledManyToManyBlockingTest extends PrefilledManyToManyBlockingContentionTest {
-    public static final PrefilledRingBuffer2<Event> RING_BUFFER =
-            PrefilledRingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .fillWith(FILLER)
-                    .manyReaders()
-                    .manyWriters()
-                    .blocking()
-                    .build();
-
+class PrefilledManyToManyBlockingTest extends PrefilledManyToManyBlockingContentionPerfTest {
     public static void main(String[] args) {
         new PrefilledManyToManyBlockingTest().runBenchmark();
     }

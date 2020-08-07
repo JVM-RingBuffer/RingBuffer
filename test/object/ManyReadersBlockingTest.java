@@ -16,17 +16,9 @@
 
 package test.object;
 
-import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
-public class ManyReadersBlockingTest extends ManyReadersBlockingContentionTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .manyReaders()
-                    .oneWriter()
-                    .blocking()
-                    .build();
-
+class ManyReadersBlockingTest extends ManyReadersBlockingContentionPerfTest {
     public static void main(String[] args) {
         new ManyReadersBlockingTest().runBenchmark();
     }
