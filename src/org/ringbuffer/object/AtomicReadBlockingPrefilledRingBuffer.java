@@ -25,6 +25,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+@Contended
 class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> {
     private static final long READ_POSITION, WRITE_POSITION;
 

@@ -19,12 +19,12 @@ package test.wait;
 import org.ringbuffer.wait.ArrayMultiStepBusyWaitStrategy;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class TwoStepMultiStepTest extends MultiStepBusyWaitStrategyTest {
+public class TwoStepArrayMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new TwoStepMultiStepTest(true).runBenchmark();
+        new TwoStepArrayMultiStepTest(true).runBenchmark();
     }
 
-    public TwoStepMultiStepTest(boolean isPerfTest) {
+    public TwoStepArrayMultiStepTest(boolean isPerfTest) {
         super(isPerfTest);
     }
 

@@ -24,6 +24,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 

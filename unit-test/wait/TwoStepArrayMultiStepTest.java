@@ -16,8 +16,8 @@
 
 package org.ringbuffer.wait;
 
-class MultiStepTest extends MultiStepBusyWaitStrategyTest {
-    MultiStepTest() {
-        super(new test.wait.MultiStepTest(false));
+class TwoStepArrayMultiStepTest extends MultiStepBusyWaitStrategyTest {
+    TwoStepArrayMultiStepTest() {
+        super(new test.wait.TwoStepArrayMultiStepTest(false));
     }
 }

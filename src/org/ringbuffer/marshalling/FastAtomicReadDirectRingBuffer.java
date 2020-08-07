@@ -23,6 +23,7 @@ import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
+@Contended
 class FastAtomicReadDirectRingBuffer extends FastDirectRingBuffer {
     private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadDirectRingBuffer.class, "readPosition");
 

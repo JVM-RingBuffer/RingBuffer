@@ -19,6 +19,7 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 
+@Contended
 class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;

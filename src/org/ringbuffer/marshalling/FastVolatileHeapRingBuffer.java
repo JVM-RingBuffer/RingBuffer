@@ -21,6 +21,7 @@ import org.ringbuffer.concurrent.AtomicBooleanArray;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     private final int capacityMinusOne;
     private final byte[] buffer;

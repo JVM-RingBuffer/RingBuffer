@@ -24,6 +24,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentHeapRingBuffer.class, "writePosition");
 
@@ -37,6 +38,7 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended
     private int writePosition;
     @Contended("read")
     private int cachedWritePosition;

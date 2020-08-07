@@ -24,6 +24,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+@Contended
 class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatilePrefilledRingBuffer.class, "writePosition");
 
@@ -35,6 +36,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended
     private int writePosition;
     @Contended("read")
     private int cachedWritePosition;

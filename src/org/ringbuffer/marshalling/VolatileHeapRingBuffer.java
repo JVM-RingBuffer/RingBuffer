@@ -23,6 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileHeapRingBuffer.class, "writePosition");
 
@@ -34,6 +35,7 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended
     private int writePosition;
     @Contended("read")
     private int cachedWritePosition;

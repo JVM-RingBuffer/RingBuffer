@@ -23,6 +23,7 @@ import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class FastAtomicReadHeapRingBuffer extends FastHeapRingBuffer {
     private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadHeapRingBuffer.class, "readPosition");
 

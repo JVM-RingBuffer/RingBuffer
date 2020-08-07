@@ -23,6 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class VolatileHeapBlockingRingBuffer implements HeapRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 

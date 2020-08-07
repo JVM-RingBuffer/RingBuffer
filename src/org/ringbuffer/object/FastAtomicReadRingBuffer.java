@@ -21,6 +21,7 @@ import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
+@Contended
 class FastAtomicReadRingBuffer<T> extends FastRingBuffer<T> {
     private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadRingBuffer.class, "readPosition");
 

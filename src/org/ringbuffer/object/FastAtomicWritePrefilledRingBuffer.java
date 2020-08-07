@@ -22,6 +22,7 @@ import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
+@Contended
 class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
 

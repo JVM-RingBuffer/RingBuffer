@@ -23,6 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
+@Contended
 class VolatileDirectBlockingRingBuffer implements DirectRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 

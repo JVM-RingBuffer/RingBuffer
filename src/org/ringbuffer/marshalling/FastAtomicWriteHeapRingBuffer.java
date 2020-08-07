@@ -23,6 +23,7 @@ import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class FastAtomicWriteHeapRingBuffer extends FastHeapRingBuffer {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteHeapRingBuffer.class, "writePosition");
 

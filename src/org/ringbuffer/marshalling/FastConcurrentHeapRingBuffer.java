@@ -23,6 +23,7 @@ import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
+@Contended
 class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 

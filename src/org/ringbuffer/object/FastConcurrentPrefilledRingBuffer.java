@@ -22,6 +22,7 @@ import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
+@Contended
 class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
 

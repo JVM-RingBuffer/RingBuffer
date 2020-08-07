@@ -25,6 +25,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+@Contended
 class ConcurrentGCRingBuffer<T> implements RingBuffer<T> {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentGCRingBuffer.class, "writePosition");
 
@@ -38,6 +39,7 @@ class ConcurrentGCRingBuffer<T> implements RingBuffer<T> {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended
     private int writePosition;
     @Contended("read")
     private int cachedWritePosition;

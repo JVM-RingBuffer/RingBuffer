@@ -23,6 +23,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
+@Contended
 class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileDirectRingBuffer.class, "writePosition");
 
@@ -34,6 +35,7 @@ class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
     private final LongHandle writePositionHandle;
     @Contended("read")
     private long readPosition;
+    @Contended
     private long writePosition;
     @Contended("read")
     private long cachedWritePosition;

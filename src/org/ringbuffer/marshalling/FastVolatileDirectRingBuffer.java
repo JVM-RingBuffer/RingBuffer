@@ -21,6 +21,7 @@ import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
+@Contended
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
     private final long capacityMinusOne;
     private final long buffer;

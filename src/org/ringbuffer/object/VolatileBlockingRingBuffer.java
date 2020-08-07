@@ -24,6 +24,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
+@Contended
 class VolatileBlockingRingBuffer<T> implements RingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
 
