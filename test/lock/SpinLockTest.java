@@ -23,8 +23,11 @@ import test.Benchmark;
 import test.Profiler;
 import test.ThreadSynchronizer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class SpinLockTest extends Benchmark {
     private static final int concurrency = 6;
+    private static final int numIterations = 1_000_000;
 
     public static void main(String[] args) {
         new SpinLockTest().runBenchmark();
@@ -35,9 +38,11 @@ class SpinLockTest extends Benchmark {
         Worker.spreader.reset();
         Worker[] workers = new Worker[concurrency];
         for (int j = 0; j < workers.length; j++) {
-            workers[j] = new Worker();
-            workers[j].start();
+            Worker worker = new Worker();
+            worker.start();
+            workers[j] = worker;
         }
+        Worker.sum = 0;
         for (Worker worker : workers) {
             worker.synchronizer.waitUntilReady();
         }
@@ -47,6 +52,7 @@ class SpinLockTest extends Benchmark {
         for (Worker worker : workers) {
             ThreadSynchronizer.waitForCompletion(worker);
         }
+        assertEquals(numIterations * concurrency, Worker.sum);
     }
 
     private static class Worker extends Thread {
@@ -63,18 +69,19 @@ class SpinLockTest extends Benchmark {
         final ThreadSynchronizer synchronizer = new ThreadSynchronizer();
 
         private static final SpinLock lock = new SpinLock();
+        static int sum;
 
         @Override
         public void run() {
             spreader.bindCurrentThreadToNextCPU();
             Threads.setCurrentThreadPriorityToRealtime();
-            int i = 1_000_000;
-            Profiler profiler = new Profiler(SpinLockTest.class, i);
+            Profiler profiler = new Profiler(SpinLockTest.class, numIterations);
             synchronizer.synchronize();
 
             profiler.start();
-            for (; i > 0; i--) {
+            for (int i = 0; i < numIterations; i++) {
                 lock.lock();
+                sum++;
                 lock.unlock();
             }
             profiler.stop();
