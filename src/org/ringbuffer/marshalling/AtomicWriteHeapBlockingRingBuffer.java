@@ -44,7 +44,10 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
+    @Contended("write")
     private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
     @Contended("read")
     private int cachedWritePosition;
 
@@ -69,14 +72,21 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
         writeLock.lock();
         int writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (freeSpace(writePosition) <= size) {
+        while (isNotEmptyEnoughCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
         }
         return writePosition;
     }
 
-    private int freeSpace(int writePosition) {
-        int readPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
+    private boolean isNotEmptyEnoughCached(int writePosition, int size) {
+        if (freeSpace(writePosition, cachedReadPosition) <= size) {
+            cachedReadPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
+            return freeSpace(writePosition, cachedReadPosition) <= size;
+        }
+        return false;
+    }
+
+    private int freeSpace(int writePosition, int readPosition) {
         if (writePosition >= readPosition) {
             return capacity - (writePosition - readPosition);
         }

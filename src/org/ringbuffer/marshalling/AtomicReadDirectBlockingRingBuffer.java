@@ -44,7 +44,10 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     private final LongHandle writePositionHandle;
     @Contended("read")
     private long readPosition;
+    @Contended("write")
     private long writePosition;
+    @Contended("write")
+    private long cachedReadPosition;
     @Contended("read")
     private long cachedWritePosition;
 
@@ -68,14 +71,21 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     public long next(long size) {
         long writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (freeSpace(writePosition) <= size) {
+        while (isNotEmptyEnoughCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
         }
         return writePosition;
     }
 
-    private long freeSpace(long writePosition) {
-        long readPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
+    private boolean isNotEmptyEnoughCached(long writePosition, long size) {
+        if (freeSpace(writePosition, cachedReadPosition) <= size) {
+            cachedReadPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
+            return freeSpace(writePosition, cachedReadPosition) <= size;
+        }
+        return false;
+    }
+
+    private long freeSpace(long writePosition, long readPosition) {
         if (writePosition >= readPosition) {
             return capacity - (writePosition - readPosition);
         }
