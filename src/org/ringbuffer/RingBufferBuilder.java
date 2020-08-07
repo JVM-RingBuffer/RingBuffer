@@ -17,7 +17,7 @@
 package org.ringbuffer;
 
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.PaddedReentrantLock;
+import org.ringbuffer.concurrent.UnfairPaddedReentrantLock;
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Numbers;
 import org.ringbuffer.lock.Lock;
@@ -189,7 +189,7 @@ public abstract class RingBufferBuilder<T> {
     }
 
     protected Lock defaultLock() {
-        return new PaddedReentrantLock();
+        return new UnfairPaddedReentrantLock();
     }
 
     protected BusyWaitStrategy getWriteBusyWaitStrategy() {

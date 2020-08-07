@@ -170,7 +170,7 @@ import java.util.concurrent.locks.*;
  * most of the liabilities when it isn't. If so desired, you can
  * augment this by preceding calls to acquire methods with
  * "fast-path" checks, possibly prechecking {@link #hasContended}
- * and/or {@link #hasQueuedThreads} to only do so if the synchronizer
+ * and/or {@link #hasQueuedThreads0} to only do so if the synchronizer
  * is likely not to be contended.
  *
  * <p>This class provides an efficient and scalable basis for
@@ -250,8 +250,8 @@ import java.util.concurrent.locks.*;
  *   public boolean isHeldByCurrentThread() {
  *     return sync.isHeldExclusively();
  *   }
- *   public boolean hasQueuedThreads() {
- *     return sync.hasQueuedThreads();
+ *   public boolean hasQueuedThreads0() {
+ *     return sync.hasQueuedThreads0();
  *   }
  *   public void lockInterruptibly() throws InterruptedException {
  *     sync.acquireInterruptibly(1);
@@ -949,7 +949,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            {@link #tryAcquire} but is otherwise uninterpreted and
      *            can represent anything you like.
      */
-    public final void acquire(int arg) {
+    protected final void acquire(int arg) {
         if (!tryAcquire(arg))
             acquire(null, arg, false, false, false, 0L);
     }
@@ -968,7 +968,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            can represent anything you like.
      * @throws InterruptedException if the current thread is interrupted
      */
-    public final void acquireInterruptibly(int arg)
+    protected final void acquireInterruptibly(int arg)
             throws InterruptedException {
         if (Thread.interrupted() ||
                 (!tryAcquire(arg) && acquire(null, arg, false, true, false, 0L) < 0))
@@ -992,7 +992,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * @return {@code true} if acquired; {@code false} if timed out
      * @throws InterruptedException if the current thread is interrupted
      */
-    public final boolean tryAcquireNanos(int arg, long nanosTimeout)
+    protected final boolean tryAcquireNanos(int arg, long nanosTimeout)
             throws InterruptedException {
         if (!Thread.interrupted()) {
             if (tryAcquire(arg))
@@ -1019,7 +1019,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            can represent anything you like.
      * @return the value returned from {@link #tryRelease}
      */
-    public final boolean release(int arg) {
+    protected final boolean release(int arg) {
         if (tryRelease(arg)) {
             signalNext(head);
             return true;
@@ -1038,7 +1038,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            {@link #tryAcquireShared} but is otherwise uninterpreted
      *            and can represent anything you like.
      */
-    public final void acquireShared(int arg) {
+    protected final void acquireShared(int arg) {
         if (tryAcquireShared(arg) < 0)
             acquire(null, arg, true, false, false, 0L);
     }
@@ -1057,7 +1057,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            you like.
      * @throws InterruptedException if the current thread is interrupted
      */
-    public final void acquireSharedInterruptibly(int arg)
+    protected final void acquireSharedInterruptibly(int arg)
             throws InterruptedException {
         if (Thread.interrupted() ||
                 (tryAcquireShared(arg) < 0 &&
@@ -1081,7 +1081,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * @return {@code true} if acquired; {@code false} if timed out
      * @throws InterruptedException if the current thread is interrupted
      */
-    public final boolean tryAcquireSharedNanos(int arg, long nanosTimeout)
+    protected final boolean tryAcquireSharedNanos(int arg, long nanosTimeout)
             throws InterruptedException {
         if (!Thread.interrupted()) {
             if (tryAcquireShared(arg) >= 0)
@@ -1107,7 +1107,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *            and can represent anything you like.
      * @return the value returned from {@link #tryReleaseShared}
      */
-    public final boolean releaseShared(int arg) {
+    protected final boolean releaseShared(int arg) {
         if (tryReleaseShared(arg)) {
             signalNext(head);
             return true;
@@ -1125,7 +1125,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *
      * @return {@code true} if there may be other threads waiting to acquire
      */
-    public final boolean hasQueuedThreads() {
+    protected final boolean hasQueuedThreads0() {
         for (Node p = tail, h = head; p != h && p != null; p = p.prev)
             if (p.status >= 0)
                 return true;
@@ -1141,7 +1141,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *
      * @return {@code true} if there has ever been contention
      */
-    public final boolean hasContended() {
+    protected final boolean hasContended() {
         return head != null;
     }
 
@@ -1156,7 +1156,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * @return the first (longest-waiting) thread in the queue, or
      * {@code null} if no threads are currently queued
      */
-    public final Thread getFirstQueuedThread() {
+    protected final Thread getFirstQueuedThread() {
         Thread first = null, w;
         Node h, s;
         if ((h = head) != null && ((s = h.next) == null ||
@@ -1180,7 +1180,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * @return {@code true} if the given thread is on the queue
      * @throws NullPointerException if the thread is null
      */
-    public final boolean isQueued(Thread thread) {
+    protected final boolean isQueued(Thread thread) {
         if (thread == null)
             throw new NullPointerException();
         for (Node p = tail; p != null; p = p.prev)
@@ -1212,7 +1212,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * more efficient than):
      * <pre> {@code
      * getFirstQueuedThread() != Thread.currentThread()
-     *   && hasQueuedThreads()}</pre>
+     *   && hasQueuedThreads0()}</pre>
      *
      * <p>Note that because cancellations due to interrupts and
      * timeouts may occur at any time, a {@code true} return does not
@@ -1247,7 +1247,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * is at the head of the queue or the queue is empty
      * @since 1.7
      */
-    public final boolean hasQueuedPredecessors() {
+    protected final boolean hasQueuedPredecessors() {
         Thread first = null;
         Node h, s;
         if ((h = head) != null && ((s = h.next) == null ||
@@ -1268,7 +1268,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *
      * @return the estimated number of threads waiting to acquire
      */
-    public final int getQueueLength() {
+    protected final int getQueueLength0() {
         int n = 0;
         for (Node p = tail; p != null; p = p.prev) {
             if (p.waiter != null)
@@ -1288,7 +1288,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *
      * @return the collection of threads
      */
-    public final Collection<Thread> getQueuedThreads() {
+    protected final Collection<Thread> getQueuedThreads0() {
         ArrayList<Thread> list = new ArrayList<>();
         for (Node p = tail; p != null; p = p.prev) {
             Thread t = p.waiter;
@@ -1301,12 +1301,12 @@ public abstract class PaddedAbstractQueuedSynchronizer
     /**
      * Returns a collection containing threads that may be waiting to
      * acquire in exclusive mode. This has the same properties
-     * as {@link #getQueuedThreads} except that it only returns
+     * as {@link #getQueuedThreads0} except that it only returns
      * those threads waiting due to an exclusive acquire.
      *
      * @return the collection of threads
      */
-    public final Collection<Thread> getExclusiveQueuedThreads() {
+    protected final Collection<Thread> getExclusiveQueuedThreads() {
         ArrayList<Thread> list = new ArrayList<>();
         for (Node p = tail; p != null; p = p.prev) {
             if (!(p instanceof SharedNode)) {
@@ -1321,12 +1321,12 @@ public abstract class PaddedAbstractQueuedSynchronizer
     /**
      * Returns a collection containing threads that may be waiting to
      * acquire in shared mode. This has the same properties
-     * as {@link #getQueuedThreads} except that it only returns
+     * as {@link #getQueuedThreads0} except that it only returns
      * those threads waiting due to a shared acquire.
      *
      * @return the collection of threads
      */
-    public final Collection<Thread> getSharedQueuedThreads() {
+    protected final Collection<Thread> getSharedQueuedThreads() {
         ArrayList<Thread> list = new ArrayList<>();
         for (Node p = tail; p != null; p = p.prev) {
             if (p instanceof SharedNode) {
@@ -1350,7 +1350,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
     public String toString() {
         return super.toString()
                 + "[State = " + getState() + ", "
-                + (hasQueuedThreads() ? "non" : "") + "empty queue]";
+                + (hasQueuedThreads0() ? "non" : "") + "empty queue]";
     }
 
     // Instrumentation methods for conditions
@@ -1363,7 +1363,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * @return {@code true} if owned
      * @throws NullPointerException if the condition is null
      */
-    public final boolean owns(ConditionObject condition) {
+    protected final boolean owns(ConditionObject condition) {
         return condition.isOwnedBy(this);
     }
 
@@ -1383,7 +1383,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *                                      not associated with this synchronizer
      * @throws NullPointerException         if the condition is null
      */
-    public final boolean hasWaiters(ConditionObject condition) {
+    protected final boolean hasWaiters(ConditionObject condition) {
         if (!owns(condition))
             throw new IllegalArgumentException("Not owner");
         return condition.hasWaiters();
@@ -1405,7 +1405,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *                                      not associated with this synchronizer
      * @throws NullPointerException         if the condition is null
      */
-    public final int getWaitQueueLength(ConditionObject condition) {
+    protected final int getWaitQueueLength(ConditionObject condition) {
         if (!owns(condition))
             throw new IllegalArgumentException("Not owner");
         return condition.getWaitQueueLength();
@@ -1427,7 +1427,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      *                                      not associated with this synchronizer
      * @throws NullPointerException         if the condition is null
      */
-    public final Collection<Thread> getWaitingThreads(ConditionObject condition) {
+    protected final Collection<Thread> getWaitingThreads(ConditionObject condition) {
         if (!owns(condition))
             throw new IllegalArgumentException("Not owner");
         return condition.getWaitingThreads();
@@ -1447,7 +1447,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
      * <p>This class is Serializable, but all fields are transient,
      * so deserialized conditions have no waiters.
      */
-    public class ConditionObject implements Condition, java.io.Serializable {
+    protected class ConditionObject implements Condition, java.io.Serializable {
         private static final long serialVersionUID = 1173984872572414699L;
         /**
          * First node of condition queue.
@@ -1461,7 +1461,7 @@ public abstract class PaddedAbstractQueuedSynchronizer
         /**
          * Creates a new {@code ConditionObject} instance.
          */
-        public ConditionObject() {
+        protected ConditionObject() {
         }
 
         // Signalling methods
@@ -1852,7 +1852,6 @@ public abstract class PaddedAbstractQueuedSynchronizer
         }
     }
 
-    // Unsafe
     private static final long STATE, HEAD, TAIL;
 
     static {

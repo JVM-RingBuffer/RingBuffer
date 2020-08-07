@@ -17,13 +17,14 @@
 package org.ringbuffer.lock;
 
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.PaddedReentrantLock;
+import org.ringbuffer.concurrent.FairPaddedReentrantLock;
+import org.ringbuffer.concurrent.UnfairPaddedReentrantLock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 public class ReentrantBusyWaitLock implements Lock {
     private final BusyWaitStrategy busyWaitStrategy;
-    private final PaddedReentrantLock lock;
+    private final java.util.concurrent.locks.Lock lock;
 
     public ReentrantBusyWaitLock() {
         this(false, HintBusyWaitStrategy.DEFAULT_INSTANCE);
@@ -38,7 +39,7 @@ public class ReentrantBusyWaitLock implements Lock {
     }
 
     public ReentrantBusyWaitLock(boolean fair, BusyWaitStrategy busyWaitStrategy) {
-        lock = new PaddedReentrantLock(fair);
+        lock = fair ? new FairPaddedReentrantLock() : new UnfairPaddedReentrantLock();
         this.busyWaitStrategy = busyWaitStrategy;
     }
 
