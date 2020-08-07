@@ -23,7 +23,7 @@ import java.util.function.UnaryOperator;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
-public class AtomicArray<T> {
+public class AtomicArray {
     public static <T> void setPlain(T[] array, int index, T value) {
         UNSAFE.putObject(array, elementOffset(index), value);
     }

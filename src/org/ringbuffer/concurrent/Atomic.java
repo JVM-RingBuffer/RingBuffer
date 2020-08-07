@@ -21,7 +21,7 @@ import java.util.function.UnaryOperator;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
-public class Atomic<T> {
+public class Atomic {
     public static <T> void setPlain(Object instance, long offset, T value) {
         UNSAFE.putObject(instance, offset, value);
     }
