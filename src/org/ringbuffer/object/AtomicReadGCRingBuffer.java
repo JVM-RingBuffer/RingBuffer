@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
@@ -25,31 +24,78 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-@Contended
-class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadGCRingBuffer.class, "writePosition");
+abstract class AtomicReadGCRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final Lock readLock;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class AtomicReadGCRingBuffer_buf<T> extends AtomicReadGCRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final T[] buffer;
+    final Lock readLock;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    AtomicReadGCRingBuffer(RingBufferBuilder<T> builder) {
+    AtomicReadGCRingBuffer_buf(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class AtomicReadGCRingBuffer_pad1<T> extends AtomicReadGCRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    AtomicReadGCRingBuffer_pad1(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class AtomicReadGCRingBuffer_read<T> extends AtomicReadGCRingBuffer_pad1<T> {
+    int readPosition;
+    int cachedWritePosition;
+
+    AtomicReadGCRingBuffer_read(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class AtomicReadGCRingBuffer_pad2<T> extends AtomicReadGCRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    AtomicReadGCRingBuffer_pad2(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class AtomicReadGCRingBuffer_write<T> extends AtomicReadGCRingBuffer_pad2<T> {
+    int writePosition;
+
+    AtomicReadGCRingBuffer_write(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class AtomicReadGCRingBuffer_pad3<T> extends AtomicReadGCRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    AtomicReadGCRingBuffer_pad3(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class AtomicReadGCRingBuffer<T> extends AtomicReadGCRingBuffer_pad3<T> implements RingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadGCRingBuffer_write.class, "writePosition");
+
+    AtomicReadGCRingBuffer(RingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override

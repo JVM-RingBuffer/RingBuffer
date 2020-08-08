@@ -16,36 +16,82 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-@Contended
-class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
-    private static final long READ_POSITION, WRITE_POSITION;
+abstract class FastConcurrentHeapRingBuffer_pad0 extends FastHeapRingBuffer {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    static {
-        final Class<?> clazz = FastConcurrentHeapRingBuffer.class;
-        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
-    }
+abstract class FastConcurrentHeapRingBuffer_buf extends FastConcurrentHeapRingBuffer_pad0 {
+    final int capacityMinusOne;
+    final byte[] buffer;
+    final boolean[] writtenPositions;
 
-    private final int capacityMinusOne;
-    private final byte[] buffer;
-    private final boolean[] writtenPositions;
-
-    @Contended
-    private int readPosition;
-    @Contended
-    private int writePosition;
-
-    FastConcurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
+    FastConcurrentHeapRingBuffer_buf(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
+    }
+}
+
+abstract class FastConcurrentHeapRingBuffer_pad1 extends FastConcurrentHeapRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastConcurrentHeapRingBuffer_pad1(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastConcurrentHeapRingBuffer_read extends FastConcurrentHeapRingBuffer_pad1 {
+    int readPosition;
+
+    FastConcurrentHeapRingBuffer_read(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastConcurrentHeapRingBuffer_pad2 extends FastConcurrentHeapRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastConcurrentHeapRingBuffer_pad2(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastConcurrentHeapRingBuffer_write extends FastConcurrentHeapRingBuffer_pad2 {
+    int writePosition;
+
+    FastConcurrentHeapRingBuffer_write(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastConcurrentHeapRingBuffer_pad3 extends FastConcurrentHeapRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastConcurrentHeapRingBuffer_pad3(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class FastConcurrentHeapRingBuffer extends FastConcurrentHeapRingBuffer_pad3 {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        READ_POSITION = Unsafe.objectFieldOffset(FastConcurrentHeapRingBuffer_read.class, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(FastConcurrentHeapRingBuffer_write.class, "writePosition");
+    }
+
+    FastConcurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

@@ -16,26 +16,73 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-@Contended
-class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
-    private final int capacityMinusOne;
-    private final byte[] buffer;
-    private final boolean[] writtenPositions;
+abstract class FastVolatileHeapRingBuffer_pad0 extends FastHeapRingBuffer {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    @Contended
-    private int readPosition;
-    @Contended
-    private int writePosition;
+abstract class FastVolatileHeapRingBuffer_buf extends FastVolatileHeapRingBuffer_pad0 {
+    final int capacityMinusOne;
+    final byte[] buffer;
+    final boolean[] writtenPositions;
 
-    FastVolatileHeapRingBuffer(HeapRingBufferBuilder builder) {
+    FastVolatileHeapRingBuffer_buf(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
+    }
+}
+
+abstract class FastVolatileHeapRingBuffer_pad1 extends FastVolatileHeapRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastVolatileHeapRingBuffer_pad1(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastVolatileHeapRingBuffer_read extends FastVolatileHeapRingBuffer_pad1 {
+    int readPosition;
+
+    FastVolatileHeapRingBuffer_read(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastVolatileHeapRingBuffer_pad2 extends FastVolatileHeapRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastVolatileHeapRingBuffer_pad2(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastVolatileHeapRingBuffer_write extends FastVolatileHeapRingBuffer_pad2 {
+    int writePosition;
+
+    FastVolatileHeapRingBuffer_write(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastVolatileHeapRingBuffer_pad3 extends FastVolatileHeapRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastVolatileHeapRingBuffer_pad3(HeapRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class FastVolatileHeapRingBuffer extends FastVolatileHeapRingBuffer_pad3 {
+    FastVolatileHeapRingBuffer(HeapRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

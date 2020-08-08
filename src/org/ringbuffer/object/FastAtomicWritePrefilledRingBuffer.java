@@ -16,29 +16,76 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
-@Contended
-class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
+abstract class FastAtomicWritePrefilledRingBuffer_pad0<T> extends FastPrefilledRingBuffer<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final boolean[] writtenPositions;
+abstract class FastAtomicWritePrefilledRingBuffer_buf<T> extends FastAtomicWritePrefilledRingBuffer_pad0<T> {
+    final int capacityMinusOne;
+    final T[] buffer;
+    final boolean[] writtenPositions;
 
-    @Contended
-    private int readPosition;
-    @Contended
-    private int writePosition;
-
-    FastAtomicWritePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    FastAtomicWritePrefilledRingBuffer_buf(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
+    }
+}
+
+abstract class FastAtomicWritePrefilledRingBuffer_pad1<T> extends FastAtomicWritePrefilledRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWritePrefilledRingBuffer_pad1(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWritePrefilledRingBuffer_read<T> extends FastAtomicWritePrefilledRingBuffer_pad1<T> {
+    int readPosition;
+
+    FastAtomicWritePrefilledRingBuffer_read(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWritePrefilledRingBuffer_pad2<T> extends FastAtomicWritePrefilledRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWritePrefilledRingBuffer_pad2(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWritePrefilledRingBuffer_write<T> extends FastAtomicWritePrefilledRingBuffer_pad2<T> {
+    int writePosition;
+
+    FastAtomicWritePrefilledRingBuffer_write(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWritePrefilledRingBuffer_pad3<T> extends FastAtomicWritePrefilledRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWritePrefilledRingBuffer_pad3(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class FastAtomicWritePrefilledRingBuffer<T> extends FastAtomicWritePrefilledRingBuffer_pad3<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer_write.class, "writePosition");
+
+    FastAtomicWritePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override

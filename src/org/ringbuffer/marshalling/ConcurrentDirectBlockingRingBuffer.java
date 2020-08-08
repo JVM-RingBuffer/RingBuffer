@@ -16,7 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.Unsafe;
@@ -24,36 +23,23 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-@Contended
-class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
-    private static final long READ_POSITION, WRITE_POSITION;
+abstract class ConcurrentDirectBlockingRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    static {
-        final Class<?> clazz = ConcurrentDirectBlockingRingBuffer.class;
-        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
-    }
+abstract class ConcurrentDirectBlockingRingBuffer_buf extends ConcurrentDirectBlockingRingBuffer_pad0 {
+    final long capacity;
+    final long capacityMinusOne;
+    final long buffer;
+    final Lock readLock;
+    final Lock writeLock;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final BusyWaitStrategy writeBusyWaitStrategy;
+    final LongHandle readPositionHandle;
+    final LongHandle writePositionHandle;
 
-    private final long capacity;
-    private final long capacityMinusOne;
-    private final long buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
-    private final BusyWaitStrategy readBusyWaitStrategy;
-    private final BusyWaitStrategy writeBusyWaitStrategy;
-
-    private final LongHandle readPositionHandle;
-    private final LongHandle writePositionHandle;
-    @Contended("read")
-    private long readPosition;
-    @Contended("write")
-    private long writePosition;
-    @Contended("write")
-    private long cachedReadPosition;
-    @Contended("read")
-    private long cachedWritePosition;
-
-    ConcurrentDirectBlockingRingBuffer(DirectRingBufferBuilder builder) {
+    ConcurrentDirectBlockingRingBuffer_buf(DirectRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -63,6 +49,64 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class ConcurrentDirectBlockingRingBuffer_pad1 extends ConcurrentDirectBlockingRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentDirectBlockingRingBuffer_pad1(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentDirectBlockingRingBuffer_read extends ConcurrentDirectBlockingRingBuffer_pad1 {
+    long readPosition;
+    long cachedWritePosition;
+
+    ConcurrentDirectBlockingRingBuffer_read(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentDirectBlockingRingBuffer_pad2 extends ConcurrentDirectBlockingRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentDirectBlockingRingBuffer_pad2(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentDirectBlockingRingBuffer_write extends ConcurrentDirectBlockingRingBuffer_pad2 {
+    long writePosition;
+    long cachedReadPosition;
+
+    ConcurrentDirectBlockingRingBuffer_write(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentDirectBlockingRingBuffer_pad3 extends ConcurrentDirectBlockingRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentDirectBlockingRingBuffer_pad3(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class ConcurrentDirectBlockingRingBuffer extends ConcurrentDirectBlockingRingBuffer_pad3 implements DirectRingBuffer {
+    private static final long READ_POSITION, WRITE_POSITION;
+
+    static {
+        READ_POSITION = Unsafe.objectFieldOffset(ConcurrentDirectBlockingRingBuffer_read.class, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentDirectBlockingRingBuffer_write.class, "writePosition");
+    }
+
+    ConcurrentDirectBlockingRingBuffer(DirectRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

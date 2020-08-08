@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -24,29 +23,76 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-@Contended
-class VolatileGCRingBuffer<T> implements RingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileGCRingBuffer.class, "writePosition");
+abstract class VolatileGCRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class VolatileGCRingBuffer_buf<T> extends VolatileGCRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final T[] buffer;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    VolatileGCRingBuffer(RingBufferBuilder<T> builder) {
+    VolatileGCRingBuffer_buf(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class VolatileGCRingBuffer_pad1<T> extends VolatileGCRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileGCRingBuffer_pad1(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileGCRingBuffer_read<T> extends VolatileGCRingBuffer_pad1<T> {
+    int readPosition;
+    int cachedWritePosition;
+
+    VolatileGCRingBuffer_read(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileGCRingBuffer_pad2<T> extends VolatileGCRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileGCRingBuffer_pad2(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileGCRingBuffer_write<T> extends VolatileGCRingBuffer_pad2<T> {
+    int writePosition;
+
+    VolatileGCRingBuffer_write(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileGCRingBuffer_pad3<T> extends VolatileGCRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileGCRingBuffer_pad3(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class VolatileGCRingBuffer<T> extends VolatileGCRingBuffer_pad3<T> implements RingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileGCRingBuffer_write.class, "writePosition");
+
+    VolatileGCRingBuffer(RingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override

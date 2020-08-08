@@ -16,30 +16,77 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-@Contended
-class FastAtomicReadDirectRingBuffer extends FastDirectRingBuffer {
-    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadDirectRingBuffer.class, "readPosition");
+abstract class FastAtomicReadDirectRingBuffer_pad0 extends FastDirectRingBuffer {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final long capacityMinusOne;
-    private final long buffer;
-    private final long writtenPositions;
+abstract class FastAtomicReadDirectRingBuffer_buf extends FastAtomicReadDirectRingBuffer_pad0 {
+    final long capacityMinusOne;
+    final long buffer;
+    final long writtenPositions;
 
-    @Contended
-    private long readPosition;
-    @Contended
-    private long writePosition;
-
-    FastAtomicReadDirectRingBuffer(DirectRingBufferBuilder builder) {
+    FastAtomicReadDirectRingBuffer_buf(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
+    }
+}
+
+abstract class FastAtomicReadDirectRingBuffer_pad1 extends FastAtomicReadDirectRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicReadDirectRingBuffer_pad1(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicReadDirectRingBuffer_read extends FastAtomicReadDirectRingBuffer_pad1 {
+    long readPosition;
+
+    FastAtomicReadDirectRingBuffer_read(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicReadDirectRingBuffer_pad2 extends FastAtomicReadDirectRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicReadDirectRingBuffer_pad2(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicReadDirectRingBuffer_write extends FastAtomicReadDirectRingBuffer_pad2 {
+    long writePosition;
+
+    FastAtomicReadDirectRingBuffer_write(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicReadDirectRingBuffer_pad3 extends FastAtomicReadDirectRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicReadDirectRingBuffer_pad3(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class FastAtomicReadDirectRingBuffer extends FastAtomicReadDirectRingBuffer_pad3 {
+    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadDirectRingBuffer_read.class, "readPosition");
+
+    FastAtomicReadDirectRingBuffer(DirectRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

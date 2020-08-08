@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
@@ -25,26 +24,21 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-@Contended
-class ConcurrentRingBuffer<T> implements RingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentRingBuffer.class, "writePosition");
+abstract class ConcurrentRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class ConcurrentRingBuffer_buf<T> extends ConcurrentRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final T[] buffer;
+    final Lock readLock;
+    final Lock writeLock;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    ConcurrentRingBuffer(RingBufferBuilder<T> builder) {
+    ConcurrentRingBuffer_buf(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -52,6 +46,58 @@ class ConcurrentRingBuffer<T> implements RingBuffer<T> {
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class ConcurrentRingBuffer_pad1<T> extends ConcurrentRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentRingBuffer_pad1(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentRingBuffer_read<T> extends ConcurrentRingBuffer_pad1<T> {
+    int readPosition;
+    int cachedWritePosition;
+
+    ConcurrentRingBuffer_read(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentRingBuffer_pad2<T> extends ConcurrentRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentRingBuffer_pad2(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentRingBuffer_write<T> extends ConcurrentRingBuffer_pad2<T> {
+    int writePosition;
+
+    ConcurrentRingBuffer_write(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentRingBuffer_pad3<T> extends ConcurrentRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentRingBuffer_pad3(RingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class ConcurrentRingBuffer<T> extends ConcurrentRingBuffer_pad3<T> implements RingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentRingBuffer_write.class, "writePosition");
+
+    ConcurrentRingBuffer(RingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override

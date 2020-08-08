@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -24,29 +23,76 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-@Contended
-class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatilePrefilledRingBuffer.class, "writePosition");
+abstract class VolatilePrefilledRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class VolatilePrefilledRingBuffer_buf<T> extends VolatilePrefilledRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final T[] buffer;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    VolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    VolatilePrefilledRingBuffer_buf(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class VolatilePrefilledRingBuffer_pad1<T> extends VolatilePrefilledRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatilePrefilledRingBuffer_pad1(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatilePrefilledRingBuffer_read<T> extends VolatilePrefilledRingBuffer_pad1<T> {
+    int readPosition;
+    int cachedWritePosition;
+
+    VolatilePrefilledRingBuffer_read(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatilePrefilledRingBuffer_pad2<T> extends VolatilePrefilledRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatilePrefilledRingBuffer_pad2(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatilePrefilledRingBuffer_write<T> extends VolatilePrefilledRingBuffer_pad2<T> {
+    int writePosition;
+
+    VolatilePrefilledRingBuffer_write(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatilePrefilledRingBuffer_pad3<T> extends VolatilePrefilledRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatilePrefilledRingBuffer_pad3(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class VolatilePrefilledRingBuffer<T> extends VolatilePrefilledRingBuffer_pad3<T> implements PrefilledRingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatilePrefilledRingBuffer_write.class, "writePosition");
+
+    VolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override

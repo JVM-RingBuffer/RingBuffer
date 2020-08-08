@@ -16,7 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -24,26 +23,21 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-@Contended
-class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentHeapRingBuffer.class, "writePosition");
+abstract class ConcurrentHeapRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final byte[] buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class ConcurrentHeapRingBuffer_buf extends ConcurrentHeapRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final byte[] buffer;
+    final Lock readLock;
+    final Lock writeLock;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    ConcurrentHeapRingBuffer(HeapClearingRingBufferBuilder builder) {
+    ConcurrentHeapRingBuffer_buf(HeapClearingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -51,6 +45,58 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class ConcurrentHeapRingBuffer_pad1 extends ConcurrentHeapRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentHeapRingBuffer_pad1(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentHeapRingBuffer_read extends ConcurrentHeapRingBuffer_pad1 {
+    int readPosition;
+    int cachedWritePosition;
+
+    ConcurrentHeapRingBuffer_read(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentHeapRingBuffer_pad2 extends ConcurrentHeapRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentHeapRingBuffer_pad2(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentHeapRingBuffer_write extends ConcurrentHeapRingBuffer_pad2 {
+    int writePosition;
+
+    ConcurrentHeapRingBuffer_write(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentHeapRingBuffer_pad3 extends ConcurrentHeapRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentHeapRingBuffer_pad3(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class ConcurrentHeapRingBuffer extends ConcurrentHeapRingBuffer_pad3 implements HeapClearingRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentHeapRingBuffer_write.class, "writePosition");
+
+    ConcurrentHeapRingBuffer(HeapClearingRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

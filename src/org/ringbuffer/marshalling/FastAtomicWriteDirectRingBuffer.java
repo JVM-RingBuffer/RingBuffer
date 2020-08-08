@@ -16,30 +16,77 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-@Contended
-class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteDirectRingBuffer.class, "writePosition");
+abstract class FastAtomicWriteDirectRingBuffer_pad0 extends FastDirectRingBuffer {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final long capacityMinusOne;
-    private final long buffer;
-    private final long writtenPositions;
+abstract class FastAtomicWriteDirectRingBuffer_buf extends FastAtomicWriteDirectRingBuffer_pad0 {
+    final long capacityMinusOne;
+    final long buffer;
+    final long writtenPositions;
 
-    @Contended
-    private long readPosition;
-    @Contended
-    private long writePosition;
-
-    FastAtomicWriteDirectRingBuffer(DirectRingBufferBuilder builder) {
+    FastAtomicWriteDirectRingBuffer_buf(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
+    }
+}
+
+abstract class FastAtomicWriteDirectRingBuffer_pad1 extends FastAtomicWriteDirectRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWriteDirectRingBuffer_pad1(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWriteDirectRingBuffer_read extends FastAtomicWriteDirectRingBuffer_pad1 {
+    long readPosition;
+
+    FastAtomicWriteDirectRingBuffer_read(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWriteDirectRingBuffer_pad2 extends FastAtomicWriteDirectRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWriteDirectRingBuffer_pad2(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWriteDirectRingBuffer_write extends FastAtomicWriteDirectRingBuffer_pad2 {
+    long writePosition;
+
+    FastAtomicWriteDirectRingBuffer_write(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class FastAtomicWriteDirectRingBuffer_pad3 extends FastAtomicWriteDirectRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    FastAtomicWriteDirectRingBuffer_pad3(DirectRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class FastAtomicWriteDirectRingBuffer extends FastAtomicWriteDirectRingBuffer_pad3 {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteDirectRingBuffer_write.class, "writePosition");
+
+    FastAtomicWriteDirectRingBuffer(DirectRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

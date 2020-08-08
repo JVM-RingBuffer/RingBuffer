@@ -16,36 +16,82 @@
 
 package org.ringbuffer.marshalling;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-@Contended
-class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileHeapRingBuffer.class, "writePosition");
+abstract class VolatileHeapRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final byte[] buffer;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class VolatileHeapRingBuffer_buf extends VolatileHeapRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final byte[] buffer;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    VolatileHeapRingBuffer(HeapClearingRingBufferBuilder builder) {
+    VolatileHeapRingBuffer_buf(HeapClearingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class VolatileHeapRingBuffer_pad1 extends VolatileHeapRingBuffer_buf {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileHeapRingBuffer_pad1(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileHeapRingBuffer_read extends VolatileHeapRingBuffer_pad1 {
+    int readPosition;
+    int cachedWritePosition;
+
+    VolatileHeapRingBuffer_read(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileHeapRingBuffer_pad2 extends VolatileHeapRingBuffer_read {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileHeapRingBuffer_pad2(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileHeapRingBuffer_write extends VolatileHeapRingBuffer_pad2 {
+    int writePosition;
+
+    VolatileHeapRingBuffer_write(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+abstract class VolatileHeapRingBuffer_pad3 extends VolatileHeapRingBuffer_write {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    VolatileHeapRingBuffer_pad3(HeapClearingRingBufferBuilder builder) {
+        super(builder);
+    }
+}
+
+class VolatileHeapRingBuffer extends VolatileHeapRingBuffer_pad3 implements HeapClearingRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileHeapRingBuffer_write.class, "writePosition");
+
+    VolatileHeapRingBuffer(HeapClearingRingBufferBuilder builder) {
+        super(builder);
     }
 
     @Override

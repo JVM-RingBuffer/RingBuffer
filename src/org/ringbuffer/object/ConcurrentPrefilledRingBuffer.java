@@ -16,7 +16,6 @@
 
 package org.ringbuffer.object;
 
-import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
@@ -25,26 +24,21 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-@Contended
-class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentPrefilledRingBuffer.class, "writePosition");
+abstract class ConcurrentPrefilledRingBuffer_pad0 {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+}
 
-    private final int capacity;
-    private final int capacityMinusOne;
-    private final T[] buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
-    private final BusyWaitStrategy readBusyWaitStrategy;
+abstract class ConcurrentPrefilledRingBuffer_buf<T> extends ConcurrentPrefilledRingBuffer_pad0 {
+    final int capacity;
+    final int capacityMinusOne;
+    final T[] buffer;
+    final Lock readLock;
+    final Lock writeLock;
+    final BusyWaitStrategy readBusyWaitStrategy;
+    final IntHandle writePositionHandle;
 
-    private final IntHandle writePositionHandle;
-    @Contended("read")
-    private int readPosition;
-    @Contended
-    private int writePosition;
-    @Contended("read")
-    private int cachedWritePosition;
-
-    ConcurrentPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    ConcurrentPrefilledRingBuffer_buf(PrefilledRingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -52,6 +46,58 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
+    }
+}
+
+abstract class ConcurrentPrefilledRingBuffer_pad1<T> extends ConcurrentPrefilledRingBuffer_buf<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentPrefilledRingBuffer_pad1(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentPrefilledRingBuffer_read<T> extends ConcurrentPrefilledRingBuffer_pad1<T> {
+    int readPosition;
+    int cachedWritePosition;
+
+    ConcurrentPrefilledRingBuffer_read(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentPrefilledRingBuffer_pad2<T> extends ConcurrentPrefilledRingBuffer_read<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentPrefilledRingBuffer_pad2(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentPrefilledRingBuffer_write<T> extends ConcurrentPrefilledRingBuffer_pad2<T> {
+    int writePosition;
+
+    ConcurrentPrefilledRingBuffer_write(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+abstract class ConcurrentPrefilledRingBuffer_pad3<T> extends ConcurrentPrefilledRingBuffer_write<T> {
+    long p000, p001, p002, p003, p004, p005, p006, p007;
+    long p008, p009, p010, p011, p012, p013, p014, p015;
+
+    ConcurrentPrefilledRingBuffer_pad3(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
+    }
+}
+
+class ConcurrentPrefilledRingBuffer<T> extends ConcurrentPrefilledRingBuffer_pad3<T> implements PrefilledRingBuffer<T> {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentPrefilledRingBuffer_write.class, "writePosition");
+
+    ConcurrentPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+        super(builder);
     }
 
     @Override
