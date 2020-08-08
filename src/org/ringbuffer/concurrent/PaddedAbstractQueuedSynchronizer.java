@@ -27,6 +27,7 @@
 
 package org.ringbuffer.concurrent;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.system.Unsafe;
 
 import java.io.Serializable;
@@ -36,23 +37,6 @@ import java.util.Date;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
-
-abstract class PaddedAbstractQueuedSynchronizer_pad0 extends AbstractOwnableSynchronizer {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
-
-abstract class PaddedAbstractQueuedSynchronizer_state extends PaddedAbstractQueuedSynchronizer_pad0 {
-    /**
-     * The synchronization state.
-     */
-    volatile int state;
-}
-
-abstract class PaddedAbstractQueuedSynchronizer_pad1 extends PaddedAbstractQueuedSynchronizer_state {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
 
 /**
  * Provides a framework for implementing blocking locks and related
@@ -312,7 +296,7 @@ abstract class PaddedAbstractQueuedSynchronizer_pad1 extends PaddedAbstractQueue
  * @author Doug Lea
  * @since 1.5
  */
-public abstract class PaddedAbstractQueuedSynchronizer extends PaddedAbstractQueuedSynchronizer_pad1 implements Serializable {
+public abstract class PaddedAbstractQueuedSynchronizer extends AbstractOwnableSynchronizer implements Serializable {
     private static final long serialVersionUID = 7373984972572414691L;
 
     /**
@@ -538,6 +522,12 @@ public abstract class PaddedAbstractQueuedSynchronizer extends PaddedAbstractQue
      * Tail of the wait queue. After initialization, modified only via casTail.
      */
     private transient volatile Node tail;
+
+    /**
+     * The synchronization state.
+     */
+    @Contended
+    private volatile int state;
 
     /**
      * Returns the current value of synchronization state.
@@ -1864,7 +1854,7 @@ public abstract class PaddedAbstractQueuedSynchronizer extends PaddedAbstractQue
 
     static {
         final Class<?> clazz = PaddedAbstractQueuedSynchronizer.class;
-        STATE = Unsafe.objectFieldOffset(PaddedAbstractQueuedSynchronizer_state.class, "state");
+        STATE = Unsafe.objectFieldOffset(clazz, "state");
         HEAD = Unsafe.objectFieldOffset(clazz, "head");
         TAIL = Unsafe.objectFieldOffset(clazz, "tail");
 

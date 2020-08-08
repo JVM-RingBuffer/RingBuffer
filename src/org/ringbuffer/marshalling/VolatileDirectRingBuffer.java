@@ -16,82 +16,36 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-abstract class VolatileDirectRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileDirectRingBuffer.class, "writePosition");
 
-abstract class VolatileDirectRingBuffer_buf extends VolatileDirectRingBuffer_pad0 {
-    final long capacity;
-    final long capacityMinusOne;
-    final long buffer;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final LongHandle writePositionHandle;
+    private final long capacity;
+    private final long capacityMinusOne;
+    private final long buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
-    VolatileDirectRingBuffer_buf(DirectClearingRingBufferBuilder builder) {
+    private final LongHandle writePositionHandle;
+    @Contended("read")
+    private long readPosition;
+    @Contended
+    private long writePosition;
+    @Contended("read")
+    private long cachedWritePosition;
+
+    VolatileDirectRingBuffer(DirectClearingRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class VolatileDirectRingBuffer_pad1 extends VolatileDirectRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDirectRingBuffer_pad1(DirectClearingRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDirectRingBuffer_read extends VolatileDirectRingBuffer_pad1 {
-    long readPosition;
-    long cachedWritePosition;
-
-    VolatileDirectRingBuffer_read(DirectClearingRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDirectRingBuffer_pad2 extends VolatileDirectRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDirectRingBuffer_pad2(DirectClearingRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDirectRingBuffer_write extends VolatileDirectRingBuffer_pad2 {
-    long writePosition;
-
-    VolatileDirectRingBuffer_write(DirectClearingRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDirectRingBuffer_pad3 extends VolatileDirectRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDirectRingBuffer_pad3(DirectClearingRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class VolatileDirectRingBuffer extends VolatileDirectRingBuffer_pad3 implements DirectClearingRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(VolatileDirectRingBuffer_write.class, "writePosition");
-
-    VolatileDirectRingBuffer(DirectClearingRingBufferBuilder builder) {
-        super(builder);
     }
 
     @Override

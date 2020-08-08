@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
@@ -24,23 +25,36 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-abstract class ConcurrentBlockingGCRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
+    private static final long READ_POSITION, WRITE_POSITION;
 
-abstract class ConcurrentBlockingGCRingBuffer_buf<T> extends ConcurrentBlockingGCRingBuffer_pad0 {
-    final int capacity;
-    final int capacityMinusOne;
-    final T[] buffer;
-    final Lock readLock;
-    final Lock writeLock;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final BusyWaitStrategy writeBusyWaitStrategy;
-    final IntHandle readPositionHandle;
-    final IntHandle writePositionHandle;
+    static {
+        final Class<?> clazz = ConcurrentBlockingGCRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
 
-    ConcurrentBlockingGCRingBuffer_buf(RingBufferBuilder<T> builder) {
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final T[] buffer;
+    private final Lock readLock;
+    private final Lock writeLock;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    @Contended("write")
+    private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
+    @Contended("read")
+    private int cachedWritePosition;
+
+    ConcurrentBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -50,64 +64,6 @@ abstract class ConcurrentBlockingGCRingBuffer_buf<T> extends ConcurrentBlockingG
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class ConcurrentBlockingGCRingBuffer_pad1<T> extends ConcurrentBlockingGCRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    ConcurrentBlockingGCRingBuffer_pad1(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class ConcurrentBlockingGCRingBuffer_read<T> extends ConcurrentBlockingGCRingBuffer_pad1<T> {
-    int readPosition;
-    int cachedWritePosition;
-
-    ConcurrentBlockingGCRingBuffer_read(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class ConcurrentBlockingGCRingBuffer_pad2<T> extends ConcurrentBlockingGCRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    ConcurrentBlockingGCRingBuffer_pad2(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class ConcurrentBlockingGCRingBuffer_write<T> extends ConcurrentBlockingGCRingBuffer_pad2<T> {
-    int writePosition;
-    int cachedReadPosition;
-
-    ConcurrentBlockingGCRingBuffer_write(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class ConcurrentBlockingGCRingBuffer_pad3<T> extends ConcurrentBlockingGCRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    ConcurrentBlockingGCRingBuffer_pad3(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class ConcurrentBlockingGCRingBuffer<T> extends ConcurrentBlockingGCRingBuffer_pad3<T> implements RingBuffer<T> {
-    private static final long READ_POSITION, WRITE_POSITION;
-
-    static {
-        READ_POSITION = Unsafe.objectFieldOffset(ConcurrentBlockingGCRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentBlockingGCRingBuffer_write.class, "writePosition");
-    }
-
-    ConcurrentBlockingGCRingBuffer(RingBufferBuilder<T> builder) {
-        super(builder);
     }
 
     @Override

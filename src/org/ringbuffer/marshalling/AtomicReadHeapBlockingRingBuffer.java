@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -23,22 +24,35 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-abstract class AtomicReadHeapBlockingRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
+    private static final long READ_POSITION, WRITE_POSITION;
 
-abstract class AtomicReadHeapBlockingRingBuffer_buf extends AtomicReadHeapBlockingRingBuffer_pad0 {
-    final int capacity;
-    final int capacityMinusOne;
-    final byte[] buffer;
-    final Lock readLock;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final BusyWaitStrategy writeBusyWaitStrategy;
-    final IntHandle readPositionHandle;
-    final IntHandle writePositionHandle;
+    static {
+        final Class<?> clazz = AtomicReadHeapBlockingRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
 
-    AtomicReadHeapBlockingRingBuffer_buf(HeapRingBufferBuilder builder) {
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final byte[] buffer;
+    private final Lock readLock;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    @Contended("write")
+    private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
+    @Contended("read")
+    private int cachedWritePosition;
+
+    AtomicReadHeapBlockingRingBuffer(HeapRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -47,64 +61,6 @@ abstract class AtomicReadHeapBlockingRingBuffer_buf extends AtomicReadHeapBlocki
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class AtomicReadHeapBlockingRingBuffer_pad1 extends AtomicReadHeapBlockingRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadHeapBlockingRingBuffer_pad1(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadHeapBlockingRingBuffer_read extends AtomicReadHeapBlockingRingBuffer_pad1 {
-    int readPosition;
-    int cachedWritePosition;
-
-    AtomicReadHeapBlockingRingBuffer_read(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadHeapBlockingRingBuffer_pad2 extends AtomicReadHeapBlockingRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadHeapBlockingRingBuffer_pad2(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadHeapBlockingRingBuffer_write extends AtomicReadHeapBlockingRingBuffer_pad2 {
-    int writePosition;
-    int cachedReadPosition;
-
-    AtomicReadHeapBlockingRingBuffer_write(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadHeapBlockingRingBuffer_pad3 extends AtomicReadHeapBlockingRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadHeapBlockingRingBuffer_pad3(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class AtomicReadHeapBlockingRingBuffer extends AtomicReadHeapBlockingRingBuffer_pad3 implements HeapRingBuffer {
-    private static final long READ_POSITION, WRITE_POSITION;
-
-    static {
-        READ_POSITION = Unsafe.objectFieldOffset(AtomicReadHeapBlockingRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadHeapBlockingRingBuffer_write.class, "writePosition");
-    }
-
-    AtomicReadHeapBlockingRingBuffer(HeapRingBufferBuilder builder) {
-        super(builder);
     }
 
     @Override

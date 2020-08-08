@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.IntHandle;
@@ -24,22 +25,35 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-abstract class AtomicWriteBlockingRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
+    private static final long READ_POSITION, WRITE_POSITION;
 
-abstract class AtomicWriteBlockingRingBuffer_buf<T> extends AtomicWriteBlockingRingBuffer_pad0 {
-    final int capacity;
-    final int capacityMinusOne;
-    final T[] buffer;
-    final Lock writeLock;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final BusyWaitStrategy writeBusyWaitStrategy;
-    final IntHandle readPositionHandle;
-    final IntHandle writePositionHandle;
+    static {
+        final Class<?> clazz = AtomicWriteBlockingRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
 
-    AtomicWriteBlockingRingBuffer_buf(RingBufferBuilder<T> builder) {
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final T[] buffer;
+    private final Lock writeLock;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    @Contended("write")
+    private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
+    @Contended("read")
+    private int cachedWritePosition;
+
+    AtomicWriteBlockingRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -48,64 +62,6 @@ abstract class AtomicWriteBlockingRingBuffer_buf<T> extends AtomicWriteBlockingR
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class AtomicWriteBlockingRingBuffer_pad1<T> extends AtomicWriteBlockingRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicWriteBlockingRingBuffer_pad1(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicWriteBlockingRingBuffer_read<T> extends AtomicWriteBlockingRingBuffer_pad1<T> {
-    int readPosition;
-    int cachedWritePosition;
-
-    AtomicWriteBlockingRingBuffer_read(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicWriteBlockingRingBuffer_pad2<T> extends AtomicWriteBlockingRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicWriteBlockingRingBuffer_pad2(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicWriteBlockingRingBuffer_write<T> extends AtomicWriteBlockingRingBuffer_pad2<T> {
-    int writePosition;
-    int cachedReadPosition;
-
-    AtomicWriteBlockingRingBuffer_write(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicWriteBlockingRingBuffer_pad3<T> extends AtomicWriteBlockingRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicWriteBlockingRingBuffer_pad3(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class AtomicWriteBlockingRingBuffer<T> extends AtomicWriteBlockingRingBuffer_pad3<T> implements RingBuffer<T> {
-    private static final long READ_POSITION, WRITE_POSITION;
-
-    static {
-        READ_POSITION = Unsafe.objectFieldOffset(AtomicWriteBlockingRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(AtomicWriteBlockingRingBuffer_write.class, "writePosition");
-    }
-
-    AtomicWriteBlockingRingBuffer(RingBufferBuilder<T> builder) {
-        super(builder);
     }
 
     @Override

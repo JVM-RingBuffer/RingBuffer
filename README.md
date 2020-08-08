@@ -91,7 +91,8 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 Find artifacts and Maven coordinates in _Releases_.  
 Build tools require [@Menzani's repository](https://www.menzani.eu/cdn/maven).
 
-The module name is `org.ringbuffer`.
+The module name is `org.ringbuffer`.  
+`-XX:-RestrictContended` is recommended.
 
 **Warning.**
 These features of object ring buffers have not yet been tested:

@@ -16,69 +16,22 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 
-abstract class FastVolatileRingBuffer_pad0<T> extends FastRingBuffer<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
+    private final int capacityMinusOne;
+    private final T[] buffer;
 
-abstract class FastVolatileRingBuffer_buf<T> extends FastVolatileRingBuffer_pad0<T> {
-    final int capacityMinusOne;
-    final T[] buffer;
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
 
-    FastVolatileRingBuffer_buf(RingBufferBuilder<T> builder) {
+    FastVolatileRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-    }
-}
-
-abstract class FastVolatileRingBuffer_pad1<T> extends FastVolatileRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileRingBuffer_pad1(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileRingBuffer_read<T> extends FastVolatileRingBuffer_pad1<T> {
-    int readPosition;
-
-    FastVolatileRingBuffer_read(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileRingBuffer_pad2<T> extends FastVolatileRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileRingBuffer_pad2(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileRingBuffer_write<T> extends FastVolatileRingBuffer_pad2<T> {
-    int writePosition;
-
-    FastVolatileRingBuffer_write(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileRingBuffer_pad3<T> extends FastVolatileRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileRingBuffer_pad3(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class FastVolatileRingBuffer<T> extends FastVolatileRingBuffer_pad3<T> {
-    FastVolatileRingBuffer(RingBufferBuilder<T> builder) {
-        super(builder);
     }
 
     @Override

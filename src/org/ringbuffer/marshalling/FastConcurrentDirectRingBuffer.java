@@ -16,82 +16,36 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-abstract class FastConcurrentDirectRingBuffer_pad0 extends FastDirectRingBuffer {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
-
-abstract class FastConcurrentDirectRingBuffer_buf extends FastConcurrentDirectRingBuffer_pad0 {
-    final long capacityMinusOne;
-    final long buffer;
-    final long writtenPositions;
-
-    FastConcurrentDirectRingBuffer_buf(DirectRingBufferBuilder builder) {
-        capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
-    }
-}
-
-abstract class FastConcurrentDirectRingBuffer_pad1 extends FastConcurrentDirectRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentDirectRingBuffer_pad1(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentDirectRingBuffer_read extends FastConcurrentDirectRingBuffer_pad1 {
-    long readPosition;
-
-    FastConcurrentDirectRingBuffer_read(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentDirectRingBuffer_pad2 extends FastConcurrentDirectRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentDirectRingBuffer_pad2(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentDirectRingBuffer_write extends FastConcurrentDirectRingBuffer_pad2 {
-    long writePosition;
-
-    FastConcurrentDirectRingBuffer_write(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentDirectRingBuffer_pad3 extends FastConcurrentDirectRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentDirectRingBuffer_pad3(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class FastConcurrentDirectRingBuffer extends FastConcurrentDirectRingBuffer_pad3 {
+@Contended
+class FastConcurrentDirectRingBuffer extends FastDirectRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 
     static {
-        READ_POSITION = Unsafe.objectFieldOffset(FastConcurrentDirectRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(FastConcurrentDirectRingBuffer_write.class, "writePosition");
+        final Class<?> clazz = FastConcurrentDirectRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
     }
 
+    private final long capacityMinusOne;
+    private final long buffer;
+    private final long writtenPositions;
+
+    @Contended
+    private long readPosition;
+    @Contended
+    private long writePosition;
+
     FastConcurrentDirectRingBuffer(DirectRingBufferBuilder builder) {
-        super(builder);
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
+        writtenPositions = builder.getWrittenPositions();
     }
 
     @Override

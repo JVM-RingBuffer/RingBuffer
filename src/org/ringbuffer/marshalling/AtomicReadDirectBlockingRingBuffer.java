@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lock.Lock;
 import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.Unsafe;
@@ -23,22 +24,35 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-abstract class AtomicReadDirectBlockingRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
+    private static final long READ_POSITION, WRITE_POSITION;
 
-abstract class AtomicReadDirectBlockingRingBuffer_buf extends AtomicReadDirectBlockingRingBuffer_pad0 {
-    final long capacity;
-    final long capacityMinusOne;
-    final long buffer;
-    final Lock readLock;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final BusyWaitStrategy writeBusyWaitStrategy;
-    final LongHandle readPositionHandle;
-    final LongHandle writePositionHandle;
+    static {
+        final Class<?> clazz = AtomicReadDirectBlockingRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
 
-    AtomicReadDirectBlockingRingBuffer_buf(DirectRingBufferBuilder builder) {
+    private final long capacity;
+    private final long capacityMinusOne;
+    private final long buffer;
+    private final Lock readLock;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+    private final BusyWaitStrategy writeBusyWaitStrategy;
+
+    private final LongHandle readPositionHandle;
+    private final LongHandle writePositionHandle;
+    @Contended("read")
+    private long readPosition;
+    @Contended("write")
+    private long writePosition;
+    @Contended("write")
+    private long cachedReadPosition;
+    @Contended("read")
+    private long cachedWritePosition;
+
+    AtomicReadDirectBlockingRingBuffer(DirectRingBufferBuilder builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
@@ -47,64 +61,6 @@ abstract class AtomicReadDirectBlockingRingBuffer_buf extends AtomicReadDirectBl
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class AtomicReadDirectBlockingRingBuffer_pad1 extends AtomicReadDirectBlockingRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadDirectBlockingRingBuffer_pad1(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadDirectBlockingRingBuffer_read extends AtomicReadDirectBlockingRingBuffer_pad1 {
-    long readPosition;
-    long cachedWritePosition;
-
-    AtomicReadDirectBlockingRingBuffer_read(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadDirectBlockingRingBuffer_pad2 extends AtomicReadDirectBlockingRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadDirectBlockingRingBuffer_pad2(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadDirectBlockingRingBuffer_write extends AtomicReadDirectBlockingRingBuffer_pad2 {
-    long writePosition;
-    long cachedReadPosition;
-
-    AtomicReadDirectBlockingRingBuffer_write(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class AtomicReadDirectBlockingRingBuffer_pad3 extends AtomicReadDirectBlockingRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    AtomicReadDirectBlockingRingBuffer_pad3(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class AtomicReadDirectBlockingRingBuffer extends AtomicReadDirectBlockingRingBuffer_pad3 implements DirectRingBuffer {
-    private static final long READ_POSITION, WRITE_POSITION;
-
-    static {
-        READ_POSITION = Unsafe.objectFieldOffset(AtomicReadDirectBlockingRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadDirectBlockingRingBuffer_write.class, "writePosition");
-    }
-
-    AtomicReadDirectBlockingRingBuffer(DirectRingBufferBuilder builder) {
-        super(builder);
     }
 
     @Override

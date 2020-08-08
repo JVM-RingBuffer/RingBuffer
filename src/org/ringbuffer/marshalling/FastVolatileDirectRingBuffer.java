@@ -16,73 +16,26 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
-abstract class FastVolatileDirectRingBuffer_pad0 extends FastDirectRingBuffer {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
+    private final long capacityMinusOne;
+    private final long buffer;
+    private final long writtenPositions;
 
-abstract class FastVolatileDirectRingBuffer_buf extends FastVolatileDirectRingBuffer_pad0 {
-    final long capacityMinusOne;
-    final long buffer;
-    final long writtenPositions;
+    @Contended
+    private long readPosition;
+    @Contended
+    private long writePosition;
 
-    FastVolatileDirectRingBuffer_buf(DirectRingBufferBuilder builder) {
+    FastVolatileDirectRingBuffer(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
-    }
-}
-
-abstract class FastVolatileDirectRingBuffer_pad1 extends FastVolatileDirectRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileDirectRingBuffer_pad1(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileDirectRingBuffer_read extends FastVolatileDirectRingBuffer_pad1 {
-    long readPosition;
-
-    FastVolatileDirectRingBuffer_read(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileDirectRingBuffer_pad2 extends FastVolatileDirectRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileDirectRingBuffer_pad2(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileDirectRingBuffer_write extends FastVolatileDirectRingBuffer_pad2 {
-    long writePosition;
-
-    FastVolatileDirectRingBuffer_write(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatileDirectRingBuffer_pad3 extends FastVolatileDirectRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatileDirectRingBuffer_pad3(DirectRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class FastVolatileDirectRingBuffer extends FastVolatileDirectRingBuffer_pad3 {
-    FastVolatileDirectRingBuffer(DirectRingBufferBuilder builder) {
-        super(builder);
     }
 
     @Override

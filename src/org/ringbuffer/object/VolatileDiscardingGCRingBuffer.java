@@ -16,6 +16,7 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
@@ -23,84 +24,39 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
-abstract class VolatileDiscardingGCRingBuffer_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class VolatileDiscardingGCRingBuffer<T> implements RingBuffer<T> {
+    private static final long READ_POSITION, WRITE_POSITION;
 
-abstract class VolatileDiscardingGCRingBuffer_buf<T> extends VolatileDiscardingGCRingBuffer_pad0 {
-    final int capacity;
-    final int capacityMinusOne;
-    final T[] buffer;
-    final BusyWaitStrategy readBusyWaitStrategy;
-    final IntHandle readPositionHandle;
-    final IntHandle writePositionHandle;
+    static {
+        final Class<?> clazz = VolatileDiscardingGCRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+    }
 
-    VolatileDiscardingGCRingBuffer_buf(RingBufferBuilder<T> builder) {
+    private final int capacity;
+    private final int capacityMinusOne;
+    private final T[] buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
+
+    private final IntHandle readPositionHandle;
+    private final IntHandle writePositionHandle;
+    @Contended("read")
+    private int readPosition;
+    @Contended("write")
+    private int writePosition;
+    @Contended("write")
+    private int cachedReadPosition;
+    @Contended("read")
+    private int cachedWritePosition;
+
+    VolatileDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         readPositionHandle = builder.newHandle();
         writePositionHandle = builder.newHandle();
-    }
-}
-
-abstract class VolatileDiscardingGCRingBuffer_pad1<T> extends VolatileDiscardingGCRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDiscardingGCRingBuffer_pad1(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDiscardingGCRingBuffer_read<T> extends VolatileDiscardingGCRingBuffer_pad1<T> {
-    int readPosition;
-    int cachedWritePosition;
-
-    VolatileDiscardingGCRingBuffer_read(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDiscardingGCRingBuffer_pad2<T> extends VolatileDiscardingGCRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDiscardingGCRingBuffer_pad2(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDiscardingGCRingBuffer_write<T> extends VolatileDiscardingGCRingBuffer_pad2<T> {
-    int writePosition;
-    int cachedReadPosition;
-
-    VolatileDiscardingGCRingBuffer_write(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class VolatileDiscardingGCRingBuffer_pad3<T> extends VolatileDiscardingGCRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    VolatileDiscardingGCRingBuffer_pad3(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class VolatileDiscardingGCRingBuffer<T> extends VolatileDiscardingGCRingBuffer_pad3<T> implements RingBuffer<T> {
-    private static final long READ_POSITION, WRITE_POSITION;
-
-    static {
-        READ_POSITION = Unsafe.objectFieldOffset(VolatileDiscardingGCRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(VolatileDiscardingGCRingBuffer_write.class, "writePosition");
-    }
-
-    VolatileDiscardingGCRingBuffer(RingBufferBuilder<T> builder) {
-        super(builder);
     }
 
     @Override

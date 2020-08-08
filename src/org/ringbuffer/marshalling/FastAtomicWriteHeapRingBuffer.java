@@ -16,77 +16,30 @@
 
 package org.ringbuffer.marshalling;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
-abstract class FastAtomicWriteHeapRingBuffer_pad0 extends FastHeapRingBuffer {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class FastAtomicWriteHeapRingBuffer extends FastHeapRingBuffer {
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteHeapRingBuffer.class, "writePosition");
 
-abstract class FastAtomicWriteHeapRingBuffer_buf extends FastAtomicWriteHeapRingBuffer_pad0 {
-    final int capacityMinusOne;
-    final byte[] buffer;
-    final boolean[] writtenPositions;
+    private final int capacityMinusOne;
+    private final byte[] buffer;
+    private final boolean[] writtenPositions;
 
-    FastAtomicWriteHeapRingBuffer_buf(HeapRingBufferBuilder builder) {
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
+
+    FastAtomicWriteHeapRingBuffer(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
-    }
-}
-
-abstract class FastAtomicWriteHeapRingBuffer_pad1 extends FastAtomicWriteHeapRingBuffer_buf {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastAtomicWriteHeapRingBuffer_pad1(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastAtomicWriteHeapRingBuffer_read extends FastAtomicWriteHeapRingBuffer_pad1 {
-    int readPosition;
-
-    FastAtomicWriteHeapRingBuffer_read(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastAtomicWriteHeapRingBuffer_pad2 extends FastAtomicWriteHeapRingBuffer_read {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastAtomicWriteHeapRingBuffer_pad2(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastAtomicWriteHeapRingBuffer_write extends FastAtomicWriteHeapRingBuffer_pad2 {
-    int writePosition;
-
-    FastAtomicWriteHeapRingBuffer_write(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-abstract class FastAtomicWriteHeapRingBuffer_pad3 extends FastAtomicWriteHeapRingBuffer_write {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastAtomicWriteHeapRingBuffer_pad3(HeapRingBufferBuilder builder) {
-        super(builder);
-    }
-}
-
-class FastAtomicWriteHeapRingBuffer extends FastAtomicWriteHeapRingBuffer_pad3 {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteHeapRingBuffer_write.class, "writePosition");
-
-    FastAtomicWriteHeapRingBuffer(HeapRingBufferBuilder builder) {
-        super(builder);
     }
 
     @Override

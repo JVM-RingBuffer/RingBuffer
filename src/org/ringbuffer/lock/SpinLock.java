@@ -16,30 +16,19 @@
 
 package org.ringbuffer.lock;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
 
-abstract class SpinLock_pad0 {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
-
-abstract class SpinLock_state extends SpinLock_pad0 {
-    boolean state;
-}
-
-abstract class SpinLock_pad1 extends SpinLock_state {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
-
-public class SpinLock extends SpinLock_pad1 implements Lock {
-    private static final long STATE = Unsafe.objectFieldOffset(SpinLock_state.class, "state");
+public class SpinLock implements Lock {
+    private static final long STATE = Unsafe.objectFieldOffset(SpinLock.class, "state");
 
     private final BusyWaitStrategy additionalBusyWaitStrategy;
+    @Contended
+    private boolean state;
 
     public SpinLock() {
         this(NoopBusyWaitStrategy.DEFAULT_INSTANCE);

@@ -16,72 +16,25 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 
-abstract class FastVolatilePrefilledRingBuffer_pad0<T> extends FastPrefilledRingBuffer<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
+@Contended
+class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
+    private final int capacityMinusOne;
+    private final T[] buffer;
+    private final boolean[] writtenPositions;
 
-abstract class FastVolatilePrefilledRingBuffer_buf<T> extends FastVolatilePrefilledRingBuffer_pad0<T> {
-    final int capacityMinusOne;
-    final T[] buffer;
-    final boolean[] writtenPositions;
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
 
-    FastVolatilePrefilledRingBuffer_buf(PrefilledRingBufferBuilder<T> builder) {
+    FastVolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         writtenPositions = builder.getWrittenPositions();
-    }
-}
-
-abstract class FastVolatilePrefilledRingBuffer_pad1<T> extends FastVolatilePrefilledRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatilePrefilledRingBuffer_pad1(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatilePrefilledRingBuffer_read<T> extends FastVolatilePrefilledRingBuffer_pad1<T> {
-    int readPosition;
-
-    FastVolatilePrefilledRingBuffer_read(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatilePrefilledRingBuffer_pad2<T> extends FastVolatilePrefilledRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatilePrefilledRingBuffer_pad2(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatilePrefilledRingBuffer_write<T> extends FastVolatilePrefilledRingBuffer_pad2<T> {
-    int writePosition;
-
-    FastVolatilePrefilledRingBuffer_write(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastVolatilePrefilledRingBuffer_pad3<T> extends FastVolatilePrefilledRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastVolatilePrefilledRingBuffer_pad3(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class FastVolatilePrefilledRingBuffer<T> extends FastVolatilePrefilledRingBuffer_pad3<T> {
-    FastVolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
-        super(builder);
     }
 
     @Override

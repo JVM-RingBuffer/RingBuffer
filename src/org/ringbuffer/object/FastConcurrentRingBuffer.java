@@ -16,78 +16,32 @@
 
 package org.ringbuffer.object;
 
+import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 
-abstract class FastConcurrentRingBuffer_pad0<T> extends FastRingBuffer<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-}
-
-abstract class FastConcurrentRingBuffer_buf<T> extends FastConcurrentRingBuffer_pad0<T> {
-    final int capacityMinusOne;
-    final T[] buffer;
-
-    FastConcurrentRingBuffer_buf(RingBufferBuilder<T> builder) {
-        capacityMinusOne = builder.getCapacityMinusOne();
-        buffer = builder.getBuffer();
-    }
-}
-
-abstract class FastConcurrentRingBuffer_pad1<T> extends FastConcurrentRingBuffer_buf<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentRingBuffer_pad1(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentRingBuffer_read<T> extends FastConcurrentRingBuffer_pad1<T> {
-    int readPosition;
-
-    FastConcurrentRingBuffer_read(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentRingBuffer_pad2<T> extends FastConcurrentRingBuffer_read<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentRingBuffer_pad2(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentRingBuffer_write<T> extends FastConcurrentRingBuffer_pad2<T> {
-    int writePosition;
-
-    FastConcurrentRingBuffer_write(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-abstract class FastConcurrentRingBuffer_pad3<T> extends FastConcurrentRingBuffer_write<T> {
-    long p000, p001, p002, p003, p004, p005, p006, p007;
-    long p008, p009, p010, p011, p012, p013, p014, p015;
-
-    FastConcurrentRingBuffer_pad3(RingBufferBuilder<T> builder) {
-        super(builder);
-    }
-}
-
-class FastConcurrentRingBuffer<T> extends FastConcurrentRingBuffer_pad3<T> {
+@Contended
+class FastConcurrentRingBuffer<T> extends FastRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
 
     static {
-        READ_POSITION = Unsafe.objectFieldOffset(FastConcurrentRingBuffer_read.class, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(FastConcurrentRingBuffer_write.class, "writePosition");
+        final Class<?> clazz = FastConcurrentRingBuffer.class;
+        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
     }
 
+    private final int capacityMinusOne;
+    private final T[] buffer;
+
+    @Contended
+    private int readPosition;
+    @Contended
+    private int writePosition;
+
     FastConcurrentRingBuffer(RingBufferBuilder<T> builder) {
-        super(builder);
+        capacityMinusOne = builder.getCapacityMinusOne();
+        buffer = builder.getBuffer();
     }
 
     @Override
