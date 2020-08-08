@@ -27,6 +27,9 @@
 
 package org.ringbuffer.concurrent;
 
+/**
+ * Generates garbage.
+ */
 public final class UnfairPaddedReentrantLock extends AbstractPaddedReentrantLock {
     private static final long serialVersionUID = 7316153563782823691L;
 

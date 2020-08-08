@@ -72,13 +72,13 @@ class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
     public int next(int size) {
         int writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (isNotEmptyEnoughCached(writePosition, size)) {
+        while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
         }
         return writePosition;
     }
 
-    private boolean isNotEmptyEnoughCached(int writePosition, int size) {
+    private boolean isThereNotEnoughFreeSpaceCached(int writePosition, int size) {
         if (freeSpace(writePosition, cachedReadPosition) <= size) {
             cachedReadPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
             return freeSpace(writePosition, cachedReadPosition) <= size;

@@ -69,13 +69,13 @@ class VolatileDirectBlockingRingBuffer implements DirectRingBuffer {
     public long next(long size) {
         long writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
-        while (isNotEmptyEnoughCached(writePosition, size)) {
+        while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
         }
         return writePosition;
     }
 
-    private boolean isNotEmptyEnoughCached(long writePosition, long size) {
+    private boolean isThereNotEnoughFreeSpaceCached(long writePosition, long size) {
         if (freeSpace(writePosition, cachedReadPosition) <= size) {
             cachedReadPosition = readPositionHandle.get(this, READ_POSITION) & capacityMinusOne;
             return freeSpace(writePosition, cachedReadPosition) <= size;

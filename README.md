@@ -30,26 +30,26 @@ First, load the native library for the current platform: `Threads.loadNativeLibr
 
 ## Performance
 
-Benchmarks were run on i7 8700 on Linux.  
-Latency is the time it takes for a single element to be written or read by latency-sensitive threads.
+Benchmarks were run on i7 8700.  
+Latency is the time it takes for a single `Object { int }` or `int` to be written or read by latency-sensitive threads.
 
 scenario|msg/sec|latency
 ---|---|---
-3 producers → 3 consumers | 19 million | 150ns
-3 producers → 1 consumer | 27 million | 37ns
-1 producer → 3 consumers | 41 million | 2ns
-1 producer → 1 consumer | 350 million | 3ns
+3 producers → 3 consumers | 37 million | 77ns
+3 producers → 1 consumer | 19 million | 52ns
+1 producer → 3 consumers | 54 million | 2ns
+1 producer → 1 consumer | 587 million | 1.5ns
 
 The following are lock-free implementations (call `withoutLocks()` on the builder).  
 They must never become full.
 
 scenario|msg/sec|latency
 ---|---|---
-3 producers → 3 consumers | 32 million | 92ns
-3 producers → 1 consumer | 44 million | 22ns
-1 producer → 3 consumers | 47 million | 2ns
-1 producer → 1 consumer | 365 million | 3ns
-2 producers → 1 processor → 2 consumers | 26 million | 37ns
+3 producers → 3 consumers | 37 million | 81ns
+3 producers → 1 consumer | 39 million | 25ns
+1 producer → 3 consumers | 50 million | 1.5ns
+1 producer → 1 consumer | 555 million | 1.5ns
+2 producers → 1 processor → 2 consumers | 33 million | 27ns
 
 The following are competitors: [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.
 
