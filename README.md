@@ -51,7 +51,14 @@ scenario|msg/sec|latency
 1 producer → 1 consumer | 555 million | 1.5ns
 2 producers → 1 processor → 2 consumers | 33 million | 27ns
 
-The following are competitors: [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.
+The following are competitors: JDK queues, [Agrona](https://github.com/real-logic/agrona) and [JCTools](https://github.com/JCTools/JCTools), respectively.
+
+scenario|msg/sec|latency
+---|---|---
+3 producers → 3 consumers | 23 million | 118ns
+3 producers → 1 consumer | 25 million | 40ns
+1 producer → 3 consumers | 17 million | 60ns
+1 producer → 1 consumer | 23 million | 42ns
 
 scenario|msg/sec|latency
 ---|---|---

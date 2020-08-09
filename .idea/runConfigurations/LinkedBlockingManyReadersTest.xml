@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LinkedBlockingManyReadersTest" type="Application" factoryName="Application" folderName="JDK">
+    <option name="MAIN_CLASS_NAME" value="test.competitors.LinkedBlockingManyReadersTest" />
+    <module name="RingBuffer" />
+    <option name="VM_PARAMETERS" value="-Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

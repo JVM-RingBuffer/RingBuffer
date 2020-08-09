@@ -23,28 +23,28 @@ import test.object.Event;
 import java.util.Queue;
 
 class Writer extends TestThread {
-    static TestThreadGroup startGroupAsync(Queue<Event> ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, ringBuffer));
+    static TestThreadGroup startGroupAsync(Queue<Event> queue, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new Writer(numIterations, queue));
         group.start(profiler);
         return group;
     }
 
-    static void runGroupAsync(Queue<Event> ringBuffer, Profiler profiler) {
-        startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
+    static void runGroupAsync(Queue<Event> queue, Profiler profiler) {
+        startGroupAsync(queue, profiler).waitForCompletion(null);
     }
 
-    static Writer startAsync(int numIterations, Queue<Event> ringBuffer, Profiler profiler) {
-        Writer writer = new Writer(numIterations, ringBuffer);
+    static Writer startAsync(int numIterations, Queue<Event> queue, Profiler profiler) {
+        Writer writer = new Writer(numIterations, queue);
         writer.startNow(profiler);
         return writer;
     }
 
-    static void runAsync(int numIterations, Queue<Event> ringBuffer, Profiler profiler) {
-        startAsync(numIterations, ringBuffer, profiler).waitForCompletion(null);
+    static void runAsync(int numIterations, Queue<Event> queue, Profiler profiler) {
+        startAsync(numIterations, queue, profiler).waitForCompletion(null);
     }
 
-    private Writer(int numIterations, Queue<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+    private Writer(int numIterations, Queue<Event> queue) {
+        super(numIterations, queue);
     }
 
     @Override

@@ -24,15 +24,15 @@ import test.object.Event;
 import java.util.Queue;
 
 class Reader extends TestThread implements AbstractReader {
-    static long runGroupAsync(Queue<Event> ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, ringBuffer));
+    static long runGroupAsync(Queue<Event> queue, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new Reader(numIterations, queue));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, Queue<Event> ringBuffer, Profiler profiler) {
-        Reader reader = new Reader(numIterations, ringBuffer);
+    static long runAsync(int numIterations, Queue<Event> queue, Profiler profiler) {
+        Reader reader = new Reader(numIterations, queue);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
         return reader.getSum();
@@ -40,8 +40,8 @@ class Reader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    Reader(int numIterations, Queue<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+    Reader(int numIterations, Queue<Event> queue) {
+        super(numIterations, queue);
     }
 
     @Override

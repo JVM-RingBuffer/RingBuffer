@@ -24,17 +24,24 @@ import test.object.Event;
 import java.util.concurrent.BlockingQueue;
 
 class BlockingReader extends TestThread implements AbstractReader {
-    static long runGroupAsync(BlockingQueue<Event> ringBuffer, Profiler profiler) {
-        TestThreadGroup group = new TestThreadGroup(numIterations -> new BlockingReader(numIterations, ringBuffer));
+    static long runGroupAsync(BlockingQueue<Event> queue, Profiler profiler) {
+        TestThreadGroup group = new TestThreadGroup(numIterations -> new BlockingReader(numIterations, queue));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
+    static long runAsync(int numIterations, BlockingQueue<Event> queue, Profiler profiler) {
+        BlockingReader reader = new BlockingReader(numIterations, queue);
+        reader.startNow(null);
+        reader.waitForCompletion(profiler);
+        return reader.getSum();
+    }
+
     private long sum;
 
-    BlockingReader(int numIterations, BlockingQueue<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+    BlockingReader(int numIterations, BlockingQueue<Event> queue) {
+        super(numIterations, queue);
     }
 
     @Override
