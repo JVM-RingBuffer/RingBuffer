@@ -35,11 +35,11 @@ public class Threads {
     }
 
     public static void loadNativeLibrary() {
-        loadNativeLibrary(Platform.current(), Platform.getTempFolder());
+        loadNativeLibrary(Platform.getTempFolder());
     }
 
-    public static void loadNativeLibrary(Platform platform, Path libraryDirectory) {
-        String libraryName = libraryNameFor(platform);
+    public static void loadNativeLibrary(Path libraryDirectory) {
+        String libraryName = libraryName();
         Path libraryPath = libraryDirectory.resolve(libraryName);
         if (!Threads.libraryPath.compareAndSet(null, libraryPath)) {
             throw new IllegalStateException("A native library has already been loaded.");
@@ -58,8 +58,8 @@ public class Threads {
         }
     }
 
-    private static String libraryNameFor(Platform platform) {
-        switch (platform) {
+    private static String libraryName() {
+        switch (Platform.current()) {
             case LINUX_32:
                 return "libthreadmanipulation_32.so";
             case LINUX_64:

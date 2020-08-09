@@ -48,25 +48,48 @@ public class Unsafe {
     public static final long ARRAY_BOOLEAN_INDEX_SCALE;
     public static final long ARRAY_OBJECT_INDEX_SCALE;
 
-    private static final sun.misc.Unsafe unsafe;
     private static final long OVERRIDE;
     private static final Method implAddOpens;
 
     static {
+        final Class<?> clazz = Module.class;
         try {
-            Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            unsafe = (sun.misc.Unsafe) field.get(null);
-
-            final Class<?> clazz = Module.class;
             implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
+
+            final Module from = JAVA_BASE_MODULE;
+            final Module to = Unsafe.class.getModule();
+            final String packageName = "jdk.internal.misc";
+            if (!from.isOpen(packageName, to)) {
+                Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                field.setAccessible(true);
+                sun.misc.Unsafe unsafe = (sun.misc.Unsafe) field.get(null);
+
+                // Code is duplicated so that we do not have to use reflection in the other case.
+                long OVERRIDE;
+                if (Version.current() == Version.JAVA_11) {
+                    OVERRIDE = unsafe.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+                } else if (Platform.current().is32Bit()) {
+                    OVERRIDE = 8L;
+                } else {
+                    long offset = unsafe.objectFieldOffset(Platform.OopsCompressed.class.getDeclaredField("i"));
+                    if (offset == 8L) {
+                        assert Platform.current().is32Bit();
+                        OVERRIDE = -1L;
+                    } else if (offset == 12L) {
+                        OVERRIDE = 12L;
+                    } else if (offset == 16L) {
+                        OVERRIDE = 16L;
+                    } else {
+                        throw new AssertionError();
+                    }
+                }
+                unsafe.putBoolean(implAddOpens, OVERRIDE, true);
+
+                implAddOpens.invoke(from, packageName, to);
+            }
         } catch (ReflectiveOperationException e) {
             throw new ExceptionInInitializerError(e);
         }
-        OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
-        setAccessible(implAddOpens);
-
-        addOpens(JAVA_BASE_MODULE, Unsafe.class.getModule(), "jdk.internal.misc");
         UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
 
         ARRAY_BYTE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
@@ -88,18 +111,29 @@ public class Unsafe {
         ARRAY_DOUBLE_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_DOUBLE_INDEX_SCALE;
         ARRAY_BOOLEAN_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_BOOLEAN_INDEX_SCALE;
         ARRAY_OBJECT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_OBJECT_INDEX_SCALE;
+
+        if (Version.current() == Version.JAVA_11) {
+            OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
+        } else if (Platform.current().is32Bit()) {
+            OVERRIDE = 8L;
+        } else if (Platform.areOopsCompressed()) {
+            OVERRIDE = 12L;
+        } else {
+            OVERRIDE = 16L;
+        }
+        setAccessible(implAddOpens);
     }
 
     public static long objectFieldOffset(Class<?> clazz, String fieldName) {
         try {
-            return unsafe.objectFieldOffset(clazz.getDeclaredField(fieldName));
+            return UNSAFE.objectFieldOffset(clazz.getDeclaredField(fieldName));
         } catch (NoSuchFieldException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
     public static void setAccessible(AccessibleObject accessibleObject) {
-        unsafe.putBoolean(accessibleObject, OVERRIDE, true);
+        UNSAFE.putBoolean(accessibleObject, OVERRIDE, true);
     }
 
     public static void addOpens(Module from, Module to, String packageName) {
@@ -107,7 +141,7 @@ public class Unsafe {
             try {
                 implAddOpens.invoke(from, packageName, to);
             } catch (ReflectiveOperationException e) {
-                throw new AssertionError();
+                throw new RuntimeException(e);
             }
         }
     }
