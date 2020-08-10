@@ -49,22 +49,21 @@ public class Unsafe {
     public static final long ARRAY_OBJECT_INDEX_SCALE;
 
     private static final long OVERRIDE;
-    private static final Method implAddOpens;
 
     static {
-        final Class<?> clazz = Module.class;
+        final Module from = JAVA_BASE_MODULE;
+        final Module to = Unsafe.class.getModule();
+        final String packageName = "jdk.internal.misc";
         try {
-            implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
-
-            final Module from = JAVA_BASE_MODULE;
-            final Module to = Unsafe.class.getModule();
-            final String packageName = "jdk.internal.misc";
             if (!from.isOpen(packageName, to)) {
                 Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
                 field.setAccessible(true);
                 sun.misc.Unsafe unsafe = (sun.misc.Unsafe) field.get(null);
 
                 // Code is duplicated so that we do not have to use reflection in the other case.
+                final Class<?> clazz = Module.class;
+                Method implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
+
                 long OVERRIDE;
                 if (Version.current() == Version.JAVA_11) {
                     OVERRIDE = unsafe.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
@@ -121,7 +120,6 @@ public class Unsafe {
         } else {
             OVERRIDE = 16L;
         }
-        setAccessible(implAddOpens);
     }
 
     public static long objectFieldOffset(Class<?> clazz, String fieldName) {
@@ -139,10 +137,24 @@ public class Unsafe {
     public static void addOpens(Module from, Module to, String packageName) {
         if (!from.isOpen(packageName, to)) {
             try {
-                implAddOpens.invoke(from, packageName, to);
+                RequiringReflection.implAddOpens.invoke(from, packageName, to);
             } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private static class RequiringReflection {
+        static final Method implAddOpens;
+
+        static {
+            final Class<?> clazz = Module.class;
+            try {
+                implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
+            } catch (NoSuchMethodException e) {
+                throw new ExceptionInInitializerError(e);
+            }
+            setAccessible(implAddOpens);
         }
     }
 }

@@ -16,7 +16,7 @@
 
 package org.ringbuffer.wait;
 
-import java.util.concurrent.locks.LockSupport;
+import org.ringbuffer.system.Unsafe;
 
 public class ParkBusyWaitStrategy implements BusyWaitStrategy {
     public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();
@@ -33,6 +33,6 @@ public class ParkBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
-        LockSupport.parkNanos(1L);
+        Unsafe.UNSAFE.park(false, 1L);
     }
 }

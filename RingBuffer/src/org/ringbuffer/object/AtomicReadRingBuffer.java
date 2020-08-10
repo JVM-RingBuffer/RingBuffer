@@ -27,11 +27,7 @@ import java.util.function.Consumer;
 
 @Contended
 class AtomicReadRingBuffer<T> implements RingBuffer<T> {
-    private static final long WRITE_POSITION;
-
-    static {
-        WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadRingBuffer.class, "writePosition");
-    }
+    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(AtomicReadRingBuffer.class, "writePosition");
 
     private final int capacity;
     private final int capacityMinusOne;

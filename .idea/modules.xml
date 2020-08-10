@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RingBuffer.iml" filepath="$PROJECT_DIR$/RingBuffer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RingBuffer/RingBuffer.iml" filepath="$PROJECT_DIR$/RingBuffer/RingBuffer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Test/Test.iml" filepath="$PROJECT_DIR$/Test/Test.iml" />
     </modules>
   </component>
 </project>
