@@ -23,6 +23,7 @@ import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
 
+@Contended
 public class SpinLock implements Lock {
     private static final long STATE = Unsafe.objectFieldOffset(SpinLock.class, "state");
 
