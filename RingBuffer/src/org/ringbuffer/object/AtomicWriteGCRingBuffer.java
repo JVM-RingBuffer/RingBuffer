@@ -101,8 +101,9 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public void takeBatch(int size) {
+        int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
-        while (size() < size) {
+        while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
         }
     }
@@ -174,6 +175,10 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public int size() {
+        return size(readPosition);
+    }
+
+    private int size(int readPosition) {
         int writePosition = writePositionHandle.get(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
