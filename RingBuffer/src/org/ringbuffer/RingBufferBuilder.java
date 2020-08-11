@@ -21,7 +21,6 @@ import org.ringbuffer.concurrent.UnfairPaddedReentrantLock;
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Numbers;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -35,7 +34,6 @@ public abstract class RingBufferBuilder<T> {
     private Lock readLock;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
-    protected MemoryOrder memoryOrder = MemoryOrder.LAZY;
     protected boolean copyClass;
     // All fields are copied in <init>(RingBufferBuilder<?>)
 
@@ -50,7 +48,6 @@ public abstract class RingBufferBuilder<T> {
         readLock = builder.readLock;
         writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
         readBusyWaitStrategy = builder.readBusyWaitStrategy;
-        memoryOrder = builder.memoryOrder;
         copyClass = builder.copyClass;
     }
 
@@ -113,12 +110,6 @@ public abstract class RingBufferBuilder<T> {
 
     protected void waitingWith0(BusyWaitStrategy busyWaitStrategy) {
         readBusyWaitStrategy = busyWaitStrategy;
-    }
-
-    public abstract RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder);
-
-    protected void withMemoryOrder0(MemoryOrder memoryOrder) {
-        this.memoryOrder = memoryOrder;
     }
 
     /**

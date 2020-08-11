@@ -9,7 +9,6 @@ module org.ringbuffer {
     exports org.ringbuffer.java;
     exports org.ringbuffer.lock;
     exports org.ringbuffer.marshalling;
-    exports org.ringbuffer.memory;
     exports org.ringbuffer.object;
     exports org.ringbuffer.system;
     exports org.ringbuffer.wait;

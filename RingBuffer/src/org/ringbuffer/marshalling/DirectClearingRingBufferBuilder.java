@@ -17,7 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class DirectClearingRingBufferBuilder extends AbstractDirectRingBufferBuilder<DirectClearingRingBuffer> {
@@ -82,12 +81,6 @@ public class DirectClearingRingBufferBuilder extends AbstractDirectRingBufferBui
     @Override
     public DirectClearingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
-        return this;
-    }
-
-    @Override
-    public DirectClearingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
-        super.withMemoryOrder0(memoryOrder);
         return this;
     }
 

@@ -18,8 +18,8 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -35,7 +35,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
     @Contended
@@ -49,7 +48,6 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         buffer = builder.getBuffer();
         readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -62,9 +60,9 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
         int writePosition = this.writePosition;
         AtomicArray.setPlain(buffer, writePosition, element);
         if (writePosition == 0) {
-            writePositionHandle.set(this, WRITE_POSITION, capacityMinusOne);
+            AtomicInt.setRelease(this, WRITE_POSITION, capacityMinusOne);
         } else {
-            writePositionHandle.set(this, WRITE_POSITION, writePosition - 1);
+            AtomicInt.setRelease(this, WRITE_POSITION, writePosition - 1);
         }
     }
 
@@ -87,7 +85,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     private boolean isEmptyCached(int readPosition) {
         if (cachedWritePosition == readPosition) {
-            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION);
+            cachedWritePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
             return cachedWritePosition == readPosition;
         }
         return false;
@@ -126,7 +124,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void forEach(Consumer<T> action) {
         int readPosition = getReadPosition();
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(AtomicArray.getPlain(buffer, i));
@@ -148,7 +146,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public boolean contains(T element) {
         int readPosition = getReadPosition();
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 if (AtomicArray.getPlain(buffer, i).equals(element)) {
@@ -180,7 +178,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     }
 
     private int size(int readPosition) {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }
@@ -189,7 +187,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(getReadPosition(), writePositionHandle.get(this, WRITE_POSITION));
+        return isEmpty(getReadPosition(), AtomicInt.getAcquire(this, WRITE_POSITION));
     }
 
     private static boolean isEmpty(int readPosition, int writePosition) {
@@ -199,7 +197,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public String toString() {
         int readPosition = getReadPosition();
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }

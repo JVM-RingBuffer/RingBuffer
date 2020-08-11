@@ -17,7 +17,6 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
@@ -93,12 +92,6 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
     @Override
     public RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
-        return this;
-    }
-
-    @Override
-    public RingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
-        super.withMemoryOrder0(memoryOrder);
         return this;
     }
 

@@ -18,8 +18,8 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -42,8 +42,6 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
-    private final IntHandle readPositionHandle;
-    private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
     @Contended("write")
@@ -60,8 +58,6 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
-        readPositionHandle = builder.newHandle();
-        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -94,7 +90,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     private boolean isFullCached(int writePosition) {
         if (cachedReadPosition == writePosition) {
-            cachedReadPosition = readPositionHandle.get(this, READ_POSITION);
+            cachedReadPosition = AtomicInt.getAcquire(this, READ_POSITION);
             return cachedReadPosition == writePosition;
         }
         return false;
@@ -102,7 +98,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public void put(int putKey) {
-        writePositionHandle.set(this, WRITE_POSITION, putKey);
+        AtomicInt.setRelease(this, WRITE_POSITION, putKey);
         writeLock.unlock();
     }
 
@@ -114,16 +110,16 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
             readBusyWaitStrategy.tick();
         }
         if (readPosition == 0) {
-            readPositionHandle.set(this, READ_POSITION, capacityMinusOne);
+            AtomicInt.setRelease(this, READ_POSITION, capacityMinusOne);
         } else {
-            readPositionHandle.set(this, READ_POSITION, readPosition - 1);
+            AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
     }
 
     private boolean isEmptyCached(int readPosition) {
         if (cachedWritePosition == readPosition) {
-            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION);
+            cachedWritePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
             return cachedWritePosition == readPosition;
         }
         return false;
@@ -146,9 +142,9 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     public T takePlain() {
         int readPosition = this.readPosition;
         if (readPosition == 0) {
-            readPositionHandle.set(this, READ_POSITION, capacityMinusOne);
+            AtomicInt.setRelease(this, READ_POSITION, capacityMinusOne);
         } else {
-            readPositionHandle.set(this, READ_POSITION, readPosition - 1);
+            AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
     }
@@ -159,8 +155,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public void forEach(Consumer<T> action) {
-        int readPosition = readPositionHandle.get(this, READ_POSITION);
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int readPosition = AtomicInt.getAcquire(this, READ_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (; readPosition > writePosition; readPosition--) {
                 action.accept(AtomicArray.getPlain(buffer, readPosition));
@@ -181,8 +177,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public boolean contains(T element) {
-        int readPosition = readPositionHandle.get(this, READ_POSITION);
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int readPosition = AtomicInt.getAcquire(this, READ_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (; readPosition > writePosition; readPosition--) {
                 if (AtomicArray.getPlain(buffer, readPosition).equals(element)) {
@@ -210,11 +206,11 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public int size() {
-        return size(readPositionHandle.get(this, READ_POSITION));
+        return size(AtomicInt.getAcquire(this, READ_POSITION));
     }
 
     private int size(int readPosition) {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }
@@ -223,7 +219,7 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(readPositionHandle.get(this, READ_POSITION), writePositionHandle.get(this, WRITE_POSITION));
+        return isEmpty(AtomicInt.getAcquire(this, READ_POSITION), AtomicInt.getAcquire(this, WRITE_POSITION));
     }
 
     private static boolean isEmpty(int readPosition, int writePosition) {
@@ -232,8 +228,8 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
 
     @Override
     public String toString() {
-        int readPosition = readPositionHandle.get(this, READ_POSITION);
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int readPosition = AtomicInt.getAcquire(this, READ_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }

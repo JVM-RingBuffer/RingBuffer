@@ -16,8 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.memory.IntHandle;
-
 import java.util.Arrays;
 
 abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
@@ -51,10 +49,6 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
 
     byte[] getBuffer() {
         return HeapBuffer.allocate(capacity);
-    }
-
-    IntHandle newHandle() {
-        return memoryOrder.newIntHandle();
     }
 
     boolean[] getWrittenPositions() {

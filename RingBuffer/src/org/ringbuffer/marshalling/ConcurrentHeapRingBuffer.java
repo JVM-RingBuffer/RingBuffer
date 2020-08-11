@@ -17,8 +17,8 @@
 package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
+import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -35,7 +35,6 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
     private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
     @Contended
@@ -50,7 +49,6 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
         readLock = builder.getReadLock();
         writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -66,7 +64,7 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public void put(int offset) {
-        writePositionHandle.set(this, WRITE_POSITION, offset);
+        AtomicInt.setRelease(this, WRITE_POSITION, offset);
         writeLock.unlock();
     }
 
@@ -85,7 +83,7 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
 
     private boolean isNotFullEnoughCached(int readPosition, int size) {
         if (size(readPosition, cachedWritePosition) < size) {
-            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne;
+            cachedWritePosition = AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne;
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
@@ -98,7 +96,7 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public int size() {
-        return size(getReadPosition() & capacityMinusOne, writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne);
+        return size(getReadPosition() & capacityMinusOne, AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne);
     }
 
     private int size(int readPosition, int writePosition) {
@@ -110,7 +108,7 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public boolean isEmpty() {
-        return (writePositionHandle.get(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
+        return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
     private int getReadPosition() {

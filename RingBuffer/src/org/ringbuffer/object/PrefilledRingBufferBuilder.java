@@ -17,7 +17,6 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
@@ -96,12 +95,6 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     @Override
     public PrefilledRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
-        return this;
-    }
-
-    @Override
-    public PrefilledRingBufferBuilder<T> withMemoryOrder(MemoryOrder memoryOrder) {
-        super.withMemoryOrder0(memoryOrder);
         return this;
     }
 

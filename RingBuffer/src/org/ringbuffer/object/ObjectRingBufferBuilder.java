@@ -18,7 +18,6 @@ package org.ringbuffer.object;
 
 import org.ringbuffer.RingBufferBuilder;
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.IntHandle;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
@@ -88,10 +87,6 @@ abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBu
     @SuppressWarnings("unchecked")
     T[] getBuffer() {
         return (T[]) new Object[capacity];
-    }
-
-    IntHandle newHandle() {
-        return memoryOrder.newIntHandle();
     }
 
     boolean[] getWrittenPositions() {

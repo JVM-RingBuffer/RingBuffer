@@ -17,7 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
-import org.ringbuffer.memory.LongHandle;
 import org.ringbuffer.system.CleanerService;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
@@ -58,10 +57,6 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         long address = DirectBuffer.allocate(capacity);
         memoryToFree[0] = address;
         return address;
-    }
-
-    LongHandle newHandle() {
-        return memoryOrder.newLongHandle();
     }
 
     long getWrittenPositions() {

@@ -193,7 +193,6 @@ DirectMarshallingClearingRingBuffer ringBuffer =
                 .manyWriters()
                 .manyReaders()
                 .copyClass()
-                .withMemoryOrder(MemoryOrder.VOLATILE)
                 .build();
 
 long offset = ringBuffer.next();

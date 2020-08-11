@@ -17,7 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.lock.Lock;
-import org.ringbuffer.memory.MemoryOrder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapClearingRingBuffer> {
@@ -82,12 +81,6 @@ public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder
     @Override
     public HeapClearingRingBufferBuilder waitingWith(BusyWaitStrategy busyWaitStrategy) {
         super.waitingWith0(busyWaitStrategy);
-        return this;
-    }
-
-    @Override
-    public HeapClearingRingBufferBuilder withMemoryOrder(MemoryOrder memoryOrder) {
-        super.withMemoryOrder0(memoryOrder);
         return this;
     }
 

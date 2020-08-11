@@ -18,7 +18,7 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.memory.IntHandle;
+import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -33,7 +33,6 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final T[] buffer;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
-    private final IntHandle writePositionHandle;
     @Contended("read")
     private int readPosition;
     @Contended
@@ -46,7 +45,6 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
-        writePositionHandle = builder.newHandle();
     }
 
     @Override
@@ -67,9 +65,9 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     @Override
     public void put(int key) {
         if (key == 0) {
-            writePositionHandle.set(this, WRITE_POSITION, capacityMinusOne);
+            AtomicInt.setRelease(this, WRITE_POSITION, capacityMinusOne);
         } else {
-            writePositionHandle.set(this, WRITE_POSITION, key - 1);
+            AtomicInt.setRelease(this, WRITE_POSITION, key - 1);
         }
     }
 
@@ -90,7 +88,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     private boolean isEmptyCached(int readPosition) {
         if (cachedWritePosition == readPosition) {
-            cachedWritePosition = writePositionHandle.get(this, WRITE_POSITION);
+            cachedWritePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
             return cachedWritePosition == readPosition;
         }
         return false;
@@ -126,7 +124,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     @Override
     public void forEach(Consumer<T> action) {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 action.accept(AtomicArray.getPlain(buffer, i));
@@ -147,7 +145,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     @Override
     public boolean contains(T element) {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             for (int i = readPosition; i > writePosition; i--) {
                 if (AtomicArray.getPlain(buffer, i).equals(element)) {
@@ -179,7 +177,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     private int size(int readPosition) {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {
             return readPosition - writePosition;
         }
@@ -188,7 +186,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     @Override
     public boolean isEmpty() {
-        return isEmpty(writePositionHandle.get(this, WRITE_POSITION));
+        return isEmpty(AtomicInt.getAcquire(this, WRITE_POSITION));
     }
 
     private boolean isEmpty(int writePosition) {
@@ -197,7 +195,7 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     @Override
     public String toString() {
-        int writePosition = writePositionHandle.get(this, WRITE_POSITION);
+        int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (isEmpty(writePosition)) {
             return "[]";
         }
