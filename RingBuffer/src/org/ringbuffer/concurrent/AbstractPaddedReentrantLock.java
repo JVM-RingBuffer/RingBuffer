@@ -27,17 +27,76 @@
 
 package org.ringbuffer.concurrent;
 
-import jdk.internal.vm.annotation.ReservedStackAccess;
-
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Base of synchronization control for this lock. Subclassed
- * into fair and nonfair versions below. Uses AQS state to
- * represent the number of holds on the lock.
+ * A reentrant mutual exclusion {@link Lock} with the same basic
+ * behavior and semantics as the implicit monitor lock accessed using
+ * {@code synchronized} methods and statements, but with extended
+ * capabilities.
+ *
+ * <p>A {@code ReentrantLock} is <em>owned</em> by the thread last
+ * successfully locking, but not yet unlocking it. A thread invoking
+ * {@code lock} will return, successfully acquiring the lock, when
+ * the lock is not owned by another thread. The method will return
+ * immediately if the current thread already owns the lock. This can
+ * be checked using methods {@link #isHeldByCurrentThread}, and {@link
+ * #getHoldCount}.
+ *
+ * <p>The constructor for this class accepts an optional
+ * <em>fairness</em> parameter.  When set {@code true}, under
+ * contention, locks favor granting access to the longest-waiting
+ * thread.  Otherwise this lock does not guarantee any particular
+ * access order.  Programs using fair locks accessed by many threads
+ * may display lower overall throughput (i.e., are slower; often much
+ * slower) than those using the default setting, but have smaller
+ * variances in times to obtain locks and guarantee lack of
+ * starvation. Note however, that fairness of locks does not guarantee
+ * fairness of thread scheduling. Thus, one of many threads using a
+ * fair lock may obtain it multiple times in succession while other
+ * active threads are not progressing and not currently holding the
+ * lock.
+ * Also note that the untimed {@link #tryLock()} method does not
+ * honor the fairness setting. It will succeed if the lock
+ * is available even if other threads are waiting.
+ *
+ * <p>It is recommended practice to <em>always</em> immediately
+ * follow a call to {@code lock} with a {@code try} block, most
+ * typically in a before/after construction such as:
+ *
+ * <pre> {@code
+ * class X {
+ *   private final ReentrantLock lock = new ReentrantLock();
+ *   // ...
+ *
+ *   public void m() {
+ *     lock.lock();  // block until condition holds
+ *     try {
+ *       // ... method body
+ *     } finally {
+ *       lock.unlock()
+ *     }
+ *   }
+ * }}</pre>
+ *
+ * <p>In addition to implementing the {@link Lock} interface, this
+ * class defines a number of {@code public} and {@code protected}
+ * methods for inspecting the state of the lock.  Some of these
+ * methods are only useful for instrumentation and monitoring.
+ *
+ * <p>Serialization of this class behaves in the same way as built-in
+ * locks: a deserialized lock is in the unlocked state, regardless of
+ * its state when serialized.
+ *
+ * <p>This lock supports a maximum of 2147483647 recursive locks by
+ * the same thread. Attempts to exceed this limit result in
+ * {@link Error} throws from locking methods.
+ *
+ * @author Doug Lea
+ * @since 1.5
  */
 abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchronizer implements Lock, org.ringbuffer.lock.Lock {
     private static final long serialVersionUID = -5179523762034025860L;
@@ -56,9 +115,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      * purposes and lies dormant until the lock has been acquired,
      * at which time the lock hold count is set to one.
      */
-    public void lock() {
-        lock0();
-    }
+    public abstract void lock();
 
     /**
      * Acquires the lock unless the current thread is
@@ -107,7 +164,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      * @throws InterruptedException if the current thread is interrupted
      */
     public void lockInterruptibly() throws InterruptedException {
-        lockInterruptibly0();
+        acquireInterruptibly(1);
     }
 
     /**
@@ -123,7 +180,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      * This &quot;barging&quot; behavior can be useful in certain
      * circumstances, even though it breaks fairness. If you want to honor
      * the fairness setting for this lock, then use
-     * {@link #tryLock(long, TimeUnit) tryLock(0, TimeUnit.SECONDS)}
+     * {@link #tryLock(long, TimeUnit) tryLock(0, TimeUnit.SECONDS) }
      * which is almost equivalent (it also detects interruption).
      *
      * <p>If the current thread already holds this lock then the hold
@@ -137,7 +194,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      * thread; and {@code false} otherwise
      */
     public boolean tryLock() {
-        return tryLock0();
+        return nonfairTryAcquire(1);
     }
 
     /**
@@ -214,7 +271,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      */
     public boolean tryLock(long timeout, TimeUnit unit)
             throws InterruptedException {
-        return tryLockNanos(unit.toNanos(timeout));
+        return tryAcquireNanos(1, unit.toNanos(timeout));
     }
 
     /**
@@ -288,7 +345,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      *
      * <pre> {@code
      * class X {
-     *   PaddedReentrantLock lock = new PaddedReentrantLock();
+     *   ReentrantLock lock = new ReentrantLock();
      *   // ...
      *   public void m() {
      *     assert lock.getHoldCount() == 0;
@@ -318,7 +375,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      *
      * <pre> {@code
      * class X {
-     *   PaddedReentrantLock lock = new PaddedReentrantLock();
+     *   ReentrantLock lock = new ReentrantLock();
      *   // ...
      *
      *   public void m() {
@@ -332,7 +389,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      *
      * <pre> {@code
      * class X {
-     *   PaddedReentrantLock lock = new PaddedReentrantLock();
+     *   ReentrantLock lock = new ReentrantLock();
      *   // ...
      *
      *   public void m() {
@@ -502,7 +559,7 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
      *                                      not associated with this lock
      * @throws NullPointerException         if the condition is null
      */
-    protected Collection<Thread> getWaitingThreads(Condition condition) {
+    public Collection<Thread> getWaitingThreads(Condition condition) {
         if (condition == null)
             throw new NullPointerException();
         if (!(condition instanceof PaddedAbstractQueuedSynchronizer.ConditionObject))
@@ -526,63 +583,36 @@ abstract class AbstractPaddedReentrantLock extends PaddedAbstractQueuedSynchroni
     }
 
     /**
-     * Performs non-fair tryLock.
+     * Performs non-fair tryLock.  tryAcquire is implemented in
+     * subclasses, but both need nonfair try for trylock method.
      */
-    @ReservedStackAccess
-    final boolean tryLock0() {
-        Thread current = Thread.currentThread();
+    final boolean nonfairTryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
         int c = getState();
         if (c == 0) {
-            if (compareAndSetState(0, 1)) {
+            if (compareAndSetState(0, acquires)) {
                 setExclusiveOwnerThread(current);
                 return true;
             }
-        } else if (getExclusiveOwnerThread() == current) {
-            if (++c < 0) // overflow
+        } else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0) // overflow
                 throw new Error("Maximum lock count exceeded");
-            setState(c);
+            setState(nextc);
             return true;
         }
         return false;
     }
 
-    /**
-     * Checks for reentrancy and acquires if lock immediately
-     * available under fair vs nonfair rules. Locking methods
-     * perform initialTryLock check before relaying to
-     * corresponding AQS acquire methods.
-     */
-    abstract boolean initialTryLock();
-
-    @ReservedStackAccess
-    final void lock0() {
-        if (!initialTryLock())
-            acquire(1);
-    }
-
-    @ReservedStackAccess
-    final void lockInterruptibly0() throws InterruptedException {
-        if (Thread.interrupted())
-            throw new InterruptedException();
-        if (!initialTryLock())
-            acquireInterruptibly(1);
-    }
-
-    @ReservedStackAccess
-    final boolean tryLockNanos(long nanos) throws InterruptedException {
-        if (Thread.interrupted())
-            throw new InterruptedException();
-        return initialTryLock() || tryAcquireNanos(1, nanos);
-    }
-
-    @ReservedStackAccess
     protected final boolean tryRelease(int releases) {
         int c = getState() - releases;
-        if (getExclusiveOwnerThread() != Thread.currentThread())
+        if (Thread.currentThread() != getExclusiveOwnerThread())
             throw new IllegalMonitorStateException();
-        boolean free = (c == 0);
-        if (free)
+        boolean free = false;
+        if (c == 0) {
+            free = true;
             setExclusiveOwnerThread(null);
+        }
         setState(c);
         return free;
     }
