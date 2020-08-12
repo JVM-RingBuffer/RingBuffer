@@ -29,7 +29,7 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
 
     private final long capacityMinusOne;
     private final long buffer;
-    private final long writtenPositions;
+    private final long positionNotModified;
 
     @Contended
     private long readPosition;
@@ -39,7 +39,7 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
     FastAtomicWriteDirectRingBuffer(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
+        positionNotModified = builder.getPositionNotModified();
     }
 
     @Override
@@ -54,14 +54,14 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public void put(long offset) {
-        DirectAtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
+        DirectAtomicBooleanArray.setRelease(positionNotModified, offset & capacityMinusOne, false);
     }
 
     @Override
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (DirectAtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
+        while (DirectAtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
             Thread.onSpinWait();
         }
         return readPosition;

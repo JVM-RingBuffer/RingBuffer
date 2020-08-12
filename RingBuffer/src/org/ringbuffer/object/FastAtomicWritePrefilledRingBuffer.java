@@ -28,7 +28,7 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final boolean[] writtenPositions;
+    private final boolean[] positionNotModified;
 
     @Contended
     private int readPosition;
@@ -38,7 +38,7 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     FastAtomicWritePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
+        positionNotModified = builder.getPositionNotModified();
     }
 
     @Override
@@ -58,13 +58,13 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public void put(int key) {
-        AtomicBooleanArray.setRelease(writtenPositions, key, false);
+        AtomicBooleanArray.setRelease(positionNotModified, key, false);
     }
 
     @Override
     public T take() {
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while (AtomicBooleanArray.getAndSetVolatile(writtenPositions, readPosition, true)) {
+        while (AtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
             Thread.onSpinWait();
         }
         return AtomicArray.getPlain(buffer, readPosition);

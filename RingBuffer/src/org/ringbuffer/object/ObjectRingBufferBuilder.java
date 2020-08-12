@@ -89,9 +89,9 @@ abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBu
         return (T[]) new Object[capacity];
     }
 
-    boolean[] getWrittenPositions() {
-        boolean[] writtenPositions = new boolean[capacity];
-        Arrays.fill(writtenPositions, true);
-        return writtenPositions;
+    boolean[] getPositionNotModified() {
+        boolean[] positionNotModified = new boolean[capacity];
+        Arrays.fill(positionNotModified, true);
+        return positionNotModified;
     }
 }

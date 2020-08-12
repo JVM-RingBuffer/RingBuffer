@@ -25,7 +25,7 @@ import static org.ringbuffer.marshalling.DirectBuffer.*;
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
     private final long capacityMinusOne;
     private final long buffer;
-    private final long writtenPositions;
+    private final long positionNotModified;
 
     @Contended
     private long readPosition;
@@ -35,7 +35,7 @@ class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
     FastVolatileDirectRingBuffer(DirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
+        positionNotModified = builder.getPositionNotModified();
     }
 
     @Override
@@ -52,17 +52,16 @@ class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public void put(long offset) {
-        DirectAtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
+        DirectAtomicBooleanArray.setRelease(positionNotModified, offset & capacityMinusOne, false);
     }
 
     @Override
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (DirectAtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
+        while (DirectAtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
             Thread.onSpinWait();
         }
-        DirectAtomicBooleanArray.setPlain(writtenPositions, readPosition, true);
         return readPosition;
     }
 

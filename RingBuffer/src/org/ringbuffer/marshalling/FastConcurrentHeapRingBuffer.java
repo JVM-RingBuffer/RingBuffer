@@ -35,7 +35,7 @@ class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
 
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final boolean[] writtenPositions;
+    private final boolean[] positionNotModified;
 
     @Contended
     private int readPosition;
@@ -45,7 +45,7 @@ class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
     FastConcurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
+        positionNotModified = builder.getPositionNotModified();
     }
 
     @Override
@@ -60,16 +60,16 @@ class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public void put(int offset) {
-        AtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
+        AtomicBooleanArray.setRelease(positionNotModified, offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
         int readPosition = AtomicInt.getAndAddVolatile(this, READ_POSITION, size) & capacityMinusOne;
-        while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
+        while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
             Thread.onSpinWait();
         }
-        AtomicBooleanArray.setOpaque(writtenPositions, readPosition, true);
+        AtomicBooleanArray.setOpaque(positionNotModified, readPosition, true);
         return readPosition;
     }
 

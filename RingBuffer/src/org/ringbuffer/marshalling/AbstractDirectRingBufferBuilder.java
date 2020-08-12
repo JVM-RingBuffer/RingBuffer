@@ -59,10 +59,9 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
         return address;
     }
 
-    long getWrittenPositions() {
-        long address = DirectAtomicBooleanArray.allocate(capacity);
+    long getPositionNotModified() {
+        long address = DirectAtomicBooleanArray.allocate(capacity, true);
         memoryToFree[1] = address;
-        DirectAtomicBooleanArray.fill(address, capacity, true);
         return address;
     }
 

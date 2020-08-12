@@ -25,7 +25,7 @@ import static org.ringbuffer.marshalling.HeapBuffer.*;
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final boolean[] writtenPositions;
+    private final boolean[] positionNotModified;
 
     @Contended
     private int readPosition;
@@ -35,7 +35,7 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     FastVolatileHeapRingBuffer(HeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writtenPositions = builder.getWrittenPositions();
+        positionNotModified = builder.getPositionNotModified();
     }
 
     @Override
@@ -52,17 +52,16 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public void put(int offset) {
-        AtomicBooleanArray.setRelease(writtenPositions, offset & capacityMinusOne, false);
+        AtomicBooleanArray.setRelease(positionNotModified, offset & capacityMinusOne, false);
     }
 
     @Override
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (AtomicBooleanArray.getAcquire(writtenPositions, readPosition)) {
+        while (AtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
             Thread.onSpinWait();
         }
-        AtomicBooleanArray.setPlain(writtenPositions, readPosition, true);
         return readPosition;
     }
 

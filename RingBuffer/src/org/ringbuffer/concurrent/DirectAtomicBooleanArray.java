@@ -19,8 +19,12 @@ package org.ringbuffer.concurrent;
 import static org.ringbuffer.system.Unsafe.UNSAFE;
 
 public class DirectAtomicBooleanArray {
-    public static long allocate(long length) {
-        return UNSAFE.allocateMemory(length);
+    public static long allocate(long length, boolean initialValue) {
+        long address = UNSAFE.allocateMemory(length);
+        for (long i = 0L; i < length; i++) {
+            setOpaque(address, i, initialValue);
+        }
+        return address;
     }
 
     public static void setPlain(long address, long index, boolean value) {
@@ -133,9 +137,5 @@ public class DirectAtomicBooleanArray {
 
     public static boolean getAndBitwiseXorVolatile(long address, long index, boolean mask) {
         return UNSAFE.getAndBitwiseXorBoolean(null, address + index, mask);
-    }
-
-    public static void fill(long address, long length, boolean value) {
-        UNSAFE.setMemory(address, length, value ? (byte) 1 : (byte) 0);
     }
 }
