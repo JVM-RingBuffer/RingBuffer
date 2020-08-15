@@ -17,7 +17,6 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.RingBufferBuilder;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
@@ -54,16 +53,6 @@ abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBu
     protected void withoutLocks0() {
         super.withoutLocks0();
         validateCapacityPowerOfTwo(capacity);
-    }
-
-    @Override
-    protected Lock getWriteLock() {
-        return super.getWriteLock();
-    }
-
-    @Override
-    protected Lock getReadLock() {
-        return super.getReadLock();
     }
 
     @Override

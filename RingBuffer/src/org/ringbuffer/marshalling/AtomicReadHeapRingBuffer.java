@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -31,7 +30,6 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -45,7 +43,6 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -65,8 +62,12 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
     }
 
     @Override
+    public Object getReadMonitor() {
+        return this;
+    }
+
+    @Override
     public int take(int size) {
-        readLock.lock();
         int readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -86,11 +87,6 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
     }
 
     @Override
-    public void advance() {
-        readLock.unlock();
-    }
-
-    @Override
     public int size() {
         return size(getReadPosition() & capacityMinusOne, AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne);
     }
@@ -107,10 +103,7 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
         return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
-    private int getReadPosition() {
-        readLock.lock();
-        int readPosition = this.readPosition;
-        readLock.unlock();
+    private synchronized int getReadPosition() {
         return readPosition;
     }
 

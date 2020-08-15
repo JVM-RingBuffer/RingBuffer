@@ -17,10 +17,8 @@
 package org.ringbuffer;
 
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.concurrent.UnfairPaddedReentrantLock;
 import org.ringbuffer.java.Assume;
 import org.ringbuffer.java.Numbers;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -30,8 +28,6 @@ public abstract class RingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
     protected RingBufferType type = RingBufferType.CLEARING;
-    private Lock writeLock;
-    private Lock readLock;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
     protected boolean copyClass;
@@ -44,8 +40,6 @@ public abstract class RingBufferBuilder<T> {
         oneWriter = builder.oneWriter;
         oneReader = builder.oneReader;
         type = builder.type;
-        writeLock = builder.writeLock;
-        readLock = builder.readLock;
         writeBusyWaitStrategy = builder.writeBusyWaitStrategy;
         readBusyWaitStrategy = builder.readBusyWaitStrategy;
         copyClass = builder.copyClass;
@@ -73,18 +67,6 @@ public abstract class RingBufferBuilder<T> {
 
     protected void manyReaders0() {
         oneReader = false;
-    }
-
-    public abstract RingBufferBuilder<T> withWriteLock(Lock lock);
-
-    protected void withWriteLock0(Lock lock) {
-        writeLock = lock;
-    }
-
-    public abstract RingBufferBuilder<T> withReadLock(Lock lock);
-
-    protected void withReadLock0(Lock lock) {
-        readLock = lock;
     }
 
     protected abstract RingBufferBuilder<?> blocking();
@@ -164,24 +146,6 @@ public abstract class RingBufferBuilder<T> {
     }
 
     protected abstract MethodHandles.Lookup getImplLookup();
-
-    protected Lock getWriteLock() {
-        if (writeLock == null) {
-            return defaultLock();
-        }
-        return writeLock;
-    }
-
-    protected Lock getReadLock() {
-        if (readLock == null) {
-            return defaultLock();
-        }
-        return readLock;
-    }
-
-    protected Lock defaultLock() {
-        return new UnfairPaddedReentrantLock();
-    }
 
     protected BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;

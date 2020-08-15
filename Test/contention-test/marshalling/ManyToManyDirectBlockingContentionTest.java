@@ -41,8 +41,8 @@ public class ManyToManyDirectBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        DirectWriter.startGroupAsync(getRingBuffer(), profiler);
-        return DirectReader.runGroupAsync(getRingBuffer(), profiler);
+        SynchronizedDirectWriter.startGroupAsync(getRingBuffer(), profiler);
+        return SynchronizedDirectReader.runGroupAsync(getRingBuffer(), profiler);
     }
 
     DirectRingBuffer getRingBuffer() {

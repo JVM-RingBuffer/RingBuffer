@@ -41,7 +41,7 @@ public class ManyWritersHeapBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        HeapWriter.startGroupAsync(getRingBuffer(), profiler);
+        SynchronizedHeapWriter.startGroupAsync(getRingBuffer(), profiler);
         return HeapReader.runAsync(TOTAL_ELEMENTS, getRingBuffer(), profiler);
     }
 

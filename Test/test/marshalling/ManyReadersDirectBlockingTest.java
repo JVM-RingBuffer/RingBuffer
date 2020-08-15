@@ -27,6 +27,6 @@ class ManyReadersDirectBlockingTest extends ManyReadersDirectBlockingContentionP
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         DirectWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return DirectReader.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedDirectReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

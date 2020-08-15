@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -32,7 +31,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -46,7 +44,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -56,8 +53,7 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void put(T element) {
-        writeLock.lock();
+    public synchronized void put(T element) {
         int writePosition = this.writePosition;
         AtomicArray.setPlain(buffer, writePosition, element);
         if (writePosition == 0) {
@@ -65,7 +61,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
         } else {
             AtomicInt.setRelease(this, WRITE_POSITION, writePosition - 1);
         }
-        writeLock.unlock();
     }
 
     @Override
@@ -94,10 +89,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -116,10 +107,6 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
             readPosition--;
         }
         return element;
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -223,5 +210,10 @@ class AtomicWriteGCRingBuffer<T> implements RingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

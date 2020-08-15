@@ -57,7 +57,6 @@ class Reader extends TestThread implements AbstractReader {
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.take().getData();
-            ringBuffer.advance();
         }
         return sum;
     }

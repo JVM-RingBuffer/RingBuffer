@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -32,7 +31,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -46,7 +44,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -57,7 +54,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
 
     @Override
     public int nextKey() {
-        writeLock.lock();
         return writePosition;
     }
 
@@ -73,7 +69,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
         } else {
             AtomicInt.setRelease(this, WRITE_POSITION, key - 1);
         }
-        writeLock.unlock();
     }
 
     @Override
@@ -100,10 +95,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -121,10 +112,6 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
             this.readPosition--;
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -228,5 +215,10 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

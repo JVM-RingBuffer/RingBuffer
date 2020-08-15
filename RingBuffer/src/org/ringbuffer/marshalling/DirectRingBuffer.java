@@ -16,11 +16,18 @@
 
 package org.ringbuffer.marshalling;
 
-/**
- * If the ring buffer is not lock-free, then from {@link #next(long)} to {@link #put(long)} and from
- * {@link #take(long)} to {@link #advance(long)} is an atomic operation.
- */
 public interface DirectRingBuffer extends AbstractDirectRingBuffer {
+    /**
+     * If the ring buffer supports multiple writers and is not lock-free, then external synchronization must be performed:
+     *
+     * <pre>{@code
+     * synchronized (ringBuffer) {
+     *     long offset = ringBuffer.next(...);
+     *     // Write data
+     *     ringBuffer.put(...);
+     * }
+     * }</pre>
+     */
     long next(long size);
 
     /**

@@ -17,7 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.RingBufferBuilder;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<DirectRingBuffer> {
@@ -46,18 +45,6 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
     @Override
     public DirectRingBufferBuilder manyReaders() {
         super.manyReaders0();
-        return this;
-    }
-
-    @Override
-    public DirectRingBufferBuilder withWriteLock(Lock lock) {
-        super.withWriteLock0(lock);
-        return this;
-    }
-
-    @Override
-    public DirectRingBufferBuilder withReadLock(Lock lock) {
-        super.withReadLock0(lock);
         return this;
     }
 

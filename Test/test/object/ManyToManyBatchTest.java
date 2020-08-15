@@ -27,6 +27,6 @@ class ManyToManyBatchTest extends ManyToManyTest {
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         Writer.runGroupAsync(RING_BUFFER, profiler);
-        return BatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
+        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
     }
 }

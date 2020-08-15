@@ -20,7 +20,8 @@ import java.util.function.Consumer;
 
 abstract class FastRingBuffer<T> implements RingBuffer<T> {
     @Override
-    public void advance() {
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -30,11 +31,6 @@ abstract class FastRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T takePlain() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void advanceBatch() {
         throw new UnsupportedOperationException();
     }
 

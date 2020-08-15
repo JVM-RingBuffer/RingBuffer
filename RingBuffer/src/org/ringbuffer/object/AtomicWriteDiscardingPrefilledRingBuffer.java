@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,7 +37,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
@@ -55,7 +53,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         dummyElement = builder.getDummyElement();
     }
@@ -67,7 +64,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
 
     @Override
     public int nextKey() {
-        writeLock.lock();
         return writePosition;
     }
 
@@ -98,7 +94,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     @Override
     public void put(int putKey) {
         AtomicInt.setRelease(this, WRITE_POSITION, putKey);
-        writeLock.unlock();
     }
 
     @Override
@@ -125,10 +120,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -146,10 +137,6 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -256,5 +243,10 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
             builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

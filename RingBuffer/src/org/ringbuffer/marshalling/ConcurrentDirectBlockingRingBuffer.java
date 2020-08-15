@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -37,8 +36,6 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final long buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -55,8 +52,6 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -68,7 +63,6 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
 
     @Override
     public long next(long size) {
-        writeLock.lock();
         long writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
         while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
@@ -95,12 +89,15 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public void put(long offset) {
         AtomicLong.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        return readBusyWaitStrategy;
     }
 
     @Override
     public long take(long size) {
-        readLock.lock();
         long readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -120,7 +117,6 @@ class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public void advance(long offset) {
         AtomicLong.setRelease(this, READ_POSITION, offset);
-        readLock.unlock();
     }
 
     @Override

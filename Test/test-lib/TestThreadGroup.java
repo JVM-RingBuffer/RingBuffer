@@ -18,13 +18,15 @@ package test;
 
 import org.ringbuffer.java.Nullable;
 
+import java.util.function.IntFunction;
+
 public class TestThreadGroup {
     private final AbstractTestThread[] testThreads;
 
-    public TestThreadGroup(TestThreadFactory testThreadFactory) {
+    public TestThreadGroup(IntFunction<AbstractTestThread> testThreadFactory) {
         testThreads = new AbstractTestThread[AbstractRingBufferTest.CONCURRENCY];
         for (int i = 0; i < testThreads.length; i++) {
-            testThreads[i] = testThreadFactory.newInstance(AbstractRingBufferTest.NUM_ITERATIONS);
+            testThreads[i] = testThreadFactory.apply(AbstractRingBufferTest.NUM_ITERATIONS);
         }
     }
 
@@ -58,9 +60,5 @@ public class TestThreadGroup {
             sum += ((AbstractReader) testThread).getSum();
         }
         return sum;
-    }
-
-    public interface TestThreadFactory {
-        AbstractTestThread newInstance(int numIterations);
     }
 }

@@ -49,7 +49,7 @@ class HeapClearingWriter extends TestThread {
 
     @Override
     protected void loop() {
-        HeapClearingRingBuffer ringBuffer = getMarshallingClearingRingBuffer();
+        HeapClearingRingBuffer ringBuffer = getHeapClearingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int offset = ringBuffer.next();
             ringBuffer.writeInt(offset, numIterations);

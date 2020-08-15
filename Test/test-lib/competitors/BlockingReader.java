@@ -16,14 +16,13 @@
 
 package test.competitors;
 
-import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 import test.object.Event;
 
 import java.util.concurrent.BlockingQueue;
 
-class BlockingReader extends TestThread implements AbstractReader {
+class BlockingReader extends Reader {
     static long runGroupAsync(BlockingQueue<Event> queue, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new BlockingReader(numIterations, queue));
         group.start(null);
@@ -38,26 +37,19 @@ class BlockingReader extends TestThread implements AbstractReader {
         return reader.getSum();
     }
 
-    private long sum;
-
-    BlockingReader(int numIterations, BlockingQueue<Event> queue) {
+    private BlockingReader(int numIterations, BlockingQueue<Event> queue) {
         super(numIterations, queue);
     }
 
     @Override
-    public long getSum() {
-        return sum;
-    }
-
-    @Override
-    protected void loop() {
+    long collect() {
         try {
             BlockingQueue<Event> queue = getBlockingQueue();
             long sum = 0L;
             for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
                 sum += queue.take().getData();
             }
-            this.sum = sum;
+            return sum;
         } catch (InterruptedException e) {
             throw new AssertionError();
         }

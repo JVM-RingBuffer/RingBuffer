@@ -82,10 +82,6 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public int size() {
         return size(readPosition & capacityMinusOne, AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne);
     }
@@ -180,5 +176,10 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     @Override
     public double readDouble(int offset) {
         return getDouble(buffer, offset & capacityMinusOne);
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -31,7 +30,6 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final long buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -45,7 +43,6 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -56,14 +53,12 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
 
     @Override
     public long next() {
-        writeLock.lock();
         return writePosition;
     }
 
     @Override
     public void put(long offset) {
         AtomicLong.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
     }
 
     @Override
@@ -84,10 +79,6 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
-    }
-
-    @Override
-    public void advance() {
     }
 
     @Override
@@ -185,5 +176,10 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
     @Override
     public double readDouble(long offset) {
         return getDouble(buffer, offset & capacityMinusOne);
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

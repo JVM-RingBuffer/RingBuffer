@@ -49,7 +49,7 @@ class FastDirectWriter extends TestThread {
 
     @Override
     protected void loop() {
-        DirectRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
+        DirectRingBuffer ringBuffer = getDirectRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             long offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);

@@ -17,13 +17,12 @@
 package test.marshalling;
 
 import org.ringbuffer.marshalling.DirectRingBuffer;
-import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.DirectOffsets.INT;
 
-class FastDirectReader extends TestThread implements AbstractReader {
+class FastDirectReader extends HeapReader {
     static long runGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new FastDirectReader(numIterations, ringBuffer));
         group.start(null);
@@ -38,24 +37,17 @@ class FastDirectReader extends TestThread implements AbstractReader {
         return reader.getSum();
     }
 
-    private long sum;
-
-    FastDirectReader(int numIterations, DirectRingBuffer ringBuffer) {
+    private FastDirectReader(int numIterations, DirectRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
-    public long getSum() {
-        return sum;
-    }
-
-    @Override
-    protected void loop() {
-        DirectRingBuffer ringBuffer = getDirectMarshallingRingBuffer();
+    long collect() {
+        DirectRingBuffer ringBuffer = getDirectRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));
         }
-        this.sum = sum;
+        return sum;
     }
 }

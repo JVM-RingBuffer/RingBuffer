@@ -49,7 +49,7 @@ class HeapWriter extends TestThread {
 
     @Override
     protected void loop() {
-        HeapRingBuffer ringBuffer = getMarshallingRingBuffer();
+        HeapRingBuffer ringBuffer = getHeapRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int offset = ringBuffer.next(INT);
             ringBuffer.writeInt(offset, numIterations);

@@ -18,6 +18,11 @@ package org.ringbuffer.marshalling;
 
 abstract class FastHeapRingBuffer implements HeapRingBuffer {
     @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void advance(int offset) {
         throw new UnsupportedOperationException();
     }

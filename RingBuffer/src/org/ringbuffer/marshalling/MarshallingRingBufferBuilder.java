@@ -17,8 +17,6 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.RingBufferBuilder;
-import org.ringbuffer.lock.Lock;
-import org.ringbuffer.lock.SpinLock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
@@ -36,21 +34,6 @@ abstract class MarshallingRingBufferBuilder<T> extends RingBufferBuilder<T> {
 
     MarshallingRingBufferBuilder(MarshallingRingBufferBuilder<?> builder) {
         super(builder);
-    }
-
-    @Override
-    protected Lock getWriteLock() {
-        return super.getWriteLock();
-    }
-
-    @Override
-    protected Lock getReadLock() {
-        return super.getReadLock();
-    }
-
-    @Override
-    protected Lock defaultLock() {
-        return new SpinLock();
     }
 
     @Override

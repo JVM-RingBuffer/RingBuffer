@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -31,7 +30,6 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final long buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -45,7 +43,6 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -65,8 +62,12 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     @Override
+    public Object getReadMonitor() {
+        return this;
+    }
+
+    @Override
     public long take(long size) {
-        readLock.lock();
         long readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -86,11 +87,6 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     @Override
-    public void advance() {
-        readLock.unlock();
-    }
-
-    @Override
     public long size() {
         return size(getReadPosition() & capacityMinusOne, AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne);
     }
@@ -107,10 +103,7 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
         return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
-    private long getReadPosition() {
-        readLock.lock();
-        long readPosition = this.readPosition;
-        readLock.unlock();
+    private synchronized long getReadPosition() {
         return readPosition;
     }
 

@@ -26,7 +26,7 @@ class PrefilledManyToManyTest extends PrefilledManyToManyContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedPrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
         return Reader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

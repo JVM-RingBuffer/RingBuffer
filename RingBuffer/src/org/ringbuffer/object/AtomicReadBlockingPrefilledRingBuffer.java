@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,7 +37,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -55,7 +53,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -102,7 +99,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
 
     @Override
     public T take() {
-        readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (isEmptyCached(readPosition)) {
@@ -125,13 +121,12 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     }
 
     @Override
-    public void advance() {
-        readLock.unlock();
+    public Object getReadMonitor() {
+        return this;
     }
 
     @Override
     public void takeBatch(int size) {
-        readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -148,11 +143,6 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
-        readLock.unlock();
     }
 
     @Override

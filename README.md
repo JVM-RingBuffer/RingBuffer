@@ -102,6 +102,7 @@ Java 11 is required.
 The module name is `org.ringbuffer`.
 
 `-XX:-RestrictContended` is recommended.
+`-XX:-UseBiasedLocking` is suggested.
 Also, to avoid using reflection, consider adding `--add-opens java.base/jdk.internal.misc=org.ringbuffer`.
 
 **Warning.**
@@ -152,11 +153,12 @@ Runnable processor = () -> {
 };
 Runnable consumer = () -> {
     for (int i = 0; i < 100 / 5; i++) {
-        processorToConsumers.takeBatch(5);
-        for (int j = 0; j < 5; j++) {
-            System.out.println(processorToConsumers.takePlain().getData());
+        synchronized (processorToConsumers.getReadMonitor()) {
+            processorToConsumers.takeBatch(5);
+            for (int j = 0; j < 5; j++) {
+                System.out.println(processorToConsumers.takePlain().getData());
+            }
         }
-        processorToConsumers.advanceBatch();
     }
 };
 
@@ -170,12 +172,11 @@ new Thread(processor).start();
 ### Marshalling ring buffers
 
 ```java
-MarshallingRingBuffer ringBuffer =
-        MarshallingRingBuffer.withCapacity(Numbers.getNextPowerOfTwo(100))
+HeapRingBuffer ringBuffer =
+        HeapRingBuffer.withCapacity(Numbers.getNextPowerOfTwo(100))
                 .oneWriter()
                 .oneReader()
-                .blocking(FailBusyWaitStrategy.readingTooSlow())
-                .withByteArray(ByteArray.UNSAFE)
+                .blocking(FailBusyWaitStrategy.readingTooSlow(100))
                 .build();
 
 int offset = ringBuffer.next(INT + CHAR);
@@ -188,20 +189,23 @@ System.out.println(ringBuffer.readInt(offset));
 System.out.println(ringBuffer.readChar(offset + INT));
 ringBuffer.advance(offset + INT + CHAR);
 
-DirectMarshallingClearingRingBuffer ringBuffer =
-        DirectMarshallingRingBuffer.withCapacity(2048L)
+DirectClearingRingBuffer ringBuffer =
+        DirectRingBuffer.withCapacity(2048L)
                 .manyWriters()
                 .manyReaders()
                 .copyClass()
                 .build();
 
-long offset = ringBuffer.next();
-ringBuffer.writeBoolean(offset, true); offset += BOOLEAN;
-ringBuffer.writeDouble(offset, 5D); offset += DOUBLE;
-ringBuffer.put(offset);
+synchronized (ringBuffer) {
+    long offset = ringBuffer.next();
+    ringBuffer.writeBoolean(offset, true);
+    ringBuffer.writeDouble(offset + BOOLEAN, 5D);
+    ringBuffer.put(offset + BOOLEAN + DOUBLE);
+}
 
-long offset = ringBuffer.take(BOOLEAN + DOUBLE);
-System.out.println(ringBuffer.readBoolean(offset)); offset += BOOLEAN;
-System.out.println(ringBuffer.readDouble(offset));
-ringBuffer.advance();
+synchronized (ringBuffer.getReadMonitor()) {
+    long offset = ringBuffer.take(BOOLEAN + DOUBLE);
+    System.out.println(ringBuffer.readBoolean(offset));
+    System.out.println(ringBuffer.readDouble(offset + BOOLEAN));
+}
 ```

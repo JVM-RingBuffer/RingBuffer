@@ -16,11 +16,17 @@
 
 package org.ringbuffer.marshalling;
 
-/**
- * From {@link #next()} to {@link #put(long)} and from {@link #take(long)} to {@link #advance()} is an atomic operation.
- */
 public interface DirectClearingRingBuffer extends AbstractDirectRingBuffer {
+    /**
+     * If the ring buffer supports multiple writers, then external synchronization must be performed:
+     *
+     * <pre>{@code
+     * synchronized (ringBuffer) {
+     *     long offset = ringBuffer.next();
+     *     // Write data
+     *     ringBuffer.put(...);
+     * }
+     * }</pre>
+     */
     long next();
-
-    void advance();
 }

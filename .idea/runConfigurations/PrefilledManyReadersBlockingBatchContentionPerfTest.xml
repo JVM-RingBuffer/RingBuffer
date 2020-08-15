@@ -2,7 +2,7 @@
   <configuration default="false" name="PrefilledManyReadersBlockingBatchContentionPerfTest" type="Application" factoryName="Application" folderName="Many Readers Prefilled">
     <option name="MAIN_CLASS_NAME" value="test.object.PrefilledManyReadersBlockingBatchContentionPerfTest" />
     <module name="Test" />
-    <option name="VM_PARAMETERS" value="-Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended --add-opens java.base/jdk.internal.misc=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="-Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended -XX:-UseBiasedLocking --add-opens java.base/jdk.internal.misc=ALL-UNNAMED" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

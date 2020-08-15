@@ -49,7 +49,7 @@ class DirectClearingWriter extends TestThread {
 
     @Override
     protected void loop() {
-        DirectClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
+        DirectClearingRingBuffer ringBuffer = getDirectClearingRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             long offset = ringBuffer.next();
             ringBuffer.writeInt(offset, numIterations);

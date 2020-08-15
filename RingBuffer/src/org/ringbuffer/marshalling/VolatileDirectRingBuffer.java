@@ -82,10 +82,6 @@ class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public long size() {
         return size(readPosition & capacityMinusOne, AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne);
     }
@@ -180,5 +176,10 @@ class VolatileDirectRingBuffer implements DirectClearingRingBuffer {
     @Override
     public double readDouble(long offset) {
         return getDouble(buffer, offset & capacityMinusOne);
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

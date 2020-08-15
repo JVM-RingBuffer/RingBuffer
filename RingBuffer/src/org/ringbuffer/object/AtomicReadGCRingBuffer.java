@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -32,7 +31,6 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -46,7 +44,6 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -68,18 +65,19 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        readLock.lock();
-        int readPosition = this.readPosition;
-        readBusyWaitStrategy.reset();
-        while (isEmptyCached(readPosition)) {
-            readBusyWaitStrategy.tick();
+        int readPosition;
+        synchronized (this) {
+            readPosition = this.readPosition;
+            readBusyWaitStrategy.reset();
+            while (isEmptyCached(readPosition)) {
+                readBusyWaitStrategy.tick();
+            }
+            if (readPosition == 0) {
+                this.readPosition = capacityMinusOne;
+            } else {
+                this.readPosition--;
+            }
         }
-        if (readPosition == 0) {
-            this.readPosition = capacityMinusOne;
-        } else {
-            this.readPosition--;
-        }
-        readLock.unlock();
         T element = AtomicArray.getPlain(buffer, readPosition);
         AtomicArray.setPlain(buffer, readPosition, null);
         return element;
@@ -94,12 +92,12 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
+    public Object getReadMonitor() {
+        return this;
     }
 
     @Override
     public void takeBatch(int size) {
-        readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -120,22 +118,17 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advanceBatch() {
-        readLock.unlock();
-    }
-
-    @Override
     public void forEach(Consumer<T> action) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        if (writePosition <= readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                action.accept(AtomicArray.getPlain(buffer, i));
+        synchronized (this) {
+            if (writePosition <= readPosition) {
+                for (int i = readPosition; i > writePosition; i--) {
+                    action.accept(AtomicArray.getPlain(buffer, i));
+                }
+            } else {
+                forEachSplit(action, writePosition);
             }
-        } else {
-            forEachSplit(action, writePosition);
         }
-        readLock.unlock();
     }
 
     private void forEachSplit(Consumer<T> action, int writePosition) {
@@ -150,8 +143,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public boolean contains(T element) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        try {
+        synchronized (this) {
             if (writePosition <= readPosition) {
                 for (int i = readPosition; i > writePosition; i--) {
                     if (AtomicArray.getPlain(buffer, i).equals(element)) {
@@ -161,8 +153,6 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
                 return false;
             }
             return containsSplit(element, writePosition);
-        } finally {
-            readLock.unlock();
         }
     }
 
@@ -205,22 +195,22 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public String toString() {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        if (isEmpty(readPosition, writePosition)) {
-            readLock.unlock();
-            return "[]";
-        }
-        StringBuilder builder = new StringBuilder(16);
-        builder.append('[');
-        if (writePosition < readPosition) {
-            for (int i = readPosition; i > writePosition; i--) {
-                builder.append(AtomicArray.getPlain(buffer, i).toString());
-                builder.append(", ");
+        StringBuilder builder;
+        synchronized (this) {
+            if (isEmpty(readPosition, writePosition)) {
+                return "[]";
             }
-        } else {
-            toStringSplit(builder, writePosition);
+            builder = new StringBuilder(16);
+            builder.append('[');
+            if (writePosition < readPosition) {
+                for (int i = readPosition; i > writePosition; i--) {
+                    builder.append(AtomicArray.getPlain(buffer, i).toString());
+                    builder.append(", ");
+                }
+            } else {
+                toStringSplit(builder, writePosition);
+            }
         }
-        readLock.unlock();
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();
@@ -237,10 +227,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
         }
     }
 
-    private int getReadPosition() {
-        readLock.lock();
-        int readPosition = this.readPosition;
-        readLock.unlock();
+    private synchronized int getReadPosition() {
         return readPosition;
     }
 }

@@ -42,7 +42,7 @@ public class ManyReadersDirectBlockingContentionTest extends RingBufferTest {
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         DirectWriter.startAsync(TOTAL_ELEMENTS, getRingBuffer(), profiler);
-        return DirectReader.runGroupAsync(getRingBuffer(), profiler);
+        return SynchronizedDirectReader.runGroupAsync(getRingBuffer(), profiler);
     }
 
     DirectRingBuffer getRingBuffer() {

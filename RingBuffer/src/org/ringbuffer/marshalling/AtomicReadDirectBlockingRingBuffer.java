@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -37,7 +36,6 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final long buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -54,7 +52,6 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -95,8 +92,12 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     }
 
     @Override
+    public Object getReadMonitor() {
+        return this;
+    }
+
+    @Override
     public long take(long size) {
-        readLock.lock();
         long readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -116,7 +117,6 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public void advance(long offset) {
         AtomicLong.setRelease(this, READ_POSITION, offset);
-        readLock.unlock();
     }
 
     @Override

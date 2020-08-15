@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,7 +37,6 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock readLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final T dummyElement;
 
@@ -55,7 +53,6 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         dummyElement = builder.getDummyElement();
     }
@@ -100,8 +97,7 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     }
 
     @Override
-    public T take() {
-        readLock.lock();
+    public synchronized T take() {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (isEmptyCached(readPosition)) {
@@ -112,9 +108,7 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
         } else {
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
-        T element = AtomicArray.getPlain(buffer, readPosition);
-        readLock.unlock();
-        return element;
+        return AtomicArray.getPlain(buffer, readPosition);
     }
 
     private boolean isEmptyCached(int readPosition) {
@@ -126,12 +120,12 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     }
 
     @Override
-    public void advance() {
+    public Object getReadMonitor() {
+        return this;
     }
 
     @Override
     public void takeBatch(int size) {
-        readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -148,11 +142,6 @@ class AtomicReadDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
-        readLock.unlock();
     }
 
     @Override

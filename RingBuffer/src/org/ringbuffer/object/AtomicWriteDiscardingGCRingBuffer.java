@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,7 +37,6 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -54,7 +52,6 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -64,8 +61,7 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void put(T element) {
-        writeLock.lock();
+    public synchronized void put(T element) {
         int writePosition = this.writePosition;
         int newWritePosition;
         if (writePosition == 0) {
@@ -77,7 +73,6 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
             AtomicArray.setPlain(buffer, writePosition, element);
             AtomicInt.setRelease(this, WRITE_POSITION, newWritePosition);
         }
-        writeLock.unlock();
     }
 
     private boolean isNotFullCached(int writePosition) {
@@ -114,10 +109,6 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -137,10 +128,6 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
         T element = AtomicArray.getPlain(buffer, readPosition);
         AtomicArray.setPlain(buffer, readPosition, null);
         return element;
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -247,5 +234,10 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

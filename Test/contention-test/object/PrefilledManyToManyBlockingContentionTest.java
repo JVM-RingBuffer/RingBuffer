@@ -43,8 +43,8 @@ public class PrefilledManyToManyBlockingContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter2.startGroupAsync(getRingBuffer(), profiler);
-        return Reader.runGroupAsync(getRingBuffer(), profiler);
+        SynchronizedPrefilledWriter2.startGroupAsync(getRingBuffer(), profiler);
+        return SynchronizedReader.runGroupAsync(getRingBuffer(), profiler);
     }
 
     PrefilledRingBuffer2<Event> getRingBuffer() {

@@ -40,6 +40,6 @@ public class ManyReadersHeapContentionTest extends RingBufferTest {
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         HeapClearingWriter.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return HeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedHeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

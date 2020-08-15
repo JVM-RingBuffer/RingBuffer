@@ -17,7 +17,6 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.RingBufferBuilder;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
@@ -54,18 +53,6 @@ public class PrefilledRingBufferBuilder2<T> extends AbstractPrefilledRingBufferB
     @Override
     public PrefilledRingBufferBuilder2<T> manyReaders() {
         super.manyReaders0();
-        return this;
-    }
-
-    @Override
-    public PrefilledRingBufferBuilder2<T> withWriteLock(Lock lock) {
-        super.withWriteLock0(lock);
-        return this;
-    }
-
-    @Override
-    public PrefilledRingBufferBuilder2<T> withReadLock(Lock lock) {
-        super.withReadLock0(lock);
         return this;
     }
 

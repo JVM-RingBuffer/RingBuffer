@@ -20,46 +20,37 @@ import org.ringbuffer.AbstractRingBuffer;
 
 import java.util.function.Consumer;
 
-/**
- * If the ring buffer is not lock-free, then from {@link #take()} to {@link #advance()} and from
- * {@link #takeBatch(int)} to {@link #advanceBatch()} is an atomic operation.
- */
 public interface ObjectRingBuffer<T> extends AbstractRingBuffer {
     int getCapacity();
 
     /**
-     * If the ring buffer supports multiple readers and is blocking and pre-filled, then after the returned
-     * object has been read, {@link #advance()} must be called.
+     * If the ring buffer supports multiple readers and is blocking and pre-filled, then external synchronization
+     * must be performed:
      *
      * <pre>{@code
-     * T element = ringBuffer.take();
-     * // Read element
-     * ringBuffer.advance();
+     * synchronized (ringBuffer.getReadMonitor()) {
+     *     T element = ringBuffer.take();
+     *     // Read element
+     * }
      * }</pre>
      */
     T take();
-
-    /**
-     * If the ring buffer supports multiple readers and is blocking and pre-filled, then this method
-     * must be called after the object returned by {@link #take()} has been read.
-     */
-    void advance();
 
     /**
      * If the ring buffer supports at least one reader and writer, then this method allows to take
      * elements in batches. When it returns, at least {@code size} elements are available,
      * and {@link #takePlain()} must be invoked {@code size} times to take them all.
      * <p>
-     * Moreover, if the ring buffer supports multiple readers, then after the last element has been read,
-     * {@link #advanceBatch()} must be called.
+     * Moreover, if the ring buffer supports multiple readers, then external synchronization must be performed:
      *
      * <pre>{@code
-     * ringBuffer.takeBatch(size);
-     * for (int i = size; i > 0; i--) {
-     *     T element = ringBuffer.takePlain();
-     *     // Read element
+     * synchronized (ringBuffer.getReadMonitor()) {
+     *     ringBuffer.takeBatch(size);
+     *     for (int i = size; i > 0; i--) {
+     *         T element = ringBuffer.takePlain();
+     *         // Read element
+     *     }
      * }
-     * ringBuffer.advanceBatch();
      * }</pre>
      */
     void takeBatch(int size);
@@ -69,12 +60,6 @@ public interface ObjectRingBuffer<T> extends AbstractRingBuffer {
      * {@link #takeBatch(int) takeBatch(size)} has returned.
      */
     T takePlain();
-
-    /**
-     * When taking elements in batches, if the ring buffer supports multiple readers,
-     * then this method must be called after the last element returned by {@link #takePlain()} has been read.
-     */
-    void advanceBatch();
 
     /**
      * If the ring buffer supports one reader and is not blocking nor discarding,

@@ -121,10 +121,6 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -142,10 +138,6 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -252,5 +244,10 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
             builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

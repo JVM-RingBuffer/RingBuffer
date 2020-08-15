@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -37,8 +36,6 @@ class ConcurrentHeapBlockingRingBuffer implements HeapRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -55,8 +52,6 @@ class ConcurrentHeapBlockingRingBuffer implements HeapRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -68,7 +63,6 @@ class ConcurrentHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public int next(int size) {
-        writeLock.lock();
         int writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
         while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
@@ -95,12 +89,15 @@ class ConcurrentHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public void put(int offset) {
         AtomicInt.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        return readBusyWaitStrategy;
     }
 
     @Override
     public int take(int size) {
-        readLock.lock();
         int readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -120,7 +117,6 @@ class ConcurrentHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public void advance(int offset) {
         AtomicInt.setRelease(this, READ_POSITION, offset);
-        readLock.unlock();
     }
 
     @Override

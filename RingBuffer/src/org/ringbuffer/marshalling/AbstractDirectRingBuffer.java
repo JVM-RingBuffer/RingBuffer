@@ -27,6 +27,17 @@ interface AbstractDirectRingBuffer extends AbstractRingBuffer {
      */
     void put(long offset);
 
+    /**
+     * If the ring buffer supports multiple readers and is not lock-free, then external synchronization must be performed:
+     *
+     * <pre>{@code
+     * synchronized (ringBuffer.getReadMonitor()) {
+     *     long offset = ringBuffer.take(...);
+     *     // Read data
+     *     ringBuffer.advance(...); // If needed
+     * }
+     * }</pre>
+     */
     long take(long size);
 
     long size();

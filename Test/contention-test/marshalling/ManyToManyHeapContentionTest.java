@@ -39,7 +39,7 @@ public class ManyToManyHeapContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        HeapClearingWriter.startGroupAsync(RING_BUFFER, profiler);
-        return HeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedHeapClearingWriter.startGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedHeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

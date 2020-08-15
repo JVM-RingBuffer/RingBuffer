@@ -51,15 +51,19 @@ class Reader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
+        sum = collect();
+    }
+
+    long collect() {
         Queue<Event> queue = getQueue();
+        Event element;
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
-            Event element;
             while ((element = queue.poll()) == null) {
                 Thread.onSpinWait();
             }
             sum += element.getData();
         }
-        this.sum = sum;
+        return sum;
     }
 }

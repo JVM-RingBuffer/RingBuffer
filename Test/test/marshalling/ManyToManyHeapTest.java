@@ -26,7 +26,7 @@ class ManyToManyHeapTest extends ManyToManyHeapContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        HeapClearingWriter.runGroupAsync(RING_BUFFER, profiler);
-        return HeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedHeapClearingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedHeapClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

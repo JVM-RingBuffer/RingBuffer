@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -31,8 +30,6 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
     private final long capacity;
     private final long capacityMinusOne;
     private final long buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -46,8 +43,6 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -58,19 +53,21 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
 
     @Override
     public long next() {
-        writeLock.lock();
         return writePosition;
     }
 
     @Override
     public void put(long offset) {
         AtomicLong.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        return readBusyWaitStrategy;
     }
 
     @Override
     public long take(long size) {
-        readLock.lock();
         long readPosition = this.readPosition & capacityMinusOne;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
@@ -87,11 +84,6 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
-    }
-
-    @Override
-    public void advance() {
-        readLock.unlock();
     }
 
     @Override
@@ -112,10 +104,9 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     private long getReadPosition() {
-        readLock.lock();
-        long readPosition = this.readPosition;
-        readLock.unlock();
-        return readPosition;
+        synchronized (readBusyWaitStrategy) {
+            return readPosition;
+        }
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -37,7 +36,6 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -54,7 +52,6 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -66,7 +63,6 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
 
     @Override
     public int next(int size) {
-        writeLock.lock();
         int writePosition = this.writePosition & capacityMinusOne;
         writeBusyWaitStrategy.reset();
         while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
@@ -93,7 +89,6 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public void put(int offset) {
         AtomicInt.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
     }
 
     @Override
@@ -214,5 +209,10 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public double readDouble(int offset) {
         return getDouble(buffer, offset & capacityMinusOne);
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

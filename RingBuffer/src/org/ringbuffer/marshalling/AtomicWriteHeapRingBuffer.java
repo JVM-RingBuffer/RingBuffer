@@ -18,7 +18,6 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -31,7 +30,6 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
     private final int capacity;
     private final int capacityMinusOne;
     private final byte[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended("read")
@@ -45,7 +43,6 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
@@ -56,14 +53,12 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
 
     @Override
     public int next() {
-        writeLock.lock();
         return writePosition;
     }
 
     @Override
     public void put(int offset) {
         AtomicInt.setRelease(this, WRITE_POSITION, offset);
-        writeLock.unlock();
     }
 
     @Override
@@ -84,10 +79,6 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
             return size(readPosition, cachedWritePosition) < size;
         }
         return false;
-    }
-
-    @Override
-    public void advance() {
     }
 
     @Override
@@ -185,5 +176,10 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
     @Override
     public double readDouble(int offset) {
         return getDouble(buffer, offset & capacityMinusOne);
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

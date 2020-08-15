@@ -16,7 +16,6 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapClearingRingBuffer> {
@@ -45,18 +44,6 @@ public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder
     @Override
     public HeapClearingRingBufferBuilder manyReaders() {
         super.manyReaders0();
-        return this;
-    }
-
-    @Override
-    public HeapClearingRingBufferBuilder withWriteLock(Lock lock) {
-        super.withWriteLock0(lock);
-        return this;
-    }
-
-    @Override
-    public HeapClearingRingBufferBuilder withReadLock(Lock lock) {
-        super.withReadLock0(lock);
         return this;
     }
 

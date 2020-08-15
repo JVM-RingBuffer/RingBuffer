@@ -26,7 +26,7 @@ class PrefilledManyToManyBlockingTest extends PrefilledManyToManyBlockingContent
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter2.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedPrefilledWriter2.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

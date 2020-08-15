@@ -89,10 +89,6 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -111,10 +107,6 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
             readPosition--;
         }
         return element;
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -218,5 +210,10 @@ class VolatileGCRingBuffer<T> implements RingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, i).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -27,6 +27,17 @@ interface AbstractHeapRingBuffer extends AbstractRingBuffer {
      */
     void put(int offset);
 
+    /**
+     * If the ring buffer supports multiple readers and is not lock-free, then external synchronization must be performed:
+     *
+     * <pre>{@code
+     * synchronized (ringBuffer.getReadMonitor()) {
+     *     int offset = ringBuffer.take(...);
+     *     // Read data
+     *     ringBuffer.advance(...); // If needed
+     * }
+     * }</pre>
+     */
     int take(int size);
 
     int size();

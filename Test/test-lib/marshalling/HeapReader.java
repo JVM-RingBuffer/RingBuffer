@@ -16,6 +16,7 @@
 
 package test.marshalling;
 
+import org.ringbuffer.AbstractRingBuffer;
 import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
@@ -40,7 +41,7 @@ class HeapReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    HeapReader(int numIterations, HeapRingBuffer ringBuffer) {
+    HeapReader(int numIterations, AbstractRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
@@ -51,13 +52,17 @@ class HeapReader extends TestThread implements AbstractReader {
 
     @Override
     protected void loop() {
-        HeapRingBuffer ringBuffer = getMarshallingRingBuffer();
+        sum = collect();
+    }
+
+    long collect() {
+        HeapRingBuffer ringBuffer = getHeapRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int offset = ringBuffer.take(INT);
             sum += ringBuffer.readInt(offset);
             ringBuffer.advance(offset + INT);
         }
-        this.sum = sum;
+        return sum;
     }
 }

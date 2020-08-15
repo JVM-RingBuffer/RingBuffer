@@ -210,4 +210,9 @@ class VolatileHeapBlockingRingBuffer implements HeapRingBuffer {
     public double readDouble(int offset) {
         return getDouble(buffer, offset & capacityMinusOne);
     }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
+    }
 }

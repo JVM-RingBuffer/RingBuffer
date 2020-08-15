@@ -26,7 +26,7 @@ class ManyWritersHeapBlockingTest extends ManyWritersHeapBlockingContentionPerfT
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        HeapWriter.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedHeapWriter.runGroupAsync(RING_BUFFER, profiler);
         return HeapReader.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
     }
 }

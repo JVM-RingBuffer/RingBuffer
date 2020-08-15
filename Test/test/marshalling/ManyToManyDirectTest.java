@@ -26,7 +26,7 @@ class ManyToManyDirectTest extends ManyToManyDirectContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        DirectClearingWriter.runGroupAsync(RING_BUFFER, profiler);
-        return DirectClearingReader.runGroupAsync(RING_BUFFER, profiler);
+        SynchronizedDirectClearingWriter.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedDirectClearingReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

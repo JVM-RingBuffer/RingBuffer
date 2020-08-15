@@ -25,7 +25,17 @@ package org.ringbuffer.object;
  * ringBuffer.put(putKey);
  * }</pre>
  * <p>
- * From {@link #nextKey()} to {@link #put(int)} is an atomic operation.
+ * If the ring buffer supports multiple writers, then external synchronization must be performed:
+ *
+ * <pre>{@code
+ * synchronized (ringBuffer) {
+ *     int key = ringBuffer.nextKey();
+ *     int putKey = ringBuffer.nextPutKey(key);
+ *     T element = ringBuffer.next(key, putKey);
+ *     // Populate element
+ *     ringBuffer.put(putKey);
+ * }
+ * }</pre>
  */
 public interface PrefilledRingBuffer2<T> extends ObjectRingBuffer<T> {
     int nextKey();

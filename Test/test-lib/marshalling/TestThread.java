@@ -28,19 +28,19 @@ abstract class TestThread extends AbstractTestThread {
         super(numIterations, ringBuffer);
     }
 
-    HeapClearingRingBuffer getMarshallingClearingRingBuffer() {
+    HeapClearingRingBuffer getHeapClearingRingBuffer() {
         return (HeapClearingRingBuffer) dataStructure;
     }
 
-    HeapRingBuffer getMarshallingRingBuffer() {
+    HeapRingBuffer getHeapRingBuffer() {
         return (HeapRingBuffer) dataStructure;
     }
 
-    DirectClearingRingBuffer getDirectMarshallingClearingRingBuffer() {
+    DirectClearingRingBuffer getDirectClearingRingBuffer() {
         return (DirectClearingRingBuffer) dataStructure;
     }
 
-    DirectRingBuffer getDirectMarshallingRingBuffer() {
+    DirectRingBuffer getDirectRingBuffer() {
         return (DirectRingBuffer) dataStructure;
     }
 }

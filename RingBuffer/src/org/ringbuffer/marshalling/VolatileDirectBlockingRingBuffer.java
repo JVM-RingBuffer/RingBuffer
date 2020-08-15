@@ -210,4 +210,9 @@ class VolatileDirectBlockingRingBuffer implements DirectRingBuffer {
     public double readDouble(long offset) {
         return getDouble(buffer, offset & capacityMinusOne);
     }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
+    }
 }

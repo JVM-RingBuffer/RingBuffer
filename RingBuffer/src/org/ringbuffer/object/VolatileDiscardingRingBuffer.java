@@ -107,10 +107,6 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -128,10 +124,6 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -238,5 +230,10 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

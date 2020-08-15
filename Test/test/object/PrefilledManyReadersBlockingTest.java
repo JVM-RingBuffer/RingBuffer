@@ -27,6 +27,6 @@ class PrefilledManyReadersBlockingTest extends PrefilledManyReadersBlockingConte
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
         PrefilledWriter2.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        return SynchronizedReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

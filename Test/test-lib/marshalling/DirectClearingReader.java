@@ -17,13 +17,12 @@
 package test.marshalling;
 
 import org.ringbuffer.marshalling.DirectClearingRingBuffer;
-import test.AbstractReader;
 import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.DirectOffsets.INT;
 
-class DirectClearingReader extends TestThread implements AbstractReader {
+class DirectClearingReader extends HeapReader {
     static long runGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectClearingReader(numIterations, ringBuffer));
         group.start(null);
@@ -38,25 +37,17 @@ class DirectClearingReader extends TestThread implements AbstractReader {
         return reader.getSum();
     }
 
-    private long sum;
-
-    DirectClearingReader(int numIterations, DirectClearingRingBuffer ringBuffer) {
+    private DirectClearingReader(int numIterations, DirectClearingRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
-    public long getSum() {
-        return sum;
-    }
-
-    @Override
-    protected void loop() {
-        DirectClearingRingBuffer ringBuffer = getDirectMarshallingClearingRingBuffer();
+    long collect() {
+        DirectClearingRingBuffer ringBuffer = getDirectClearingRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));
-            ringBuffer.advance();
         }
-        this.sum = sum;
+        return sum;
     }
 }

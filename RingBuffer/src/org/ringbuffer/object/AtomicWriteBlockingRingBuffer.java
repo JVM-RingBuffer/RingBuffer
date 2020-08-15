@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,7 +37,6 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -55,7 +53,6 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -66,8 +63,7 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void put(T element) {
-        writeLock.lock();
+    public synchronized void put(T element) {
         int writePosition = this.writePosition;
         int newWritePosition;
         if (writePosition == 0) {
@@ -81,7 +77,6 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
         }
         AtomicArray.setPlain(buffer, writePosition, element);
         AtomicInt.setRelease(this, WRITE_POSITION, newWritePosition);
-        writeLock.unlock();
     }
 
     private boolean isFullCached(int writePosition) {
@@ -116,10 +111,6 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
-    }
-
-    @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
@@ -137,10 +128,6 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
             AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
         }
         return AtomicArray.getPlain(buffer, readPosition);
-    }
-
-    @Override
-    public void advanceBatch() {
     }
 
     @Override
@@ -247,5 +234,10 @@ class AtomicWriteBlockingRingBuffer<T> implements RingBuffer<T> {
             builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
             builder.append(", ");
         }
+    }
+
+    @Override
+    public Object getReadMonitor() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -19,7 +19,6 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lock.Lock;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
@@ -38,8 +37,6 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
-    private final Lock readLock;
-    private final Lock writeLock;
     private final BusyWaitStrategy readBusyWaitStrategy;
     private final BusyWaitStrategy writeBusyWaitStrategy;
 
@@ -56,8 +53,6 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
         capacity = builder.getCapacity();
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
-        readLock = builder.getReadLock();
-        writeLock = builder.getWriteLock();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
         writeBusyWaitStrategy = builder.getWriteBusyWaitStrategy();
     }
@@ -68,8 +63,7 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void put(T element) {
-        writeLock.lock();
+    public synchronized void put(T element) {
         int writePosition = this.writePosition;
         int newWritePosition;
         if (writePosition == 0) {
@@ -83,7 +77,6 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
         }
         AtomicArray.setPlain(buffer, writePosition, element);
         AtomicInt.setRelease(this, WRITE_POSITION, newWritePosition);
-        writeLock.unlock();
     }
 
     private boolean isFullCached(int writePosition) {
@@ -96,21 +89,21 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
-        readLock.lock();
-        int readPosition = this.readPosition;
-        readBusyWaitStrategy.reset();
-        while (isEmptyCached(readPosition)) {
-            readBusyWaitStrategy.tick();
+        synchronized (readBusyWaitStrategy) {
+            int readPosition = this.readPosition;
+            readBusyWaitStrategy.reset();
+            while (isEmptyCached(readPosition)) {
+                readBusyWaitStrategy.tick();
+            }
+            if (readPosition == 0) {
+                AtomicInt.setRelease(this, READ_POSITION, capacityMinusOne);
+            } else {
+                AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
+            }
+            T element = AtomicArray.getPlain(buffer, readPosition);
+            AtomicArray.setPlain(buffer, readPosition, null);
+            return element;
         }
-        if (readPosition == 0) {
-            AtomicInt.setRelease(this, READ_POSITION, capacityMinusOne);
-        } else {
-            AtomicInt.setRelease(this, READ_POSITION, readPosition - 1);
-        }
-        T element = AtomicArray.getPlain(buffer, readPosition);
-        AtomicArray.setPlain(buffer, readPosition, null);
-        readLock.unlock();
-        return element;
     }
 
     private boolean isEmptyCached(int readPosition) {
@@ -122,12 +115,12 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advance() {
+    public Object getReadMonitor() {
+        return readBusyWaitStrategy;
     }
 
     @Override
     public void takeBatch(int size) {
-        readLock.lock();
         int readPosition = this.readPosition;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
@@ -149,23 +142,18 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public void advanceBatch() {
-        readLock.unlock();
-    }
-
-    @Override
     public void forEach(Consumer<T> action) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        int readPosition = this.readPosition;
-        if (writePosition <= readPosition) {
-            for (; readPosition > writePosition; readPosition--) {
-                action.accept(AtomicArray.getPlain(buffer, readPosition));
+        synchronized (readBusyWaitStrategy) {
+            int readPosition = this.readPosition;
+            if (writePosition <= readPosition) {
+                for (; readPosition > writePosition; readPosition--) {
+                    action.accept(AtomicArray.getPlain(buffer, readPosition));
+                }
+            } else {
+                forEachSplit(action, readPosition, writePosition);
             }
-        } else {
-            forEachSplit(action, readPosition, writePosition);
         }
-        readLock.unlock();
     }
 
     private void forEachSplit(Consumer<T> action, int readPosition, int writePosition) {
@@ -180,9 +168,8 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public boolean contains(T element) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        int readPosition = this.readPosition;
-        try {
+        synchronized (readBusyWaitStrategy) {
+            int readPosition = this.readPosition;
             if (writePosition <= readPosition) {
                 for (; readPosition > writePosition; readPosition--) {
                     if (AtomicArray.getPlain(buffer, readPosition).equals(element)) {
@@ -192,8 +179,6 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
                 return false;
             }
             return containsSplit(element, readPosition, writePosition);
-        } finally {
-            readLock.unlock();
         }
     }
 
@@ -236,23 +221,23 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public String toString() {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
-        readLock.lock();
-        int readPosition = this.readPosition;
-        if (isEmpty(readPosition, writePosition)) {
-            readLock.unlock();
-            return "[]";
-        }
-        StringBuilder builder = new StringBuilder(16);
-        builder.append('[');
-        if (writePosition < readPosition) {
-            for (; readPosition > writePosition; readPosition--) {
-                builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
-                builder.append(", ");
+        StringBuilder builder;
+        synchronized (readBusyWaitStrategy) {
+            int readPosition = this.readPosition;
+            if (isEmpty(readPosition, writePosition)) {
+                return "[]";
             }
-        } else {
-            toStringSplit(builder, readPosition, writePosition);
+            builder = new StringBuilder(16);
+            builder.append('[');
+            if (writePosition < readPosition) {
+                for (; readPosition > writePosition; readPosition--) {
+                    builder.append(AtomicArray.getPlain(buffer, readPosition).toString());
+                    builder.append(", ");
+                }
+            } else {
+                toStringSplit(builder, readPosition, writePosition);
+            }
         }
-        readLock.unlock();
         builder.setLength(builder.length() - 2);
         builder.append(']');
         return builder.toString();

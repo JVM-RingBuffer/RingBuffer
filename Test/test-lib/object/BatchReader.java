@@ -36,9 +36,9 @@ class BatchReader extends Reader {
         return reader.getSum();
     }
 
-    private final int batchSize;
+    final int batchSize;
 
-    private BatchReader(int numIterations, int batchSize, ObjectRingBuffer<Event> ringBuffer) {
+    BatchReader(int numIterations, int batchSize, ObjectRingBuffer<Event> ringBuffer) {
         super(Numbers.ceilDiv(numIterations, batchSize), ringBuffer);
         this.batchSize = batchSize;
     }
@@ -50,10 +50,9 @@ class BatchReader extends Reader {
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             ringBuffer.takeBatch(batchSize);
-            for (int j = batchSize; j > 0; j--) {
+            for (int i = batchSize; i > 0; i--) {
                 sum += ringBuffer.takePlain().getData();
             }
-            ringBuffer.advanceBatch();
         }
         return sum;
     }
