@@ -61,9 +61,10 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (DirectAtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
+        while (DirectAtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
             Thread.onSpinWait();
         }
+        DirectAtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return readPosition;
     }
 

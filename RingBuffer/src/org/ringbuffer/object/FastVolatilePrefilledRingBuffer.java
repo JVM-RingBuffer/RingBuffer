@@ -60,9 +60,10 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     @Override
     public T take() {
         int readPosition = this.readPosition++ & capacityMinusOne;
-        while (AtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
+        while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
             Thread.onSpinWait();
         }
+        AtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return AtomicArray.getPlain(buffer, readPosition);
     }
 }

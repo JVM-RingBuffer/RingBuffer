@@ -59,9 +59,10 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
-        while (AtomicBooleanArray.getAcquireAndSetPlain(positionNotModified, readPosition, true)) {
+        while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
             Thread.onSpinWait();
         }
+        AtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return readPosition;
     }
 
