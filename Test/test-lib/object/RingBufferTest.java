@@ -16,7 +16,7 @@
 
 package test.object;
 
-import org.ringbuffer.java.Numbers;
+import org.ringbuffer.lang.Numbers;
 import test.AbstractRingBufferTest;
 
 import java.util.function.Supplier;

@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ringbuffer.java;
 
-@FunctionalInterface
-public interface FloatBinaryOperator {
-    float applyAsFloat(float left, float right);
+package org.ringbuffer.lang;
+
+class IllegalIntStateException extends IllegalStateException {
+    IllegalIntStateException(int value) {
+        super(Ensure.EXCEPTION_CLASS_NAME + value);
+    }
+
+    IllegalIntStateException(int value, int cap) {
+        super(Ensure.EXCEPTION_CLASS_NAME + value + " " + cap);
+    }
+
+    @Override
+    public String toString() {
+        return getMessage();
+    }
 }

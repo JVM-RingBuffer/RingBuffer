@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
-class IllegalLongStateException extends IllegalStateException {
-    IllegalLongStateException(long value) {
-        super(Ensure.EXCEPTION_CLASS_NAME + value);
+class IllegalIntArgumentException extends IllegalArgumentException {
+    IllegalIntArgumentException(int value) {
+        super(Assume.EXCEPTION_CLASS_NAME + value);
     }
 
-    IllegalLongStateException(long value, long cap) {
-        super(Ensure.EXCEPTION_CLASS_NAME + value + " " + cap);
+    IllegalIntArgumentException(int value, int cap) {
+        super(Assume.EXCEPTION_CLASS_NAME + value + " " + cap);
     }
 
     @Override

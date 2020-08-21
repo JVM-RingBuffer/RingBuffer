@@ -16,7 +16,7 @@
 
 package test.object;
 
-import org.ringbuffer.java.Numbers;
+import org.ringbuffer.lang.Numbers;
 import org.ringbuffer.object.ObjectRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;

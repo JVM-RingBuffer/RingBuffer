@@ -16,7 +16,7 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.java.Nullable;
+import org.ringbuffer.lang.Optional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Threads {
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
-    public static @Nullable Path getLibraryPath() {
+    public static @Optional Path getLibraryPath() {
         return libraryPath.get();
     }
 

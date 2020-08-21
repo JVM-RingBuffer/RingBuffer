@@ -16,7 +16,7 @@
 
 package test.marshalling;
 
-import org.ringbuffer.java.Numbers;
+import org.ringbuffer.lang.Numbers;
 import org.ringbuffer.marshalling.Offsets;
 import test.AbstractRingBufferTest;
 

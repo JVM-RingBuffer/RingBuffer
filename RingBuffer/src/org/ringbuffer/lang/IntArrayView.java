@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
-public class ArrayView<T> extends AbstractList<T> implements RandomAccess, Serializable {
+public class IntArrayView extends AbstractList<Integer> implements RandomAccess, Serializable {
     private static final long serialVersionUID = 0L;
 
-    private final T[] array;
+    private final int[] array;
     private final int fromIndex;
 
-    public ArrayView(T[] array) {
+    public IntArrayView(int[] array) {
         this(array, 0);
     }
 
-    public ArrayView(T[] array, int fromIndex) {
+    public IntArrayView(int[] array, int fromIndex) {
         Assume.notNegative(fromIndex);
         Assume.lesserThan(fromIndex, array.length);
         this.array = array;
@@ -44,17 +44,17 @@ public class ArrayView<T> extends AbstractList<T> implements RandomAccess, Seria
     }
 
     @Override
-    public T get(int index) {
+    public Integer get(int index) {
         Assume.notNegative(index);
         return array[fromIndex + index];
     }
 
     @Override
-    public java.util.Iterator<T> iterator() {
+    public java.util.Iterator<Integer> iterator() {
         return new Iterator();
     }
 
-    private class Iterator implements java.util.Iterator<T> {
+    private class Iterator implements java.util.Iterator<Integer> {
         private int cursor = fromIndex;
 
         Iterator() {
@@ -66,7 +66,7 @@ public class ArrayView<T> extends AbstractList<T> implements RandomAccess, Seria
         }
 
         @Override
-        public T next() {
+        public Integer next() {
             if (cursor == array.length) {
                 throw new NoSuchElementException();
             }

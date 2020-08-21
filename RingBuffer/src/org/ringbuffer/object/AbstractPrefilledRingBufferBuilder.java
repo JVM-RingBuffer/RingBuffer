@@ -16,7 +16,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.java.Assume;
+import org.ringbuffer.lang.Assume;
 
 import java.util.function.Supplier;
 

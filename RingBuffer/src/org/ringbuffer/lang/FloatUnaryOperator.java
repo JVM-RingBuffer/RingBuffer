@@ -13,13 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ringbuffer.lang;
 
-package org.ringbuffer.java;
+import java.util.Objects;
 
-import java.lang.annotation.*;
+@FunctionalInterface
+public interface FloatUnaryOperator {
+    float applyAsFloat(float operand);
 
-@Target(ElementType.TYPE_USE)
-@Retention(RetentionPolicy.SOURCE)
-@Documented
-public @interface Nullable {
+    default FloatUnaryOperator compose(FloatUnaryOperator before) {
+        Objects.requireNonNull(before);
+        return (float v) -> applyAsFloat(before.applyAsFloat(v));
+    }
+
+    default FloatUnaryOperator andThen(FloatUnaryOperator after) {
+        Objects.requireNonNull(after);
+        return (float t) -> after.applyAsFloat(applyAsFloat(t));
+    }
+
+    static FloatUnaryOperator identity() {
+        return t -> t;
+    }
 }

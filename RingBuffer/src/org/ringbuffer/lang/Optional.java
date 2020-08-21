@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
-class IllegalObjectStateException extends IllegalStateException {
-    IllegalObjectStateException(Object value) {
-        super(Ensure.EXCEPTION_CLASS_NAME + value);
-    }
+import java.lang.annotation.*;
 
-    @Override
-    public String toString() {
-        return getMessage();
-    }
+/**
+ * Use of this annotation implies that all non-annotated types are not optional, that is they may not take the
+ * {@code null} value.
+ */
+@Target(ElementType.TYPE_USE)
+@Retention(RetentionPolicy.SOURCE)
+@Documented
+public @interface Optional {
 }

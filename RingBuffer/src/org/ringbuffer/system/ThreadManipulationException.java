@@ -16,8 +16,8 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.java.Assume;
-import org.ringbuffer.java.Ensure;
+import org.ringbuffer.lang.Assume;
+import org.ringbuffer.lang.Ensure;
 
 public class ThreadManipulationException extends RuntimeException {
     private static final long serialVersionUID = 0L;

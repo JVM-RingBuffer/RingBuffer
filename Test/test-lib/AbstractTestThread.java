@@ -16,7 +16,8 @@
 
 package test;
 
-import org.ringbuffer.java.Nullable;
+import org.ringbuffer.concurrent.ThreadSynchronizer;
+import org.ringbuffer.lang.Optional;
 import org.ringbuffer.system.ThreadSpreader;
 import org.ringbuffer.system.Threads;
 
@@ -44,7 +45,7 @@ public abstract class AbstractTestThread extends Thread {
         this.dataStructure = dataStructure;
     }
 
-    protected void startNow(@Nullable Profiler profiler) {
+    protected void startNow(@Optional Profiler profiler) {
         start();
         waitUntilReady();
         commenceExecution();
@@ -62,10 +63,14 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     void waitForCompletion() {
-        ThreadSynchronizer.waitForCompletion(this);
+        try {
+            join();
+        } catch (InterruptedException e) {
+            throw new AssertionError();
+        }
     }
 
-    protected void waitForCompletion(@Nullable Profiler profiler) {
+    protected void waitForCompletion(@Optional Profiler profiler) {
         waitForCompletion();
         if (profiler != null) {
             profiler.stop();

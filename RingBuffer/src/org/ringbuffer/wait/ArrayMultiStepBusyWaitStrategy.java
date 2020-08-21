@@ -17,9 +17,9 @@
 package org.ringbuffer.wait;
 
 import org.ringbuffer.classcopy.CopiedClass;
-import org.ringbuffer.java.ArrayView;
-import org.ringbuffer.java.Assert;
-import org.ringbuffer.java.IntArrayView;
+import org.ringbuffer.lang.ArrayView;
+import org.ringbuffer.lang.Assert;
+import org.ringbuffer.lang.IntArrayView;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;

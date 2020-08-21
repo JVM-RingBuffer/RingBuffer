@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.java.Assume;
+import org.ringbuffer.lang.Assume;
 
 import static org.ringbuffer.concurrent.AtomicByteArray.elementOffset;
 import static org.ringbuffer.system.Unsafe.UNSAFE;

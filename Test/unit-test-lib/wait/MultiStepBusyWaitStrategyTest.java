@@ -17,7 +17,7 @@
 package org.ringbuffer.wait;
 
 import org.junit.jupiter.api.Test;
-import org.ringbuffer.java.Assert;
+import org.ringbuffer.lang.Assert;
 
 import java.util.ArrayList;
 import java.util.Iterator;

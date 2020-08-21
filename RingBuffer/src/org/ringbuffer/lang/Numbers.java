@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
 public class Numbers {
     public static int ceilDiv(int dividend, int divisor) {

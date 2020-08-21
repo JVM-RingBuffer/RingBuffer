@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ringbuffer.lang;
 
-package org.ringbuffer.java;
-
-class IllegalIntArgumentException extends IllegalArgumentException {
-    IllegalIntArgumentException(int value) {
-        super(Assume.EXCEPTION_CLASS_NAME + value);
-    }
-
-    IllegalIntArgumentException(int value, int cap) {
-        super(Assume.EXCEPTION_CLASS_NAME + value + " " + cap);
-    }
-
-    @Override
-    public String toString() {
-        return getMessage();
-    }
+@FunctionalInterface
+public interface FloatBinaryOperator {
+    float applyAsFloat(float left, float right);
 }

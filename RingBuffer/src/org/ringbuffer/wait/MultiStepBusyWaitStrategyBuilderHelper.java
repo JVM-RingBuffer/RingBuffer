@@ -16,7 +16,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.java.Assume;
+import org.ringbuffer.lang.Assume;
 
 class MultiStepBusyWaitStrategyBuilderHelper {
     static void throwNoIntermediateStepsAdded() {

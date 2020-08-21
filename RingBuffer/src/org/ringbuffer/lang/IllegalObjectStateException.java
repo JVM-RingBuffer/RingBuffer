@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
-public class IntPair {
-    public static long of(int first, int second) {
-        return (long) second << 32 | first & 0xFFFFFFFFL;
+class IllegalObjectStateException extends IllegalStateException {
+    IllegalObjectStateException(Object value) {
+        super(Ensure.EXCEPTION_CLASS_NAME + value);
     }
 
-    public static int getFirst(long intPair) {
-        return (int) intPair;
-    }
-
-    public static int getSecond(long intPair) {
-        return (int) (intPair >> 32);
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

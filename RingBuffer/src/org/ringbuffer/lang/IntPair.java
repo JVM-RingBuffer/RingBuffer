@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ringbuffer.java;
 
-import java.util.Objects;
+package org.ringbuffer.lang;
 
-@FunctionalInterface
-public interface FloatUnaryOperator {
-    float applyAsFloat(float operand);
-
-    default FloatUnaryOperator compose(FloatUnaryOperator before) {
-        Objects.requireNonNull(before);
-        return (float v) -> applyAsFloat(before.applyAsFloat(v));
+public class IntPair {
+    public static long of(int first, int second) {
+        return (long) second << 32 | first & 0xFFFFFFFFL;
     }
 
-    default FloatUnaryOperator andThen(FloatUnaryOperator after) {
-        Objects.requireNonNull(after);
-        return (float t) -> after.applyAsFloat(applyAsFloat(t));
+    public static int getFirst(long intPair) {
+        return (int) intPair;
     }
 
-    static FloatUnaryOperator identity() {
-        return t -> t;
+    public static int getSecond(long intPair) {
+        return (int) (intPair >> 32);
     }
 }

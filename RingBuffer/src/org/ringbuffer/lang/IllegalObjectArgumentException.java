@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
 class IllegalObjectArgumentException extends IllegalArgumentException {
     IllegalObjectArgumentException(Object value) {

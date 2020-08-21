@@ -16,8 +16,8 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.java.FloatBinaryOperator;
-import org.ringbuffer.java.FloatUnaryOperator;
+import org.ringbuffer.lang.FloatBinaryOperator;
+import org.ringbuffer.lang.FloatUnaryOperator;
 import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.system.Unsafe.UNSAFE;

@@ -16,7 +16,7 @@
 
 package test;
 
-import org.ringbuffer.java.Nullable;
+import org.ringbuffer.lang.Optional;
 
 import java.util.function.IntFunction;
 
@@ -30,7 +30,7 @@ public class TestThreadGroup {
         }
     }
 
-    public void start(@Nullable Profiler profiler) {
+    public void start(@Optional Profiler profiler) {
         for (AbstractTestThread testThread : testThreads) {
             testThread.start();
         }
@@ -45,7 +45,7 @@ public class TestThreadGroup {
         }
     }
 
-    public void waitForCompletion(@Nullable Profiler profiler) {
+    public void waitForCompletion(@Optional Profiler profiler) {
         for (AbstractTestThread testThread : testThreads) {
             testThread.waitForCompletion();
         }

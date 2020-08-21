@@ -18,7 +18,7 @@ package org.ringbuffer.classcopy;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import org.ringbuffer.java.Assert;
+import org.ringbuffer.lang.Assert;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;

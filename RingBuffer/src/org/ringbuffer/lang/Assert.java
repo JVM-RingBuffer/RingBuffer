@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.java;
+package org.ringbuffer.lang;
 
 public class Assert {
     public static void equal(int left, int right) {
