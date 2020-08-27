@@ -21,10 +21,13 @@ import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -63,9 +66,15 @@ class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T take() {
+        return take(defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
         int readPosition = this.readPosition++ & capacityMinusOne;
+        busyWaitStrategy.reset();
         while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return AtomicArray.getPlain(buffer, readPosition);

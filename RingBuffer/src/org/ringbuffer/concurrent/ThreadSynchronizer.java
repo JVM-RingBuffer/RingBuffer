@@ -17,6 +17,8 @@
 package org.ringbuffer.concurrent;
 
 import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 /**
  * Coordinator thread:
@@ -37,6 +39,7 @@ import org.ringbuffer.system.Unsafe;
  */
 public class ThreadSynchronizer {
     private static final long NOT_READY, DO_NOT_COMMENCE;
+    private static final BusyWaitStrategy defaultSynchronizeBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = ThreadSynchronizer.class;
@@ -44,17 +47,27 @@ public class ThreadSynchronizer {
         DO_NOT_COMMENCE = Unsafe.objectFieldOffset(clazz, "doNotCommence");
     }
 
+    private final BusyWaitStrategy waitBusyWaitStrategy;
+
+    public ThreadSynchronizer() {
+        this(HintBusyWaitStrategy.getDefault());
+    }
+
+    public ThreadSynchronizer(BusyWaitStrategy waitBusyWaitStrategy) {
+        this.waitBusyWaitStrategy = waitBusyWaitStrategy;
+    }
+
     private boolean notReady;
     private boolean doNotCommence;
 
     {
-        AtomicBoolean.setOpaque(this, NOT_READY, true);
-        AtomicBoolean.setOpaque(this, DO_NOT_COMMENCE, true);
+        reset();
     }
 
     public void waitUntilReady() {
+        waitBusyWaitStrategy.reset();
         while (AtomicBoolean.getOpaque(this, NOT_READY)) {
-            Thread.onSpinWait();
+            waitBusyWaitStrategy.tick();
         }
     }
 
@@ -63,9 +76,22 @@ public class ThreadSynchronizer {
     }
 
     public void synchronize() {
+        synchronize(defaultSynchronizeBusyWaitStrategy);
+    }
+
+    public void synchronize(BusyWaitStrategy busyWaitStrategy) {
         AtomicBoolean.setOpaque(this, NOT_READY, false);
         while (AtomicBoolean.getOpaque(this, DO_NOT_COMMENCE)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
+    }
+
+    /**
+     * You also have to call {@link BusyWaitStrategy#reset() reset()} on every busy-wait strategy passed to
+     * {@link #synchronize(BusyWaitStrategy)}.
+     */
+    public void reset() {
+        AtomicBoolean.setOpaque(this, NOT_READY, true);
+        AtomicBoolean.setOpaque(this, DO_NOT_COMMENCE, true);
     }
 }

@@ -19,9 +19,13 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+
     private final int capacityMinusOne;
     private final T[] buffer;
     private final boolean[] positionNotModified;
@@ -59,9 +63,15 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T take() {
+        return take(defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
         int readPosition = this.readPosition++ & capacityMinusOne;
+        busyWaitStrategy.reset();
         while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return AtomicArray.getPlain(buffer, readPosition);

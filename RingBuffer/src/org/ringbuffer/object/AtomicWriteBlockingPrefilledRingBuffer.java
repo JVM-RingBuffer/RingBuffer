@@ -250,4 +250,9 @@ class AtomicWriteBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<
     public Object getReadMonitor() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -21,10 +21,13 @@ import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = FastConcurrentPrefilledRingBuffer.class;
@@ -69,9 +72,15 @@ class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T take() {
+        return take(defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
         int readPosition = AtomicInt.getAndIncrementVolatile(this, READ_POSITION) & capacityMinusOne;
+        busyWaitStrategy.reset();
         while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicBooleanArray.setOpaque(positionNotModified, readPosition, true);
         return AtomicArray.getPlain(buffer, readPosition);

@@ -250,4 +250,9 @@ class AtomicReadBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
             builder.append(", ");
         }
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

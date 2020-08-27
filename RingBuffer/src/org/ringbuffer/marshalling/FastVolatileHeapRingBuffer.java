@@ -18,11 +18,15 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
 @Contended
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+
     private final int capacityMinusOne;
     private final byte[] buffer;
     private final boolean[] positionNotModified;
@@ -57,10 +61,16 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public int take(int size) {
+        return take(size, defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public int take(int size, BusyWaitStrategy busyWaitStrategy) {
         int readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
+        busyWaitStrategy.reset();
         while (AtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return readPosition;

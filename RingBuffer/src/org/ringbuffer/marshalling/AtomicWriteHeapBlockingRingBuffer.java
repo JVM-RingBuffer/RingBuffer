@@ -215,4 +215,9 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     public Object getReadMonitor() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public int take(int size, BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

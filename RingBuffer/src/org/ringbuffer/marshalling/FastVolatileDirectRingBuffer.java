@@ -18,11 +18,15 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
 @Contended
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+
     private final long capacityMinusOne;
     private final long buffer;
     private final long positionNotModified;
@@ -57,10 +61,16 @@ class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long take(long size) {
+        return take(size, defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public long take(long size, BusyWaitStrategy busyWaitStrategy) {
         long readPosition = this.readPosition & capacityMinusOne;
         this.readPosition += size;
+        busyWaitStrategy.reset();
         while (DirectAtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         DirectAtomicBooleanArray.setPlain(positionNotModified, readPosition, true);
         return readPosition;

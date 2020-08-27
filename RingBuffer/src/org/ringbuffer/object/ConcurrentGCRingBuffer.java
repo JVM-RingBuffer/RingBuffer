@@ -232,4 +232,9 @@ class ConcurrentGCRingBuffer<T> implements RingBuffer<T> {
             return readPosition;
         }
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

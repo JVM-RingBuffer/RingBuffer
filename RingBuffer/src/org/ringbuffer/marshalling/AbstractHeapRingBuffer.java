@@ -17,6 +17,7 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 interface AbstractHeapRingBuffer extends AbstractRingBuffer {
     int getCapacity();
@@ -26,6 +27,8 @@ interface AbstractHeapRingBuffer extends AbstractRingBuffer {
      * {@link HeapRingBuffer#next(int)}.
      */
     void put(int offset);
+
+    int take(int size, BusyWaitStrategy busyWaitStrategy);
 
     /**
      * If the ring buffer supports multiple readers and is not lock-free, then external synchronization must be performed:

@@ -215,4 +215,9 @@ class AtomicWriteDirectBlockingRingBuffer implements DirectRingBuffer {
     public Object getReadMonitor() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public long take(long size, BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

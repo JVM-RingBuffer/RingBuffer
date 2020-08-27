@@ -249,4 +249,9 @@ class VolatileDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     public Object getReadMonitor() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

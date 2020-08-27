@@ -17,11 +17,14 @@
 package org.ringbuffer.object;
 
 import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
 public interface ObjectRingBuffer<T> extends AbstractRingBuffer {
     int getCapacity();
+
+    T take(BusyWaitStrategy busyWaitStrategy);
 
     /**
      * If the ring buffer supports multiple readers and is blocking and pre-filled, then external synchronization

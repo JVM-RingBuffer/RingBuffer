@@ -20,12 +20,15 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicLong;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.DirectBuffer.*;
 
 @Contended
 class FastConcurrentDirectRingBuffer extends FastDirectRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = FastConcurrentDirectRingBuffer.class;
@@ -65,9 +68,15 @@ class FastConcurrentDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long take(long size) {
+        return take(size, defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public long take(long size, BusyWaitStrategy busyWaitStrategy) {
         long readPosition = AtomicLong.getAndAddVolatile(this, READ_POSITION, size) & capacityMinusOne;
+        busyWaitStrategy.reset();
         while (DirectAtomicBooleanArray.getAcquire(positionNotModified, readPosition)) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         DirectAtomicBooleanArray.setOpaque(positionNotModified, readPosition, true);
         return readPosition;

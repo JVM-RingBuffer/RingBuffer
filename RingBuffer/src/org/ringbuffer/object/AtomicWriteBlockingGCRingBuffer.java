@@ -244,4 +244,9 @@ class AtomicWriteBlockingGCRingBuffer<T> implements RingBuffer<T> {
     public Object getReadMonitor() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

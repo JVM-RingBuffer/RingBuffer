@@ -230,4 +230,9 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     private synchronized int getReadPosition() {
         return readPosition;
     }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
+        throw new UnsupportedOperationException();
+    }
 }

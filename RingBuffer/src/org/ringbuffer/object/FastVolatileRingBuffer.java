@@ -18,9 +18,13 @@ package org.ringbuffer.object;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
+
     private final int capacityMinusOne;
     private final T[] buffer;
 
@@ -46,10 +50,16 @@ class FastVolatileRingBuffer<T> extends FastRingBuffer<T> {
 
     @Override
     public T take() {
+        return take(defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
         T element;
         int readPosition = this.readPosition++ & capacityMinusOne;
+        busyWaitStrategy.reset();
         while ((element = AtomicArray.getAcquire(buffer, readPosition)) == null) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicArray.setPlain(buffer, readPosition, null);
         return element;

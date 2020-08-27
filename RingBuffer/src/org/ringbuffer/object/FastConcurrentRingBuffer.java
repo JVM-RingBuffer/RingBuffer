@@ -20,10 +20,13 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.wait.BusyWaitStrategy;
+import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastConcurrentRingBuffer<T> extends FastRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
+    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = FastConcurrentRingBuffer.class;
@@ -56,10 +59,16 @@ class FastConcurrentRingBuffer<T> extends FastRingBuffer<T> {
 
     @Override
     public T take() {
+        return take(defaultReadBusyWaitStrategy);
+    }
+
+    @Override
+    public T take(BusyWaitStrategy busyWaitStrategy) {
         T element;
         int readPosition = AtomicInt.getAndIncrementVolatile(this, READ_POSITION) & capacityMinusOne;
+        busyWaitStrategy.reset();
         while ((element = AtomicArray.getAcquire(buffer, readPosition)) == null) {
-            Thread.onSpinWait();
+            busyWaitStrategy.tick();
         }
         AtomicArray.setOpaque(buffer, readPosition, null);
         return element;
