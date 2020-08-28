@@ -17,6 +17,7 @@
 package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBuffer;
+import org.ringbuffer.concurrent.ThreadLocal;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 interface AbstractDirectRingBuffer extends AbstractRingBuffer {
@@ -28,7 +29,7 @@ interface AbstractDirectRingBuffer extends AbstractRingBuffer {
      */
     void put(long offset);
 
-    long take(long size, BusyWaitStrategy busyWaitStrategy);
+    long take(long size, @ThreadLocal BusyWaitStrategy busyWaitStrategy);
 
     /**
      * If the ring buffer supports multiple readers and is not lock-free, then external synchronization must be performed:

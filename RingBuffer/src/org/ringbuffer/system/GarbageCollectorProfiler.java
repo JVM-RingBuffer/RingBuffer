@@ -18,6 +18,7 @@ package org.ringbuffer.system;
 
 import com.sun.management.GarbageCollectionNotificationInfo;
 import com.sun.management.GcInfo;
+import org.ringbuffer.lang.StreamBuffer;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
@@ -77,25 +78,26 @@ public class GarbageCollectorProfiler {
     }
 
     private static class Logger implements Listener {
+        private static final StreamBuffer buffer = StreamBuffer.standardOutput(128);
+
         Logger() {
         }
 
         @Override
         public void onEvent(GarbageCollectionNotificationInfo notification, GcInfo info) {
-            synchronized (System.out) {
-                System.out.print('[');
-                System.out.print(notification.getGcName());
-                System.out.print("] ");
-                System.out.print(notification.getGcAction());
-                System.out.print(":  ");
-                System.out.print(sumValuesToMB(info.getMemoryUsageBeforeGc()));
-                System.out.print(" MB -> ");
-                System.out.print(sumValuesToMB(info.getMemoryUsageAfterGc()));
-                System.out.print(" MB  ");
-                System.out.print(info.getDuration());
-                System.out.print("ms");
-                System.out.println();
-            }
+            buffer.reset();
+            buffer.builder.append('[');
+            buffer.builder.append(notification.getGcName());
+            buffer.builder.append("] ");
+            buffer.builder.append(notification.getGcAction());
+            buffer.builder.append(":  ");
+            buffer.builder.append(sumValuesToMB(info.getMemoryUsageBeforeGc()));
+            buffer.builder.append(" MB -> ");
+            buffer.builder.append(sumValuesToMB(info.getMemoryUsageAfterGc()));
+            buffer.builder.append(" MB  ");
+            buffer.builder.append(info.getDuration());
+            buffer.builder.append("ms");
+            buffer.println();
         }
     }
 

@@ -206,7 +206,7 @@ class VolatileDiscardingRingBuffer<T> implements RingBuffer<T> {
         if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }
-        StringBuilder builder = new StringBuilder(16);
+        StringBuilder builder = new StringBuilder();
         builder.append('[');
         if (writePosition < readPosition) {
             for (; readPosition > writePosition; readPosition--) {

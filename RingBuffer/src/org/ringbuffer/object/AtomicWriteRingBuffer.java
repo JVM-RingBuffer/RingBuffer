@@ -183,7 +183,7 @@ class AtomicWriteRingBuffer<T> implements RingBuffer<T> {
         if (isEmpty(writePosition)) {
             return "[]";
         }
-        StringBuilder builder = new StringBuilder(16);
+        StringBuilder builder = new StringBuilder();
         builder.append('[');
         if (writePosition < readPosition) {
             for (int i = readPosition; i > writePosition; i--) {

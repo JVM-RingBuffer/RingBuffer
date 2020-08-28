@@ -79,7 +79,7 @@ public class ThreadSynchronizer {
         synchronize(defaultSynchronizeBusyWaitStrategy);
     }
 
-    public void synchronize(BusyWaitStrategy busyWaitStrategy) {
+    public void synchronize(@ThreadLocal BusyWaitStrategy busyWaitStrategy) {
         AtomicBoolean.setOpaque(this, NOT_READY, false);
         while (AtomicBoolean.getOpaque(this, DO_NOT_COMMENCE)) {
             busyWaitStrategy.tick();
@@ -88,7 +88,7 @@ public class ThreadSynchronizer {
 
     /**
      * You also have to call {@link BusyWaitStrategy#reset() reset()} on every busy-wait strategy passed to
-     * {@link #synchronize(BusyWaitStrategy)}.
+     * {@link #synchronize(BusyWaitStrategy) synchronize()}.
      */
     public void reset() {
         AtomicBoolean.setOpaque(this, NOT_READY, true);

@@ -202,7 +202,7 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
         if (isEmpty(readPosition, writePosition)) {
             return "[]";
         }
-        StringBuilder builder = new StringBuilder(16);
+        StringBuilder builder = new StringBuilder();
         builder.append('[');
         if (writePosition < readPosition) {
             for (int i = readPosition; i > writePosition; i--) {

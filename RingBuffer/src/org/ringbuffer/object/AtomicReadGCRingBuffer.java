@@ -200,7 +200,7 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
             if (isEmpty(readPosition, writePosition)) {
                 return "[]";
             }
-            builder = new StringBuilder(16);
+            builder = new StringBuilder();
             builder.append('[');
             if (writePosition < readPosition) {
                 for (int i = readPosition; i > writePosition; i--) {
