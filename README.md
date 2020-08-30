@@ -95,8 +95,7 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 
 ## Download
 
-Find artifacts and Maven coordinates in _Releases_.  
-Build tools require [@Menzani's repository](https://www.menzani.eu/cdn/maven).
+Find artifacts and Maven coordinates in _Releases_.
 
 Java 11 is required.
 The module name is `org.ringbuffer`.

@@ -28,7 +28,6 @@ import static org.ringbuffer.marshalling.DirectBuffer.*;
 @Contended
 class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
     private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteDirectRingBuffer.class, "writePosition");
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     private final long capacityMinusOne;
     private final long buffer;
@@ -62,7 +61,7 @@ class FastAtomicWriteDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long take(long size) {
-        return take(size, defaultReadBusyWaitStrategy);
+        return take(size, HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override

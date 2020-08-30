@@ -25,8 +25,6 @@ import static org.ringbuffer.marshalling.HeapBuffer.*;
 
 @Contended
 class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
-
     private final int capacityMinusOne;
     private final byte[] buffer;
     private final boolean[] positionNotModified;
@@ -61,7 +59,7 @@ class FastVolatileHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public int take(int size) {
-        return take(size, defaultReadBusyWaitStrategy);
+        return take(size, HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override

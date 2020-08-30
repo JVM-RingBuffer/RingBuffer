@@ -28,7 +28,6 @@ import static org.ringbuffer.marshalling.HeapBuffer.*;
 @Contended
 class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = FastConcurrentHeapRingBuffer.class;
@@ -68,7 +67,7 @@ class FastConcurrentHeapRingBuffer extends FastHeapRingBuffer {
 
     @Override
     public int take(int size) {
-        return take(size, defaultReadBusyWaitStrategy);
+        return take(size, HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override

@@ -26,7 +26,6 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 @Contended
 class FastAtomicReadRingBuffer<T> extends FastRingBuffer<T> {
     private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadRingBuffer.class, "readPosition");
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -53,7 +52,7 @@ class FastAtomicReadRingBuffer<T> extends FastRingBuffer<T> {
 
     @Override
     public T take() {
-        return take(defaultReadBusyWaitStrategy);
+        return take(HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override

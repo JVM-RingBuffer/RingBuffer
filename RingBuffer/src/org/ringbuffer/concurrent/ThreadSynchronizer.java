@@ -39,7 +39,6 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
  */
 public class ThreadSynchronizer {
     private static final long NOT_READY, DO_NOT_COMMENCE;
-    private static final BusyWaitStrategy defaultSynchronizeBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = ThreadSynchronizer.class;
@@ -61,11 +60,10 @@ public class ThreadSynchronizer {
     private boolean doNotCommence;
 
     {
-        reset();
+        resetFlags();
     }
 
     public void waitUntilReady() {
-        waitBusyWaitStrategy.reset();
         while (AtomicBoolean.getOpaque(this, NOT_READY)) {
             waitBusyWaitStrategy.tick();
         }
@@ -76,7 +74,7 @@ public class ThreadSynchronizer {
     }
 
     public void synchronize() {
-        synchronize(defaultSynchronizeBusyWaitStrategy);
+        synchronize(HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     public void synchronize(@ThreadLocal BusyWaitStrategy busyWaitStrategy) {
@@ -91,6 +89,11 @@ public class ThreadSynchronizer {
      * {@link #synchronize(BusyWaitStrategy) synchronize()}.
      */
     public void reset() {
+        waitBusyWaitStrategy.reset();
+        resetFlags();
+    }
+
+    private void resetFlags() {
         AtomicBoolean.setOpaque(this, NOT_READY, true);
         AtomicBoolean.setOpaque(this, DO_NOT_COMMENCE, true);
     }

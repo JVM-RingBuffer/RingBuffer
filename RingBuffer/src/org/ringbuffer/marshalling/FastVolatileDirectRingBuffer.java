@@ -25,8 +25,6 @@ import static org.ringbuffer.marshalling.DirectBuffer.*;
 
 @Contended
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
-
     private final long capacityMinusOne;
     private final long buffer;
     private final long positionNotModified;
@@ -61,7 +59,7 @@ class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {
 
     @Override
     public long take(long size) {
-        return take(size, defaultReadBusyWaitStrategy);
+        return take(size, HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override

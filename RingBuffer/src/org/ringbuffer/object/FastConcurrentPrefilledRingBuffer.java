@@ -27,7 +27,6 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 @Contended
 class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
-    private static final BusyWaitStrategy defaultReadBusyWaitStrategy = HintBusyWaitStrategy.getDefault();
 
     static {
         final Class<?> clazz = FastConcurrentPrefilledRingBuffer.class;
@@ -72,7 +71,7 @@ class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T take() {
-        return take(defaultReadBusyWaitStrategy);
+        return take(HintBusyWaitStrategy.DEFAULT_INSTANCE);
     }
 
     @Override
