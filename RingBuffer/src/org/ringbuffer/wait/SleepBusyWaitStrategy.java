@@ -16,10 +16,8 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.Unsafe;
-
-public class ParkBusyWaitStrategy implements BusyWaitStrategy {
-    public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();
+public class SleepBusyWaitStrategy implements BusyWaitStrategy {
+    public static final SleepBusyWaitStrategy DEFAULT_INSTANCE = new SleepBusyWaitStrategy();
 
     public static BusyWaitStrategy getDefault() {
         return WaitBusyWaitStrategy.createDefault(DEFAULT_INSTANCE);
@@ -31,6 +29,10 @@ public class ParkBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
-        Unsafe.UNSAFE.park(false, 1L);
+        try {
+            Thread.sleep(1L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

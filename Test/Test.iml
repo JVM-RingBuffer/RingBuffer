@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/unit-test" isTestSource="true" packagePrefix="org.ringbuffer" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test-lib" isTestSource="true" packagePrefix="org.ringbuffer" />
     </content>
-    <orderEntry type="jdk" jdkName="11" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JUnit" level="project" />
     <orderEntry type="library" name="Agrona" level="project" />
