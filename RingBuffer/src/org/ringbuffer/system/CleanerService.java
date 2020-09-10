@@ -16,13 +16,15 @@
 
 package org.ringbuffer.system;
 
-import java.lang.ref.Cleaner;
+import org.ringbuffer.UnsafeAccess;
 
 public class CleanerService {
-    private static final Cleaner cleaner = Cleaner.create();
-
     public static void freeMemory(Object object, long... addresses) {
-        cleaner.register(object, new FreeMemory(addresses));
+        Cleaner.value.register(object, new FreeMemory(addresses));
+    }
+
+    public static void freeMemory(long address) {
+        UnsafeAccess.UNSAFE.freeMemory(address);
     }
 
     private static class FreeMemory implements Runnable {
@@ -35,8 +37,12 @@ public class CleanerService {
         @Override
         public void run() {
             for (long address : addresses) {
-                Unsafe.UNSAFE.freeMemory(address);
+                freeMemory(address);
             }
         }
+    }
+
+    private static class Cleaner {
+        static final java.lang.ref.Cleaner value = java.lang.ref.Cleaner.create();
     }
 }

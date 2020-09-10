@@ -16,11 +16,13 @@
 
 package org.ringbuffer.concurrent;
 
-import static org.ringbuffer.system.Unsafe.UNSAFE;
+import org.ringbuffer.system.Unsafe;
+
+import static org.ringbuffer.UnsafeAccess.UNSAFE;
 
 public class DirectAtomicBooleanArray {
     public static long allocate(long length, boolean initialValue) {
-        long address = UNSAFE.allocateMemory(length);
+        long address = Unsafe.allocateMemory(length);
         for (long i = 0L; i < length; i++) {
             setOpaque(address, i, initialValue);
         }

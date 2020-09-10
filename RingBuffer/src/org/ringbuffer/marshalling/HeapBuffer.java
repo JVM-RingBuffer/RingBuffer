@@ -18,76 +18,76 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.lang.Assume;
 
+import static org.ringbuffer.UnsafeAccess.UNSAFE;
 import static org.ringbuffer.concurrent.AtomicByteArray.elementOffset;
-import static org.ringbuffer.system.Unsafe.UNSAFE;
 
-class HeapBuffer {
-    static byte[] allocate(int length) {
+public class HeapBuffer {
+    public static byte[] allocate(int length) {
         Assume.notGreater(length, Integer.MAX_VALUE - 8);
         return new byte[length + 8];
     }
 
-    static void putByte(byte[] array, int index, byte value) {
+    public static void putByte(byte[] array, int index, byte value) {
         UNSAFE.putByte(array, elementOffset(index), value);
     }
 
-    static void putChar(byte[] array, int index, char value) {
+    public static void putChar(byte[] array, int index, char value) {
         UNSAFE.putChar(array, elementOffset(index), value);
     }
 
-    static void putShort(byte[] array, int index, short value) {
+    public static void putShort(byte[] array, int index, short value) {
         UNSAFE.putShort(array, elementOffset(index), value);
     }
 
-    static void putInt(byte[] array, int index, int value) {
+    public static void putInt(byte[] array, int index, int value) {
         UNSAFE.putInt(array, elementOffset(index), value);
     }
 
-    static void putLong(byte[] array, int index, long value) {
+    public static void putLong(byte[] array, int index, long value) {
         UNSAFE.putLong(array, elementOffset(index), value);
     }
 
-    static void putBoolean(byte[] array, int index, boolean value) {
+    public static void putBoolean(byte[] array, int index, boolean value) {
         UNSAFE.putBoolean(array, elementOffset(index), value);
     }
 
-    static void putFloat(byte[] array, int index, float value) {
+    public static void putFloat(byte[] array, int index, float value) {
         UNSAFE.putFloat(array, elementOffset(index), value);
     }
 
-    static void putDouble(byte[] array, int index, double value) {
+    public static void putDouble(byte[] array, int index, double value) {
         UNSAFE.putDouble(array, elementOffset(index), value);
     }
 
-    static byte getByte(byte[] array, int index) {
+    public static byte getByte(byte[] array, int index) {
         return UNSAFE.getByte(array, elementOffset(index));
     }
 
-    static char getChar(byte[] array, int index) {
+    public static char getChar(byte[] array, int index) {
         return UNSAFE.getChar(array, elementOffset(index));
     }
 
-    static short getShort(byte[] array, int index) {
+    public static short getShort(byte[] array, int index) {
         return UNSAFE.getShort(array, elementOffset(index));
     }
 
-    static int getInt(byte[] array, int index) {
+    public static int getInt(byte[] array, int index) {
         return UNSAFE.getInt(array, elementOffset(index));
     }
 
-    static long getLong(byte[] array, int index) {
+    public static long getLong(byte[] array, int index) {
         return UNSAFE.getLong(array, elementOffset(index));
     }
 
-    static boolean getBoolean(byte[] array, int index) {
+    public static boolean getBoolean(byte[] array, int index) {
         return UNSAFE.getBoolean(array, elementOffset(index));
     }
 
-    static float getFloat(byte[] array, int index) {
+    public static float getFloat(byte[] array, int index) {
         return UNSAFE.getFloat(array, elementOffset(index));
     }
 
-    static double getDouble(byte[] array, int index) {
+    public static double getDouble(byte[] array, int index) {
         return UNSAFE.getDouble(array, elementOffset(index));
     }
 }

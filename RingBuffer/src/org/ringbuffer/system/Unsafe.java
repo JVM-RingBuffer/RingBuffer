@@ -16,17 +16,21 @@
 
 package org.ringbuffer.system;
 
+import org.ringbuffer.SunUnsafeAccess;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.security.ProtectionDomain;
+
+import static org.ringbuffer.UnsafeAccess.UNSAFE;
 
 /**
  * To avoid using reflection, consider adding the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
  */
 public class Unsafe {
     public static final Module JAVA_BASE_MODULE = Class.class.getModule();
-
-    public static final jdk.internal.misc.Unsafe UNSAFE;
 
     public static final long ARRAY_BYTE_BASE_OFFSET;
     public static final long ARRAY_CHAR_BASE_OFFSET;
@@ -51,46 +55,6 @@ public class Unsafe {
     private static final long OVERRIDE;
 
     static {
-        final Module from = JAVA_BASE_MODULE;
-        final Module to = Unsafe.class.getModule();
-        final String packageName = "jdk.internal.misc";
-        try {
-            if (!from.isOpen(packageName, to)) {
-                Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-                field.setAccessible(true);
-                sun.misc.Unsafe unsafe = (sun.misc.Unsafe) field.get(null);
-
-                // Code is duplicated so that we do not have to use reflection in the other case.
-                final Class<?> clazz = Module.class;
-                Method implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
-
-                long OVERRIDE;
-                if (Version.current() == Version.JAVA_11) {
-                    OVERRIDE = unsafe.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
-                } else if (Platform.current().is32Bit()) {
-                    OVERRIDE = 8L;
-                } else {
-                    long offset = unsafe.objectFieldOffset(Platform.OopsCompressed.class.getDeclaredField("i"));
-                    if (offset == 8L) {
-                        assert Platform.current().is32Bit();
-                        OVERRIDE = -1L;
-                    } else if (offset == 12L) {
-                        OVERRIDE = 12L;
-                    } else if (offset == 16L) {
-                        OVERRIDE = 16L;
-                    } else {
-                        throw new AssertionError();
-                    }
-                }
-                unsafe.putBoolean(implAddOpens, OVERRIDE, true);
-
-                implAddOpens.invoke(from, packageName, to);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-        UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
-
         ARRAY_BYTE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
         ARRAY_CHAR_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET;
         ARRAY_SHORT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;
@@ -142,6 +106,214 @@ public class Unsafe {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static long getAddress(Object o, long offset) {
+        return UNSAFE.getAddress(o, offset);
+    }
+
+    public static void putAddress(Object o, long offset, long x) {
+        UNSAFE.putAddress(o, offset, x);
+    }
+
+    public static Object getUncompressedObject(long address) {
+        return UNSAFE.getUncompressedObject(address);
+    }
+
+    public static long getAddress(long address) {
+        return UNSAFE.getAddress(address);
+    }
+
+    public static void putAddress(long address, long x) {
+        UNSAFE.putAddress(address, x);
+    }
+
+    public static long allocateMemory(long bytes) {
+        return UNSAFE.allocateMemory(bytes);
+    }
+
+    public static long reallocateMemory(long address, long bytes) {
+        return UNSAFE.reallocateMemory(address, bytes);
+    }
+
+    public static void setMemory(Object o, long offset, long bytes, byte value) {
+        UNSAFE.setMemory(o, offset, bytes, value);
+    }
+
+    public static void setMemory(long address, long bytes, byte value) {
+        UNSAFE.setMemory(address, bytes, value);
+    }
+
+    public static void copyMemory(Object srcBase, long srcOffset, Object destBase, long destOffset, long bytes) {
+        UNSAFE.copyMemory(srcBase, srcOffset, destBase, destOffset, bytes);
+    }
+
+    public static void copyMemory(long srcAddress, long destAddress, long bytes) {
+        UNSAFE.copyMemory(srcAddress, destAddress, bytes);
+    }
+
+    public static void copySwapMemory(Object srcBase, long srcOffset, Object destBase, long destOffset, long bytes, long elemSize) {
+        UNSAFE.copySwapMemory(srcBase, srcOffset, destBase, destOffset, bytes, elemSize);
+    }
+
+    public static void copySwapMemory(long srcAddress, long destAddress, long bytes, long elemSize) {
+        UNSAFE.copySwapMemory(srcAddress, destAddress, bytes, elemSize);
+    }
+
+    public static boolean shouldBeInitialized(Class<?> c) {
+        return UNSAFE.shouldBeInitialized(c);
+    }
+
+    public static void ensureClassInitialized(Class<?> c) {
+        UNSAFE.ensureClassInitialized(c);
+    }
+
+    public static int addressSize() {
+        return UNSAFE.addressSize();
+    }
+
+    public static int pageSize() {
+        return UNSAFE.pageSize();
+    }
+
+    public static Class<?> defineClass(String name, byte[] b, int off, int len, ClassLoader loader, ProtectionDomain protectionDomain) {
+        return UNSAFE.defineClass(name, b, off, len, loader, protectionDomain);
+    }
+
+    public static Class<?> defineClass0(String name, byte[] b, int off, int len, ClassLoader loader, ProtectionDomain protectionDomain) {
+        return UNSAFE.defineClass0(name, b, off, len, loader, protectionDomain);
+    }
+
+    public static Class<?> defineAnonymousClass(Class<?> hostClass, byte[] data, Object[] cpPatches) {
+        return UNSAFE.defineAnonymousClass(hostClass, data, cpPatches);
+    }
+
+    public static Object allocateInstance(Class<?> cls) throws InstantiationException {
+        return UNSAFE.allocateInstance(cls);
+    }
+
+    public static Object allocateUninitializedArray(Class<?> componentType, int length) {
+        return UNSAFE.allocateUninitializedArray(componentType, length);
+    }
+
+    public static void throwException(Throwable ee) {
+        UNSAFE.throwException(ee);
+    }
+
+    public static void unpark(Object thread) {
+        UNSAFE.unpark(thread);
+    }
+
+    public static void park(boolean isAbsolute, long time) {
+        UNSAFE.park(isAbsolute, time);
+    }
+
+    public static int getLoadAverage(double[] loadavg, int nelems) {
+        return UNSAFE.getLoadAverage(loadavg, nelems);
+    }
+
+    public static void loadFence() {
+        UNSAFE.loadFence();
+    }
+
+    public static void storeFence() {
+        UNSAFE.storeFence();
+    }
+
+    public static void fullFence() {
+        UNSAFE.fullFence();
+    }
+
+    public static void loadLoadFence() {
+        UNSAFE.loadLoadFence();
+    }
+
+    public static void storeStoreFence() {
+        UNSAFE.storeStoreFence();
+    }
+
+    public static boolean isBigEndian() {
+        return UNSAFE.isBigEndian();
+    }
+
+    public static boolean unalignedAccess() {
+        return UNSAFE.unalignedAccess();
+    }
+
+    public static long getLongUnaligned(Object o, long offset) {
+        return UNSAFE.getLongUnaligned(o, offset);
+    }
+
+    public static long getLongUnaligned(Object o, long offset, boolean bigEndian) {
+        return UNSAFE.getLongUnaligned(o, offset, bigEndian);
+    }
+
+    public static int getIntUnaligned(Object o, long offset) {
+        return UNSAFE.getIntUnaligned(o, offset);
+    }
+
+    public static int getIntUnaligned(Object o, long offset, boolean bigEndian) {
+        return UNSAFE.getIntUnaligned(o, offset, bigEndian);
+    }
+
+    public static short getShortUnaligned(Object o, long offset) {
+        return UNSAFE.getShortUnaligned(o, offset);
+    }
+
+    public static short getShortUnaligned(Object o, long offset, boolean bigEndian) {
+        return UNSAFE.getShortUnaligned(o, offset, bigEndian);
+    }
+
+    public static char getCharUnaligned(Object o, long offset) {
+        return UNSAFE.getCharUnaligned(o, offset);
+    }
+
+    public static char getCharUnaligned(Object o, long offset, boolean bigEndian) {
+        return UNSAFE.getCharUnaligned(o, offset, bigEndian);
+    }
+
+    public static void putLongUnaligned(Object o, long offset, long x) {
+        UNSAFE.putLongUnaligned(o, offset, x);
+    }
+
+    public static void putLongUnaligned(Object o, long offset, long x, boolean bigEndian) {
+        UNSAFE.putLongUnaligned(o, offset, x, bigEndian);
+    }
+
+    public static void putIntUnaligned(Object o, long offset, int x) {
+        UNSAFE.putIntUnaligned(o, offset, x);
+    }
+
+    public static void putIntUnaligned(Object o, long offset, int x, boolean bigEndian) {
+        UNSAFE.putIntUnaligned(o, offset, x, bigEndian);
+    }
+
+    public static void putShortUnaligned(Object o, long offset, short x) {
+        UNSAFE.putShortUnaligned(o, offset, x);
+    }
+
+    public static void putShortUnaligned(Object o, long offset, short x, boolean bigEndian) {
+        UNSAFE.putShortUnaligned(o, offset, x, bigEndian);
+    }
+
+    public static void putCharUnaligned(Object o, long offset, char x) {
+        UNSAFE.putCharUnaligned(o, offset, x);
+    }
+
+    public static void putCharUnaligned(Object o, long offset, char x, boolean bigEndian) {
+        UNSAFE.putCharUnaligned(o, offset, x, bigEndian);
+    }
+
+    public static void invokeCleaner(ByteBuffer directBuffer) {
+        SunUnsafeAccess.UNSAFE.invokeCleaner(directBuffer);
+    }
+
+    public static Object staticFieldBase(Field f) {
+        return UNSAFE.staticFieldBase(f);
+    }
+
+    public static long staticFieldOffset(Field f) {
+        return UNSAFE.staticFieldOffset(f);
     }
 
     private static class RequiringReflection {

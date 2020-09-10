@@ -16,12 +16,10 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.system.Unsafe;
-
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
-import static org.ringbuffer.system.Unsafe.UNSAFE;
+import static org.ringbuffer.UnsafeAccess.UNSAFE;
 
 public class AtomicIntArray {
     public static void setPlain(int[] array, int index, int value) {
@@ -346,6 +344,6 @@ public class AtomicIntArray {
     }
 
     public static long elementOffset(int index) {
-        return Unsafe.ARRAY_INT_BASE_OFFSET + Unsafe.ARRAY_INT_INDEX_SCALE * index;
+        return UNSAFE.ARRAY_INT_BASE_OFFSET + UNSAFE.ARRAY_INT_INDEX_SCALE * index;
     }
 }

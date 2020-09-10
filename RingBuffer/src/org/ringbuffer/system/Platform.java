@@ -16,19 +16,25 @@
 
 package org.ringbuffer.system;
 
+import org.ringbuffer.UnsafeAccess;
+
 import java.nio.file.Path;
 
 public enum Platform {
-    LINUX_32(false, true),
-    LINUX_64(false, false),
-    WINDOWS_32(true, true),
-    WINDOWS_64(true, false);
+    LINUX_32(false, true, false, true),
+    LINUX_64(false, true, false, false),
+    WINDOWS_32(true, false, false, true),
+    WINDOWS_64(true, false, false, false),
+    MAC_32(false, false, true, true),
+    MAC_64(false, false, true, false);
 
-    private final boolean isWindows;
+    private final boolean isWindows, isLinux, isMac;
     private final boolean is32Bit;
 
-    Platform(boolean isWindows, boolean is32Bit) {
+    Platform(boolean isWindows, boolean isLinux, boolean isMac, boolean is32Bit) {
         this.isWindows = isWindows;
+        this.isLinux = isLinux;
+        this.isMac = isMac;
         this.is32Bit = is32Bit;
     }
 
@@ -37,7 +43,11 @@ public enum Platform {
     }
 
     public boolean isLinux() {
-        return !isWindows;
+        return isLinux;
+    }
+
+    public boolean isMac() {
+        return isMac;
     }
 
     public boolean is32Bit() {
@@ -57,50 +67,40 @@ public enum Platform {
     }
 
     public static boolean areOopsCompressed() {
-        return OopsCompressed.value;
+        return UnsafeAccess.OopsCompressed.value;
     }
 
     private static class Current {
         static final Platform value;
 
         static {
+            String osName = System.getProperty("os.name");
             boolean is32Bit = System.getProperty("sun.arch.data.model").equals("32");
-            if (System.getProperty("os.name").contains("Windows")) {
+            if (osName.contains("Windows")) {
                 if (is32Bit) {
                     value = WINDOWS_32;
                 } else {
                     value = WINDOWS_64;
                 }
-            } else if (is32Bit) {
-                value = LINUX_32;
+            } else if (osName.contains("Linux")) {
+                if (is32Bit) {
+                    value = LINUX_32;
+                } else {
+                    value = LINUX_64;
+                }
+            } else if (osName.contains("Mac")) {
+                if (is32Bit) {
+                    value = MAC_32;
+                } else {
+                    value = MAC_64;
+                }
             } else {
-                value = LINUX_64;
+                throw new AssertionError();
             }
         }
     }
 
     private static class TempFolder {
         static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
-    }
-
-    static class OopsCompressed {
-        static final boolean value;
-
-        int i;
-
-        // Duplicated in Unsafe.<clinit>
-        static {
-            long offset = Unsafe.objectFieldOffset(OopsCompressed.class, "i");
-            if (offset == 8L) {
-                assert Platform.current().is32Bit();
-                value = false;
-            } else if (offset == 12L) {
-                value = true;
-            } else if (offset == 16L) {
-                value = false;
-            } else {
-                throw new AssertionError();
-            }
-        }
     }
 }

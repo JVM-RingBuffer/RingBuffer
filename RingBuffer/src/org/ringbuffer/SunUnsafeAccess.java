@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.wait;
+package org.ringbuffer;
 
-import org.ringbuffer.system.Unsafe;
+import sun.misc.Unsafe;
 
-public class ParkBusyWaitStrategy implements BusyWaitStrategy {
-    public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();
+import java.lang.reflect.Field;
 
-    public static BusyWaitStrategy getDefault() {
-        return WaitBusyWaitStrategy.createDefault(DEFAULT_INSTANCE);
-    }
+public class SunUnsafeAccess {
+    public static final Unsafe UNSAFE;
 
-    @Override
-    public void reset() {
-    }
-
-    @Override
-    public void tick() {
-        Unsafe.park(false, 1L);
+    static {
+        try {
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            UNSAFE = (Unsafe) field.get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }
