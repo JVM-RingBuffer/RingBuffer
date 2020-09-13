@@ -26,9 +26,12 @@ import java.lang.reflect.Method;
 public class UnsafeAccess {
     public static final jdk.internal.misc.Unsafe UNSAFE;
 
+    public static void init() {
+    }
+
     static {
-        final Module from = Unsafe.JAVA_BASE_MODULE;
-        final Module to = Unsafe.class.getModule();
+        final Module from = Platform.JAVA_BASE_MODULE;
+        final Module to = Platform.ORG_RINGBUFFER_MODULE;
         final String packageName = "jdk.internal.misc";
         try {
             if (!from.isOpen(packageName, to)) {

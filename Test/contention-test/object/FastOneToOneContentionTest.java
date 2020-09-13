@@ -20,12 +20,14 @@ import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class FastOneToOneContentionTest extends RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>withCapacity(FAST_ONE_TO_ONE_SIZE)
-                    .oneReader()
-                    .oneWriter()
-                    .withoutLocks()
-                    .build();
+    public static class Holder {
+        public static final RingBuffer<Event> RING_BUFFER =
+                RingBuffer.<Event>withCapacity(FAST_ONE_TO_ONE_SIZE)
+                        .oneReader()
+                        .oneWriter()
+                        .withoutLocks()
+                        .build();
+    }
 
     public static void main(String[] args) {
         new FastOneToOneContentionTest().runBenchmark();
@@ -39,7 +41,7 @@ public class FastOneToOneContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.startAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        Writer.startAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
+        return Reader.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
     }
 }

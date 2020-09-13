@@ -26,7 +26,7 @@ class ManyReadersBatchContentionTest extends ManyReadersContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
+        Writer.startAsync(TOTAL_ELEMENTS, Holder.RING_BUFFER, profiler);
+        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, Holder.RING_BUFFER, profiler);
     }
 }

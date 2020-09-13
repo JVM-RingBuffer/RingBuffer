@@ -26,7 +26,7 @@ class FastManyReadersTest extends FastManyReadersContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        Writer.runAsync(TOTAL_ELEMENTS, Holder.RING_BUFFER, profiler);
+        return Reader.runGroupAsync(Holder.RING_BUFFER, profiler);
     }
 }

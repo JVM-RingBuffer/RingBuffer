@@ -26,7 +26,7 @@ class ManyWritersBatchContentionTest extends ManyWritersContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startGroupAsync(RING_BUFFER, profiler);
-        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, RING_BUFFER, profiler);
+        Writer.startGroupAsync(Holder.RING_BUFFER, profiler);
+        return BatchReader.runAsync(TOTAL_ELEMENTS, BATCH_SIZE, Holder.RING_BUFFER, profiler);
     }
 }

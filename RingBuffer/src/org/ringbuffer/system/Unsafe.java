@@ -17,6 +17,7 @@
 package org.ringbuffer.system;
 
 import org.ringbuffer.SunUnsafeAccess;
+import org.ringbuffer.UnsafeAccess;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -30,8 +31,6 @@ import static org.ringbuffer.UnsafeAccess.UNSAFE;
  * To avoid using reflection, consider adding the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
  */
 public class Unsafe {
-    public static final Module JAVA_BASE_MODULE = Class.class.getModule();
-
     public static final long ARRAY_BYTE_BASE_OFFSET;
     public static final long ARRAY_CHAR_BASE_OFFSET;
     public static final long ARRAY_SHORT_BASE_OFFSET;
@@ -55,6 +54,7 @@ public class Unsafe {
     private static final long OVERRIDE;
 
     static {
+        UnsafeAccess.init();
         ARRAY_BYTE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
         ARRAY_CHAR_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET;
         ARRAY_SHORT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;

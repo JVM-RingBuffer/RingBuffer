@@ -26,7 +26,7 @@ class ManyReadersBatchTest extends ManyReadersTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, RING_BUFFER, profiler);
+        Writer.runAsync(TOTAL_ELEMENTS, Holder.RING_BUFFER, profiler);
+        return SynchronizedBatchReader.runGroupAsync(BATCH_SIZE, Holder.RING_BUFFER, profiler);
     }
 }

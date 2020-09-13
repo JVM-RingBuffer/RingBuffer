@@ -26,7 +26,7 @@ class FastManyToManyTest extends FastManyToManyContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        Writer.runGroupAsync(Holder.RING_BUFFER, profiler);
+        return Reader.runGroupAsync(Holder.RING_BUFFER, profiler);
     }
 }

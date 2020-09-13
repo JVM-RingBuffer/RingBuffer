@@ -103,4 +103,7 @@ public enum Platform {
     private static class TempFolder {
         static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
     }
+
+    public static final Module JAVA_BASE_MODULE = IllegalArgumentException.class.getModule();
+    public static final Module ORG_RINGBUFFER_MODULE = UnsafeAccess.OopsCompressed.class.getModule();
 }

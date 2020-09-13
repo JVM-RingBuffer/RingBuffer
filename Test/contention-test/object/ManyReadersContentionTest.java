@@ -20,11 +20,13 @@ import org.ringbuffer.object.RingBuffer;
 import test.Profiler;
 
 public class ManyReadersContentionTest extends RingBufferTest {
-    public static final RingBuffer<Event> RING_BUFFER =
-            RingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
-                    .manyReaders()
-                    .oneWriter()
-                    .build();
+    public static class Holder {
+        public static final RingBuffer<Event> RING_BUFFER =
+                RingBuffer.<Event>withCapacity(NOT_ONE_TO_ONE_SIZE)
+                        .manyReaders()
+                        .oneWriter()
+                        .build();
+    }
 
     public static void main(String[] args) {
         new ManyReadersContentionTest().runBenchmark();
@@ -38,7 +40,7 @@ public class ManyReadersContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        Writer.startAsync(TOTAL_ELEMENTS, Holder.RING_BUFFER, profiler);
+        return Reader.runGroupAsync(Holder.RING_BUFFER, profiler);
     }
 }

@@ -72,16 +72,16 @@ class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
     @Test
     void testClasses() {
         expectClass(ConcurrentBlockingRingBuffer.class, ManyToManyBlockingContentionTest.Holder.RING_BUFFER, ManyToManyBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(ConcurrentRingBuffer.class, ManyToManyContentionTest.RING_BUFFER);
+        expectClass(ConcurrentRingBuffer.class, ManyToManyContentionTest.Holder.RING_BUFFER);
 
         expectClass(AtomicReadBlockingRingBuffer.class, ManyReadersBlockingContentionTest.Holder.RING_BUFFER, ManyReadersBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(AtomicReadRingBuffer.class, ManyReadersContentionTest.RING_BUFFER);
+        expectClass(AtomicReadRingBuffer.class, ManyReadersContentionTest.Holder.RING_BUFFER);
 
         expectClass(AtomicWriteBlockingRingBuffer.class, ManyWritersBlockingContentionTest.Holder.RING_BUFFER, ManyWritersBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(AtomicWriteRingBuffer.class, ManyWritersContentionTest.RING_BUFFER);
+        expectClass(AtomicWriteRingBuffer.class, ManyWritersContentionTest.Holder.RING_BUFFER);
 
         expectClass(VolatileBlockingRingBuffer.class, OneToOneBlockingContentionTest.Holder.RING_BUFFER, OneToOneBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(VolatileRingBuffer.class, OneToOneContentionTest.RING_BUFFER);
+        expectClass(VolatileRingBuffer.class, OneToOneContentionTest.Holder.RING_BUFFER);
 
         expectClass(ConcurrentBlockingPrefilledRingBuffer.class, PrefilledManyToManyBlockingContentionTest.Holder.RING_BUFFER, PrefilledManyToManyBlockingContentionPerfTest.RING_BUFFER);
         expectClass(ConcurrentPrefilledRingBuffer.class, PrefilledManyToManyContentionTest.RING_BUFFER);
@@ -98,10 +98,10 @@ class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
         expectClass(FastAtomicWriteRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
         expectClass(FastAtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
 
-        expectClass(FastConcurrentRingBuffer.class, FastManyToManyContentionTest.RING_BUFFER);
-        expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.RING_BUFFER);
-        expectClass(FastAtomicWriteRingBuffer.class, FastManyWritersContentionTest.RING_BUFFER);
-        expectClass(FastVolatileRingBuffer.class, FastOneToOneContentionTest.RING_BUFFER);
+        expectClass(FastConcurrentRingBuffer.class, FastManyToManyContentionTest.Holder.RING_BUFFER);
+        expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.Holder.RING_BUFFER);
+        expectClass(FastAtomicWriteRingBuffer.class, FastManyWritersContentionTest.Holder.RING_BUFFER);
+        expectClass(FastVolatileRingBuffer.class, FastOneToOneContentionTest.Holder.RING_BUFFER);
 
         expectClass(FastConcurrentPrefilledRingBuffer.class, FastPrefilledManyToManyContentionTest.RING_BUFFER);
         expectClass(FastAtomicReadPrefilledRingBuffer.class, FastPrefilledManyReadersContentionTest.RING_BUFFER);
