@@ -140,6 +140,22 @@ class AtomicWriteDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer
     }
 
     @Override
+    public T takeLast() {
+        int position;
+        readBusyWaitStrategy.reset();
+        while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {
+            readBusyWaitStrategy.tick();
+        }
+        if (position == capacityMinusOne) {
+            position = 0;
+        } else {
+            position++;
+        }
+        readPosition = position;
+        return AtomicArray.getPlain(buffer, position);
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         int readPosition = AtomicInt.getAcquire(this, READ_POSITION);
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);

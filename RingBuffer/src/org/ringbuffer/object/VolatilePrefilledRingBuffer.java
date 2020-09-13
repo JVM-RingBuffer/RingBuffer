@@ -115,6 +115,22 @@ class VolatilePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public T takeLast() {
+        int position;
+        readBusyWaitStrategy.reset();
+        while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {
+            readBusyWaitStrategy.tick();
+        }
+        if (position == capacityMinusOne) {
+            position = 0;
+        } else {
+            position++;
+        }
+        readPosition = position;
+        return AtomicArray.getPlain(buffer, position);
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (writePosition <= readPosition) {

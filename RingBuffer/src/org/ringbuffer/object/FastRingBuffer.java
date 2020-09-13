@@ -35,6 +35,11 @@ abstract class FastRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public T takeLast() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         throw new UnsupportedOperationException();
     }

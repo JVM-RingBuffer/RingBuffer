@@ -85,8 +85,8 @@ Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
 
-- `Unsafe.UNSAFE` exposes the `jdk.internal.misc.Unsafe` without causing `IllegalAccessError`s.
-- `Atomic*` classes wrap `Unsafe` calls, exposing all the features supported by `VarHandle`s while having better names and reducing indirection.
+- `Unsafe` exposes `jdk.internal.misc.Unsafe` methods without causing `IllegalAccessError`s.
+- `Atomic*` classes wrap `jdk.internal.misc.Unsafe` calls, exposing all the features supported by `VarHandle`s while having better names and reducing indirection.
 - `Platform.current()` returns the current OS and JVM architecture.
 - `CleanerService` supports freeing off-heap memory on object GC.
 - `GarbageCollectorProfiler` supports listening to GC events and logging them.
@@ -107,7 +107,7 @@ Also, to avoid using reflection, consider adding `--add-opens java.base/jdk.inte
 **Warning.**
 These features of object ring buffers have not yet been tested:
 - Discarding elements when full
-- `forEach()`, `contains()` and `toString()`
+- `takeLast()`, `forEach()`, `contains()` and `toString()`
 
 You can [run the benchmarks and build from source](BUILD.md).
 

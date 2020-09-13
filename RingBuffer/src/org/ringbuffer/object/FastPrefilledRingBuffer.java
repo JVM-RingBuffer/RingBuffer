@@ -35,6 +35,11 @@ abstract class FastPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public T takeLast() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         throw new UnsupportedOperationException();
     }

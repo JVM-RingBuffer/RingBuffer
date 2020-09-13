@@ -123,6 +123,24 @@ class AtomicReadPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public T takeLast() {
+        int position;
+        synchronized (this) {
+            readBusyWaitStrategy.reset();
+            while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {
+                readBusyWaitStrategy.tick();
+            }
+            if (position == capacityMinusOne) {
+                position = 0;
+            } else {
+                position++;
+            }
+            readPosition = position;
+        }
+        return AtomicArray.getPlain(buffer, position);
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         int readPosition = getReadPosition();
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);

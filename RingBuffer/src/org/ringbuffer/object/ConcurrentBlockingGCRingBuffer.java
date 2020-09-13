@@ -142,6 +142,42 @@ class ConcurrentBlockingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public T takeLast() {
+        synchronized (readBusyWaitStrategy) {
+            int position;
+            readBusyWaitStrategy.reset();
+            while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {
+                readBusyWaitStrategy.tick();
+            }
+            if (position == capacityMinusOne) {
+                position = 0;
+            } else {
+                position++;
+            }
+
+            if (position <= readPosition) {
+                for (int i = readPosition; i > position; i--) {
+                    AtomicArray.setPlain(buffer, i, null);
+                }
+            } else {
+                takeLastSplit(position);
+            }
+
+            readPosition = position;
+            return AtomicArray.getPlain(buffer, position);
+        }
+    }
+
+    private void takeLastSplit(int position) {
+        for (int i = readPosition; i >= 0; i--) {
+            AtomicArray.setPlain(buffer, i, null);
+        }
+        for (int i = capacityMinusOne; i > position; i--) {
+            AtomicArray.setPlain(buffer, i, null);
+        }
+    }
+
+    @Override
     public void forEach(Consumer<T> action) {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         synchronized (readBusyWaitStrategy) {
