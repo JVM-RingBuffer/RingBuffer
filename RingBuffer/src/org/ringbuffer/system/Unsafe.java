@@ -16,8 +16,9 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.SunUnsafeAccess;
-import org.ringbuffer.UnsafeAccess;
+import org.ringbuffer.InternalUnsafe;
+import org.ringbuffer.SunUnsafe;
+import org.ringbuffer.lang.Lang;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -25,7 +26,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.ProtectionDomain;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 /**
  * To avoid using reflection, consider adding the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
@@ -54,7 +55,7 @@ public class Unsafe {
     private static final long OVERRIDE;
 
     static {
-        UnsafeAccess.init();
+        InternalUnsafe.init();
         ARRAY_BYTE_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
         ARRAY_CHAR_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET;
         ARRAY_SHORT_BASE_OFFSET = jdk.internal.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;
@@ -90,7 +91,7 @@ public class Unsafe {
         try {
             return UNSAFE.objectFieldOffset(clazz.getDeclaredField(fieldName));
         } catch (NoSuchFieldException e) {
-            throw new ExceptionInInitializerError(e);
+            throw Lang.uncheck(e);
         }
     }
 
@@ -103,7 +104,7 @@ public class Unsafe {
             try {
                 RequiringReflection.implAddOpens.invoke(from, packageName, to);
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
+                throw Lang.uncheck(e);
             }
         }
     }
@@ -305,7 +306,7 @@ public class Unsafe {
     }
 
     public static void invokeCleaner(ByteBuffer directBuffer) {
-        SunUnsafeAccess.UNSAFE.invokeCleaner(directBuffer);
+        SunUnsafe.UNSAFE.invokeCleaner(directBuffer);
     }
 
     public static Object staticFieldBase(Field f) {
@@ -324,7 +325,7 @@ public class Unsafe {
             try {
                 implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
             } catch (NoSuchMethodException e) {
-                throw new ExceptionInInitializerError(e);
+                throw Lang.uncheck(e);
             }
             setAccessible(implAddOpens);
         }

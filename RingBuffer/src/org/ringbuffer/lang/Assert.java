@@ -18,22 +18,50 @@ package org.ringbuffer.lang;
 
 public class Assert {
     public static void equal(int left, int right) {
+        assert left == right : left;
+    }
+
+    public static void equalTo(int left, int right) {
         assert left == right : left + " " + right;
     }
 
     public static void equal(long left, long right) {
+        assert left == right : left;
+    }
+
+    public static void equalTo(long left, long right) {
         assert left == right : left + " " + right;
     }
 
+    public static void equal(Object left, Object right) {
+        assert left.equals(right) : left;
+    }
+
+    public static void equalTo(Object left, Object right) {
+        assert left.equals(right) : left + " " + right;
+    }
+
     public static void notEqual(int left, int right) {
+        assert left != right;
+    }
+
+    public static void notEqualTo(int left, int right) {
         assert left != right : left;
     }
 
     public static void notEqual(long left, long right) {
+        assert left != right;
+    }
+
+    public static void notEqualTo(long left, long right) {
         assert left != right : left;
     }
 
     public static void notEqual(Object left, Object right) {
+        assert !left.equals(right);
+    }
+
+    public static void notEqualTo(Object left, Object right) {
         assert !left.equals(right) : left;
     }
 

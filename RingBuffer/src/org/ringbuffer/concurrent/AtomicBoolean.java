@@ -16,7 +16,7 @@
 
 package org.ringbuffer.concurrent;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicBoolean {
     public static void setPlain(Object instance, long offset, boolean value) {

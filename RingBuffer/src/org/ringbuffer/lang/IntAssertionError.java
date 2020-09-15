@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.lang;
 
-import org.ringbuffer.lang.Lang;
-
-import java.lang.reflect.Method;
-
-class FactoryMethod<T> implements Invokable<T> {
-    private final Method method;
-
-    FactoryMethod(Method method) {
-        this.method = method;
+class IntAssertionError extends AssertionError {
+    IntAssertionError(int one, int two) {
+        super(Check.EXCEPTION_CLASS_NAME + one + " " + two);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T call(Object... arguments) {
-        try {
-            return (T) method.invoke(arguments);
-        } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
-        }
+    public String toString() {
+        return getMessage();
     }
 }

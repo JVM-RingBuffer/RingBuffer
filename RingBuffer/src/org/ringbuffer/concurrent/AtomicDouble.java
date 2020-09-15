@@ -19,7 +19,7 @@ package org.ringbuffer.concurrent;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicDouble {
     public static void setPlain(Object instance, long offset, double value) {

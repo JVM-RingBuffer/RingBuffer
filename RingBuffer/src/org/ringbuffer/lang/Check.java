@@ -16,204 +16,222 @@
 
 package org.ringbuffer.lang;
 
-public class Assume {
+public class Check {
+    public static void equal(int left, int right) {
+        if (left != right) {
+            throw new AssertionError(left);
+        }
+    }
+
+    public static void equalTo(int left, int right) {
+        if (left != right) {
+            throw new IntAssertionError(left, right);
+        }
+    }
+
+    public static void equal(long left, long right) {
+        if (left != right) {
+            throw new AssertionError(left);
+        }
+    }
+
+    public static void equalTo(long left, long right) {
+        if (left != right) {
+            throw new LongAssertionError(left, right);
+        }
+    }
+
+    public static void equal(Object left, Object right) {
+        if (!left.equals(right)) {
+            throw new AssertionError(left);
+        }
+    }
+
+    public static void equalTo(Object left, Object right) {
+        if (!left.equals(right)) {
+            throw new ObjectAssertionError(left, right);
+        }
+    }
+
     public static void notEqual(int left, int right) {
         if (left == right) {
-            throw new IllegalArgumentException();
+            throw new AssertionError();
         }
     }
 
     public static void notEqualTo(int left, int right) {
         if (left == right) {
-            throw new IllegalIntArgumentException(left);
+            throw new AssertionError(left);
         }
     }
 
     public static void notEqual(long left, long right) {
         if (left == right) {
-            throw new IllegalArgumentException();
+            throw new AssertionError();
         }
     }
 
     public static void notEqualTo(long left, long right) {
         if (left == right) {
-            throw new IllegalLongArgumentException(left);
+            throw new AssertionError(left);
         }
     }
 
     public static void notEqual(Object left, Object right) {
         if (left.equals(right)) {
-            throw new IllegalArgumentException();
+            throw new AssertionError();
         }
     }
 
     public static void notEqualTo(Object left, Object right) {
         if (left.equals(right)) {
-            throw new IllegalObjectArgumentException(left);
+            throw new AssertionError(left);
         }
     }
 
     public static void lesser(int value, int cap) {
         if (value >= cap) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void lesserThan(int value, int cap) {
         if (value >= cap) {
-            throw new IllegalIntArgumentException(value, cap);
+            throw new IntAssertionError(value, cap);
         }
     }
 
     public static void lesser(long value, long cap) {
         if (value >= cap) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void lesserThan(long value, long cap) {
         if (value >= cap) {
-            throw new IllegalLongArgumentException(value, cap);
+            throw new LongAssertionError(value, cap);
         }
     }
 
     public static void notLesser(int value, int cap) {
         if (value < cap) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notLesserThan(int value, int cap) {
         if (value < cap) {
-            throw new IllegalIntArgumentException(value, cap);
+            throw new IntAssertionError(value, cap);
         }
     }
 
     public static void notLesser(long value, long cap) {
         if (value < cap) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notLesserThan(long value, long cap) {
         if (value < cap) {
-            throw new IllegalLongArgumentException(value, cap);
+            throw new LongAssertionError(value, cap);
         }
     }
 
     public static void greater(int value, int cap) {
         if (value <= cap) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void greaterThan(int value, int cap) {
         if (value <= cap) {
-            throw new IllegalIntArgumentException(value, cap);
+            throw new IntAssertionError(value, cap);
         }
     }
 
     public static void greater(long value, long cap) {
         if (value <= cap) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void greaterThan(long value, long cap) {
         if (value <= cap) {
-            throw new IllegalLongArgumentException(value, cap);
+            throw new LongAssertionError(value, cap);
         }
     }
 
     public static void notGreater(int value, int cap) {
         if (value > cap) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notGreaterThan(int value, int cap) {
         if (value > cap) {
-            throw new IllegalIntArgumentException(value, cap);
+            throw new IntAssertionError(value, cap);
         }
     }
 
     public static void notGreater(long value, long cap) {
         if (value > cap) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notGreaterThan(long value, long cap) {
         if (value > cap) {
-            throw new IllegalLongArgumentException(value, cap);
+            throw new LongAssertionError(value, cap);
         }
     }
 
     public static void positive(int value) {
         if (value <= 0) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void positive(long value) {
         if (value <= 0L) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notPositive(int value) {
         if (value > 0) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notPositive(long value) {
         if (value > 0L) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void negative(int value) {
         if (value >= 0) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void negative(long value) {
         if (value >= 0L) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notNegative(int value) {
         if (value < 0) {
-            throw new IllegalIntArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
     public static void notNegative(long value) {
         if (value < 0L) {
-            throw new IllegalLongArgumentException(value);
+            throw new AssertionError(value);
         }
     }
 
-    public static void notZero(int value) {
-        if (value == 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public static void notZero(long value) {
-        if (value == 0L) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public static void notNull(Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    static final String EXCEPTION_CLASS_NAME = IllegalArgumentException.class.getName() + ": ";
+    static final String EXCEPTION_CLASS_NAME = AssertionError.class.getName() + ": ";
 }

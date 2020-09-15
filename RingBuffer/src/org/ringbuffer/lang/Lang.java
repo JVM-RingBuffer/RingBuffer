@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.lang;
 
-import org.ringbuffer.lang.Lang;
+import org.ringbuffer.InternalUnsafe;
 
-import java.lang.reflect.Method;
+public class Lang {
+    public static final Module JAVA_BASE_MODULE = IllegalArgumentException.class.getModule();
+    public static final Module ORG_RINGBUFFER_MODULE = InternalUnsafe.OopsCompressed.class.getModule();
 
-class FactoryMethod<T> implements Invokable<T> {
-    private final Method method;
-
-    FactoryMethod(Method method) {
-        this.method = method;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
-    public T call(Object... arguments) {
-        try {
-            return (T) method.invoke(arguments);
-        } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
-        }
+    public static <T extends Throwable> T uncheck(Throwable throwable) throws T {
+        return (T) throwable;
     }
 }

@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer;
 
 import org.ringbuffer.lang.Lang;
+import sun.misc.Unsafe;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 
-class FactoryMethod<T> implements Invokable<T> {
-    private final Method method;
+public class SunUnsafe {
+    public static final Unsafe UNSAFE;
 
-    FactoryMethod(Method method) {
-        this.method = method;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public T call(Object... arguments) {
+    static {
         try {
-            return (T) method.invoke(arguments);
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            UNSAFE = (Unsafe) field.get(null);
         } catch (ReflectiveOperationException e) {
             throw Lang.uncheck(e);
         }

@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.ringbuffer;
+package org.ringbuffer.lang;
 
-import sun.misc.Unsafe;
+class LongAssertionError extends AssertionError {
+    LongAssertionError(long one, long two) {
+        super(Check.EXCEPTION_CLASS_NAME + one + " " + two);
+    }
 
-import java.lang.reflect.Field;
-
-public class SunUnsafeAccess {
-    public static final Unsafe UNSAFE;
-
-    static {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            UNSAFE = (Unsafe) field.get(null);
-        } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+    @Override
+    public String toString() {
+        return getMessage();
     }
 }

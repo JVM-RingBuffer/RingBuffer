@@ -19,7 +19,7 @@ package org.ringbuffer.concurrent;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicArray {
     public static <T> void setPlain(T[] array, int index, T value) {

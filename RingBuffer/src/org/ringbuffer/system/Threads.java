@@ -24,9 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Requires Linux or Windows. Tested on CentOS 7 and Windows 10.
- */
 public class Threads {
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
@@ -69,7 +66,7 @@ public class Threads {
             case WINDOWS_64:
                 return "ThreadManipulation_64.dll";
         }
-        throw new AssertionError();
+        throw new UnsupportedOperationException("Platform is not supported.");
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {

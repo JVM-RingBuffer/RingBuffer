@@ -19,7 +19,7 @@ package org.ringbuffer.concurrent;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class Atomic {
     public static <T> void setPlain(Object instance, long offset, T value) {

@@ -16,7 +16,7 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.UnsafeAccess;
+import org.ringbuffer.InternalUnsafe;
 
 import java.nio.file.Path;
 
@@ -67,7 +67,7 @@ public enum Platform {
     }
 
     public static boolean areOopsCompressed() {
-        return UnsafeAccess.OopsCompressed.value;
+        return InternalUnsafe.OopsCompressed.value;
     }
 
     private static class Current {
@@ -103,7 +103,4 @@ public enum Platform {
     private static class TempFolder {
         static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
     }
-
-    public static final Module JAVA_BASE_MODULE = IllegalArgumentException.class.getModule();
-    public static final Module ORG_RINGBUFFER_MODULE = UnsafeAccess.OopsCompressed.class.getModule();
 }

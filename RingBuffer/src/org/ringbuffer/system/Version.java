@@ -72,7 +72,7 @@ public enum Version {
                     value = JAVA_19;
                     break;
                 default:
-                    throw new AssertionError();
+                    throw new ExceptionInInitializerError("Version is unknown.");
             }
         }
     }

@@ -19,7 +19,7 @@ package org.ringbuffer.concurrent;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongUnaryOperator;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicLongArray {
     public static void setPlain(long[] array, int index, long value) {

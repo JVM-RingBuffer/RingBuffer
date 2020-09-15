@@ -16,6 +16,8 @@
 
 package org.ringbuffer;
 
+import org.ringbuffer.lang.Check;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.system.Platform;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.system.Version;
@@ -23,15 +25,15 @@ import org.ringbuffer.system.Version;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
-public class UnsafeAccess {
+public class InternalUnsafe {
     public static final jdk.internal.misc.Unsafe UNSAFE;
 
     public static void init() {
     }
 
     static {
-        final Module from = Platform.JAVA_BASE_MODULE;
-        final Module to = Platform.ORG_RINGBUFFER_MODULE;
+        final Module from = Lang.JAVA_BASE_MODULE;
+        final Module to = Lang.ORG_RINGBUFFER_MODULE;
         final String packageName = "jdk.internal.misc";
         try {
             if (!from.isOpen(packageName, to)) {
@@ -41,15 +43,13 @@ public class UnsafeAccess {
 
                 long OVERRIDE;
                 if (Version.current() == Version.JAVA_11) {
-                    OVERRIDE = SunUnsafeAccess.UNSAFE.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+                    OVERRIDE = SunUnsafe.UNSAFE.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
                 } else if (Platform.current().is32Bit()) {
                     OVERRIDE = 8L;
                 } else {
-                    long offset = SunUnsafeAccess.UNSAFE.objectFieldOffset(OopsCompressed.class.getDeclaredField("i"));
-                    if (offset == 8L) {
-                        assert Platform.current().is32Bit();
-                        OVERRIDE = -1L;
-                    } else if (offset == 12L) {
+                    long offset = SunUnsafe.UNSAFE.objectFieldOffset(OopsCompressed.class.getDeclaredField("i"));
+                    Check.notEqualTo(offset, 8L);
+                    if (offset == 12L) {
                         OVERRIDE = 12L;
                     } else if (offset == 16L) {
                         OVERRIDE = 16L;
@@ -57,12 +57,12 @@ public class UnsafeAccess {
                         throw new AssertionError();
                     }
                 }
-                SunUnsafeAccess.UNSAFE.putBoolean(implAddOpens, OVERRIDE, true);
+                SunUnsafe.UNSAFE.putBoolean(implAddOpens, OVERRIDE, true);
 
                 implAddOpens.invoke(from, packageName, to);
             }
         } catch (ReflectiveOperationException e) {
-            throw new ExceptionInInitializerError(e);
+            throw Lang.uncheck(e);
         }
         UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
     }
@@ -72,7 +72,7 @@ public class UnsafeAccess {
 
         int i;
 
-        // Duplicated in Unsafe.<clinit>
+        // Duplicated in InternalUnsafe.<clinit>
         static {
             long offset = Unsafe.objectFieldOffset(OopsCompressed.class, "i");
             if (offset == 8L) {

@@ -18,7 +18,7 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.lang.Assume;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 import static org.ringbuffer.concurrent.AtomicByteArray.elementOffset;
 
 public class HeapBuffer {

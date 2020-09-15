@@ -16,7 +16,7 @@
 
 package org.ringbuffer.classcopy;
 
-import java.lang.reflect.InvocationTargetException;
+import org.ringbuffer.lang.Lang;
 
 class Constructor<T> implements Invokable<T> {
     private final java.lang.reflect.Constructor<T> constructor;
@@ -29,10 +29,8 @@ class Constructor<T> implements Invokable<T> {
     public T call(Object... arguments) {
         try {
             return constructor.newInstance(arguments);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new AssertionError();
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause());
+        } catch (ReflectiveOperationException e) {
+            throw Lang.uncheck(e);
         }
     }
 }

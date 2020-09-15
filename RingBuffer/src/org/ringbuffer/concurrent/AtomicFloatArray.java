@@ -19,7 +19,7 @@ package org.ringbuffer.concurrent;
 import org.ringbuffer.lang.FloatBinaryOperator;
 import org.ringbuffer.lang.FloatUnaryOperator;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicFloatArray {
     public static void setPlain(float[] array, int index, float value) {

@@ -18,7 +18,7 @@ package org.ringbuffer.concurrent;
 
 import org.ringbuffer.system.Unsafe;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class DirectAtomicBooleanArray {
     public static long allocate(long length, boolean initialValue) {

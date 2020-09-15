@@ -19,7 +19,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.lang.Assume;
 import org.ringbuffer.system.Unsafe;
 
-import static org.ringbuffer.UnsafeAccess.UNSAFE;
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class DirectBuffer {
     public static long allocate(long length) {

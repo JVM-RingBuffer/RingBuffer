@@ -19,6 +19,7 @@ package org.ringbuffer.classcopy;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.ringbuffer.lang.Assert;
+import org.ringbuffer.lang.Lang;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
@@ -60,7 +61,7 @@ public class CopiedClass<T> {
         try {
             return of(original, MethodHandles.privateLookupIn(original, lookup));
         } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
+            throw Lang.uncheck(e);
         }
     }
 
@@ -108,7 +109,7 @@ public class CopiedClass<T> {
         try {
             constructor = copy.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
+            throw Lang.uncheck(e);
         }
         if (!constructor.canAccess(null)) {
             constructor.setAccessible(true);
@@ -124,7 +125,7 @@ public class CopiedClass<T> {
         try {
             method = copy.getDeclaredMethod(name, parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
+            throw Lang.uncheck(e);
         }
         if (!Modifier.isStatic(method.getModifiers())) {
             throw new IllegalArgumentException("Method must be static.");

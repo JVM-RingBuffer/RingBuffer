@@ -16,7 +16,7 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.UnsafeAccess;
+import org.ringbuffer.InternalUnsafe;
 
 public class CleanerService {
     public static void freeMemory(Object object, long... addresses) {
@@ -24,7 +24,7 @@ public class CleanerService {
     }
 
     public static void freeMemory(long address) {
-        UnsafeAccess.UNSAFE.freeMemory(address);
+        InternalUnsafe.UNSAFE.freeMemory(address);
     }
 
     private static class FreeMemory implements Runnable {
