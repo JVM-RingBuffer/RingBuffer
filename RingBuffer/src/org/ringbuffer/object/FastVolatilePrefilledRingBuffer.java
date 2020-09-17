@@ -20,13 +20,13 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.wait.BusyWaitStrategy;
-import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;
     private final boolean[] positionNotModified;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended
     private int readPosition;
@@ -37,6 +37,7 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
     @Override
@@ -61,7 +62,7 @@ class FastVolatilePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     @Override
     public T take() {
-        return take(HintBusyWaitStrategy.DEFAULT_INSTANCE);
+        return take(readBusyWaitStrategy);
     }
 
     @Override

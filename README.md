@@ -15,6 +15,7 @@ If ultra-low latency is not a requirement, there are ways to busy-wait without c
 They can be pre-filled, to support garbage-free operation.  
 They support reading elements in batches, which improves throughput at the cost of reduced granularity.  
 When full, they can either clear all elements, discard incoming elements, or they can block waiting for an element to be read.
+`ConcurrentOverwriting*` ones discard the element that is going to be read.
 
 **Marshalling ring buffers** are backed by a byte array and allow to transfer any primitive type.
 

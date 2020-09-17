@@ -16,13 +16,13 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.RingBufferBuilder;
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
-abstract class ObjectRingBufferBuilder<T> extends RingBufferBuilder<ObjectRingBuffer<T>> {
+abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
     private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
 
     @Override

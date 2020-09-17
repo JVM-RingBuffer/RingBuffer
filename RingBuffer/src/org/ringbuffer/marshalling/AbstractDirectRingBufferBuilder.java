@@ -16,6 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.system.CleanerService;
 
@@ -37,7 +38,7 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     }
 
     @Override
-    protected abstract AbstractDirectRingBufferBuilder<?> withoutLocks();
+    protected abstract AbstractRingBufferBuilder<?> withoutLocks();
 
     @Override
     protected void withoutLocks0() {

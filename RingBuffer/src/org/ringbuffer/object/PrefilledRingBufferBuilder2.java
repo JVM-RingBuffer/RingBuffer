@@ -16,7 +16,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.RingBufferBuilder;
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Supplier;
@@ -57,12 +57,12 @@ public class PrefilledRingBufferBuilder2<T> extends AbstractPrefilledRingBufferB
     }
 
     @Override
-    protected RingBufferBuilder<?> blocking() {
+    protected AbstractRingBufferBuilder<?> blocking() {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
+    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
         throw new AssertionError();
     }
 
@@ -72,7 +72,7 @@ public class PrefilledRingBufferBuilder2<T> extends AbstractPrefilledRingBufferB
     }
 
     @Override
-    protected RingBufferBuilder<?> withoutLocks() {
+    protected AbstractRingBufferBuilder<?> withoutLocks() {
         throw new AssertionError();
     }
 

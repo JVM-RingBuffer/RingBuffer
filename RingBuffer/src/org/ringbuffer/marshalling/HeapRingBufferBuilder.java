@@ -16,7 +16,7 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.RingBufferBuilder;
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRingBuffer> {
@@ -49,17 +49,17 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
     }
 
     @Override
-    protected RingBufferBuilder<?> blocking() {
+    protected AbstractRingBufferBuilder<?> blocking() {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
+    protected AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy) {
         throw new AssertionError();
     }
 
     @Override
-    protected RingBufferBuilder<?> withoutLocks() {
+    protected AbstractRingBufferBuilder<?> withoutLocks() {
         throw new AssertionError();
     }
 

@@ -21,7 +21,6 @@ import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.wait.BusyWaitStrategy;
-import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
@@ -29,6 +28,7 @@ class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
 
     private final int capacityMinusOne;
     private final T[] buffer;
+    private final BusyWaitStrategy readBusyWaitStrategy;
 
     @Contended
     private int readPosition;
@@ -38,6 +38,7 @@ class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
     FastAtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
+        readBusyWaitStrategy = builder.getReadBusyWaitStrategy();
     }
 
     @Override
@@ -52,7 +53,7 @@ class FastAtomicWriteRingBuffer<T> extends FastRingBuffer<T> {
 
     @Override
     public T take() {
-        return take(HintBusyWaitStrategy.DEFAULT_INSTANCE);
+        return take(readBusyWaitStrategy);
     }
 
     @Override

@@ -16,12 +16,12 @@
 
 package org.ringbuffer.marshalling;
 
-import org.ringbuffer.RingBufferBuilder;
+import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 
-abstract class MarshallingRingBufferBuilder<T> extends RingBufferBuilder<T> {
+abstract class MarshallingRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
     private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
 
     @Override

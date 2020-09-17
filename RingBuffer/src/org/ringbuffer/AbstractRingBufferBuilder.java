@@ -24,19 +24,19 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.lang.invoke.MethodHandles;
 
-public abstract class RingBufferBuilder<T> {
+public abstract class AbstractRingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
     protected RingBufferType type = RingBufferType.CLEARING;
     private BusyWaitStrategy writeBusyWaitStrategy;
     private BusyWaitStrategy readBusyWaitStrategy;
     protected boolean copyClass;
-    // All fields are copied in <init>(RingBufferBuilder<?>)
+    // All fields are copied in <init>(AbstractRingBufferBuilder<?>)
 
-    protected RingBufferBuilder() {
+    protected AbstractRingBufferBuilder() {
     }
 
-    protected RingBufferBuilder(RingBufferBuilder<?> builder) {
+    protected AbstractRingBufferBuilder(AbstractRingBufferBuilder<?> builder) {
         oneWriter = builder.oneWriter;
         oneReader = builder.oneReader;
         type = builder.type;
@@ -45,50 +45,50 @@ public abstract class RingBufferBuilder<T> {
         copyClass = builder.copyClass;
     }
 
-    public abstract RingBufferBuilder<T> oneWriter();
+    public abstract AbstractRingBufferBuilder<T> oneWriter();
 
     protected void oneWriter0() {
         oneWriter = true;
     }
 
-    public abstract RingBufferBuilder<T> manyWriters();
+    public abstract AbstractRingBufferBuilder<T> manyWriters();
 
     protected void manyWriters0() {
         oneWriter = false;
     }
 
-    public abstract RingBufferBuilder<T> oneReader();
+    public abstract AbstractRingBufferBuilder<T> oneReader();
 
     protected void oneReader0() {
         oneReader = true;
     }
 
-    public abstract RingBufferBuilder<T> manyReaders();
+    public abstract AbstractRingBufferBuilder<T> manyReaders();
 
     protected void manyReaders0() {
         oneReader = false;
     }
 
-    protected abstract RingBufferBuilder<?> blocking();
+    protected abstract AbstractRingBufferBuilder<?> blocking();
 
     protected void blocking0() {
         blocking0(HintBusyWaitStrategy.getDefault());
     }
 
-    protected abstract RingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy);
+    protected abstract AbstractRingBufferBuilder<?> blocking(BusyWaitStrategy busyWaitStrategy);
 
     protected void blocking0(BusyWaitStrategy busyWaitStrategy) {
         type = RingBufferType.BLOCKING;
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    protected abstract RingBufferBuilder<?> withoutLocks();
+    protected abstract AbstractRingBufferBuilder<?> withoutLocks();
 
     protected void withoutLocks0() {
         type = RingBufferType.FAST;
     }
 
-    public abstract RingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
+    public abstract AbstractRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
 
     protected void waitingWith0(BusyWaitStrategy busyWaitStrategy) {
         readBusyWaitStrategy = busyWaitStrategy;
@@ -99,7 +99,7 @@ public abstract class RingBufferBuilder<T> {
      *
      * @see CopiedClass
      */
-    public abstract RingBufferBuilder<T> copyClass();
+    public abstract AbstractRingBufferBuilder<T> copyClass();
 
     protected void copyClass0() {
         copyClass = true;
