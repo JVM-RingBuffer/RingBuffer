@@ -214,4 +214,45 @@ public class Ensure {
     }
 
     static final String EXCEPTION_CLASS_NAME = IllegalStateException.class.getName() + ": ";
+
+    private static class IllegalIntStateException extends IllegalStateException {
+        IllegalIntStateException(int value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        IllegalIntStateException(int value, int cap) {
+            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
+
+    private static class IllegalLongStateException extends IllegalStateException {
+        IllegalLongStateException(long value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        IllegalLongStateException(long value, long cap) {
+            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
+
+    private static class IllegalObjectStateException extends IllegalStateException {
+        IllegalObjectStateException(Object value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
 }

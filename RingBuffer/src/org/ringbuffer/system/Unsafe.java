@@ -86,11 +86,7 @@ public class Unsafe {
     }
 
     public static long objectFieldOffset(Class<?> clazz, String fieldName) {
-        try {
-            return UNSAFE.objectFieldOffset(clazz.getDeclaredField(fieldName));
-        } catch (NoSuchFieldException e) {
-            throw Lang.uncheck(e);
-        }
+        return UNSAFE.objectFieldOffset(Lang.getField(clazz, fieldName));
     }
 
     public static void setAccessible(AccessibleObject accessibleObject) {

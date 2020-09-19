@@ -214,4 +214,45 @@ public class Assume {
     }
 
     static final String EXCEPTION_CLASS_NAME = IllegalArgumentException.class.getName() + ": ";
+
+    private static class IllegalIntArgumentException extends IllegalArgumentException {
+        IllegalIntArgumentException(int value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        IllegalIntArgumentException(int value, int cap) {
+            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
+
+    private static class IllegalLongArgumentException extends IllegalArgumentException {
+        IllegalLongArgumentException(long value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        IllegalLongArgumentException(long value, long cap) {
+            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
+
+    private static class IllegalObjectArgumentException extends IllegalArgumentException {
+        IllegalObjectArgumentException(Object value) {
+            super(EXCEPTION_CLASS_NAME + value);
+        }
+
+        @Override
+        public String toString() {
+            return getMessage();
+        }
+    }
 }

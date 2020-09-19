@@ -25,23 +25,23 @@ public class ConcurrentStack<T extends ConcurrentStack.Element<T>> {
     private T head;
 
     public void push(T element) {
-        T current;
+        T head;
         do {
-            current = Atomic.getOpaque(this, HEAD);
-            element.setNext(current);
-        } while (!Atomic.compareAndSetVolatile(this, HEAD, current, element));
+            head = Atomic.getOpaque(this, HEAD);
+            element.setNext(head);
+        } while (!Atomic.compareAndSetVolatile(this, HEAD, head, element));
     }
 
     public @Optional T pop() {
-        T currentHead, futureHead;
+        T head, newHead;
         do {
-            currentHead = Atomic.getAcquire(this, HEAD);
-            if (currentHead == null) {
+            head = Atomic.getAcquire(this, HEAD);
+            if (head == null) {
                 return null;
             }
-            futureHead = currentHead.getNext();
-        } while (!Atomic.compareAndSetVolatile(this, HEAD, currentHead, futureHead));
-        return currentHead;
+            newHead = head.getNext();
+        } while (!Atomic.compareAndSetVolatile(this, HEAD, head, newHead));
+        return head;
     }
 
     public @Optional T peek() {

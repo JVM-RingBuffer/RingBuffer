@@ -96,21 +96,23 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 
 ## Download
 
-Find artifacts and Maven coordinates in _Releases_.
+Maven: `org.ringbuffer:ringbuffer:0.1` - add repository: `https://ringbuffer.org/maven`
+
+Download: [binary](https://ringbuffer.org/download/RingBuffer-0.1.jar) - [sources](https://ringbuffer.org/download/RingBuffer-0.1-sources.jar)
 
 Java 11 is required.
 The module name is `org.ringbuffer`.
 
-`-XX:-RestrictContended` is recommended.
-`-XX:-UseBiasedLocking` is suggested.
-Also, to avoid using reflection, consider adding `--add-opens java.base/jdk.internal.misc=org.ringbuffer`.
+`-XX:-RestrictContended` is recommended.  
+`-XX:-UseBiasedLocking` is suggested.  
+`--add-opens java.base/jdk.internal.misc=org.ringbuffer` may be added to avoid the need to use reflection.
 
 **Warning.**
 These features of object ring buffers have not yet been tested:
 - Discarding elements when full
 - `takeLast()`, `forEach()`, `contains()` and `toString()`
 
-You can [run the benchmarks and build from source](BUILD.md).
+You can [build from source and run the benchmarks](BUILD.md).
 
 ## Examples
 
