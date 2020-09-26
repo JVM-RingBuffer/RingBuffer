@@ -216,6 +216,8 @@ public class Ensure {
     static final String EXCEPTION_CLASS_NAME = IllegalStateException.class.getName() + ": ";
 
     private static class IllegalIntStateException extends IllegalStateException {
+        private static final long serialVersionUID = 0L;
+
         IllegalIntStateException(int value) {
             super(EXCEPTION_CLASS_NAME + value);
         }
@@ -231,6 +233,8 @@ public class Ensure {
     }
 
     private static class IllegalLongStateException extends IllegalStateException {
+        private static final long serialVersionUID = 0L;
+
         IllegalLongStateException(long value) {
             super(EXCEPTION_CLASS_NAME + value);
         }
@@ -246,6 +250,8 @@ public class Ensure {
     }
 
     private static class IllegalObjectStateException extends IllegalStateException {
+        private static final long serialVersionUID = 0L;
+
         IllegalObjectStateException(Object value) {
             super(EXCEPTION_CLASS_NAME + value);
         }

@@ -4,7 +4,6 @@ module org.ringbuffer {
     requires static net.bytebuddy;
     requires static jdk.management;
 
-    exports org.ringbuffer.classcopy;
     exports org.ringbuffer.concurrent;
     exports org.ringbuffer.lang;
     exports org.ringbuffer.marshalling;

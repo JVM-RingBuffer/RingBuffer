@@ -12,23 +12,10 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.concurrent;
 
-import org.ringbuffer.lang.Lang;
+public interface ConcurrentStackElement<T extends ConcurrentStackElement<T>> {
+    void setNext(T next);
 
-class Constructor<T> implements Invokable<T> {
-    private final java.lang.reflect.Constructor<T> constructor;
-
-    Constructor(java.lang.reflect.Constructor<T> constructor) {
-        this.constructor = constructor;
-    }
-
-    @Override
-    public T call(Object... arguments) {
-        try {
-            return constructor.newInstance(arguments);
-        } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
-        }
-    }
+    T getNext();
 }

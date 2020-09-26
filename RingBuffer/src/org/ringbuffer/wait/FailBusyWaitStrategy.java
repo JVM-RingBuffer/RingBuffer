@@ -15,8 +15,8 @@
 package org.ringbuffer.wait;
 
 public class FailBusyWaitStrategy implements BusyWaitStrategy {
-    public static final FailBusyWaitStrategy READING_TOO_SLOW = new FailBusyWaitStrategy(false);
-    public static final FailBusyWaitStrategy WRITING_TOO_SLOW = new FailBusyWaitStrategy(true);
+    public static final FailBusyWaitStrategy READING_TOO_SLOW = new FailBusyWaitStrategy(new BusyWaitException("The reading side is slower than expected.", false));
+    public static final FailBusyWaitStrategy WRITING_TOO_SLOW = new FailBusyWaitStrategy(new BusyWaitException("The writing side is slower than expected.", true));
 
     public static BusyWaitStrategy readingTooSlow(int timeBudget) {
         return LinkedMultiStepBusyWaitStrategy.endWith(READING_TOO_SLOW)
@@ -30,10 +30,10 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
                 .build();
     }
 
-    private final boolean isReading;
+    private final BusyWaitException exception;
 
-    private FailBusyWaitStrategy(boolean isReading) {
-        this.isReading = isReading;
+    private FailBusyWaitStrategy(BusyWaitException exception) {
+        this.exception = exception;
     }
 
     @Override
@@ -42,9 +42,6 @@ public class FailBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
-        if (isReading) {
-            throw BusyWaitException.whileReading("The writing side is slower than expected.");
-        }
-        throw BusyWaitException.whileWriting("The reading side is slower than expected.");
+        throw exception;
     }
 }

@@ -216,6 +216,8 @@ public class Assume {
     static final String EXCEPTION_CLASS_NAME = IllegalArgumentException.class.getName() + ": ";
 
     private static class IllegalIntArgumentException extends IllegalArgumentException {
+        private static final long serialVersionUID = 0L;
+
         IllegalIntArgumentException(int value) {
             super(EXCEPTION_CLASS_NAME + value);
         }
@@ -231,6 +233,8 @@ public class Assume {
     }
 
     private static class IllegalLongArgumentException extends IllegalArgumentException {
+        private static final long serialVersionUID = 0L;
+
         IllegalLongArgumentException(long value) {
             super(EXCEPTION_CLASS_NAME + value);
         }
@@ -246,6 +250,8 @@ public class Assume {
     }
 
     private static class IllegalObjectArgumentException extends IllegalArgumentException {
+        private static final long serialVersionUID = 0L;
+
         IllegalObjectArgumentException(Object value) {
             super(EXCEPTION_CLASS_NAME + value);
         }

@@ -23,12 +23,16 @@ public class SunUnsafe {
     public static final Unsafe UNSAFE;
 
     static {
+        Field field = Lang.getField(Unsafe.class, "theUnsafe");
+        field.setAccessible(true);
         try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
             UNSAFE = (Unsafe) field.get(null);
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException e) {
             throw Lang.uncheck(e);
         }
+    }
+
+    public static long objectFieldOffset(Class<?> clazz, String fieldName) {
+        return UNSAFE.objectFieldOffset(Lang.getField(clazz, fieldName));
     }
 }

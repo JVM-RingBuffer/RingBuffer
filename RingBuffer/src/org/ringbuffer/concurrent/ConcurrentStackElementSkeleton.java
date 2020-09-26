@@ -12,8 +12,18 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.concurrent;
 
-public interface Invokable<T> {
-    T call(Object... arguments);
+public abstract class ConcurrentStackElementSkeleton<T extends ConcurrentStackElementSkeleton<T>> implements ConcurrentStackElement<T> {
+    private T next;
+
+    @Override
+    public void setNext(T next) {
+        this.next = next;
+    }
+
+    @Override
+    public T getNext() {
+        return next;
+    }
 }

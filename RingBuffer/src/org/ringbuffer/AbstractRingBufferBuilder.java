@@ -14,8 +14,8 @@
 
 package org.ringbuffer;
 
-import org.ringbuffer.classcopy.CopiedClass;
 import org.ringbuffer.lang.Assume;
+import org.ringbuffer.lang.CopiedClass;
 import org.ringbuffer.lang.Numbers;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;

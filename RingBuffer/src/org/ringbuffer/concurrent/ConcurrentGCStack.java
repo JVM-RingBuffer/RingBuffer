@@ -18,7 +18,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.lang.Optional;
 import org.ringbuffer.system.Unsafe;
 
-public class ConcurrentGCStack<T extends ConcurrentGCStack.Element<T>> {
+public class ConcurrentGCStack<T extends ConcurrentStackElement<T>> {
     private static final long HEAD = Unsafe.objectFieldOffset(ConcurrentGCStack.class, "head");
 
     @Contended
@@ -47,25 +47,5 @@ public class ConcurrentGCStack<T extends ConcurrentGCStack.Element<T>> {
 
     public @Optional T peek() {
         return Atomic.getAcquire(this, HEAD);
-    }
-
-    public interface Element<T extends Element<T>> {
-        void setNext(T next);
-
-        T getNext();
-    }
-
-    public static abstract class ElementSkeleton<T extends ElementSkeleton<T>> implements Element<T> {
-        private T next;
-
-        @Override
-        public void setNext(T next) {
-            this.next = next;
-        }
-
-        @Override
-        public T getNext() {
-            return next;
-        }
     }
 }

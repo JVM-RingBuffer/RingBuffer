@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.classcopy.CopiedClass;
+import org.ringbuffer.lang.CopiedClass;
 
 import java.util.List;
 

@@ -12,24 +12,38 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.lang;
 
-import org.ringbuffer.lang.Lang;
+import org.ringbuffer.system.Unsafe;
 
-import java.lang.reflect.Method;
+public class Constructor<T> implements Invokable<T> {
+    private final java.lang.reflect.Constructor<T> constructor;
 
-class FactoryMethod<T> implements Invokable<T> {
-    private final Method method;
-
-    FactoryMethod(Method method) {
-        this.method = method;
+    Constructor(java.lang.reflect.Constructor<T> constructor) {
+        this.constructor = constructor;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    public java.lang.reflect.Constructor<T> getExecutable() {
+        return constructor;
+    }
+
+    @Override
+    public void ensureAccessible() {
+        if (!constructor.canAccess(null)) {
+            constructor.setAccessible(true);
+        }
+    }
+
+    @Override
+    public void forceAccessible() {
+        Unsafe.setAccessible(constructor);
+    }
+
+    @Override
     public T call(Object... arguments) {
         try {
-            return (T) method.invoke(arguments);
+            return constructor.newInstance(arguments);
         } catch (ReflectiveOperationException e) {
             throw Lang.uncheck(e);
         }

@@ -16,11 +16,12 @@ package org.ringbuffer.system;
 
 import org.ringbuffer.InternalUnsafe;
 import org.ringbuffer.SunUnsafe;
+import org.ringbuffer.lang.Invokable;
 import org.ringbuffer.lang.Lang;
+import org.ringbuffer.lang.Method;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.ProtectionDomain;
 
@@ -95,11 +96,8 @@ public class Unsafe {
 
     public static void addOpens(Module from, Module to, String packageName) {
         if (!from.isOpen(packageName, to)) {
-            try {
-                RequiringReflection.implAddOpens.invoke(from, packageName, to);
-            } catch (ReflectiveOperationException e) {
-                throw Lang.uncheck(e);
-            }
+            RequiringReflection.implAddOpens.setTargetInstance(from);
+            RequiringReflection.implAddOpens.call(packageName, to);
         }
     }
 
@@ -312,16 +310,12 @@ public class Unsafe {
     }
 
     private static class RequiringReflection {
-        static final Method implAddOpens;
+        static final Method<?> implAddOpens;
 
         static {
             final Class<?> clazz = Module.class;
-            try {
-                implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
-            } catch (NoSuchMethodException e) {
-                throw Lang.uncheck(e);
-            }
-            setAccessible(implAddOpens);
+            implAddOpens = Invokable.ofMethod(clazz, "implAddOpens", String.class, clazz);
+            implAddOpens.forceAccessible();
         }
     }
 }

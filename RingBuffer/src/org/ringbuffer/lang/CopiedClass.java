@@ -12,15 +12,12 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.classcopy;
+package org.ringbuffer.lang;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import org.ringbuffer.lang.Assert;
-import org.ringbuffer.lang.Lang;
 
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -103,38 +100,24 @@ public class CopiedClass<T> {
     }
 
     public Invokable<T> getConstructor(Class<?>... parameterTypes) {
-        java.lang.reflect.Constructor<T> constructor;
-        try {
-            constructor = copy.getDeclaredConstructor(parameterTypes);
-        } catch (NoSuchMethodException e) {
-            throw Lang.uncheck(e);
-        }
-        if (!constructor.canAccess(null)) {
-            constructor.setAccessible(true);
-        }
-        return new Constructor<>(constructor);
+        Invokable<T> constructor = Invokable.ofConstructor(copy, parameterTypes);
+        constructor.ensureAccessible();
+        return constructor;
     }
 
     /**
      * The method must be static, and it must return a subtype of the original class.
      */
     public Invokable<T> getFactoryMethod(String name, Class<?>... parameterTypes) {
-        Method method;
-        try {
-            method = copy.getDeclaredMethod(name, parameterTypes);
-        } catch (NoSuchMethodException e) {
-            throw Lang.uncheck(e);
-        }
-        if (!Modifier.isStatic(method.getModifiers())) {
+        Method<T> method = Invokable.ofMethod(copy, name, parameterTypes);
+        if (!method.isStatic()) {
             throw new IllegalArgumentException("Method must be static.");
         }
-        Class<?> returnType = method.getReturnType();
+        Class<?> returnType = method.getExecutable().getReturnType();
         if (returnType != copy && !original.isAssignableFrom(returnType)) {
             throw new IllegalArgumentException("Method must be a factory.");
         }
-        if (!method.canAccess(null)) {
-            method.setAccessible(true);
-        }
-        return new FactoryMethod<>(method);
+        method.ensureAccessible();
+        return method;
     }
 }

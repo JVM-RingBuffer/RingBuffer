@@ -15,13 +15,14 @@
 package org.ringbuffer;
 
 import org.ringbuffer.lang.Check;
+import org.ringbuffer.lang.Invokable;
 import org.ringbuffer.lang.Lang;
+import org.ringbuffer.lang.Method;
 import org.ringbuffer.system.Platform;
 import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.system.Version;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
 
 public class InternalUnsafe {
     public static final jdk.internal.misc.Unsafe UNSAFE;
@@ -33,34 +34,31 @@ public class InternalUnsafe {
         final Module from = Lang.JAVA_BASE_MODULE;
         final Module to = Lang.ORG_RINGBUFFER_MODULE;
         final String packageName = "jdk.internal.misc";
-        try {
-            if (!from.isOpen(packageName, to)) {
-                // Code is duplicated so that we do not have to use reflection in the other case.
-                final Class<?> clazz = Module.class;
-                Method implAddOpens = clazz.getDeclaredMethod("implAddOpens", String.class, clazz);
+        if (!from.isOpen(packageName, to)) {
+            // Code is duplicated so that we do not have to use reflection in the other case.
+            final Class<?> clazz = Module.class;
+            Method<?> implAddOpens = Invokable.ofMethod(clazz, "implAddOpens", String.class, clazz);
 
-                long OVERRIDE;
-                if (Version.current() == Version.JAVA_11) {
-                    OVERRIDE = SunUnsafe.UNSAFE.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
-                } else if (Platform.current().is32Bit()) {
-                    OVERRIDE = 8L;
+            long OVERRIDE;
+            if (Version.current() == Version.JAVA_11) {
+                OVERRIDE = SunUnsafe.objectFieldOffset(AccessibleObject.class, "override");
+            } else if (Platform.current().is32Bit()) {
+                OVERRIDE = 8L;
+            } else {
+                long offset = SunUnsafe.objectFieldOffset(OopsCompressed.class, "i");
+                Check.notEqualTo(offset, 8L);
+                if (offset == 12L) {
+                    OVERRIDE = 12L;
+                } else if (offset == 16L) {
+                    OVERRIDE = 16L;
                 } else {
-                    long offset = SunUnsafe.UNSAFE.objectFieldOffset(OopsCompressed.class.getDeclaredField("i"));
-                    Check.notEqualTo(offset, 8L);
-                    if (offset == 12L) {
-                        OVERRIDE = 12L;
-                    } else if (offset == 16L) {
-                        OVERRIDE = 16L;
-                    } else {
-                        throw new AssertionError();
-                    }
+                    throw new AssertionError();
                 }
-                SunUnsafe.UNSAFE.putBoolean(implAddOpens, OVERRIDE, true);
-
-                implAddOpens.invoke(from, packageName, to);
             }
-        } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
+            SunUnsafe.UNSAFE.putBoolean(implAddOpens.getExecutable(), OVERRIDE, true);
+
+            implAddOpens.setTargetInstance(from);
+            implAddOpens.call(packageName, to);
         }
         UNSAFE = jdk.internal.misc.Unsafe.getUnsafe();
     }
