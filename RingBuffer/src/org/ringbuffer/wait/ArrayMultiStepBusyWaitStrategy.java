@@ -16,10 +16,8 @@ package org.ringbuffer.wait;
 
 import org.ringbuffer.lang.ArrayView;
 import org.ringbuffer.lang.Assert;
-import org.ringbuffer.lang.CopiedClass;
 import org.ringbuffer.lang.IntArrayView;
 
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,11 +74,8 @@ public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy
     }
 
     public static class Builder implements MultiStepBusyWaitStrategy.Builder {
-        private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
-
         private final List<BusyWaitStrategy> strategies = new ArrayList<>();
         private final List<Integer> strategiesTicks = new ArrayList<>();
-        private boolean copyClass;
 
         @Override
         public MultiStepBusyWaitStrategy.Builder endWith(BusyWaitStrategy finalStrategy) {
@@ -110,21 +105,10 @@ public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy
         }
 
         @Override
-        public MultiStepBusyWaitStrategy.Builder copyClass() {
-            copyClass = true;
-            return this;
-        }
-
-        @Override
         public MultiStepBusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.size() == 1) {
                 throwNoIntermediateStepsAdded();
-            }
-            if (copyClass) {
-                return CopiedClass.<MultiStepBusyWaitStrategy>of(ArrayMultiStepBusyWaitStrategy.class, implLookup)
-                        .getConstructor(Builder.class)
-                        .call(this);
             }
             return new ArrayMultiStepBusyWaitStrategy(this);
         }

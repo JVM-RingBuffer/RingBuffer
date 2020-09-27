@@ -14,8 +14,6 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.lang.CopiedClass;
-
 import java.util.List;
 
 public interface MultiStepBusyWaitStrategy extends BusyWaitStrategy {
@@ -27,13 +25,6 @@ public interface MultiStepBusyWaitStrategy extends BusyWaitStrategy {
         Builder endWith(BusyWaitStrategy finalStrategy);
 
         Builder after(BusyWaitStrategy strategy, int strategyTicks);
-
-        /**
-         * A separate busy-wait strategy implementation will be created to allow inlining of polymorphic calls.
-         *
-         * @see CopiedClass
-         */
-        Builder copyClass();
 
         MultiStepBusyWaitStrategy build();
     }

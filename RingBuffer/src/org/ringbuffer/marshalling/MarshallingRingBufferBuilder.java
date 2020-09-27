@@ -20,11 +20,13 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 import java.lang.invoke.MethodHandles;
 
 abstract class MarshallingRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
-    private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
+    private static class ImplLookup {
+        static final MethodHandles.Lookup value = MethodHandles.lookup();
+    }
 
     @Override
     protected MethodHandles.Lookup getImplLookup() {
-        return implLookup;
+        return ImplLookup.value;
     }
 
     MarshallingRingBufferBuilder() {

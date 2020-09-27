@@ -21,11 +21,13 @@ import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
 abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
-    private static final MethodHandles.Lookup implLookup = MethodHandles.lookup();
+    private static class ImplLookup {
+        static final MethodHandles.Lookup value = MethodHandles.lookup();
+    }
 
     @Override
     protected MethodHandles.Lookup getImplLookup() {
-        return implLookup;
+        return ImplLookup.value;
     }
 
     private final int capacity;

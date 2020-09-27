@@ -119,11 +119,6 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
         }
 
         @Override
-        public MultiStepBusyWaitStrategy.Builder copyClass() {
-            return this;
-        }
-
-        @Override
         public MultiStepBusyWaitStrategy build() {
             Assert.equal(strategies.size(), strategiesTicks.size());
             if (strategies.isEmpty()) {

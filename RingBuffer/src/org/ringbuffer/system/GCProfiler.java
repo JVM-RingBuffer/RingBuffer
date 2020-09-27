@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-public class GarbageCollectorProfiler {
+public class GCProfiler {
     private static final AtomicBoolean jvmListenerRegistered = new AtomicBoolean();
     private static volatile JVMListener jvmListener;
 
@@ -52,7 +52,7 @@ public class GarbageCollectorProfiler {
                 e.printStackTrace();
                 return;
             }
-            GarbageCollectorProfiler.jvmListener = jvmListener;
+            GCProfiler.jvmListener = jvmListener;
         }
         jvmListener.addUserListener(listener);
     }
