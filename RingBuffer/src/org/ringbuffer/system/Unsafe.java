@@ -193,14 +193,6 @@ public class Unsafe {
         UNSAFE.throwException(ee);
     }
 
-    public static void unpark(Object thread) {
-        UNSAFE.unpark(thread);
-    }
-
-    public static void park(boolean isAbsolute, long time) {
-        UNSAFE.park(isAbsolute, time);
-    }
-
     public static int getLoadAverage(double[] loadavg, int nelems) {
         return UNSAFE.getLoadAverage(loadavg, nelems);
     }

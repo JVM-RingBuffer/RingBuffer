@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ProducersToProcessorToConsumersTest" type="Application" factoryName="Application" folderName="Other">
-    <option name="MAIN_CLASS_NAME" value="test.object.ProducersToProcessorToConsumersTest" />
+  <configuration default="false" name="ConcurrentStackTest" type="Application" factoryName="Application" folderName="Other" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="test.object.ConcurrentStackTest" />
     <module name="Test" />
     <option name="VM_PARAMETERS" value="-Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended -XX:-UseBiasedLocking --add-opens java.base/jdk.internal.misc=ALL-UNNAMED" />
     <method v="2">

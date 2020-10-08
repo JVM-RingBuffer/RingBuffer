@@ -86,12 +86,12 @@ Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
 
-- `Unsafe` exposes `jdk.internal.misc.Unsafe` methods without causing `IllegalAccessError`s.
-- `Atomic*` classes wrap `jdk.internal.misc.Unsafe` calls, exposing all the features supported by `VarHandle`s while having better names and reducing indirection.
+- `jdk.internal.misc.Unsafe` methods are exposed without causing `IllegalAccessError`s.
+- `Atomic*` classes expose all the features supported by `VarHandle`s while having better names and reducing indirection.
 - `Platform.current()` returns the current OS and JVM architecture.
-- `CleanerService` supports freeing off-heap memory on object GC.
-- `GCProfiler` supports listening to GC events and logging them.
+- `Garbage` supports freeing off-heap memory on object GC, and listening to GC events and logging them.
 - `Assert`, `Check`, `Assume` and `Ensure` perform the bare-minimum work to check conditions, and have better names.
+- `ConcurrentStack` should be faster than `java.util.Stack`.
 - `*ArrayView`s allow to view an array as `List`.
 
 ## Download

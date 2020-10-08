@@ -16,7 +16,7 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
-import org.ringbuffer.system.CleanerService;
+import org.ringbuffer.system.Garbage;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final long capacity;
@@ -66,6 +66,6 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
 
     @Override
     protected void afterBuild(T ringBuffer) {
-        CleanerService.freeMemory(ringBuffer, memoryToFree);
+        Garbage.freeMemory(ringBuffer, memoryToFree);
     }
 }

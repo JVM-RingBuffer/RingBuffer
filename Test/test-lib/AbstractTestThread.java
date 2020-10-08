@@ -61,11 +61,7 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     void waitForCompletion() {
-        try {
-            join();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
+        Threads.join(this);
     }
 
     protected void waitForCompletion(@Optional Profiler profiler) {

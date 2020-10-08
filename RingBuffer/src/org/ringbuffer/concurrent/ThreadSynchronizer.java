@@ -46,18 +46,15 @@ public class ThreadSynchronizer {
 
     private final BusyWaitStrategy waitBusyWaitStrategy;
 
+    private boolean notReady;
+    private boolean doNotCommence;
+
     public ThreadSynchronizer() {
         this(HintBusyWaitStrategy.getDefault());
     }
 
     public ThreadSynchronizer(BusyWaitStrategy waitBusyWaitStrategy) {
         this.waitBusyWaitStrategy = waitBusyWaitStrategy;
-    }
-
-    private boolean notReady;
-    private boolean doNotCommence;
-
-    {
         resetFlags();
     }
 

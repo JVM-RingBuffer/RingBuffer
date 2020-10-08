@@ -41,6 +41,12 @@ public abstract class AbstractRingBufferTest extends Benchmark {
         return result;
     }
 
+    private boolean checkSum = true;
+
+    protected void doNotCheckSum() {
+        checkSum = false;
+    }
+
     protected abstract long getSum();
 
     protected abstract long testSum();
@@ -53,6 +59,9 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     protected void test(int i) {
         AbstractTestThread.resetThreadSpreader();
 
-        assertEquals(getSum(), testSum());
+        long sum = testSum();
+        if (checkSum) {
+            assertEquals(getSum(), sum);
+        }
     }
 }

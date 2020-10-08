@@ -12,18 +12,22 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.concurrent;
+package test.object;
 
-public abstract class ConcurrentStackElementSkeleton<T extends ConcurrentStackElementSkeleton<T>> implements ConcurrentStackElement<T> {
-    private T next;
+import org.ringbuffer.object.ConcurrentStack;
+import test.Profiler;
 
-    @Override
-    public void setNext(T next) {
-        this.next = next;
+class ConcurrentStackTest extends ConcurrentStackContentionTest {
+    private static final ConcurrentStack<Event> STACK = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE);
+
+    public static void main(String[] args) {
+        new ConcurrentStackTest().runBenchmark();
     }
 
     @Override
-    public T getNext() {
-        return next;
+    protected long testSum() {
+        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
+        Writer.runGroupAsync(STACK, profiler);
+        return Reader.runGroupAsync(STACK, profiler);
     }
 }

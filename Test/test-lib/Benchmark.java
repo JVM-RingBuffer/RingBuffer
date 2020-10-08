@@ -39,7 +39,7 @@ public abstract class Benchmark {
     }
 
     protected int getNumIterations() {
-        return 0;
+        return 1_000_000;
     }
 
     public void runBenchmark() {

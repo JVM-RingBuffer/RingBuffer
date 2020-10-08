@@ -14,6 +14,8 @@
 
 package org.ringbuffer.system;
 
+import org.ringbuffer.InternalUnsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Optional;
 
 import java.io.IOException;
@@ -23,6 +25,34 @@ import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Threads {
+    public static void unpark(Object thread) {
+        InternalUnsafe.UNSAFE.unpark(thread);
+    }
+
+    public static void park(long timeInNanoseconds) {
+        park(false, timeInNanoseconds);
+    }
+
+    public static void park(boolean isAbsolute, long timeInNanoseconds) {
+        InternalUnsafe.UNSAFE.park(isAbsolute, timeInNanoseconds);
+    }
+
+    public static void join(Thread thread) {
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw Lang.uncheck(e);
+        }
+    }
+
+    public static void sleep(long timeInMilliseconds) {
+        try {
+            Thread.sleep(timeInMilliseconds);
+        } catch (InterruptedException e) {
+            throw Lang.uncheck(e);
+        }
+    }
+
     private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
 
     public static @Optional Path getLibraryPath() {

@@ -14,6 +14,8 @@
 
 package org.ringbuffer.wait;
 
+import org.ringbuffer.system.Threads;
+
 public class SleepBusyWaitStrategy implements BusyWaitStrategy {
     public static final SleepBusyWaitStrategy DEFAULT_INSTANCE = new SleepBusyWaitStrategy();
 
@@ -27,10 +29,6 @@ public class SleepBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
-        try {
-            Thread.sleep(1L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        Threads.sleep(1L);
     }
 }
