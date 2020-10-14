@@ -15,10 +15,10 @@
 package org.ringbuffer.wait;
 
 import org.ringbuffer.concurrent.AtomicBoolean;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 
 public class InterruptibleBusyWaitStrategy implements BusyWaitStrategy {
-    private static final long INTERRUPTED = Unsafe.objectFieldOffset(InterruptibleBusyWaitStrategy.class, "interrupted");
+    private static final long INTERRUPTED = Lang.objectFieldOffset(InterruptibleBusyWaitStrategy.class, "interrupted");
 
     private final BusyWaitInterruptedException exception;
     private final BusyWaitStrategy nextStrategy;

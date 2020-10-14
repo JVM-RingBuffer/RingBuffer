@@ -20,8 +20,6 @@ import org.ringbuffer.lang.Numbers;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import java.lang.invoke.MethodHandles;
-
 public abstract class AbstractRingBufferBuilder<T> {
     private Boolean oneWriter;
     private Boolean oneReader;
@@ -138,12 +136,10 @@ public abstract class AbstractRingBufferBuilder<T> {
     protected abstract T create(RingBufferConcurrency concurrency, RingBufferType type);
 
     protected T instantiateCopy(Class<?> ringBufferClass) {
-        return CopiedClass.<T>of(ringBufferClass, getImplLookup())
+        return CopiedClass.<T>of(ringBufferClass)
                 .getConstructor(getClass())
                 .call(this);
     }
-
-    protected abstract MethodHandles.Lookup getImplLookup();
 
     protected BusyWaitStrategy getWriteBusyWaitStrategy() {
         return writeBusyWaitStrategy;

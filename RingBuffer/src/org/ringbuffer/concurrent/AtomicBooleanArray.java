@@ -14,6 +14,8 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class AtomicBooleanArray {
@@ -187,6 +189,6 @@ public class AtomicBooleanArray {
     }
 
     public static long elementOffset(int index) {
-        return UNSAFE.ARRAY_BOOLEAN_BASE_OFFSET + UNSAFE.ARRAY_BOOLEAN_INDEX_SCALE * index;
+        return Unsafe.ARRAY_BOOLEAN_BASE_OFFSET + Unsafe.ARRAY_BOOLEAN_INDEX_SCALE * index;
     }
 }

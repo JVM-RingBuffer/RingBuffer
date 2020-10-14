@@ -14,6 +14,8 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
@@ -306,6 +308,6 @@ public class AtomicDoubleArray {
     }
 
     public static long elementOffset(int index) {
-        return UNSAFE.ARRAY_DOUBLE_BASE_OFFSET + UNSAFE.ARRAY_DOUBLE_INDEX_SCALE * index;
+        return Unsafe.ARRAY_DOUBLE_BASE_OFFSET + Unsafe.ARRAY_DOUBLE_INDEX_SCALE * index;
     }
 }

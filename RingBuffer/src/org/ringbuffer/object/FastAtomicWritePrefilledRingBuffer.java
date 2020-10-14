@@ -18,12 +18,12 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 @Contended
 class FastAtomicWritePrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
+    private static final long WRITE_POSITION = Lang.objectFieldOffset(FastAtomicWritePrefilledRingBuffer.class, "writePosition");
 
     private final int capacityMinusOne;
     private final T[] buffer;

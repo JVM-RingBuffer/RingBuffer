@@ -17,19 +17,9 @@ package org.ringbuffer.object;
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
 abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
-    private static class ImplLookup {
-        static final MethodHandles.Lookup value = MethodHandles.lookup();
-    }
-
-    @Override
-    protected MethodHandles.Lookup getImplLookup() {
-        return ImplLookup.value;
-    }
-
     private final int capacity;
     // All fields are copied in <init>(ObjectRingBufferBuilder<?>)
 

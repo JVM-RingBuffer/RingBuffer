@@ -14,7 +14,7 @@
 
 package org.ringbuffer.concurrent;
 
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -40,8 +40,8 @@ public class ThreadSynchronizer {
 
     static {
         final Class<?> clazz = ThreadSynchronizer.class;
-        NOT_READY = Unsafe.objectFieldOffset(clazz, "notReady");
-        DO_NOT_COMMENCE = Unsafe.objectFieldOffset(clazz, "doNotCommence");
+        NOT_READY = Lang.objectFieldOffset(clazz, "notReady");
+        DO_NOT_COMMENCE = Lang.objectFieldOffset(clazz, "doNotCommence");
     }
 
     private final BusyWaitStrategy waitBusyWaitStrategy;

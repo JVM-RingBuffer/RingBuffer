@@ -17,7 +17,7 @@ package org.ringbuffer.marshalling;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -25,7 +25,7 @@ import static org.ringbuffer.marshalling.HeapBuffer.*;
 
 @Contended
 class FastAtomicReadHeapRingBuffer extends FastHeapRingBuffer {
-    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadHeapRingBuffer.class, "readPosition");
+    private static final long READ_POSITION = Lang.objectFieldOffset(FastAtomicReadHeapRingBuffer.class, "readPosition");
 
     private final int capacityMinusOne;
     private final byte[] buffer;

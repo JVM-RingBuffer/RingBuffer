@@ -18,7 +18,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -28,8 +28,8 @@ class FastConcurrentPrefilledRingBuffer<T> extends FastPrefilledRingBuffer<T> {
 
     static {
         final Class<?> clazz = FastConcurrentPrefilledRingBuffer.class;
-        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+        READ_POSITION = Lang.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Lang.objectFieldOffset(clazz, "writePosition");
     }
 
     private final int capacityMinusOne;

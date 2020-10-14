@@ -16,14 +16,14 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
 
 @Contended
 class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(AtomicWriteHeapRingBuffer.class, "writePosition");
+    private static final long WRITE_POSITION = Lang.objectFieldOffset(AtomicWriteHeapRingBuffer.class, "writePosition");
 
     private final int capacity;
     private final int capacityMinusOne;

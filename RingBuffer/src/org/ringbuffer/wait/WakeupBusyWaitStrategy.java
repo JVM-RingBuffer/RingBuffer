@@ -15,10 +15,10 @@
 package org.ringbuffer.wait;
 
 import org.ringbuffer.concurrent.AtomicBoolean;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 
 public class WakeupBusyWaitStrategy implements BusyWaitStrategy {
-    private static final long SHOULD_WAKEUP = Unsafe.objectFieldOffset(WakeupBusyWaitStrategy.class, "shouldWakeup");
+    private static final long SHOULD_WAKEUP = Lang.objectFieldOffset(WakeupBusyWaitStrategy.class, "shouldWakeup");
 
     private final BusyWaitStrategy busyWaitStrategy;
 

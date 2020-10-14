@@ -17,14 +17,14 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
 
 @Contended
 class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(ConcurrentPrefilledRingBuffer.class, "writePosition");
+    private static final long WRITE_POSITION = Lang.objectFieldOffset(ConcurrentPrefilledRingBuffer.class, "writePosition");
 
     private final int capacity;
     private final int capacityMinusOne;

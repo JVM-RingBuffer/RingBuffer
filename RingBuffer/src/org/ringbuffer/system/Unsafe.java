@@ -16,6 +16,7 @@ package org.ringbuffer.system;
 
 import org.ringbuffer.InternalUnsafe;
 import org.ringbuffer.SunUnsafe;
+import org.ringbuffer.concurrent.AtomicBoolean;
 import org.ringbuffer.lang.Invokable;
 import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Method;
@@ -27,9 +28,6 @@ import java.security.ProtectionDomain;
 
 import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
-/**
- * To avoid using reflection, consider adding the VM option: {@code --add-opens java.base/jdk.internal.misc=org.ringbuffer}
- */
 public class Unsafe {
     public static final long ARRAY_BYTE_BASE_OFFSET;
     public static final long ARRAY_CHAR_BASE_OFFSET;
@@ -76,7 +74,7 @@ public class Unsafe {
         ARRAY_OBJECT_INDEX_SCALE = jdk.internal.misc.Unsafe.ARRAY_OBJECT_INDEX_SCALE;
 
         if (Version.current() == Version.JAVA_11) {
-            OVERRIDE = objectFieldOffset(AccessibleObject.class, "override");
+            OVERRIDE = Lang.objectFieldOffset(AccessibleObject.class, "override");
         } else if (Platform.current().is32Bit()) {
             OVERRIDE = 8L;
         } else if (Platform.areOopsCompressed()) {
@@ -86,12 +84,8 @@ public class Unsafe {
         }
     }
 
-    public static long objectFieldOffset(Class<?> clazz, String fieldName) {
-        return UNSAFE.objectFieldOffset(Lang.getField(clazz, fieldName));
-    }
-
     public static void setAccessible(AccessibleObject accessibleObject) {
-        UNSAFE.putBoolean(accessibleObject, OVERRIDE, true);
+        AtomicBoolean.setPlain(accessibleObject, OVERRIDE, true);
     }
 
     public static void addOpens(Module from, Module to, String packageName) {

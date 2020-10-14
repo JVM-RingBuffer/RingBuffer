@@ -17,18 +17,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import java.lang.invoke.MethodHandles;
-
 abstract class MarshallingRingBufferBuilder<T> extends AbstractRingBufferBuilder<T> {
-    private static class ImplLookup {
-        static final MethodHandles.Lookup value = MethodHandles.lookup();
-    }
-
-    @Override
-    protected MethodHandles.Lookup getImplLookup() {
-        return ImplLookup.value;
-    }
-
     MarshallingRingBufferBuilder() {
     }
 

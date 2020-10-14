@@ -17,7 +17,7 @@ package org.ringbuffer.marshalling;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
@@ -25,7 +25,7 @@ import static org.ringbuffer.marshalling.HeapBuffer.*;
 
 @Contended
 class FastAtomicWriteHeapRingBuffer extends FastHeapRingBuffer {
-    private static final long WRITE_POSITION = Unsafe.objectFieldOffset(FastAtomicWriteHeapRingBuffer.class, "writePosition");
+    private static final long WRITE_POSITION = Lang.objectFieldOffset(FastAtomicWriteHeapRingBuffer.class, "writePosition");
 
     private final int capacityMinusOne;
     private final byte[] buffer;

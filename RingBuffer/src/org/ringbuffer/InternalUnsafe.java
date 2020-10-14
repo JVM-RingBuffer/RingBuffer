@@ -19,7 +19,6 @@ import org.ringbuffer.lang.Invokable;
 import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Method;
 import org.ringbuffer.system.Platform;
-import org.ringbuffer.system.Unsafe;
 import org.ringbuffer.system.Version;
 
 import java.lang.reflect.AccessibleObject;
@@ -70,7 +69,7 @@ public class InternalUnsafe {
 
         // Duplicated in InternalUnsafe.<clinit>
         static {
-            long offset = Unsafe.objectFieldOffset(OopsCompressed.class, "i");
+            long offset = Lang.objectFieldOffset(OopsCompressed.class, "i");
             if (offset == 8L) {
                 assert Platform.current().is32Bit();
                 value = false;

@@ -17,7 +17,7 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;
@@ -28,8 +28,8 @@ class AtomicWriteDiscardingGCRingBuffer<T> implements RingBuffer<T> {
 
     static {
         final Class<?> clazz = AtomicWriteDiscardingGCRingBuffer.class;
-        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+        READ_POSITION = Lang.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Lang.objectFieldOffset(clazz, "writePosition");
     }
 
     private final int capacity;

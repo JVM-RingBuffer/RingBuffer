@@ -14,6 +14,8 @@
 
 package org.ringbuffer.concurrent;
 
+import org.ringbuffer.system.Unsafe;
+
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongUnaryOperator;
 
@@ -342,6 +344,6 @@ public class AtomicLongArray {
     }
 
     public static long elementOffset(int index) {
-        return UNSAFE.ARRAY_LONG_BASE_OFFSET + UNSAFE.ARRAY_LONG_INDEX_SCALE * index;
+        return Unsafe.ARRAY_LONG_BASE_OFFSET + Unsafe.ARRAY_LONG_INDEX_SCALE * index;
     }
 }

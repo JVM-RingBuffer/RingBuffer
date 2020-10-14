@@ -16,6 +16,7 @@ package org.ringbuffer.concurrent;
 
 import org.ringbuffer.lang.FloatBinaryOperator;
 import org.ringbuffer.lang.FloatUnaryOperator;
+import org.ringbuffer.system.Unsafe;
 
 import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
@@ -306,6 +307,6 @@ public class AtomicFloatArray {
     }
 
     public static long elementOffset(int index) {
-        return UNSAFE.ARRAY_FLOAT_BASE_OFFSET + UNSAFE.ARRAY_FLOAT_INDEX_SCALE * index;
+        return Unsafe.ARRAY_FLOAT_BASE_OFFSET + Unsafe.ARRAY_FLOAT_INDEX_SCALE * index;
     }
 }

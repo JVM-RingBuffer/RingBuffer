@@ -16,7 +16,7 @@ package org.ringbuffer.marshalling;
 
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import static org.ringbuffer.marshalling.HeapBuffer.*;
@@ -27,8 +27,8 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
 
     static {
         final Class<?> clazz = AtomicWriteHeapBlockingRingBuffer.class;
-        READ_POSITION = Unsafe.objectFieldOffset(clazz, "readPosition");
-        WRITE_POSITION = Unsafe.objectFieldOffset(clazz, "writePosition");
+        READ_POSITION = Lang.objectFieldOffset(clazz, "readPosition");
+        WRITE_POSITION = Lang.objectFieldOffset(clazz, "writePosition");
     }
 
     private final int capacity;

@@ -17,13 +17,13 @@ package org.ringbuffer.object;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.concurrent.AtomicArray;
 import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.system.Unsafe;
+import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
 class FastAtomicReadRingBuffer<T> extends FastRingBuffer<T> {
-    private static final long READ_POSITION = Unsafe.objectFieldOffset(FastAtomicReadRingBuffer.class, "readPosition");
+    private static final long READ_POSITION = Lang.objectFieldOffset(FastAtomicReadRingBuffer.class, "readPosition");
 
     private final int capacityMinusOne;
     private final T[] buffer;

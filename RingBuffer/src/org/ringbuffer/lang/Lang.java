@@ -20,6 +20,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static org.ringbuffer.InternalUnsafe.UNSAFE;
+
 public class Lang {
     public static final Module JAVA_BASE_MODULE = IllegalArgumentException.class.getModule();
     public static final Module ORG_RINGBUFFER_MODULE = InternalUnsafe.OopsCompressed.class.getModule();
@@ -51,5 +53,9 @@ public class Lang {
         } catch (NoSuchMethodException e) {
             throw uncheck(e);
         }
+    }
+
+    public static long objectFieldOffset(Class<?> clazz, String fieldName) {
+        return UNSAFE.objectFieldOffset(getField(clazz, fieldName));
     }
 }

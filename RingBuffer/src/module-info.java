@@ -9,5 +9,6 @@ module org.ringbuffer {
     exports org.ringbuffer.marshalling;
     exports org.ringbuffer.object;
     exports org.ringbuffer.system;
+    exports org.ringbuffer.util;
     exports org.ringbuffer.wait;
 }
