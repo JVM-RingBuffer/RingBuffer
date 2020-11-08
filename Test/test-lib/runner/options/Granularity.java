@@ -12,16 +12,17 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum Type implements Option {
-    OVERWRITING("Overwriting"),
-    BLOCKING("Blocking"),
-    DISCARDING("Discarding");
+import test.runner.Option;
+
+public enum Granularity implements Option {
+    NO_BATCH("No Batch"),
+    BATCH("Batch");
 
     private final String name;
 
-    Type(String name) {
+    Granularity(String name) {
         this.name = name;
     }
 

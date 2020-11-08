@@ -12,15 +12,18 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum ThreadSafetyStrategy implements Option {
-    LOCK_BASED("Lock-based"),
-    LOCK_FREE("Lock-free");
+import test.runner.Option;
+
+public enum ElementType implements Option {
+    OBJECT("Object"),
+    HEAP("Heap"),
+    DIRECT("Direct");
 
     private final String name;
 
-    ThreadSafetyStrategy(String name) {
+    ElementType(String name) {
         this.name = name;
     }
 

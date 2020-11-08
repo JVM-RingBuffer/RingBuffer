@@ -14,6 +14,7 @@
 
 package test.runner;
 
+import org.ringbuffer.lang.Lang;
 import test.AbstractRingBufferTest;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 class ProcessStarter extends Thread {
     private static final Class<?> poisonPill = ProcessStarter.class;
+    private static final String testModuleName = poisonPill.getModule().getName();
 
     private final BlockingQueue<Class<?>> queue = new LinkedBlockingQueue<>();
     private final TestRunner testRunner;
@@ -43,8 +45,7 @@ class ProcessStarter extends Thread {
 
     @Override
     public void run() {
-        String classPath = System.getProperty("java.class.path");
-        List<String> command = new ArrayList<>(List.of("java", "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED", "-classpath", classPath));
+        List<String> command = new ArrayList<>(List.of("java", "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=" + Lang.ORG_RINGBUFFER_MODULE.getName(), "-p", System.getProperty("jdk.module.path"), "-m"));
         command.add(null);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
@@ -52,7 +53,7 @@ class ProcessStarter extends Thread {
         try {
             Class<?> testClass;
             while ((testClass = queue.take()) != poisonPill) {
-                command.set(13, testClass.getName());
+                command.set(command.size() - 1, testModuleName + '/' + testClass.getName());
                 Process process = builder.start();
                 process.waitFor();
                 String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.ISO_8859_1);

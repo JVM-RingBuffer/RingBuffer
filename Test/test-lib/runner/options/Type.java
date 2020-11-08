@@ -12,17 +12,18 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum Concurrency implements Option {
-    CONCURRENT("Concurrent"),
-    MANY_READERS("Many Readers"),
-    MANY_WRITERS("Many Writers"),
-    VOLATILE("Volatile");
+import test.runner.Option;
+
+public enum Type implements Option {
+    OVERWRITING("Overwriting"),
+    BLOCKING("Blocking"),
+    DISCARDING("Discarding");
 
     private final String name;
 
-    Concurrency(String name) {
+    Type(String name) {
         this.name = name;
     }
 

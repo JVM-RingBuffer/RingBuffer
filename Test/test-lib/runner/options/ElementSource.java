@@ -12,16 +12,17 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum ElementType implements Option {
-    OBJECT("Object"),
-    HEAP("Heap"),
-    DIRECT("Direct");
+import test.runner.Option;
+
+public enum ElementSource implements Option {
+    EMPTY("Empty"),
+    PREFILLED("Pre-filled");
 
     private final String name;
 
-    ElementType(String name) {
+    ElementSource(String name) {
         this.name = name;
     }
 

@@ -14,6 +14,6 @@
 
 package test.runner;
 
-interface Option {
+public interface Option {
     String getName();
 }

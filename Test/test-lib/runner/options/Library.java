@@ -12,16 +12,19 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum Contention implements Option {
-    CONTENTION("Contention"),
-    NO_CONTENTION("No Contention"),
-    UNBLOCKED_CONTENTION("Unblocked Contention");
+import test.runner.Option;
+
+public enum Library implements Option {
+    RING_BUFFER("RingBuffer"),
+    AGRONA("Agrona"),
+    JCTOOLS("JCTools"),
+    JDK("JDK");
 
     private final String name;
 
-    Contention(String name) {
+    Library(String name) {
         this.name = name;
     }
 

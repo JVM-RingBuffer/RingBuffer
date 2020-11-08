@@ -18,12 +18,13 @@ import test.AbstractRingBufferTest;
 import test.competitors.*;
 import test.marshalling.*;
 import test.object.*;
+import test.runner.options.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class TestRunner {
+class TestRunner {
     public static void main(String[] args) {
         new TestRunner().initialize();
     }

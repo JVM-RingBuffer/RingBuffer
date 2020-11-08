@@ -14,7 +14,6 @@
 
 package test.marshalling;
 
-import org.ringbuffer.AbstractRingBuffer;
 import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.AbstractReader;
 import test.Profiler;
@@ -39,7 +38,7 @@ class HeapReader extends TestThread implements AbstractReader {
 
     private long sum;
 
-    HeapReader(int numIterations, AbstractRingBuffer ringBuffer) {
+    HeapReader(int numIterations, Object ringBuffer) {
         super(numIterations, ringBuffer);
     }
 

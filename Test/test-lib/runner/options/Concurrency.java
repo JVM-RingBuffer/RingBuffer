@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum Library implements Option {
-    RING_BUFFER("RingBuffer"),
-    AGRONA("Agrona"),
-    JCTOOLS("JCTools"),
-    JDK("JDK");
+import test.runner.Option;
+
+public enum Concurrency implements Option {
+    CONCURRENT("Concurrent"),
+    MANY_READERS("Many Readers"),
+    MANY_WRITERS("Many Writers"),
+    VOLATILE("Volatile");
 
     private final String name;
 
-    Library(String name) {
+    Concurrency(String name) {
         this.name = name;
     }
 

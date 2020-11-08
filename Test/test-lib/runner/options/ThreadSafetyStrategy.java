@@ -12,15 +12,17 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum ElementSource implements Option {
-    EMPTY("Empty"),
-    PREFILLED("Pre-filled");
+import test.runner.Option;
+
+public enum ThreadSafetyStrategy implements Option {
+    LOCK_BASED("Lock-based"),
+    LOCK_FREE("Lock-free");
 
     private final String name;
 
-    ElementSource(String name) {
+    ThreadSafetyStrategy(String name) {
         this.name = name;
     }
 

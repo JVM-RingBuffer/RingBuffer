@@ -14,7 +14,6 @@
 
 package test.marshalling;
 
-import org.ringbuffer.AbstractRingBuffer;
 import org.ringbuffer.marshalling.DirectClearingRingBuffer;
 import org.ringbuffer.marshalling.DirectRingBuffer;
 import org.ringbuffer.marshalling.HeapClearingRingBuffer;
@@ -22,7 +21,7 @@ import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
-    TestThread(int numIterations, AbstractRingBuffer ringBuffer) {
+    TestThread(int numIterations, Object ringBuffer) {
         super(numIterations, ringBuffer);
     }
 

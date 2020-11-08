@@ -12,15 +12,19 @@
  * limitations under the License.
  */
 
-package test.runner;
+package test.runner.options;
 
-enum Granularity implements Option {
-    NO_BATCH("No Batch"),
-    BATCH("Batch");
+import test.runner.Option;
+
+public enum JDKQueue implements Option {
+    ARRAY_BLOCKING("ArrayBlocking"),
+    LINKED_BLOCKING("LinkedBlocking"),
+    LINKED_TRANSFER("LinkedTransfer"),
+    LINKED_CONCURRENT("LinkedConcurrent");
 
     private final String name;
 
-    Granularity(String name) {
+    JDKQueue(String name) {
         this.name = name;
     }
 
