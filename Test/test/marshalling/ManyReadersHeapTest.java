@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyReadersHeapTest extends ManyReadersHeapContentionTest {
+public class ManyReadersHeapTest extends ManyReadersHeapContentionTest {
     public static void main(String[] args) {
         new ManyReadersHeapTest().runBenchmark();
     }

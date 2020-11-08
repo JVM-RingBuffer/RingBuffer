@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyToManyHeapTest extends ManyToManyHeapContentionTest {
+public class ManyToManyHeapTest extends ManyToManyHeapContentionTest {
     public static void main(String[] args) {
         new ManyToManyHeapTest().runBenchmark();
     }

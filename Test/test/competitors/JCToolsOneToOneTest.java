@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class JCToolsOneToOneTest extends JCToolsOneToOneContentionTest {
+public class JCToolsOneToOneTest extends JCToolsOneToOneContentionTest {
     public static void main(String[] args) {
         new JCToolsOneToOneTest().runBenchmark();
     }

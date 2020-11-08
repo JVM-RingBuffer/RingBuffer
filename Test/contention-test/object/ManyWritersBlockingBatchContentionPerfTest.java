@@ -16,7 +16,7 @@ package test.object;
 
 import org.ringbuffer.object.RingBuffer;
 
-class ManyWritersBlockingBatchContentionPerfTest extends ManyWritersBlockingContentionTest {
+public class ManyWritersBlockingBatchContentionPerfTest extends ManyWritersBlockingContentionTest {
     public static void main(String[] args) {
         new ManyWritersBlockingBatchContentionPerfTest().runBenchmark();
     }

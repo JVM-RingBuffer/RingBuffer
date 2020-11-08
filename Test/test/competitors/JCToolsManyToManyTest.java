@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class JCToolsManyToManyTest extends JCToolsManyToManyContentionTest {
+public class JCToolsManyToManyTest extends JCToolsManyToManyContentionTest {
     public static void main(String[] args) {
         new JCToolsManyToManyTest().runBenchmark();
     }

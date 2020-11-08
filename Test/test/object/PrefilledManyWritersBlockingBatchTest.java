@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyWritersBlockingBatchTest extends PrefilledManyWritersBlockingTest {
+public class PrefilledManyWritersBlockingBatchTest extends PrefilledManyWritersBlockingTest {
     public static void main(String[] args) {
         new PrefilledManyWritersBlockingBatchTest().runBenchmark();
     }

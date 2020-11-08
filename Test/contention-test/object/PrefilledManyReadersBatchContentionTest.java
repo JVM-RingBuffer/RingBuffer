@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyReadersBatchContentionTest extends PrefilledManyReadersContentionTest {
+public class PrefilledManyReadersBatchContentionTest extends PrefilledManyReadersContentionTest {
     public static void main(String[] args) {
         new PrefilledManyReadersBatchContentionTest().runBenchmark();
     }

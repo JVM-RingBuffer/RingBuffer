@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class OneToOneBlockingBatchTest extends OneToOneBlockingTest {
+public class OneToOneBlockingBatchTest extends OneToOneBlockingTest {
     public static void main(String[] args) {
         new OneToOneBlockingBatchTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class FastManyReadersDirectTest extends FastManyReadersDirectContentionTest {
+public class FastManyReadersDirectTest extends FastManyReadersDirectContentionTest {
     public static void main(String[] args) {
         new FastManyReadersDirectTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class FastOneToOneTest extends FastOneToOneContentionTest {
+public class FastOneToOneTest extends FastOneToOneContentionTest {
     public static void main(String[] args) {
         new FastOneToOneTest().runBenchmark();
     }

@@ -21,7 +21,7 @@ import test.object.FastOneToOneContentionTest;
 
 import java.util.Queue;
 
-class AgronaOneToOneContentionTest extends FastOneToOneContentionTest {
+public class AgronaOneToOneContentionTest extends FastOneToOneContentionTest {
     static final Queue<Event> QUEUE = new OneToOneConcurrentArrayQueue<>(FAST_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

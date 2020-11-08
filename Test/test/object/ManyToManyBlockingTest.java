@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyToManyBlockingTest extends ManyToManyBlockingContentionPerfTest {
+public class ManyToManyBlockingTest extends ManyToManyBlockingContentionPerfTest {
     public static void main(String[] args) {
         new ManyToManyBlockingTest().runBenchmark();
     }

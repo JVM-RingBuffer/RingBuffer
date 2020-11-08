@@ -21,7 +21,7 @@ import test.object.ManyToManyContentionTest;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-class LinkedConcurrentManyToManyContentionTest extends ManyToManyContentionTest {
+public class LinkedConcurrentManyToManyContentionTest extends ManyToManyContentionTest {
     static final Queue<Event> QUEUE = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) {

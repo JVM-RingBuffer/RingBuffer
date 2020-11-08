@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyWritersTest extends ManyWritersContentionTest {
+public class ManyWritersTest extends ManyWritersContentionTest {
     public static void main(String[] args) {
         new ManyWritersTest().runBenchmark();
     }

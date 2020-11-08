@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class FastManyWritersTest extends FastManyWritersContentionTest {
+public class FastManyWritersTest extends FastManyWritersContentionTest {
     public static void main(String[] args) {
         new FastManyWritersTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyReadersTest extends PrefilledManyReadersContentionTest {
+public class PrefilledManyReadersTest extends PrefilledManyReadersContentionTest {
     public static void main(String[] args) {
         new PrefilledManyReadersTest().runBenchmark();
     }

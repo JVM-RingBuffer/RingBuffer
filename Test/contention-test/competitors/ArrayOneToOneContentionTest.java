@@ -21,7 +21,7 @@ import test.object.OneToOneContentionTest;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-class ArrayOneToOneContentionTest extends OneToOneContentionTest {
+public class ArrayOneToOneContentionTest extends OneToOneContentionTest {
     static final BlockingQueue<Event> QUEUE = new ArrayBlockingQueue<>(ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

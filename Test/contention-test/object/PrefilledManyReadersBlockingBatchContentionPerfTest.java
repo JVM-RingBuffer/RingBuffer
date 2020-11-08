@@ -16,7 +16,7 @@ package test.object;
 
 import org.ringbuffer.object.PrefilledRingBuffer2;
 
-class PrefilledManyReadersBlockingBatchContentionPerfTest extends PrefilledManyReadersBlockingContentionTest {
+public class PrefilledManyReadersBlockingBatchContentionPerfTest extends PrefilledManyReadersBlockingContentionTest {
     public static void main(String[] args) {
         new PrefilledManyReadersBlockingBatchContentionPerfTest().runBenchmark();
     }

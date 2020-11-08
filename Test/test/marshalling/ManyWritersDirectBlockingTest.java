@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyWritersDirectBlockingTest extends ManyWritersDirectBlockingContentionPerfTest {
+public class ManyWritersDirectBlockingTest extends ManyWritersDirectBlockingContentionPerfTest {
     public static void main(String[] args) {
         new ManyWritersDirectBlockingTest().runBenchmark();
     }

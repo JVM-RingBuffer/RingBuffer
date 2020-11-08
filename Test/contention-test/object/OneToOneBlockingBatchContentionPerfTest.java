@@ -16,7 +16,7 @@ package test.object;
 
 import org.ringbuffer.object.RingBuffer;
 
-class OneToOneBlockingBatchContentionPerfTest extends OneToOneBlockingContentionTest {
+public class OneToOneBlockingBatchContentionPerfTest extends OneToOneBlockingContentionTest {
     public static void main(String[] args) {
         new OneToOneBlockingBatchContentionPerfTest().runBenchmark();
     }

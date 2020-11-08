@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyWritersHeapTest extends ManyWritersHeapContentionTest {
+public class ManyWritersHeapTest extends ManyWritersHeapContentionTest {
     public static void main(String[] args) {
         new ManyWritersHeapTest().runBenchmark();
     }

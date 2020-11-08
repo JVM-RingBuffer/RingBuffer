@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class FastOneToOneHeapTest extends FastOneToOneHeapContentionTest {
+public class FastOneToOneHeapTest extends FastOneToOneHeapContentionTest {
     public static void main(String[] args) {
         new FastOneToOneHeapTest().runBenchmark();
     }

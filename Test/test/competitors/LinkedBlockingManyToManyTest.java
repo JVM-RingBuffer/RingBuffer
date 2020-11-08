@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class LinkedBlockingManyToManyTest extends LinkedBlockingManyToManyContentionTest {
+public class LinkedBlockingManyToManyTest extends LinkedBlockingManyToManyContentionTest {
     public static void main(String[] args) {
         new LinkedBlockingManyToManyTest().runBenchmark();
     }

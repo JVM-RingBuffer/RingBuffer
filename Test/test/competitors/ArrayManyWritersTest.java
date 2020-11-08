@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class ArrayManyWritersTest extends ArrayManyWritersContentionTest {
+public class ArrayManyWritersTest extends ArrayManyWritersContentionTest {
     public static void main(String[] args) {
         new ArrayManyWritersTest().runBenchmark();
     }

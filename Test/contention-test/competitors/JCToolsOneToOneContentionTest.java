@@ -21,7 +21,7 @@ import test.object.FastOneToOneContentionTest;
 
 import java.util.Queue;
 
-class JCToolsOneToOneContentionTest extends FastOneToOneContentionTest {
+public class JCToolsOneToOneContentionTest extends FastOneToOneContentionTest {
     static final Queue<Event> QUEUE = new SpscArrayQueue<>(FAST_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

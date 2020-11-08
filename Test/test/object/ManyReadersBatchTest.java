@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyReadersBatchTest extends ManyReadersTest {
+public class ManyReadersBatchTest extends ManyReadersTest {
     public static void main(String[] args) {
         new ManyReadersBatchTest().runBenchmark();
     }

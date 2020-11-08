@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class FastManyToManyDirectTest extends FastManyToManyDirectContentionTest {
+public class FastManyToManyDirectTest extends FastManyToManyDirectContentionTest {
     public static void main(String[] args) {
         new FastManyToManyDirectTest().runBenchmark();
     }

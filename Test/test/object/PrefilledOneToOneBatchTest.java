@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
+public class PrefilledOneToOneBatchTest extends PrefilledOneToOneTest {
     public static void main(String[] args) {
         new PrefilledOneToOneBatchTest().runBenchmark();
     }

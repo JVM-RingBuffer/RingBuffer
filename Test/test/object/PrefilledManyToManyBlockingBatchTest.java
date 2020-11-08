@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyToManyBlockingBatchTest extends PrefilledManyToManyBlockingTest {
+public class PrefilledManyToManyBlockingBatchTest extends PrefilledManyToManyBlockingTest {
     public static void main(String[] args) {
         new PrefilledManyToManyBlockingBatchTest().runBenchmark();
     }

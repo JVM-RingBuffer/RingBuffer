@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyWritersBatchTest extends ManyWritersTest {
+public class ManyWritersBatchTest extends ManyWritersTest {
     public static void main(String[] args) {
         new ManyWritersBatchTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class OneToOneBatchContentionTest extends OneToOneContentionTest {
+public class OneToOneBatchContentionTest extends OneToOneContentionTest {
     public static void main(String[] args) {
         new OneToOneBatchContentionTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyReadersDirectTest extends ManyReadersDirectContentionTest {
+public class ManyReadersDirectTest extends ManyReadersDirectContentionTest {
     public static void main(String[] args) {
         new ManyReadersDirectTest().runBenchmark();
     }

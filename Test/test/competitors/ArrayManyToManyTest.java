@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class ArrayManyToManyTest extends ArrayManyToManyContentionTest {
+public class ArrayManyToManyTest extends ArrayManyToManyContentionTest {
     public static void main(String[] args) {
         new ArrayManyToManyTest().runBenchmark();
     }

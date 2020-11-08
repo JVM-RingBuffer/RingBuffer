@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyWritersTest extends PrefilledManyWritersContentionTest {
+public class PrefilledManyWritersTest extends PrefilledManyWritersContentionTest {
     public static void main(String[] args) {
         new PrefilledManyWritersTest().runBenchmark();
     }

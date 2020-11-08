@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledOneToOneTest extends PrefilledOneToOneContentionTest {
+public class PrefilledOneToOneTest extends PrefilledOneToOneContentionTest {
     public static void main(String[] args) {
         new PrefilledOneToOneTest().runBenchmark();
     }

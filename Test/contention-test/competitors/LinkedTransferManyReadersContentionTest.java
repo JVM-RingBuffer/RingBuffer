@@ -21,7 +21,7 @@ import test.object.ManyReadersContentionTest;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
-class LinkedTransferManyReadersContentionTest extends ManyReadersContentionTest {
+public class LinkedTransferManyReadersContentionTest extends ManyReadersContentionTest {
     static final BlockingQueue<Event> QUEUE = new LinkedTransferQueue<>();
 
     public static void main(String[] args) {

@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class LinkedConcurrentManyWritersTest extends LinkedConcurrentManyWritersContentionTest {
+public class LinkedConcurrentManyWritersTest extends LinkedConcurrentManyWritersContentionTest {
     public static void main(String[] args) {
         new LinkedConcurrentManyWritersTest().runBenchmark();
     }

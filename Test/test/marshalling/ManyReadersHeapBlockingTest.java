@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyReadersHeapBlockingTest extends ManyReadersHeapBlockingContentionPerfTest {
+public class ManyReadersHeapBlockingTest extends ManyReadersHeapBlockingContentionPerfTest {
     public static void main(String[] args) {
         new ManyReadersHeapBlockingTest().runBenchmark();
     }

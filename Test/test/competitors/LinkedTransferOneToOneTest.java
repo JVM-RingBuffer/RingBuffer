@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class LinkedTransferOneToOneTest extends LinkedTransferOneToOneContentionTest {
+public class LinkedTransferOneToOneTest extends LinkedTransferOneToOneContentionTest {
     public static void main(String[] args) {
         new LinkedTransferOneToOneTest().runBenchmark();
     }

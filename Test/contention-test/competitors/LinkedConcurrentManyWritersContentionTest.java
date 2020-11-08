@@ -21,7 +21,7 @@ import test.object.ManyWritersContentionTest;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-class LinkedConcurrentManyWritersContentionTest extends ManyWritersContentionTest {
+public class LinkedConcurrentManyWritersContentionTest extends ManyWritersContentionTest {
     static final Queue<Event> QUEUE = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) {

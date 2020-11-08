@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class AgronaManyToManyTest extends AgronaManyToManyContentionTest {
+public class AgronaManyToManyTest extends AgronaManyToManyContentionTest {
     public static void main(String[] args) {
         new AgronaManyToManyTest().runBenchmark();
     }

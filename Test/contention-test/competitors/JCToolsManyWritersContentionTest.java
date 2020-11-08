@@ -21,7 +21,7 @@ import test.object.FastManyWritersContentionTest;
 
 import java.util.Queue;
 
-class JCToolsManyWritersContentionTest extends FastManyWritersContentionTest {
+public class JCToolsManyWritersContentionTest extends FastManyWritersContentionTest {
     static final Queue<Event> QUEUE = new MpscArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

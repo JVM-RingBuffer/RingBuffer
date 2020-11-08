@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyToManyBlockingTest extends PrefilledManyToManyBlockingContentionPerfTest {
+public class PrefilledManyToManyBlockingTest extends PrefilledManyToManyBlockingContentionPerfTest {
     public static void main(String[] args) {
         new PrefilledManyToManyBlockingTest().runBenchmark();
     }

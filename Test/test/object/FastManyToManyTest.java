@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class FastManyToManyTest extends FastManyToManyContentionTest {
+public class FastManyToManyTest extends FastManyToManyContentionTest {
     public static void main(String[] args) {
         new FastManyToManyTest().runBenchmark();
     }

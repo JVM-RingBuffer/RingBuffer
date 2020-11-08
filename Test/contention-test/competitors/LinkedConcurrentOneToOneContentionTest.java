@@ -21,7 +21,7 @@ import test.object.OneToOneContentionTest;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-class LinkedConcurrentOneToOneContentionTest extends OneToOneContentionTest {
+public class LinkedConcurrentOneToOneContentionTest extends OneToOneContentionTest {
     static final Queue<Event> QUEUE = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) {

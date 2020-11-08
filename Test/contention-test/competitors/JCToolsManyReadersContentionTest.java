@@ -21,7 +21,7 @@ import test.object.FastManyReadersContentionTest;
 
 import java.util.Queue;
 
-class JCToolsManyReadersContentionTest extends FastManyReadersContentionTest {
+public class JCToolsManyReadersContentionTest extends FastManyReadersContentionTest {
     static final Queue<Event> QUEUE = new SpmcArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

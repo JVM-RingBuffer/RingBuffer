@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class OneToOneBlockingTest extends OneToOneBlockingContentionPerfTest {
+public class OneToOneBlockingTest extends OneToOneBlockingContentionPerfTest {
     public static void main(String[] args) {
         new OneToOneBlockingTest().runBenchmark();
     }

@@ -21,7 +21,7 @@ import test.object.OneToOneContentionTest;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
-class LinkedTransferOneToOneContentionTest extends OneToOneContentionTest {
+public class LinkedTransferOneToOneContentionTest extends OneToOneContentionTest {
     static final BlockingQueue<Event> QUEUE = new LinkedTransferQueue<>();
 
     public static void main(String[] args) {

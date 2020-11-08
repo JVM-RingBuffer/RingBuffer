@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class ArrayOneToOneTest extends ArrayOneToOneContentionTest {
+public class ArrayOneToOneTest extends ArrayOneToOneContentionTest {
     public static void main(String[] args) {
         new ArrayOneToOneTest().runBenchmark();
     }

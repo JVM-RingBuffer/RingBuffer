@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class ManyWritersDirectTest extends ManyWritersDirectContentionTest {
+public class ManyWritersDirectTest extends ManyWritersDirectContentionTest {
     public static void main(String[] args) {
         new ManyWritersDirectTest().runBenchmark();
     }

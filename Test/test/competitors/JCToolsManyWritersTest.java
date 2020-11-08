@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class JCToolsManyWritersTest extends JCToolsManyWritersContentionTest {
+public class JCToolsManyWritersTest extends JCToolsManyWritersContentionTest {
     public static void main(String[] args) {
         new JCToolsManyWritersTest().runBenchmark();
     }

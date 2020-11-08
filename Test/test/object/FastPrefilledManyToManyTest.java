@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class FastPrefilledManyToManyTest extends FastPrefilledManyToManyContentionTest {
+public class FastPrefilledManyToManyTest extends FastPrefilledManyToManyContentionTest {
     public static void main(String[] args) {
         new FastPrefilledManyToManyTest().runBenchmark();
     }

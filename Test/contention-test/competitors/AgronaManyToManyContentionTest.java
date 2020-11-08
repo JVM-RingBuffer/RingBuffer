@@ -21,7 +21,7 @@ import test.object.FastManyToManyContentionTest;
 
 import java.util.Queue;
 
-class AgronaManyToManyContentionTest extends FastManyToManyContentionTest {
+public class AgronaManyToManyContentionTest extends FastManyToManyContentionTest {
     static final Queue<Event> QUEUE = new ManyToManyConcurrentArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

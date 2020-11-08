@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledOneToOneBatchContentionTest extends PrefilledOneToOneContentionTest {
+public class PrefilledOneToOneBatchContentionTest extends PrefilledOneToOneContentionTest {
     public static void main(String[] args) {
         new PrefilledOneToOneBatchContentionTest().runBenchmark();
     }

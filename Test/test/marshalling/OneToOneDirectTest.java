@@ -16,7 +16,7 @@ package test.marshalling;
 
 import test.Profiler;
 
-class OneToOneDirectTest extends OneToOneDirectContentionTest {
+public class OneToOneDirectTest extends OneToOneDirectContentionTest {
     public static void main(String[] args) {
         new OneToOneDirectTest().runBenchmark();
     }

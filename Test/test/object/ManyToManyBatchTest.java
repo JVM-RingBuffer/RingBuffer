@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyToManyBatchTest extends ManyToManyTest {
+public class ManyToManyBatchTest extends ManyToManyTest {
     public static void main(String[] args) {
         new ManyToManyBatchTest().runBenchmark();
     }

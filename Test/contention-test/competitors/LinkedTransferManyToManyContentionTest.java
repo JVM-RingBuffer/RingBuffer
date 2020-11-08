@@ -21,7 +21,7 @@ import test.object.ManyToManyContentionTest;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
-class LinkedTransferManyToManyContentionTest extends ManyToManyContentionTest {
+public class LinkedTransferManyToManyContentionTest extends ManyToManyContentionTest {
     static final BlockingQueue<Event> QUEUE = new LinkedTransferQueue<>();
 
     public static void main(String[] args) {

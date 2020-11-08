@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class LinkedConcurrentOneToOneTest extends LinkedConcurrentOneToOneContentionTest {
+public class LinkedConcurrentOneToOneTest extends LinkedConcurrentOneToOneContentionTest {
     public static void main(String[] args) {
         new LinkedConcurrentOneToOneTest().runBenchmark();
     }

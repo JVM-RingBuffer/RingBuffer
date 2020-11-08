@@ -21,7 +21,7 @@ import test.object.FastManyToManyContentionTest;
 
 import java.util.Queue;
 
-class JCToolsManyToManyContentionTest extends FastManyToManyContentionTest {
+public class JCToolsManyToManyContentionTest extends FastManyToManyContentionTest {
     static final Queue<Event> QUEUE = new MpmcArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class LinkedTransferManyToManyTest extends LinkedTransferManyToManyContentionTest {
+public class LinkedTransferManyToManyTest extends LinkedTransferManyToManyContentionTest {
     public static void main(String[] args) {
         new LinkedTransferManyToManyTest().runBenchmark();
     }

@@ -16,7 +16,7 @@ package test.competitors;
 
 import test.Profiler;
 
-class AgronaOneToOneTest extends AgronaOneToOneContentionTest {
+public class AgronaOneToOneTest extends AgronaOneToOneContentionTest {
     public static void main(String[] args) {
         new AgronaOneToOneTest().runBenchmark();
     }

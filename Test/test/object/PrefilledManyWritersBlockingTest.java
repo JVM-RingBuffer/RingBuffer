@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class PrefilledManyWritersBlockingTest extends PrefilledManyWritersBlockingContentionPerfTest {
+public class PrefilledManyWritersBlockingTest extends PrefilledManyWritersBlockingContentionPerfTest {
     public static void main(String[] args) {
         new PrefilledManyWritersBlockingTest().runBenchmark();
     }

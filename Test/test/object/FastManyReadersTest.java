@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class FastManyReadersTest extends FastManyReadersContentionTest {
+public class FastManyReadersTest extends FastManyReadersContentionTest {
     public static void main(String[] args) {
         new FastManyReadersTest().runBenchmark();
     }

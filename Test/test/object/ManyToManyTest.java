@@ -16,7 +16,7 @@ package test.object;
 
 import test.Profiler;
 
-class ManyToManyTest extends ManyToManyContentionTest {
+public class ManyToManyTest extends ManyToManyContentionTest {
     public static void main(String[] args) {
         new ManyToManyTest().runBenchmark();
     }

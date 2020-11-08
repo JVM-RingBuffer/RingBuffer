@@ -21,7 +21,7 @@ import test.object.ManyWritersContentionTest;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-class ArrayManyWritersContentionTest extends ManyWritersContentionTest {
+public class ArrayManyWritersContentionTest extends ManyWritersContentionTest {
     static final BlockingQueue<Event> QUEUE = new ArrayBlockingQueue<>(NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {

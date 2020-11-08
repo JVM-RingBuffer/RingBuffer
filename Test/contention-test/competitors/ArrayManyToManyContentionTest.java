@@ -21,7 +21,7 @@ import test.object.ManyToManyContentionTest;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-class ArrayManyToManyContentionTest extends ManyToManyContentionTest {
+public class ArrayManyToManyContentionTest extends ManyToManyContentionTest {
     static final BlockingQueue<Event> QUEUE = new ArrayBlockingQueue<>(NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
