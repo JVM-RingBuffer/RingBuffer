@@ -43,11 +43,11 @@ public class ConcurrentKeyedCounter<K> implements KeyedCounter<K> {
 
         private int value;
 
-        Count() {
+        private Count() {
             AtomicInt.setOpaque(this, VALUE, 1);
         }
 
-        int getAndIncrement() {
+        private int getAndIncrement() {
             return AtomicInt.getAndIncrementVolatile(this, VALUE);
         }
     }

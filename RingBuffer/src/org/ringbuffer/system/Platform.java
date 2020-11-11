@@ -69,7 +69,7 @@ public enum Platform {
     }
 
     private static class Current {
-        static final Platform value;
+        private static final Platform value;
 
         static {
             String osName = System.getProperty("os.name");
@@ -99,6 +99,6 @@ public enum Platform {
     }
 
     private static class TempFolder {
-        static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
+        private static final Path value = Path.of(System.getProperty("java.io.tmpdir"));
     }
 }

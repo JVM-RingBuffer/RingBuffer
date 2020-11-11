@@ -296,7 +296,7 @@ public class Unsafe {
     }
 
     private static class RequiringReflection {
-        static final Method<?> implAddOpens;
+        private static final Method<?> implAddOpens;
 
         static {
             final Class<?> clazz = Module.class;

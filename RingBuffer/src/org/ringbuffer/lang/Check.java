@@ -231,11 +231,11 @@ public class Check {
         }
     }
 
-    static final String EXCEPTION_CLASS_NAME = AssertionError.class.getName() + ": ";
+    private static final String exceptionClassName = AssertionError.class.getName() + ": ";
 
     private static class IntAssertionError extends AssertionError {
-        IntAssertionError(int one, int two) {
-            super(EXCEPTION_CLASS_NAME + one + " " + two);
+        private IntAssertionError(int one, int two) {
+            super(exceptionClassName + one + " " + two);
         }
 
         @Override
@@ -245,8 +245,8 @@ public class Check {
     }
 
     private static class LongAssertionError extends AssertionError {
-        LongAssertionError(long one, long two) {
-            super(EXCEPTION_CLASS_NAME + one + " " + two);
+        private LongAssertionError(long one, long two) {
+            super(exceptionClassName + one + " " + two);
         }
 
         @Override
@@ -256,8 +256,8 @@ public class Check {
     }
 
     private static class ObjectAssertionError extends AssertionError {
-        ObjectAssertionError(Object one, Object two) {
-            super(EXCEPTION_CLASS_NAME + one + " " + two);
+        private ObjectAssertionError(Object one, Object two) {
+            super(exceptionClassName + one + " " + two);
         }
 
         @Override

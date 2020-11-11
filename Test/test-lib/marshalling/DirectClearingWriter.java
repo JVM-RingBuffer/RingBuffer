@@ -21,7 +21,7 @@ import test.TestThreadGroup;
 import static org.ringbuffer.marshalling.DirectOffsets.INT;
 
 class DirectClearingWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
+    private static TestThreadGroup startGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new DirectClearingWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;

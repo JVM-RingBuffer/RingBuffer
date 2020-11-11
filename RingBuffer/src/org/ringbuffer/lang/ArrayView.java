@@ -55,9 +55,6 @@ public class ArrayView<T> extends AbstractList<T> implements RandomAccess, Seria
     private class Iterator implements java.util.Iterator<T> {
         private int cursor = fromIndex;
 
-        Iterator() {
-        }
-
         @Override
         public boolean hasNext() {
             return cursor < array.length;

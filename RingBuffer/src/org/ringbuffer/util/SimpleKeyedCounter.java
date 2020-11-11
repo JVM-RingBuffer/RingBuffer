@@ -41,9 +41,6 @@ public class SimpleKeyedCounter<K> implements KeyedCounter<K> {
     }
 
     private static class Count {
-        int value = 1;
-
-        Count() {
-        }
+        private int value = 1;
     }
 }

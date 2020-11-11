@@ -21,7 +21,7 @@ import test.TestThreadGroup;
 import static org.ringbuffer.marshalling.Offsets.INT;
 
 class HeapWriter extends TestThread {
-    static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {
+    private static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new HeapWriter(numIterations, ringBuffer));
         group.start(profiler);
         return group;

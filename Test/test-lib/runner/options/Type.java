@@ -17,7 +17,7 @@ package test.runner.options;
 import test.runner.Option;
 
 public enum Type implements Option {
-    OVERWRITING("Overwriting"),
+    CLEARING("Clearing"),
     BLOCKING("Blocking"),
     DISCARDING("Discarding");
 

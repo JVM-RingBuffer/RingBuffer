@@ -29,7 +29,7 @@ class SynchronizedPrefilledWriter extends TestThread {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static SynchronizedPrefilledWriter startAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
+    private static SynchronizedPrefilledWriter startAsync(int numIterations, PrefilledRingBuffer<Event> ringBuffer, Profiler profiler) {
         SynchronizedPrefilledWriter writer = new SynchronizedPrefilledWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;

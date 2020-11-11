@@ -19,7 +19,7 @@ import test.Profiler;
 import test.TestThreadGroup;
 
 class PrefilledWriter2 extends TestThread {
-    static TestThreadGroup startGroupAsync(PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
+    private static TestThreadGroup startGroupAsync(PrefilledRingBuffer2<Event> ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new PrefilledWriter2(numIterations, ringBuffer));
         group.start(profiler);
         return group;

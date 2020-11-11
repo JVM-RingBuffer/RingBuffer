@@ -82,7 +82,7 @@ abstract class MultiStepBusyWaitStrategyTest {
         private final String name;
         private int counter;
 
-        TestBusyWaitStrategy(String name) {
+        private TestBusyWaitStrategy(String name) {
             this.name = name;
         }
 

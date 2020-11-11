@@ -113,15 +113,15 @@ public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy
             return new ArrayMultiStepBusyWaitStrategy(this);
         }
 
-        int getInitialStrategyIndex() {
+        private int getInitialStrategyIndex() {
             return strategies.size();
         }
 
-        BusyWaitStrategy[] getStrategies() {
+        private BusyWaitStrategy[] getStrategies() {
             return strategies.toArray(new BusyWaitStrategy[0]);
         }
 
-        int[] getStrategiesTicks() {
+        private int[] getStrategiesTicks() {
             int[] strategiesTicks = new int[this.strategiesTicks.size()];
             int i = 0;
             for (Integer strategyTicks : this.strategiesTicks) {

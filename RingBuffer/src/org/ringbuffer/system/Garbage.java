@@ -43,13 +43,13 @@ public class Garbage {
     }
 
     private static class Cleaner {
-        static final java.lang.ref.Cleaner value = java.lang.ref.Cleaner.create();
+        private static final java.lang.ref.Cleaner value = java.lang.ref.Cleaner.create();
     }
 
     private static class FreeMemory implements Runnable {
         private final long[] addresses;
 
-        FreeMemory(long[] addresses) {
+        private FreeMemory(long[] addresses) {
             this.addresses = addresses;
         }
 
@@ -67,9 +67,6 @@ public class Garbage {
 
     private static class Logger implements Listener {
         private static final StreamBuffer buffer = StreamBuffer.standardOutput(128);
-
-        Logger() {
-        }
 
         @Override
         public void onEvent(GarbageCollectionNotificationInfo notification, GcInfo info) {
@@ -98,17 +95,6 @@ public class Garbage {
     private static class ValuesSumAction implements Consumer<MemoryUsage> {
         private long total;
 
-        ValuesSumAction() {
-        }
-
-        void resetTotal() {
-            total = 0L;
-        }
-
-        long getTotal() {
-            return total;
-        }
-
         @Override
         public void accept(MemoryUsage memoryUsage) {
             total += memoryUsage.getUsed();
@@ -117,9 +103,9 @@ public class Garbage {
 
     public static long sumValues(Map<String, MemoryUsage> memoryUsage) {
         synchronized (valuesSumAction) {
-            valuesSumAction.resetTotal();
+            valuesSumAction.total = 0L;
             memoryUsage.values().forEach(valuesSumAction); // Should create no garbage
-            return valuesSumAction.getTotal();
+            return valuesSumAction.total;
         }
     }
 
@@ -150,10 +136,7 @@ public class Garbage {
     private static class JVMListener implements NotificationListener {
         private final List<Listener> userListeners = new CopyOnWriteArrayList<>();
 
-        JVMListener() {
-        }
-
-        void addUserListener(Listener userListener) {
+        private void addUserListener(Listener userListener) {
             userListeners.add(userListener);
         }
 

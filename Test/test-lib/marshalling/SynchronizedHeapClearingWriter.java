@@ -31,7 +31,7 @@ class SynchronizedHeapClearingWriter extends TestThread {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static SynchronizedHeapClearingWriter startAsync(int numIterations, HeapClearingRingBuffer ringBuffer, Profiler profiler) {
+    private static SynchronizedHeapClearingWriter startAsync(int numIterations, HeapClearingRingBuffer ringBuffer, Profiler profiler) {
         SynchronizedHeapClearingWriter writer = new SynchronizedHeapClearingWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;

@@ -213,17 +213,17 @@ public class Assume {
         }
     }
 
-    static final String EXCEPTION_CLASS_NAME = IllegalArgumentException.class.getName() + ": ";
+    private static final String exceptionClassName = IllegalArgumentException.class.getName() + ": ";
 
     private static class IllegalIntArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        IllegalIntArgumentException(int value) {
-            super(EXCEPTION_CLASS_NAME + value);
+        private IllegalIntArgumentException(int value) {
+            super(exceptionClassName + value);
         }
 
-        IllegalIntArgumentException(int value, int cap) {
-            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        private IllegalIntArgumentException(int value, int cap) {
+            super(exceptionClassName + value + " " + cap);
         }
 
         @Override
@@ -235,12 +235,12 @@ public class Assume {
     private static class IllegalLongArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        IllegalLongArgumentException(long value) {
-            super(EXCEPTION_CLASS_NAME + value);
+        private IllegalLongArgumentException(long value) {
+            super(exceptionClassName + value);
         }
 
-        IllegalLongArgumentException(long value, long cap) {
-            super(EXCEPTION_CLASS_NAME + value + " " + cap);
+        private IllegalLongArgumentException(long value, long cap) {
+            super(exceptionClassName + value + " " + cap);
         }
 
         @Override
@@ -252,8 +252,8 @@ public class Assume {
     private static class IllegalObjectArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        IllegalObjectArgumentException(Object value) {
-            super(EXCEPTION_CLASS_NAME + value);
+        private IllegalObjectArgumentException(Object value) {
+            super(exceptionClassName + value);
         }
 
         @Override

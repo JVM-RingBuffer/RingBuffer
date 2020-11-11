@@ -19,11 +19,11 @@ import test.Profiler;
 
 class ConcurrentStackContentionTest extends RingBufferTest {
     private static class Holder {
-        static final ConcurrentStack<Event> STACK = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
+        private static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
 
         static {
-            for (int i = 0; i < STACK.getCapacity() / 2; i++) {
-                STACK.push(new Event(0));
+            for (int i = 0; i < stack.getCapacity() / 2; i++) {
+                stack.push(new Event(0));
             }
         }
     }
@@ -42,7 +42,7 @@ class ConcurrentStackContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startGroupAsync(Holder.STACK, profiler);
-        return Reader.runGroupAsync(Holder.STACK, profiler);
+        Writer.startGroupAsync(Holder.stack, profiler);
+        return Reader.runGroupAsync(Holder.stack, profiler);
     }
 }

@@ -43,7 +43,7 @@ class TestRunner {
     private final TextArea outputTextArea = new TextArea();
     private final Frame frame = new Frame();
 
-    TestRunner() {
+    private TestRunner() {
         Panel panel = new Panel(new GridLayout(10, 0));
         OptionGroupFactory factory = new OptionGroupFactory(panel);
         concurrency = factory.create(Concurrency.values());
@@ -68,9 +68,10 @@ class TestRunner {
         frame.setVisible(true);
 
         outputTextArea.setFont(outputTextArea.getFont().deriveFont(16F));
+        outputTextArea.requestFocus();
     }
 
-    void initialize() {
+    private void initialize() {
         ProcessStarter processStarter = new ProcessStarter(this);
         processStarter.start();
 
@@ -101,7 +102,7 @@ class TestRunner {
                         switch (threadSafetyStrategy.getOption()) {
                             case LOCK_BASED:
                                 switch (type.getOption()) {
-                                    case OVERWRITING:
+                                    case CLEARING:
                                         switch (elementType.getOption()) {
                                             case OBJECT:
                                                 switch (elementSource.getOption()) {
@@ -328,7 +329,7 @@ class TestRunner {
                         switch (threadSafetyStrategy.getOption()) {
                             case LOCK_BASED:
                                 switch (type.getOption()) {
-                                    case OVERWRITING:
+                                    case CLEARING:
                                         switch (elementType.getOption()) {
                                             case OBJECT:
                                                 switch (elementSource.getOption()) {
@@ -555,7 +556,7 @@ class TestRunner {
                         switch (threadSafetyStrategy.getOption()) {
                             case LOCK_BASED:
                                 switch (type.getOption()) {
-                                    case OVERWRITING:
+                                    case CLEARING:
                                         switch (elementType.getOption()) {
                                             case OBJECT:
                                                 switch (elementSource.getOption()) {
@@ -782,7 +783,7 @@ class TestRunner {
                         switch (threadSafetyStrategy.getOption()) {
                             case LOCK_BASED:
                                 switch (type.getOption()) {
-                                    case OVERWRITING:
+                                    case CLEARING:
                                         switch (elementType.getOption()) {
                                             case OBJECT:
                                                 switch (elementSource.getOption()) {

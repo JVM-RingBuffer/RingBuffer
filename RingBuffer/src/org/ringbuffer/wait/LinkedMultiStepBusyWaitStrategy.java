@@ -127,7 +127,7 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
             return new LinkedMultiStepBusyWaitStrategy(this);
         }
 
-        Node getInitialStrategy() {
+        private Node getInitialStrategy() {
             Iterator<BusyWaitStrategy> strategies = this.strategies.iterator();
             Iterator<Integer> strategiesTicks = this.strategiesTicks.iterator();
             Node initialStrategy = new Node(strategies.next(), strategiesTicks.next(), new Node(finalStrategy, 0, null));
@@ -139,9 +139,9 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
     }
 
     private static class Node {
-        final BusyWaitStrategy strategy;
-        final int strategyTicks;
-        final Node next;
+        private final BusyWaitStrategy strategy;
+        private final int strategyTicks;
+        private final Node next;
 
         Node(BusyWaitStrategy strategy, int strategyTicks, Node next) {
             this.strategy = strategy;

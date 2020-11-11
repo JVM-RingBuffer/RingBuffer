@@ -31,7 +31,7 @@ class SynchronizedDirectWriter extends TestThread {
         startGroupAsync(ringBuffer, profiler).waitForCompletion(null);
     }
 
-    static SynchronizedDirectWriter startAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
+    private static SynchronizedDirectWriter startAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
         SynchronizedDirectWriter writer = new SynchronizedDirectWriter(numIterations, ringBuffer);
         writer.startNow(profiler);
         return writer;

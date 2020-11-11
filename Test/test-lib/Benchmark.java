@@ -73,7 +73,7 @@ public abstract class Benchmark {
     static class Result {
         private static final DecimalFormat doubleFormat = new DecimalFormat("#.##");
 
-        final String profilerName;
+        private final String profilerName;
         private final Profiler.ResultFormat format;
 
         private double sum;
@@ -81,7 +81,7 @@ public abstract class Benchmark {
         private double minimum = Double.MAX_VALUE;
         private double maximum;
 
-        Result(String profilerName, Profiler.ResultFormat format) {
+        private Result(String profilerName, Profiler.ResultFormat format) {
             this.profilerName = profilerName;
             this.format = format;
         }
@@ -97,7 +97,7 @@ public abstract class Benchmark {
             }
         }
 
-        void report() {
+        private void report() {
             double sum;
             double count;
             double minimum;
