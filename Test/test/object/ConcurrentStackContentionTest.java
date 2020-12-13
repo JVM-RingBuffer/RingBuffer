@@ -19,7 +19,7 @@ import test.Profiler;
 
 public class ConcurrentStackContentionTest extends RingBufferTest {
     private static class Holder {
-        private static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
+        static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
 
         static {
             for (int i = 0; i < stack.getCapacity() / 2; i++) {

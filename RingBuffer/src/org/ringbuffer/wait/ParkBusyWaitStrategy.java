@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.Threads;
+import org.ringbuffer.system.Unsafe;
 
 public class ParkBusyWaitStrategy implements BusyWaitStrategy {
     public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();
@@ -29,6 +29,6 @@ public class ParkBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
-        Threads.park(1L);
+        Unsafe.park(1L);
     }
 }

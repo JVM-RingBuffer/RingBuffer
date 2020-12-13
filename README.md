@@ -25,9 +25,8 @@ When full, they can either clear all contents or block waiting for enough space 
 
 ## Thread priority and affinity
 
-First, load the native library for the current platform: `Threads.loadNativeLibrary()`
-- Bind threads to specific CPU cores: `Threads.bindCurrentThreadToCPU(int)`
-- Set threads priority to realtime: `Threads.setCurrentThreadPriorityToRealtime()`
+Bind threads to specific CPU cores: `Threads.bindCurrentThreadToCPU(int)`  
+Set threads priority to realtime: `Threads.setCurrentThreadPriorityToRealtime()`
 
 ## Performance
 

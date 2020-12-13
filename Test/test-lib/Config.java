@@ -20,17 +20,11 @@ import org.ringbuffer.util.PropertyConfiguration;
 import java.nio.file.Path;
 
 public class Config {
-    private static final Config config = new Config();
+    static final int hardwareThreadsPerCore;
+    public static final String javaRuntime;
+    static final int concurrentProducersAndConsumers;
 
-    public static Config getConfig() {
-        return config;
-    }
-
-    private final int hardwareThreadsPerCore;
-    private final String javaRuntime;
-    private final int concurrentProducersAndConsumers;
-
-    private Config() {
+    static {
         PropertyConfiguration configuration = new PropertyConfiguration(Path.of("cfg", "test.properties"));
         hardwareThreadsPerCore = configuration.getInt("hardware-threads-per-core", 2);
         javaRuntime = configuration.getString("java-runtime", "java");
@@ -38,17 +32,5 @@ public class Config {
         configuration.saveDefault();
         Check.positive(hardwareThreadsPerCore);
         Check.notLesser(concurrentProducersAndConsumers, 2);
-    }
-
-    int getHardwareThreadsPerCore() {
-        return hardwareThreadsPerCore;
-    }
-
-    public String getJavaRuntime() {
-        return javaRuntime;
-    }
-
-    int getConcurrentProducersAndConsumers() {
-        return concurrentProducersAndConsumers;
     }
 }

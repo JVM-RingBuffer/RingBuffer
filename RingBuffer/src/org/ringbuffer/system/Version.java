@@ -38,7 +38,7 @@ public enum Version {
     }
 
     private static class Current {
-        private static final Version value;
+        static final Version value;
 
         static {
             switch (System.getProperty("java.version").charAt(1)) {

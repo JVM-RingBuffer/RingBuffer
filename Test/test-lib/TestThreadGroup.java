@@ -22,7 +22,7 @@ public class TestThreadGroup {
     private final AbstractTestThread[] testThreads;
 
     public TestThreadGroup(IntFunction<AbstractTestThread> testThreadFactory) {
-        testThreads = new AbstractTestThread[Config.getConfig().getConcurrentProducersAndConsumers()];
+        testThreads = new AbstractTestThread[Config.concurrentProducersAndConsumers];
         for (int i = 0; i < testThreads.length; i++) {
             testThreads[i] = testThreadFactory.apply(AbstractRingBufferTest.NUM_ITERATIONS);
         }

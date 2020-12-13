@@ -3,7 +3,7 @@
 #include <jni.h>
 #include <sched.h>
 #include <errno.h>
-#include "Threads.h"
+#include "Native.h"
 
 JNIEXPORT jint JNICALL Java_org_ringbuffer_system_Threads_bindCurrentThread
   (JNIEnv *env, jclass clazz, jint cpu)

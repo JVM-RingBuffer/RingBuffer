@@ -14,97 +14,17 @@
 
 package org.ringbuffer.system;
 
-import org.ringbuffer.InternalUnsafe;
-import org.ringbuffer.lang.Optional;
-import org.ringbuffer.lang.UncaughtException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicReference;
+import org.ringbuffer.Native;
 
 public class Threads {
-    public static void unpark(Object thread) {
-        InternalUnsafe.UNSAFE.unpark(thread);
-    }
-
-    public static void park(long timeInNanoseconds) {
-        park(false, timeInNanoseconds);
-    }
-
-    public static void park(boolean isAbsolute, long timeInNanoseconds) {
-        InternalUnsafe.UNSAFE.park(isAbsolute, timeInNanoseconds);
-    }
-
-    public static void join(Thread thread) {
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new UncaughtException(e);
-        }
-    }
-
-    public static void sleep(long timeInMilliseconds) {
-        try {
-            Thread.sleep(timeInMilliseconds);
-        } catch (InterruptedException e) {
-            throw new UncaughtException(e);
-        }
-    }
-
-    private static final AtomicReference<Path> libraryPath = new AtomicReference<>();
-
-    public static @Optional Path getLibraryPath() {
-        return libraryPath.get();
-    }
-
-    public static void loadNativeLibrary() {
-        loadNativeLibrary(Platform.getTempFolder());
-    }
-
-    public static void loadNativeLibrary(Path libraryDirectory) {
-        String libraryName = libraryName();
-        Path libraryPath = libraryDirectory.resolve(libraryName);
-        if (!Threads.libraryPath.compareAndSet(null, libraryPath)) {
-            throw new IllegalStateException("A native library has already been loaded.");
-        }
-        if (Files.notExists(libraryPath)) {
-            try (InputStream stream = Threads.class.getResourceAsStream(libraryName)) {
-                Files.copy(stream, libraryPath);
-            } catch (IOException e) {
-                throw new ThreadManipulationException(e);
-            }
-        }
-        try {
-            System.load(libraryPath.toAbsolutePath().toString());
-        } catch (UnsatisfiedLinkError e) {
-            throw new ThreadManipulationException(e);
-        }
-    }
-
-    private static String libraryName() {
-        switch (Platform.current()) {
-            case LINUX_32:
-                return "libthreadmanipulation_32.so";
-            case LINUX_64:
-                return "libthreadmanipulation_64.so";
-            case WINDOWS_32:
-                return "ThreadManipulation_32.dll";
-            case WINDOWS_64:
-                return "ThreadManipulation_64.dll";
-        }
-        throw new UnsupportedOperationException("Platform is not supported.");
+    static {
+        Native.init();
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
-        try {
-            int errorCode = bindCurrentThread(cpu);
-            if (errorCode != 0) {
-                throw new ThreadManipulationException(errorCode);
-            }
-        } catch (UnsatisfiedLinkError e) {
-            throw new ThreadManipulationException(e);
+        int errorCode = bindCurrentThread(cpu);
+        if (errorCode != 0) {
+            throw new ThreadManipulationException(errorCode);
         }
     }
 
@@ -119,13 +39,9 @@ public class Threads {
      * }</pre>
      */
     public static void setCurrentThreadPriorityToRealtime() {
-        try {
-            int errorCode = setCurrentThreadPriority();
-            if (errorCode != 0) {
-                throw new ThreadManipulationException(errorCode);
-            }
-        } catch (UnsatisfiedLinkError e) {
-            throw new ThreadManipulationException(e);
+        int errorCode = setCurrentThreadPriority();
+        if (errorCode != 0) {
+            throw new ThreadManipulationException(errorCode);
         }
     }
 

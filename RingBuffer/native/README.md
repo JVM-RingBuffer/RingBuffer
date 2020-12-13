@@ -17,5 +17,5 @@ yum install java-11-openjdk-devel
 Build Tools for Visual Studio 2019  
 Workload: C++ build tools  
 Optional: MSVC - VS C++ x64/x86 build tools, Windows 10 SDK  
-Set environment variable to JDK 11 folder: `JAVA_HOME`  
+Set `JAVA_HOME` to JDK 11  
 `build_windows.bat`

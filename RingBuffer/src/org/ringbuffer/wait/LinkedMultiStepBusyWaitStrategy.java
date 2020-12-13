@@ -139,9 +139,9 @@ public class LinkedMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrateg
     }
 
     private static class Node {
-        private final BusyWaitStrategy strategy;
-        private final int strategyTicks;
-        private final Node next;
+        final BusyWaitStrategy strategy;
+        final int strategyTicks;
+        final Node next;
 
         Node(BusyWaitStrategy strategy, int strategyTicks, Node next) {
             this.strategy = strategy;

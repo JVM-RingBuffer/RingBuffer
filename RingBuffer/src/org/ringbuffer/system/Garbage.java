@@ -43,7 +43,7 @@ public class Garbage {
     }
 
     private static class Cleaner {
-        private static final java.lang.ref.Cleaner value = java.lang.ref.Cleaner.create();
+        static final java.lang.ref.Cleaner value = java.lang.ref.Cleaner.create();
     }
 
     private static class FreeMemory implements Runnable {
@@ -93,7 +93,7 @@ public class Garbage {
     private static final ValuesSumAction valuesSumAction = new ValuesSumAction();
 
     private static class ValuesSumAction implements Consumer<MemoryUsage> {
-        private long total;
+        long total;
 
         @Override
         public void accept(MemoryUsage memoryUsage) {
@@ -136,7 +136,7 @@ public class Garbage {
     private static class JVMListener implements NotificationListener {
         private final List<Listener> userListeners = new CopyOnWriteArrayList<>();
 
-        private void addUserListener(Listener userListener) {
+        void addUserListener(Listener userListener) {
             userListeners.add(userListener);
         }
 

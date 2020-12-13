@@ -12,14 +12,20 @@
  * limitations under the License.
  */
 
-package test.marshalling;
+package org.ringbuffer.system;
 
-import org.ringbuffer.lang.Numbers;
-import org.ringbuffer.marshalling.HeapOffsets;
-import test.AbstractRingBufferTest;
+import org.ringbuffer.Native;
 
-abstract class RingBufferTest extends AbstractRingBufferTest {
-    static final int BLOCKING_SIZE = Numbers.getNextPowerOfTwo(5 * HeapOffsets.INT);
-    static final int ONE_TO_ONE_SIZE = Numbers.getNextPowerOfTwo(NUM_ITERATIONS * HeapOffsets.INT + 1);
-    static final int NOT_ONE_TO_ONE_SIZE = Numbers.getNextPowerOfTwo(TOTAL_ELEMENTS * HeapOffsets.INT + 1);
+public class WindowsSleep {
+    static {
+        Native.init();
+        if (!Platform.current().isWindows()) {
+            throw new PlatformNotSupportedException();
+        }
+        prepare();
+    }
+
+    private static native void prepare();
+
+    public static native void sleepHalfAMillisecond();
 }

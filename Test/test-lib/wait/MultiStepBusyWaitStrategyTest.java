@@ -53,7 +53,6 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     @Override
     public void runBenchmark() {
         if (isPerfTest) {
-            Threads.loadNativeLibrary();
             Threads.bindCurrentThreadToCPU(2);
             Threads.setCurrentThreadPriorityToRealtime();
             super.runBenchmark();

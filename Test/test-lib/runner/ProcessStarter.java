@@ -51,7 +51,8 @@ class ProcessStarter extends Thread {
 
     @Override
     public void run() {
-        List<String> command = new ArrayList<>(List.of(Config.getConfig().getJavaRuntime(), "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=" + Lang.ORG_RINGBUFFER_MODULE.getName(), "-p", System.getProperty("jdk.module.path"), "-m"));
+        // -Xms8g -Xmx8g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:-RestrictContended -XX:-UseBiasedLocking
+        List<String> command = new ArrayList<>(List.of(Config.javaRuntime, "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=" + Lang.ORG_RINGBUFFER_MODULE.getName(), "-p", System.getProperty("jdk.module.path"), "-m"));
         command.add(null);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);

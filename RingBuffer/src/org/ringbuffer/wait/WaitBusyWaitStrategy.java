@@ -21,7 +21,7 @@ public class WaitBusyWaitStrategy {
 
     static {
         if (Platform.current().isWindows()) {
-            DEFAULT_INSTANCE = SleepBusyWaitStrategy.DEFAULT_INSTANCE;
+            DEFAULT_INSTANCE = NtDelayBusyWaitStrategy.DEFAULT_INSTANCE;
         } else {
             DEFAULT_INSTANCE = ParkBusyWaitStrategy.DEFAULT_INSTANCE;
         }
@@ -29,7 +29,7 @@ public class WaitBusyWaitStrategy {
 
     public static BusyWaitStrategy getDefault() {
         if (Platform.current().isWindows()) {
-            return SleepBusyWaitStrategy.getDefault();
+            return NtDelayBusyWaitStrategy.getDefault();
         }
         return ParkBusyWaitStrategy.getDefault();
     }

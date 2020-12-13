@@ -186,6 +186,18 @@ public class Unsafe {
         UNSAFE.throwException(ee);
     }
 
+    public static void unpark(Object thread) {
+        UNSAFE.unpark(thread);
+    }
+
+    public static void park(long nanoseconds) {
+        park(false, nanoseconds);
+    }
+
+    public static void park(boolean isAbsolute, long nanoseconds) {
+        UNSAFE.park(isAbsolute, nanoseconds);
+    }
+
     public static int getLoadAverage(double[] loadavg, int nelems) {
         return UNSAFE.getLoadAverage(loadavg, nelems);
     }
@@ -287,7 +299,7 @@ public class Unsafe {
     }
 
     private static class RequiringReflection {
-        private static final Method<?> implAddOpens;
+        static final Method<?> implAddOpens;
 
         static {
             final Class<?> clazz = Module.class;

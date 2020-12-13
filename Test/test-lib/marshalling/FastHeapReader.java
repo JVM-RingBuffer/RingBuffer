@@ -18,7 +18,7 @@ import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.Profiler;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.Offsets.INT;
+import static org.ringbuffer.marshalling.HeapOffsets.INT;
 
 class FastHeapReader extends HeapReader {
     static long runGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {

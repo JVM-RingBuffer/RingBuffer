@@ -23,15 +23,11 @@ public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU()
             .toLastCPU()
-            .increment(Config.getConfig().getHardwareThreadsPerCore())
+            .increment(Config.hardwareThreadsPerCore)
             .build();
 
     static void resetThreadSpreader() {
         spreader.reset();
-    }
-
-    static {
-        Threads.loadNativeLibrary();
     }
 
     private final int numIterations;
@@ -61,7 +57,11 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     void waitForCompletion() {
-        Threads.join(this);
+        try {
+            join();
+        } catch (InterruptedException e) {
+            throw new AssertionError();
+        }
     }
 
     protected void waitForCompletion(@Optional Profiler profiler) {
