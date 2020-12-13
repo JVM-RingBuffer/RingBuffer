@@ -3,6 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="test.wait.TwoStepLinkedMultiStepTest" />
     <module name="Test" />
     <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Test" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

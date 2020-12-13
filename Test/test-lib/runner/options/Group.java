@@ -16,15 +16,16 @@ package test.runner.options;
 
 import test.runner.Option;
 
-public enum Library implements Option {
+public enum Group implements Option {
     RING_BUFFER("RingBuffer"),
     AGRONA("Agrona"),
     JCTOOLS("JCTools"),
-    JDK("JDK");
+    JDK("JDK"),
+    OTHER("Other");
 
     private final String name;
 
-    Library(String name) {
+    Group(String name) {
         this.name = name;
     }
 

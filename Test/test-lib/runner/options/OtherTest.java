@@ -12,22 +12,22 @@
  * limitations under the License.
  */
 
-package test.object;
+package test.runner.options;
 
-import org.ringbuffer.object.ConcurrentStack;
-import test.Profiler;
+import test.runner.Option;
 
-public class ConcurrentStackTest extends ConcurrentStackContentionTest {
-    private static final ConcurrentStack<Event> STACK = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE);
+public enum OtherTest implements Option {
+    STACK("Stack"),
+    COMPLEX("Complex");
 
-    public static void main(String[] args) {
-        new ConcurrentStackTest().runBenchmark();
+    private final String name;
+
+    OtherTest(String name) {
+        this.name = name;
     }
 
     @Override
-    protected long testSum() {
-        Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(STACK, profiler);
-        return Reader.runGroupAsync(STACK, profiler);
+    public String getName() {
+        return name;
     }
 }

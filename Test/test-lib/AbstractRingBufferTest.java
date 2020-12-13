@@ -18,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractRingBufferTest extends Benchmark {
     protected static final int NUM_ITERATIONS = 1_000_000;
-    static final int CONCURRENCY = 3;
-    protected static final int TOTAL_ELEMENTS = NUM_ITERATIONS * CONCURRENCY;
+    protected static final int TOTAL_ELEMENTS = NUM_ITERATIONS * Config.getConfig().getConcurrentProducersAndConsumers();
 
     protected static final long ONE_TO_ONE_SUM = getOneToOneSum();
     protected static final long ONE_TO_MANY_SUM = getOneToManySum();
-    protected static final long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * CONCURRENCY;
+    protected static final long MANY_WRITERS_SUM = ONE_TO_ONE_SUM * Config.getConfig().getConcurrentProducersAndConsumers();
 
     private static long getOneToOneSum() {
         long result = 0L;

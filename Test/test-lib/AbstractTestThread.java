@@ -23,7 +23,7 @@ public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU()
             .toLastCPU()
-            .skipHyperthreads()
+            .increment(Config.getConfig().getHardwareThreadsPerCore())
             .build();
 
     static void resetThreadSpreader() {

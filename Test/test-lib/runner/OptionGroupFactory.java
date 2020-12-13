@@ -14,14 +14,15 @@
 
 package test.runner;
 
-import java.awt.*;
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
+import java.awt.Container;
+import java.awt.Panel;
+import java.util.ArrayList;
+import java.util.List;
 
 class OptionGroupFactory {
-    private final Container container;
-
-    OptionGroupFactory(Container container) {
-        this.container = container;
-    }
+    private final List<Panel> panels = new ArrayList<>();
 
     <T extends Enum<T> & Option> OptionGroup<T> create(T[] options) {
         CheckboxGroup group = new CheckboxGroup();
@@ -32,7 +33,17 @@ class OptionGroupFactory {
             first = false;
             panel.add(checkbox);
         }
-        container.add(panel);
+        panels.add(panel);
         return new OptionGroup<>(group, options);
+    }
+
+    int getCreatedCount() {
+        return panels.size();
+    }
+
+    void addTo(Container container) {
+        for (Panel panel : panels) {
+            container.add(panel);
+        }
     }
 }

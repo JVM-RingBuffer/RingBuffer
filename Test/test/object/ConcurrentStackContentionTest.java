@@ -17,7 +17,7 @@ package test.object;
 import org.ringbuffer.object.ConcurrentStack;
 import test.Profiler;
 
-class ConcurrentStackContentionTest extends RingBufferTest {
+public class ConcurrentStackContentionTest extends RingBufferTest {
     private static class Holder {
         private static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
 

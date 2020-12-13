@@ -75,7 +75,7 @@ public class ThreadSpreader {
         }
 
         public Builder increment(int increment) {
-            Assume.notLesser(increment, 1);
+            Assume.positive(increment);
             this.increment = increment;
             return this;
         }

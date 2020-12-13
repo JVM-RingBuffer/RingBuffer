@@ -16,8 +16,11 @@ package test.runner;
 
 import org.ringbuffer.lang.Lang;
 import test.AbstractRingBufferTest;
+import test.Config;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +28,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 class ProcessStarter extends Thread {
-    private static final Class<?> poisonPill = ProcessStarter.class;
-    private static final String testModuleName = poisonPill.getModule().getName();
+    private static final String testModuleName = ProcessStarter.class.getModule().getName();
 
     private final BlockingQueue<Class<?>> queue = new LinkedBlockingQueue<>();
     private final TestRunner testRunner;
+
+    private Process process;
 
     ProcessStarter(TestRunner testRunner) {
         this.testRunner = testRunner;
@@ -39,25 +43,35 @@ class ProcessStarter extends Thread {
         queue.add(testClass);
     }
 
-    void terminate() {
-        queue.add(poisonPill);
+    synchronized void terminate() {
+        if (process != null) {
+            process.destroy();
+        }
     }
 
     @Override
     public void run() {
-        List<String> command = new ArrayList<>(List.of("java", "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=" + Lang.ORG_RINGBUFFER_MODULE.getName(), "-p", System.getProperty("jdk.module.path"), "-m"));
+        List<String> command = new ArrayList<>(List.of(Config.getConfig().getJavaRuntime(), "-Xms8g", "-Xmx8g", "-XX:+UseLargePages", "-XX:+AlwaysPreTouch", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:-RestrictContended", "-XX:-UseBiasedLocking", "--add-opens", "java.base/jdk.internal.misc=" + Lang.ORG_RINGBUFFER_MODULE.getName(), "-p", System.getProperty("jdk.module.path"), "-m"));
         command.add(null);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
 
         try {
-            Class<?> testClass;
-            while ((testClass = queue.take()) != poisonPill) {
-                command.set(command.size() - 1, testModuleName + '/' + testClass.getName());
-                Process process = builder.start();
-                process.waitFor();
-                String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.ISO_8859_1);
-                testRunner.setOutput(output);
+            while (true) {
+                command.set(command.size() - 1, testModuleName + '/' + queue.take().getName());
+                synchronized (this) {
+                    process = builder.start();
+                }
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.ISO_8859_1))) {
+                    StringBuilder output = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        output.append(line);
+                        output.append('\n');
+                        testRunner.setOutput(output.toString());
+                    }
+                    testRunner.allowRun();
+                }
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
