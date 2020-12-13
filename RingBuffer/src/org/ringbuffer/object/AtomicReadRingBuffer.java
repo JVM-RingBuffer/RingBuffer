@@ -64,6 +64,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public T take() {
         int readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (this) {
             readPosition = this.readPosition;
             readBusyWaitStrategy.reset();
@@ -95,6 +96,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -115,6 +117,7 @@ class AtomicReadRingBuffer<T> implements RingBuffer<T> {
     @Override
     public T takeLast() {
         int position;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (this) {
             readBusyWaitStrategy.reset();
             while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {

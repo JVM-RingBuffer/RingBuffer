@@ -83,6 +83,7 @@ class ConcurrentDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T take() {
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (readBusyWaitStrategy) {
             int readPosition = this.readPosition;
             readBusyWaitStrategy.reset();
@@ -114,6 +115,7 @@ class ConcurrentDiscardingRingBuffer<T> implements RingBuffer<T> {
     @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -133,6 +135,7 @@ class ConcurrentDiscardingRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public T takeLast() {
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (readBusyWaitStrategy) {
             int position;
             readBusyWaitStrategy.reset();

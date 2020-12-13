@@ -62,6 +62,7 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public int next(int size) {
         int writePosition = this.writePosition & capacityMinusOne;
+        var writeBusyWaitStrategy = this.writeBusyWaitStrategy;
         writeBusyWaitStrategy.reset();
         while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
@@ -92,6 +93,7 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     @Override
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();

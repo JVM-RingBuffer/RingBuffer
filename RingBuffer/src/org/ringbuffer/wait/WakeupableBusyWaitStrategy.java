@@ -45,6 +45,7 @@ public class WakeupableBusyWaitStrategy implements BusyWaitStrategy {
 
     @Override
     public void tick() {
+        var busyWaitStrategy = this.busyWaitStrategy;
         busyWaitStrategy.reset();
         for (int i = maxIterations; i != 0 && AtomicBoolean.getOpaque(this, SHOULD_WAKEUP); i--) {
             busyWaitStrategy.tick();

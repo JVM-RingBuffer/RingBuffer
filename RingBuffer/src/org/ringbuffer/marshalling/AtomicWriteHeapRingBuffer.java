@@ -62,6 +62,7 @@ class AtomicWriteHeapRingBuffer implements HeapClearingRingBuffer {
     @Override
     public int take(int size) {
         int readPosition = this.readPosition & capacityMinusOne;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();

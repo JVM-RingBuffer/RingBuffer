@@ -96,6 +96,7 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
 
     @Override
     public T take() {
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (readBusyWaitStrategy) {
             int readPosition = this.readPosition;
             readBusyWaitStrategy.reset();
@@ -127,6 +128,7 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
     @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -146,6 +148,7 @@ class ConcurrentDiscardingPrefilledRingBuffer<T> implements PrefilledRingBuffer2
 
     @Override
     public T takeLast() {
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (readBusyWaitStrategy) {
             int position;
             readBusyWaitStrategy.reset();

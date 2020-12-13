@@ -75,6 +75,7 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
 
     @Override
     public T next(int key, int putKey) {
+        var writeBusyWaitStrategy = this.writeBusyWaitStrategy;
         writeBusyWaitStrategy.reset();
         while (isFullCached(putKey)) {
             writeBusyWaitStrategy.tick();
@@ -98,6 +99,7 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     @Override
     public T take() {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
@@ -126,6 +128,7 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
     @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -145,6 +148,7 @@ class ConcurrentBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T
 
     @Override
     public T takeLast() {
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         synchronized (readBusyWaitStrategy) {
             int position;
             readBusyWaitStrategy.reset();

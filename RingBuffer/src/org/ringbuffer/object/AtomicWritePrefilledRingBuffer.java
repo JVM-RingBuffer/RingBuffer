@@ -72,6 +72,7 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     @Override
     public T take() {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isEmptyCached(readPosition)) {
             readBusyWaitStrategy.tick();
@@ -95,6 +96,7 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     @Override
     public void takeBatch(int size) {
         int readPosition = this.readPosition;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (size(readPosition) < size) {
             readBusyWaitStrategy.tick();
@@ -115,6 +117,7 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     @Override
     public T takeLast() {
         int position;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while ((position = AtomicInt.getAcquire(this, WRITE_POSITION)) == readPosition) {
             readBusyWaitStrategy.tick();

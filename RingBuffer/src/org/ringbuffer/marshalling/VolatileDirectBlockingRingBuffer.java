@@ -62,6 +62,7 @@ class VolatileDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public long next(long size) {
         long writePosition = this.writePosition & capacityMinusOne;
+        var writeBusyWaitStrategy = this.writeBusyWaitStrategy;
         writeBusyWaitStrategy.reset();
         while (isThereNotEnoughFreeSpaceCached(writePosition, size)) {
             writeBusyWaitStrategy.tick();
@@ -92,6 +93,7 @@ class VolatileDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();

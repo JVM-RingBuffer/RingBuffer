@@ -62,6 +62,7 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
     @Override
     public long take(long size) {
         long readPosition = this.readPosition & capacityMinusOne;
+        var readBusyWaitStrategy = this.readBusyWaitStrategy;
         readBusyWaitStrategy.reset();
         while (isNotFullEnoughCached(readPosition, size)) {
             readBusyWaitStrategy.tick();
