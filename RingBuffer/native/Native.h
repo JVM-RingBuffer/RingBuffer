@@ -13,6 +13,9 @@ JNIEXPORT void JNICALL Java_org_ringbuffer_system_WindowsSleep_prepare
 JNIEXPORT void JNICALL Java_org_ringbuffer_system_WindowsSleep_sleepHalfAMillisecond
   (JNIEnv *, jclass);
 
+JNIEXPORT void JNICALL Java_org_ringbuffer_system_LinuxSleep_sleep
+  (JNIEnv *, jclass, jint);
+
 JNIEXPORT jint JNICALL Java_org_ringbuffer_system_Threads_bindCurrentThread
   (JNIEnv *, jclass, jint);
 

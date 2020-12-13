@@ -1,9 +1,19 @@
 #define _GNU_SOURCE
 
 #include <jni.h>
+#include <time.h>
 #include <sched.h>
 #include <errno.h>
 #include "Native.h"
+
+JNIEXPORT void JNICALL Java_org_ringbuffer_system_LinuxSleep_sleep
+  (JNIEnv *env, jclass clazz, jint nanoseconds)
+{
+    struct timespec time;
+    time.tv_sec = 0;
+    time.tv_nsec = nanoseconds;
+    nanosleep(&time, NULL);
+}
 
 JNIEXPORT jint JNICALL Java_org_ringbuffer_system_Threads_bindCurrentThread
   (JNIEnv *env, jclass clazz, jint cpu)
