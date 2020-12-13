@@ -14,7 +14,7 @@
 
 package test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.ringbuffer.lang.Check;
 
 public abstract class AbstractRingBufferTest extends Benchmark {
     protected static final int NUM_ITERATIONS = 1_000_000;
@@ -60,7 +60,7 @@ public abstract class AbstractRingBufferTest extends Benchmark {
 
         long sum = testSum();
         if (checkSum) {
-            assertEquals(getSum(), sum);
+            Check.equalTo(sum, getSum());
         }
     }
 }
