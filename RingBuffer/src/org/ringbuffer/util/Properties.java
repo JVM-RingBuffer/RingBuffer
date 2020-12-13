@@ -14,8 +14,8 @@
 
 package org.ringbuffer.util;
 
-import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Optional;
+import org.ringbuffer.lang.UncaughtException;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -37,7 +37,7 @@ class Properties {
         try {
             lines = Files.readAllLines(path, charset);
         } catch (IOException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
         for (String line : lines) {
             int indexOfEquals = line.indexOf('=');
@@ -57,7 +57,7 @@ class Properties {
             Files.createDirectories(path.getParent());
             Files.write(path, lines, charset);
         } catch (IOException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 

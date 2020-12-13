@@ -15,8 +15,8 @@
 package org.ringbuffer.system;
 
 import org.ringbuffer.InternalUnsafe;
-import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Optional;
+import org.ringbuffer.lang.UncaughtException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public class Threads {
         try {
             thread.join();
         } catch (InterruptedException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 
@@ -49,7 +49,7 @@ public class Threads {
         try {
             Thread.sleep(timeInMilliseconds);
         } catch (InterruptedException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 

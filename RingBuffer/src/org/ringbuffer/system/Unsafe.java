@@ -22,7 +22,6 @@ import org.ringbuffer.lang.Lang;
 import org.ringbuffer.lang.Method;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.security.ProtectionDomain;
 
@@ -285,14 +284,6 @@ public class Unsafe {
 
     public static void invokeCleaner(ByteBuffer directBuffer) {
         SunUnsafe.UNSAFE.invokeCleaner(directBuffer);
-    }
-
-    public static Object staticFieldBase(Field f) {
-        return UNSAFE.staticFieldBase(f);
-    }
-
-    public static long staticFieldOffset(Field f) {
-        return UNSAFE.staticFieldOffset(f);
     }
 
     private static class RequiringReflection {

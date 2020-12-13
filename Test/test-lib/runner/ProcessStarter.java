@@ -58,7 +58,8 @@ class ProcessStarter extends Thread {
 
         try {
             while (true) {
-                command.set(command.size() - 1, testModuleName + '/' + queue.take().getName());
+                Class<?> testClass = queue.take();
+                command.set(command.size() - 1, testModuleName + '/' + testClass.getName());
                 synchronized (this) {
                     process = builder.start();
                 }

@@ -16,27 +16,19 @@ package org.ringbuffer.lang;
 
 import org.ringbuffer.InternalUnsafe;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import static org.ringbuffer.InternalUnsafe.UNSAFE;
 
 public class Lang {
     public static final Module JAVA_BASE_MODULE = IllegalArgumentException.class.getModule();
     public static final Module ORG_RINGBUFFER_MODULE = InternalUnsafe.OopsCompressed.class.getModule();
 
-    public static RuntimeException uncheck(Throwable throwable) {
-        return new UncaughtException(throwable);
-    }
-
     public static Field getField(Class<?> clazz, String name) {
         try {
             return clazz.getDeclaredField(name);
         } catch (NoSuchFieldException e) {
-            throw uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 
@@ -44,7 +36,7 @@ public class Lang {
         try {
             return clazz.getDeclaredMethod(name, parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 
@@ -52,78 +44,16 @@ public class Lang {
         try {
             return clazz.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 
     public static long objectFieldOffset(Class<?> clazz, String fieldName) {
-        return UNSAFE.objectFieldOffset(getField(clazz, fieldName));
+        return InternalUnsafe.UNSAFE.objectFieldOffset(getField(clazz, fieldName));
     }
 
-    private static class UncaughtException extends RuntimeException {
-        private final Throwable delegate;
-
-        private UncaughtException(Throwable delegate) {
-            this.delegate = delegate;
-            fillInStackTrace();
-        }
-
-        @Override
-        public String getMessage() {
-            return delegate.getMessage();
-        }
-
-        @Override
-        public String getLocalizedMessage() {
-            return delegate.getLocalizedMessage();
-        }
-
-        @Override
-        public Throwable getCause() {
-            return delegate.getCause();
-        }
-
-        @Override
-        public Throwable initCause(Throwable cause) {
-            return delegate.initCause(cause);
-        }
-
-        @Override
-        public String toString() {
-            return delegate.toString();
-        }
-
-        @Override
-        public void printStackTrace() {
-            delegate.printStackTrace();
-        }
-
-        @Override
-        public void printStackTrace(PrintStream s) {
-            delegate.printStackTrace(s);
-        }
-
-        @Override
-        public void printStackTrace(PrintWriter s) {
-            delegate.printStackTrace(s);
-        }
-
-        @Override
-        public Throwable fillInStackTrace() {
-            if (delegate == null) {
-                return null;
-            }
-            return super.fillInStackTrace();
-        }
-
-        @Override
-        public StackTraceElement[] getStackTrace() {
-            return delegate.getStackTrace();
-        }
-
-        @Override
-        public void setStackTrace(StackTraceElement[] stackTrace) {
-            delegate.setStackTrace(stackTrace);
-        }
+    public static StaticFieldOffset staticFieldOffset(Class<?> clazz, String fieldName) {
+        Field field = getField(clazz, fieldName);
+        return new StaticFieldOffset(InternalUnsafe.UNSAFE.staticFieldBase(field), InternalUnsafe.UNSAFE.staticFieldOffset(field));
     }
 }

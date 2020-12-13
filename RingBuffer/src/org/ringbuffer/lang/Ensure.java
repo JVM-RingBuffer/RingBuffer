@@ -218,11 +218,11 @@ public class Ensure {
     private static class IllegalIntStateException extends IllegalStateException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalIntStateException(int value) {
+        IllegalIntStateException(int value) {
             super(exceptionClassName + value);
         }
 
-        private IllegalIntStateException(int value, int cap) {
+        IllegalIntStateException(int value, int cap) {
             super(exceptionClassName + value + " " + cap);
         }
 
@@ -235,11 +235,11 @@ public class Ensure {
     private static class IllegalLongStateException extends IllegalStateException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalLongStateException(long value) {
+        IllegalLongStateException(long value) {
             super(exceptionClassName + value);
         }
 
-        private IllegalLongStateException(long value, long cap) {
+        IllegalLongStateException(long value, long cap) {
             super(exceptionClassName + value + " " + cap);
         }
 
@@ -252,7 +252,7 @@ public class Ensure {
     private static class IllegalObjectStateException extends IllegalStateException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalObjectStateException(Object value) {
+        IllegalObjectStateException(Object value) {
             super(exceptionClassName + value);
         }
 

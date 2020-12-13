@@ -49,7 +49,7 @@ public class Garbage {
     private static class FreeMemory implements Runnable {
         private final long[] addresses;
 
-        private FreeMemory(long[] addresses) {
+        FreeMemory(long[] addresses) {
             this.addresses = addresses;
         }
 

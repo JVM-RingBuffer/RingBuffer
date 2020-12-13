@@ -45,7 +45,7 @@ public class Constructor<T> implements Invokable<T> {
         try {
             return constructor.newInstance(arguments);
         } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 }

@@ -15,6 +15,7 @@
 package org.ringbuffer;
 
 import org.ringbuffer.lang.Lang;
+import org.ringbuffer.lang.UncaughtException;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ public class SunUnsafe {
         try {
             UNSAFE = (Unsafe) field.get(null);
         } catch (IllegalAccessException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 

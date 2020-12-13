@@ -218,11 +218,11 @@ public class Assume {
     private static class IllegalIntArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalIntArgumentException(int value) {
+        IllegalIntArgumentException(int value) {
             super(exceptionClassName + value);
         }
 
-        private IllegalIntArgumentException(int value, int cap) {
+        IllegalIntArgumentException(int value, int cap) {
             super(exceptionClassName + value + " " + cap);
         }
 
@@ -235,11 +235,11 @@ public class Assume {
     private static class IllegalLongArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalLongArgumentException(long value) {
+        IllegalLongArgumentException(long value) {
             super(exceptionClassName + value);
         }
 
-        private IllegalLongArgumentException(long value, long cap) {
+        IllegalLongArgumentException(long value, long cap) {
             super(exceptionClassName + value + " " + cap);
         }
 
@@ -252,7 +252,7 @@ public class Assume {
     private static class IllegalObjectArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 0L;
 
-        private IllegalObjectArgumentException(Object value) {
+        IllegalObjectArgumentException(Object value) {
             super(exceptionClassName + value);
         }
 

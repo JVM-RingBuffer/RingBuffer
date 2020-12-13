@@ -57,7 +57,7 @@ public class Method<T> implements Invokable<T> {
         try {
             return (T) method.invoke(targetInstance, arguments);
         } catch (ReflectiveOperationException e) {
-            throw Lang.uncheck(e);
+            throw new UncaughtException(e);
         }
     }
 }
