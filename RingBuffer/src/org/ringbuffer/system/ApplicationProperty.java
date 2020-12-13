@@ -38,6 +38,10 @@ public class ApplicationProperty {
         return System.getProperty(value);
     }
 
+    public boolean getAsBoolean() {
+        return get() != null;
+    }
+
     public ApplicationProperty resolve(String first, String... more) {
         return new ApplicationProperty(value, first, more);
     }

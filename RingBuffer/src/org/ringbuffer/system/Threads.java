@@ -15,6 +15,7 @@
 package org.ringbuffer.system;
 
 import org.ringbuffer.Native;
+import org.ringbuffer.lang.Assume;
 
 public class Threads {
     static {
@@ -22,6 +23,7 @@ public class Threads {
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
+        Assume.notNegative(cpu);
         int errorCode = bindCurrentThread(cpu);
         if (errorCode != 0) {
             throw new ThreadManipulationException(errorCode);

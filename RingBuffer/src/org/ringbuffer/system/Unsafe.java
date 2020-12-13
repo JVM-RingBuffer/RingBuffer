@@ -191,11 +191,11 @@ public class Unsafe {
     }
 
     public static void park(long nanoseconds) {
-        park(false, nanoseconds);
+        UNSAFE.park(false, nanoseconds);
     }
 
-    public static void park(boolean isAbsolute, long nanoseconds) {
-        UNSAFE.park(isAbsolute, nanoseconds);
+    public static void absolutePark(long nanoseconds) {
+        UNSAFE.park(true, nanoseconds);
     }
 
     public static int getLoadAverage(double[] loadavg, int nelems) {

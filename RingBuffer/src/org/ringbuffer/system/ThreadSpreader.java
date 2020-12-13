@@ -34,13 +34,11 @@ public class ThreadSpreader {
         nextCPU = new AtomicInteger(firstCPU);
     }
 
-    public int bindCurrentThreadToNextCPU() {
-        int cpu = nextCPU();
-        Threads.bindCurrentThreadToCPU(cpu);
-        return cpu;
+    public void bindCurrentThreadToNextCPU() {
+        Threads.bindCurrentThreadToCPU(nextCPU());
     }
 
-    int nextCPU() {
+    public int nextCPU() {
         return nextCPU.getAndUpdate(cpu -> {
             if (cpu > lastCPU) {
                 throw new ThreadManipulationException("No more CPUs are available to bind to.");
