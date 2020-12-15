@@ -1,3 +1,10 @@
+### Problem space
+
+This library is useful when:
+
+- you need to process events at the highest speed, with the lowest latency, you do not care about power consumption and you want to split the work between concatenated event-loop threads
+- you care about power consumption, do not need the lowest latency, but still care about high performance
+
 # RingBuffer
 
 This library supplies FIFO ring buffer implementations that are optimized for different use cases and can be configured extensively. The following cases are covered:
@@ -9,6 +16,7 @@ This library supplies FIFO ring buffer implementations that are optimized for di
 
 Only busy-waiting is supported, and the way in which it is done can be configured, so even an exception may be thrown.
 If ultra-low latency is not a requirement, there are ways to busy-wait without causing excessive CPU usage.
+In that case, however, on Windows wait-notify has lowest latency.
 
 **Object ring buffers** work with Java objects.
 
@@ -88,9 +96,8 @@ To build a Java library for ultra-low-latency inter-thread communication, we int
 - `jdk.internal.misc.Unsafe` methods are exposed without causing `IllegalAccessError`s.
 - `Atomic*` classes expose all the features supported by `VarHandle`s while having better names and reducing indirection.
 - `Platform.current()` returns the current OS and JVM architecture.
-- `Garbage` supports freeing off-heap memory on object GC, and listening to GC events and logging them.
+- `Garbage` supports freeing off-heap memory on object GC, listening to GC events and logging them.
 - `Assert`, `Check`, `Assume` and `Ensure` perform the bare-minimum work to check conditions, and have better names.
-- `ConcurrentStack` should be faster than `java.util.Stack`.
 - `*ArrayView`s allow to view an array as `List`.
 
 ## Download

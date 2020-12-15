@@ -62,7 +62,7 @@ public class ThreadSpreader {
         private boolean cycle;
 
         public Builder fromCPU(int firstCPU) {
-            Assume.notNegative(firstCPU);
+            Threads.validateCPU(firstCPU);
             this.firstCPU = firstCPU;
             return this;
         }
@@ -89,7 +89,7 @@ public class ThreadSpreader {
         }
 
         public Builder toCPU(int lastCPU) {
-            Assume.notNegative(lastCPU);
+            Threads.validateCPU(lastCPU);
             this.lastCPU = lastCPU;
             return this;
         }

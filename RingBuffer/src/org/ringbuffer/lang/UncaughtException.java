@@ -18,14 +18,20 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 public class UncaughtException extends RuntimeException {
+    private static final long serialVersionUID = 0L;
+
     private final Throwable delegate;
 
     public UncaughtException(Throwable throwable) {
         if (throwable instanceof RuntimeException) {
-            throw new IllegalArgumentException();
+            throw (RuntimeException) throwable;
         }
         delegate = throwable;
         fillInStackTrace();
+    }
+
+    public Throwable getThrowable() {
+        return delegate;
     }
 
     @Override

@@ -14,10 +14,7 @@
 
 package test.runner;
 
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
-import java.awt.Container;
-import java.awt.Panel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

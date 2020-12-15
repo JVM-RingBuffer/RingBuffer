@@ -100,7 +100,7 @@ public class BusyWaitClock {
 
         @Override
         public void run() {
-            threadManipulation.run();
+            threadManipulation.applyToCurrentThread();
 
             ParkedThread[] parkedThreads = new ParkedThread[maxParkedThreads];
             int parkedThreadsCount = 0;

@@ -14,7 +14,7 @@
 
 package test.runner;
 
-import java.awt.CheckboxGroup;
+import java.awt.*;
 
 class OptionGroup<T extends Enum<T> & Option> {
     private final CheckboxGroup checkboxGroup;

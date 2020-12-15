@@ -23,11 +23,15 @@ public class Threads {
     }
 
     public static void bindCurrentThreadToCPU(int cpu) {
-        Assume.notNegative(cpu);
+        validateCPU(cpu);
         int errorCode = bindCurrentThread(cpu);
         if (errorCode != 0) {
             throw new ThreadManipulationException(errorCode);
         }
+    }
+
+    static void validateCPU(int cpu) {
+        Assume.notNegative(cpu);
     }
 
     private static native int bindCurrentThread(int cpu);
