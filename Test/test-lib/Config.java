@@ -14,20 +14,20 @@
 
 package test;
 
-import org.ringbuffer.lang.Check;
-import org.ringbuffer.util.PropertyConfiguration;
+import eu.menzani.lang.Check;
+import eu.menzani.util.PropertyConfiguration;
 
 import java.nio.file.Path;
 
 public class Config {
     static final int hardwareThreadsPerCore;
-    public static final String javaRuntime;
+    public static final Path javaRuntime;
     static final int concurrentProducersAndConsumers;
 
     static {
         PropertyConfiguration configuration = new PropertyConfiguration(Path.of("cfg", "test.properties"));
         hardwareThreadsPerCore = configuration.getInt("hardware-threads-per-core", 2);
-        javaRuntime = configuration.getString("java-runtime", "java");
+        javaRuntime = configuration.getPath("java-runtime", Path.of("java"));
         concurrentProducersAndConsumers = configuration.getInt("concurrent-producers-and-consumers", Runtime.getRuntime().availableProcessors() / hardwareThreadsPerCore / 2, "USE_ALL_CPUS");
         configuration.saveDefault();
         Check.positive(hardwareThreadsPerCore);

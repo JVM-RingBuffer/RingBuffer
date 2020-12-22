@@ -14,8 +14,8 @@
 
 package test.competitors;
 
+import eu.menzani.benchmark.Profiler;
 import test.AbstractReader;
-import test.Profiler;
 import test.TestThreadGroup;
 import test.object.Event;
 

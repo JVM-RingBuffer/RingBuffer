@@ -14,7 +14,7 @@
 
 package test.object;
 
-import org.ringbuffer.lang.Numbers;
+import eu.menzani.lang.Numbers;
 import test.AbstractRingBufferTest;
 
 import java.util.function.Supplier;

@@ -14,9 +14,9 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.ObjectRingBuffer;
 import org.ringbuffer.object.RingBuffer;
-import test.Profiler;
 import test.TestThreadGroup;
 
 class Writer extends TestThread {

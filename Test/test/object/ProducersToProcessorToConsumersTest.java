@@ -14,7 +14,7 @@
 
 package test.object;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToConsumersContentionTest {
     public static void main(String[] args) {

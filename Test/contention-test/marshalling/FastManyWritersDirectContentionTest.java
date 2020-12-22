@@ -14,8 +14,8 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.DirectRingBuffer;
-import test.Profiler;
 
 public class FastManyWritersDirectContentionTest extends RingBufferTest {
     public static final DirectRingBuffer RING_BUFFER =

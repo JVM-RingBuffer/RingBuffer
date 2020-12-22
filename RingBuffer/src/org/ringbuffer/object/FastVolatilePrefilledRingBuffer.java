@@ -14,9 +14,9 @@
 
 package org.ringbuffer.object;
 
+import eu.menzani.atomic.AtomicArray;
+import eu.menzani.atomic.AtomicBooleanArray;
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.concurrent.AtomicBooleanArray;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 @Contended

@@ -14,8 +14,8 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapClearingRingBuffer;
-import test.Profiler;
 import test.TestThreadGroup;
 
 import static org.ringbuffer.marshalling.HeapOffsets.INT;

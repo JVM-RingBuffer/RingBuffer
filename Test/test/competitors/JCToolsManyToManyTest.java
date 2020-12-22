@@ -14,7 +14,7 @@
 
 package test.competitors;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class JCToolsManyToManyTest extends JCToolsManyToManyContentionTest {
     public static void main(String[] args) {

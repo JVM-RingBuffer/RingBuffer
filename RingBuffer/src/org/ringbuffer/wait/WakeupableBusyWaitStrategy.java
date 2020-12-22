@@ -14,8 +14,8 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.concurrent.AtomicBoolean;
-import org.ringbuffer.lang.Lang;
+import eu.menzani.atomic.AtomicBoolean;
+import eu.menzani.lang.Lang;
 
 public class WakeupableBusyWaitStrategy implements BusyWaitStrategy {
     private static final long SHOULD_WAKEUP = Lang.objectFieldOffset(WakeupableBusyWaitStrategy.class, "shouldWakeup");

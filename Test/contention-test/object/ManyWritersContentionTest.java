@@ -14,8 +14,8 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.RingBuffer;
-import test.Profiler;
 
 public class ManyWritersContentionTest extends RingBufferTest {
     public static class Holder {

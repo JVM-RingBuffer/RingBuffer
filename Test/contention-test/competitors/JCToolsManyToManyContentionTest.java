@@ -14,8 +14,8 @@
 
 package test.competitors;
 
+import eu.menzani.benchmark.Profiler;
 import org.jctools.queues.MpmcArrayQueue;
-import test.Profiler;
 import test.object.Event;
 import test.object.FastManyToManyContentionTest;
 

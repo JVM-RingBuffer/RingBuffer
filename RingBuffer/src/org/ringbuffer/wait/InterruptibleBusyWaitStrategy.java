@@ -14,8 +14,8 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.concurrent.AtomicBoolean;
-import org.ringbuffer.lang.Lang;
+import eu.menzani.atomic.AtomicBoolean;
+import eu.menzani.lang.Lang;
 
 public class InterruptibleBusyWaitStrategy implements BusyWaitStrategy {
     private static final long INTERRUPTED = Lang.objectFieldOffset(InterruptibleBusyWaitStrategy.class, "interrupted");

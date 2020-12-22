@@ -14,7 +14,8 @@
 
 package test;
 
-import org.ringbuffer.lang.Optional;
+import eu.menzani.benchmark.Profiler;
+import eu.menzani.lang.Optional;
 
 import java.util.function.IntFunction;
 

@@ -14,8 +14,8 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapRingBuffer;
-import test.Profiler;
 
 public class OneToOneHeapBlockingContentionTest extends RingBufferTest {
     public static class Holder {

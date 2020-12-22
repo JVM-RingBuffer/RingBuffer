@@ -14,7 +14,7 @@
 
 package org.ringbuffer.object;
 
-import org.ringbuffer.lang.Assume;
+import eu.menzani.lang.Assume;
 
 import java.util.function.Supplier;
 

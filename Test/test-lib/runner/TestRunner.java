@@ -75,18 +75,18 @@ class TestRunner {
     }
 
     private void initialize() {
-        ProcessStarter processStarter = new ProcessStarter(this);
-        processStarter.start();
+        BenchmarkRunner benchmarkRunner = new BenchmarkRunner(this);
+        benchmarkRunner.start();
 
         runButton.addActionListener(e -> {
             runButton.setEnabled(false);
-            processStarter.runTest(getSelectedTestClass());
+            benchmarkRunner.runTest(getSelectedTestClass());
         });
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                processStarter.terminate();
+                benchmarkRunner.terminate();
                 System.exit(0);
             }
         });

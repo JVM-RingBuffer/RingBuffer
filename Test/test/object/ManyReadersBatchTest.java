@@ -14,7 +14,7 @@
 
 package test.object;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class ManyReadersBatchTest extends ManyReadersTest {
     public static void main(String[] args) {

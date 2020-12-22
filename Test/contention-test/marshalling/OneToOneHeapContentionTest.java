@@ -14,9 +14,9 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapClearingRingBuffer;
 import org.ringbuffer.marshalling.HeapRingBuffer;
-import test.Profiler;
 
 public class OneToOneHeapContentionTest extends RingBufferTest {
     public static final HeapClearingRingBuffer RING_BUFFER =

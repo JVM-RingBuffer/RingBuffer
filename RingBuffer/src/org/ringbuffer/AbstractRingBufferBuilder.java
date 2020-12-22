@@ -14,9 +14,9 @@
 
 package org.ringbuffer;
 
-import org.ringbuffer.lang.Assume;
-import org.ringbuffer.lang.CopiedClass;
-import org.ringbuffer.lang.Numbers;
+import eu.menzani.lang.Assume;
+import eu.menzani.lang.CopiedClass;
+import eu.menzani.lang.Numbers;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 

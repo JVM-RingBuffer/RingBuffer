@@ -14,8 +14,8 @@
 
 package org.ringbuffer.object;
 
+import eu.menzani.concurrent.ThreadLocal;
 import org.ringbuffer.AbstractRingBuffer;
-import org.ringbuffer.concurrent.ThreadLocal;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;

@@ -12,16 +12,11 @@
  * limitations under the License.
  */
 
-package org.ringbuffer.concurrent;
+package org.ringbuffer.clock;
 
-import java.lang.annotation.*;
+class ParkedThread {
+    Thread thread;
+    long endTime;
 
-/**
- * Either the parameter's concrete type must be thread-safe, or a different instance must be supplied for each thread
- * invoking the method.
- */
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.SOURCE)
-@Documented
-public @interface ThreadLocal {
+    boolean shouldTerminate;
 }

@@ -14,8 +14,8 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.ConcurrentStack;
-import test.Profiler;
 
 public class ConcurrentStackTest extends ConcurrentStackContentionTest {
     private static final ConcurrentStack<Event> STACK = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE);

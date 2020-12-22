@@ -89,17 +89,6 @@ To understand when this can be useful, examine the particular implementation you
 First, add [Byte Buddy](https://bytebuddy.net/#/) to the classpath.  
 Then, call `copyClass()` where available or use `CopiedClass` directly.
 
-## Public utilities
-
-To build a Java library for ultra-low-latency inter-thread communication, we introduced utilities.
-
-- `jdk.internal.misc.Unsafe` methods are exposed without causing `IllegalAccessError`s.
-- `Atomic*` classes expose all the features supported by `VarHandle`s while having better names and reducing indirection.
-- `Platform.current()` returns the current OS and JVM architecture.
-- `Garbage` supports freeing off-heap memory on object GC, listening to GC events and logging them.
-- `Assert`, `Check`, `Assume` and `Ensure` perform the bare-minimum work to check conditions, and have better names.
-- `*ArrayView`s allow to view an array as `List`.
-
 ## Download
 
 Please [build from source](BUILD.md).
@@ -109,8 +98,7 @@ Java 11 is required.
 The module name is `org.ringbuffer`.
 
 `-XX:-RestrictContended` is recommended.  
-`-XX:-UseBiasedLocking` is suggested.  
-`--add-opens java.base/jdk.internal.misc=org.ringbuffer` may be added to avoid the need to use reflection.
+`-XX:-UseBiasedLocking` is suggested.
 
 **Warning.**
 These features of object ring buffers have not yet been tested:

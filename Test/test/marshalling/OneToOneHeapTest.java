@@ -14,7 +14,7 @@
 
 package test.marshalling;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class OneToOneHeapTest extends OneToOneHeapContentionTest {
     public static void main(String[] args) {

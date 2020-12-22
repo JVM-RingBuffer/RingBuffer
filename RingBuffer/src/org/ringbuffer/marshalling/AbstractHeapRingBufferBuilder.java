@@ -14,6 +14,8 @@
 
 package org.ringbuffer.marshalling;
 
+import eu.menzani.buffer.HeapBuffer;
+
 import java.util.Arrays;
 
 abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {

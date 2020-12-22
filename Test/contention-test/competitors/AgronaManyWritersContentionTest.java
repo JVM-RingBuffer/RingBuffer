@@ -14,8 +14,8 @@
 
 package test.competitors;
 
+import eu.menzani.benchmark.Profiler;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import test.Profiler;
 import test.object.Event;
 import test.object.FastManyWritersContentionTest;
 

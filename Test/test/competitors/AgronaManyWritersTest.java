@@ -14,7 +14,7 @@
 
 package test.competitors;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class AgronaManyWritersTest extends AgronaManyWritersContentionTest {
     public static void main(String[] args) {

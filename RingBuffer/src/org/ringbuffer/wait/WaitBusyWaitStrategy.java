@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.Platform;
+import eu.menzani.system.Platform;
 
 public class WaitBusyWaitStrategy {
     public static final BusyWaitStrategy DEFAULT_INSTANCE;

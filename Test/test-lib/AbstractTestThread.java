@@ -14,10 +14,11 @@
 
 package test;
 
-import org.ringbuffer.concurrent.ThreadSynchronizer;
-import org.ringbuffer.lang.Optional;
-import org.ringbuffer.system.ThreadSpreader;
-import org.ringbuffer.system.Threads;
+import eu.menzani.benchmark.Profiler;
+import eu.menzani.concurrent.ThreadSynchronizer;
+import eu.menzani.lang.Optional;
+import eu.menzani.system.ThreadSpreader;
+import eu.menzani.system.Threads;
 
 public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()

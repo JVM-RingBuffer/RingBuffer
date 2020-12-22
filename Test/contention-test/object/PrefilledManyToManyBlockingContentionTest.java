@@ -14,9 +14,9 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer2;
-import test.Profiler;
 
 public class PrefilledManyToManyBlockingContentionTest extends RingBufferTest {
     public static class Holder {

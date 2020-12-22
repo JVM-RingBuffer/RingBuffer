@@ -14,7 +14,7 @@
 
 package test.marshalling;
 
-import org.ringbuffer.lang.Numbers;
+import eu.menzani.lang.Numbers;
 import org.ringbuffer.marshalling.HeapOffsets;
 import test.AbstractRingBufferTest;
 

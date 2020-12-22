@@ -14,8 +14,8 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.DirectRingBuffer;
-import test.Profiler;
 
 public class ManyToManyDirectBlockingContentionTest extends RingBufferTest {
     public static class Holder {

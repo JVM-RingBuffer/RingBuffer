@@ -14,9 +14,10 @@
 
 package org.ringbuffer.marshalling;
 
+import eu.menzani.atomic.DirectAtomicBooleanArray;
+import eu.menzani.buffer.DirectBuffer;
+import eu.menzani.system.Garbage;
 import org.ringbuffer.AbstractRingBufferBuilder;
-import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
-import org.ringbuffer.system.Garbage;
 
 abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferBuilder<T> {
     private final long capacity;

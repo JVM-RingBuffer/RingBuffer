@@ -14,7 +14,7 @@
 
 package test.competitors;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 import test.object.Event;
 import test.object.OneToOneContentionTest;
 

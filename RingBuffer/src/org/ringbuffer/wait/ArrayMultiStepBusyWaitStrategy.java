@@ -14,9 +14,9 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.lang.ArrayView;
-import org.ringbuffer.lang.Assert;
-import org.ringbuffer.lang.IntArrayView;
+import eu.menzani.lang.ArrayView;
+import eu.menzani.lang.Assert;
+import eu.menzani.lang.IntArrayView;
 
 import java.util.ArrayList;
 import java.util.List;

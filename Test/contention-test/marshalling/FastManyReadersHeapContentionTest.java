@@ -14,8 +14,8 @@
 
 package test.marshalling;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapRingBuffer;
-import test.Profiler;
 
 public class FastManyReadersHeapContentionTest extends RingBufferTest {
     public static final HeapRingBuffer RING_BUFFER =

@@ -14,12 +14,12 @@
 
 package test.wait;
 
-import org.ringbuffer.system.Threads;
+import eu.menzani.benchmark.Benchmark;
+import eu.menzani.benchmark.Profiler;
+import eu.menzani.system.Threads;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
-import test.Benchmark;
-import test.Profiler;
 
 public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     public static final int STEP_TICKS = 100;

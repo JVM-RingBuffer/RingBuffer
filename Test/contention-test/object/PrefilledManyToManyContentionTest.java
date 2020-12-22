@@ -14,8 +14,8 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.PrefilledRingBuffer;
-import test.Profiler;
 
 public class PrefilledManyToManyContentionTest extends RingBufferTest {
     public static final PrefilledRingBuffer<Event> RING_BUFFER =

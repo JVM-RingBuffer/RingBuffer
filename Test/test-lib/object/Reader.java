@@ -14,9 +14,9 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.ObjectRingBuffer;
 import test.AbstractReader;
-import test.Profiler;
 import test.TestThreadGroup;
 
 class Reader extends TestThread implements AbstractReader {

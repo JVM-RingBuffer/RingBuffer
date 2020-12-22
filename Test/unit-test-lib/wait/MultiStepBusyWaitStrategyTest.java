@@ -14,8 +14,8 @@
 
 package org.ringbuffer.wait;
 
+import eu.menzani.lang.Assert;
 import org.junit.jupiter.api.Test;
-import org.ringbuffer.lang.Assert;
 
 import java.util.ArrayList;
 import java.util.Iterator;

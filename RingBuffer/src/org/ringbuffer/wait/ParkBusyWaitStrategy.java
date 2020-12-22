@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.Unsafe;
+import eu.menzani.system.Unsafe;
 
 public class ParkBusyWaitStrategy implements BusyWaitStrategy {
     public static final ParkBusyWaitStrategy DEFAULT_INSTANCE = new ParkBusyWaitStrategy();

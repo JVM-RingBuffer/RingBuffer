@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.LinuxSleep;
+import eu.menzani.system.LinuxSleep;
 
 public class NanosleepBusyWaitStrategy implements BusyWaitStrategy {
     public static final NanosleepBusyWaitStrategy DEFAULT_INSTANCE = new NanosleepBusyWaitStrategy(5);

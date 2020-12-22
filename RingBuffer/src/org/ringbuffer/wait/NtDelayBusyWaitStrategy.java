@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.system.WindowsSleep;
+import eu.menzani.system.WindowsSleep;
 
 public class NtDelayBusyWaitStrategy implements BusyWaitStrategy {
     public static final NtDelayBusyWaitStrategy DEFAULT_INSTANCE = new NtDelayBusyWaitStrategy();

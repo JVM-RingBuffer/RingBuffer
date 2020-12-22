@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.util.BusyWaitClock;
+import org.ringbuffer.clock.BusyWaitClock;
 
 public class BusyWaitClockBusyWaitStrategy implements BusyWaitStrategy {
     public static final BusyWaitClockBusyWaitStrategy DEFAULT_INSTANCE = new BusyWaitClockBusyWaitStrategy(50_000);

@@ -14,12 +14,12 @@
 
 package org.ringbuffer.marshalling;
 
+import eu.menzani.atomic.AtomicInt;
+import eu.menzani.lang.Lang;
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import static org.ringbuffer.marshalling.HeapBuffer.*;
+import static eu.menzani.buffer.HeapBuffer.*;
 
 @Contended
 class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {

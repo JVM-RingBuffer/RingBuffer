@@ -14,7 +14,13 @@
 
 package test;
 
-import org.ringbuffer.lang.Check;
+import eu.menzani.benchmark.Benchmark;
+import eu.menzani.benchmark.Profiler;
+import eu.menzani.benchmark.ResultFormat;
+import eu.menzani.lang.Check;
+import eu.menzani.system.ThreadManipulation;
+
+import java.nio.file.Path;
 
 public abstract class AbstractRingBufferTest extends Benchmark {
     protected static final int NUM_ITERATIONS = 1_000_000;
@@ -51,7 +57,17 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     protected abstract long testSum();
 
     protected static Profiler createThroughputProfiler(int divideBy) {
-        return new Profiler("Throughput", divideBy, Profiler.ResultFormat.THROUGHPUT);
+        return new Profiler("Throughput", divideBy, ResultFormat.THROUGHPUT);
+    }
+
+    @Override
+    protected Path getJavaRuntime() {
+        return Config.javaRuntime;
+    }
+
+    @Override
+    protected ThreadManipulation getThreadManipulation() {
+        return ThreadManipulation.doNothing();
     }
 
     @Override

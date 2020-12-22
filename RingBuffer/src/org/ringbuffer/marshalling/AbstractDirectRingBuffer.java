@@ -14,8 +14,8 @@
 
 package org.ringbuffer.marshalling;
 
+import eu.menzani.concurrent.ThreadLocal;
 import org.ringbuffer.AbstractRingBuffer;
-import org.ringbuffer.concurrent.ThreadLocal;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 interface AbstractDirectRingBuffer extends AbstractRingBuffer {

@@ -14,12 +14,12 @@
 
 package org.ringbuffer.marshalling;
 
+import eu.menzani.atomic.DirectAtomicBooleanArray;
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.DirectAtomicBooleanArray;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import static org.ringbuffer.marshalling.DirectBuffer.*;
+import static eu.menzani.buffer.DirectBuffer.*;
 
 @Contended
 class FastVolatileDirectRingBuffer extends FastDirectRingBuffer {

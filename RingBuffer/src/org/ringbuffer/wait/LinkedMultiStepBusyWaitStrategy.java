@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.lang.Assert;
+import eu.menzani.lang.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;

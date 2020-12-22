@@ -14,7 +14,7 @@
 
 package org.ringbuffer.wait;
 
-import org.ringbuffer.lang.Assume;
+import eu.menzani.lang.Assume;
 
 class MultiStepBusyWaitStrategyBuilderHelper {
     static void throwNoIntermediateStepsAdded() {

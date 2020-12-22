@@ -14,8 +14,8 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.ObjectRingBuffer;
-import test.Profiler;
 import test.TestThreadGroup;
 
 class SynchronizedReader extends Reader {

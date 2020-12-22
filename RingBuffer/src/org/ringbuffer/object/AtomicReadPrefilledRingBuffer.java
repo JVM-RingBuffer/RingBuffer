@@ -14,10 +14,10 @@
 
 package org.ringbuffer.object;
 
+import eu.menzani.atomic.AtomicArray;
+import eu.menzani.atomic.AtomicInt;
+import eu.menzani.lang.Lang;
 import jdk.internal.vm.annotation.Contended;
-import org.ringbuffer.concurrent.AtomicArray;
-import org.ringbuffer.concurrent.AtomicInt;
-import org.ringbuffer.lang.Lang;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 import java.util.function.Consumer;

@@ -14,7 +14,7 @@
 
 package test.marshalling;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class ManyReadersDirectBlockingTest extends ManyReadersDirectBlockingContentionPerfTest {
     public static void main(String[] args) {

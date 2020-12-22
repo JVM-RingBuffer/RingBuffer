@@ -14,7 +14,7 @@
 
 package test.competitors;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class LinkedBlockingOneToOneTest extends LinkedBlockingOneToOneContentionTest {
     public static void main(String[] args) {

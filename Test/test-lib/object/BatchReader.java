@@ -14,9 +14,9 @@
 
 package test.object;
 
-import org.ringbuffer.lang.Numbers;
+import eu.menzani.benchmark.Profiler;
+import eu.menzani.lang.Numbers;
 import org.ringbuffer.object.ObjectRingBuffer;
-import test.Profiler;
 import test.TestThreadGroup;
 
 class BatchReader extends Reader {

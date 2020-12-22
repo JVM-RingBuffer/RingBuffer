@@ -14,7 +14,7 @@
 
 package test.marshalling;
 
-import test.Profiler;
+import eu.menzani.benchmark.Profiler;
 
 public class OneToOneDirectBlockingTest extends OneToOneDirectBlockingContentionPerfTest {
     public static void main(String[] args) {

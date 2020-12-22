@@ -14,8 +14,8 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.PrefilledRingBuffer2;
-import test.Profiler;
 import test.TestThreadGroup;
 
 class PrefilledWriter2 extends TestThread {

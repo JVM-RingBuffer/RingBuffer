@@ -14,9 +14,9 @@
 
 package test.object;
 
+import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.object.PrefilledRingBuffer;
 import org.ringbuffer.object.RingBuffer;
-import test.Profiler;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {
     public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
