@@ -1,21 +1,8 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package test;
 
 import eu.menzani.benchmark.Profiler;
 import eu.menzani.concurrent.ThreadSynchronizer;
+import eu.menzani.lang.Nonblocking;
 import eu.menzani.lang.Optional;
 import eu.menzani.system.ThreadSpreader;
 import eu.menzani.system.Threads;
@@ -24,7 +11,7 @@ public abstract class AbstractTestThread extends Thread {
     private static final ThreadSpreader spreader = Threads.spreadOverCPUs()
             .fromFirstCPU()
             .toLastCPU()
-            .increment(Config.hardwareThreadsPerCore)
+            .skipHyperthreads()
             .build();
 
     static void resetThreadSpreader() {
@@ -58,11 +45,7 @@ public abstract class AbstractTestThread extends Thread {
     }
 
     void waitForCompletion() {
-        try {
-            join();
-        } catch (InterruptedException e) {
-            throw new AssertionError();
-        }
+        Nonblocking.join(this);
     }
 
     protected void waitForCompletion(@Optional Profiler profiler) {

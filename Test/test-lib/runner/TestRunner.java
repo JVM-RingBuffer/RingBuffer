@@ -1,20 +1,8 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package test.runner;
 
+import eu.menzani.swing.Swing;
 import test.AbstractRingBufferTest;
+import test.Config;
 import test.competitors.*;
 import test.marshalling.*;
 import test.object.*;
@@ -26,7 +14,8 @@ import java.awt.event.WindowEvent;
 
 class TestRunner {
     public static void main(String[] args) {
-        new TestRunner().initialize();
+        Swing.run(() -> new TestRunner().initialize());
+        Config.init();
     }
 
     private final OptionGroup<Concurrency> concurrency;

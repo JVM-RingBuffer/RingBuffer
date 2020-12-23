@@ -1,11 +1,8 @@
 .idea/*
-!.idea/artifacts
-!.idea/copyright
 !.idea/libraries
 !.idea/runConfigurations
 !.idea/modules.xml
 !.idea/compiler.xml
-!.idea/externalDependencies.xml
 
 lib/
 

@@ -91,8 +91,8 @@ Then, call `copyClass()` where available or use `CopiedClass` directly.
 
 ## Download
 
-Please [build from source](BUILD.md).
-You can also run the benchmarks.
+Please build from source.
+You can also [run the benchmarks](Test/BENCHMARKS.md).
 
 Java 11 is required.
 The module name is `org.ringbuffer`.
