@@ -1,8 +1,7 @@
 package test.wait;
 
 import eu.menzani.benchmark.Benchmark;
-import eu.menzani.benchmark.Profiler;
-import eu.menzani.system.Threads;
+import eu.menzani.system.ThreadManipulation;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
 import org.ringbuffer.wait.NoopBusyWaitStrategy;
@@ -19,6 +18,7 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     public static BusyWaitStrategy SIXTH;
 
     private final boolean isPerfTest;
+    private BusyWaitStrategy strategy;
 
     MultiStepBusyWaitStrategyTest(boolean isPerfTest) {
         this.isPerfTest = isPerfTest;
@@ -37,10 +37,22 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     }
 
     @Override
-    public void runBenchmark() {
+    protected ThreadManipulation getThreadManipulation() {
         if (isPerfTest) {
-            Threads.bindCurrentThreadToCPU(2);
-            Threads.setCurrentThreadPriorityToRealtime();
+            return super.getThreadManipulation();
+        }
+        return ThreadManipulation.doNothing();
+    }
+
+    @Override
+    protected boolean shouldAutoProfile() {
+        return isPerfTest;
+    }
+
+    @Override
+    public void runBenchmark() {
+        strategy = getStrategy();
+        if (isPerfTest) {
             super.runBenchmark();
         } else {
             test(getNumIterations());
@@ -49,16 +61,13 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
 
     @Override
     protected void test(int i) {
-        BusyWaitStrategy strategy = getStrategy();
-        Profiler profiler = new Profiler(this, i);
-        profiler.start();
+        BusyWaitStrategy strategy = this.strategy;
         for (; i > 0; i--) {
             strategy.reset();
             for (int j = 0; j < NUM_TICKS; j++) {
                 strategy.tick();
             }
         }
-        profiler.stop();
     }
 
     BusyWaitStrategy getStrategy() {

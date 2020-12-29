@@ -3,7 +3,6 @@ package test.runner;
 import eu.menzani.benchmark.Benchmark;
 import eu.menzani.lang.Nonblocking;
 import eu.menzani.lang.UncaughtException;
-import test.AbstractRingBufferTest;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 class BenchmarkRunner extends Thread {
-    private final BlockingQueue<Class<?>> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Class<? extends Benchmark>> queue = new LinkedBlockingQueue<>();
     private final TestRunner testRunner;
 
     private final Lock processLock = new ReentrantLock();
@@ -21,7 +20,7 @@ class BenchmarkRunner extends Thread {
         this.testRunner = testRunner;
     }
 
-    void runTest(Class<? extends AbstractRingBufferTest> testClass) {
+    void runTest(Class<? extends Benchmark> testClass) {
         queue.add(testClass);
     }
 
@@ -45,8 +44,8 @@ class BenchmarkRunner extends Thread {
         BenchmarkListener benchmarkListener = new BenchmarkListener();
         try {
             while (true) {
-                Class<?> testClass = Nonblocking.take(queue);
-                Benchmark benchmark = (Benchmark) testClass.getDeclaredConstructor().newInstance();
+                Class<? extends Benchmark> testClass = Nonblocking.take(queue);
+                Benchmark benchmark = testClass.getDeclaredConstructor().newInstance();
                 benchmark.launchBenchmark(benchmarkListener);
             }
         } catch (ReflectiveOperationException e) {

@@ -5,7 +5,11 @@ import org.ringbuffer.wait.MultiStepBusyWaitStrategy;
 
 public class ArrayMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new ArrayMultiStepTest(true).runBenchmark();
+        new ArrayMultiStepTest().runBenchmark();
+    }
+
+    public ArrayMultiStepTest() {
+        this(true);
     }
 
     public ArrayMultiStepTest(boolean isPerfTest) {

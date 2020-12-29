@@ -1,12 +1,13 @@
 package test.runner;
 
+import eu.menzani.benchmark.Benchmark;
 import eu.menzani.swing.Swing;
-import test.AbstractRingBufferTest;
 import test.Config;
 import test.competitors.*;
 import test.marshalling.*;
 import test.object.*;
 import test.runner.options.*;
+import test.wait.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -28,6 +29,7 @@ class TestRunner {
     private final OptionGroup<Group> group;
     private final OptionGroup<JDKQueue> jdkQueue;
     private final OptionGroup<OtherTest> otherTest;
+    private final OptionGroup<Wait> wait;
 
     private final Button runButton = new Button("Run");
     private final TextArea outputTextArea = new TextArea();
@@ -45,6 +47,7 @@ class TestRunner {
         group = factory.create(Group.values());
         jdkQueue = factory.create(JDKQueue.values());
         otherTest = factory.create(OtherTest.values());
+        wait = factory.create(Wait.values());
 
         Panel panel = new Panel(new GridLayout(factory.getCreatedCount() + 1, 0));
         factory.addTo(panel);
@@ -89,7 +92,7 @@ class TestRunner {
         runButton.setEnabled(true);
     }
 
-    private Class<? extends AbstractRingBufferTest> getSelectedTestClass() {
+    private Class<? extends Benchmark> getSelectedTestClass() {
         switch (group.getOption()) {
             case RING_BUFFER:
                 switch (concurrency.getOption()) {
@@ -1000,6 +1003,24 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return ProducersToProcessorToConsumersTest.class;
                             case UNBLOCKED_CONTENTION:
+                        }
+                    case WAIT:
+                        switch (wait.getOption()) {
+                            case ARRAY:
+                                return ArrayMultiStepTest.class;
+                            case LINKED:
+                                return LinkedMultiStepTest.class;
+                            case MANUAL:
+                                return ManualMultiStepTest.class;
+                        }
+                    case WAIT_TWO_STEP:
+                        switch (wait.getOption()) {
+                            case ARRAY:
+                                return TwoStepArrayMultiStepTest.class;
+                            case LINKED:
+                                return TwoStepLinkedMultiStepTest.class;
+                            case MANUAL:
+                                return TwoStepManualMultiStepTest.class;
                         }
                 }
         }

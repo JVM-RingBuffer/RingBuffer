@@ -4,7 +4,11 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 
 public class TwoStepManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public static void main(String[] args) {
-        new TwoStepManualMultiStepTest(true).runBenchmark();
+        new TwoStepManualMultiStepTest().runBenchmark();
+    }
+
+    public TwoStepManualMultiStepTest() {
+        this(true);
     }
 
     public TwoStepManualMultiStepTest(boolean isPerfTest) {

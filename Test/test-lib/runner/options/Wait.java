@@ -2,15 +2,14 @@ package test.runner.options;
 
 import test.runner.Option;
 
-public enum OtherTest implements Option {
-    STACK("Stack"),
-    COMPLEX("Complex"),
-    WAIT("Wait"),
-    WAIT_TWO_STEP("Wait Two Step");
+public enum Wait implements Option {
+    ARRAY("Array"),
+    LINKED("Linked"),
+    MANUAL("Manual");
 
     private final String name;
 
-    OtherTest(String name) {
+    Wait(String name) {
         this.name = name;
     }
 
