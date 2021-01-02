@@ -3,12 +3,12 @@ package test.competitors;
 import eu.menzani.benchmark.Profiler;
 import org.jctools.queues.SpscArrayQueue;
 import test.object.Event;
-import test.object.FastOneToOneContentionTest;
+import test.object.LockfreeOneToOneContentionTest;
 
 import java.util.Queue;
 
-public class JCToolsOneToOneContentionTest extends FastOneToOneContentionTest {
-    static final Queue<Event> QUEUE = new SpscArrayQueue<>(FAST_ONE_TO_ONE_SIZE);
+public class JCToolsOneToOneContentionTest extends LockfreeOneToOneContentionTest {
+    static final Queue<Event> QUEUE = new SpscArrayQueue<>(LOCKFREE_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
         new JCToolsOneToOneContentionTest().runBenchmark();

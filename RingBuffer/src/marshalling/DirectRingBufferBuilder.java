@@ -43,7 +43,7 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
     }
 
     @Override
-    protected AbstractRingBufferBuilder<?> withoutLocks() {
+    protected AbstractRingBufferBuilder<?> lockfree() {
         throw new AssertionError();
     }
 
@@ -69,8 +69,8 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
                             return instantiateCopy(VolatileDirectBlockingRingBuffer.class);
                         }
                         return new VolatileDirectBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastVolatileDirectRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeVolatileDirectRingBuffer(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
@@ -79,8 +79,8 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
                             return instantiateCopy(AtomicReadDirectBlockingRingBuffer.class);
                         }
                         return new AtomicReadDirectBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastAtomicReadDirectRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicReadDirectRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
@@ -89,8 +89,8 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
                             return instantiateCopy(AtomicWriteDirectBlockingRingBuffer.class);
                         }
                         return new AtomicWriteDirectBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastAtomicWriteDirectRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicWriteDirectRingBuffer(this);
                 }
             case CONCURRENT:
                 switch (type) {
@@ -99,8 +99,8 @@ public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<Dir
                             return instantiateCopy(ConcurrentDirectBlockingRingBuffer.class);
                         }
                         return new ConcurrentDirectBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastConcurrentDirectRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeConcurrentDirectRingBuffer(this);
                 }
         }
         throw new AssertionError();

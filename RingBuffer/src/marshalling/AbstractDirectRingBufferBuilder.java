@@ -23,11 +23,11 @@ abstract class AbstractDirectRingBufferBuilder<T> extends MarshallingRingBufferB
     }
 
     @Override
-    protected abstract AbstractRingBufferBuilder<?> withoutLocks();
+    protected abstract AbstractRingBufferBuilder<?> lockfree();
 
     @Override
-    protected void withoutLocks0() {
-        super.withoutLocks0();
+    protected void lockfree0() {
+        super.lockfree0();
         validateCapacityPowerOfTwo(capacity);
     }
 

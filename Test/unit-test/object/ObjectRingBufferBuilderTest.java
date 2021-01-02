@@ -79,17 +79,17 @@ class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
         expectClass(VolatileBlockingPrefilledRingBuffer.class, PrefilledOneToOneBlockingContentionTest.Holder.RING_BUFFER, PrefilledOneToOneBlockingContentionPerfTest.RING_BUFFER);
         expectClass(VolatilePrefilledRingBuffer.class, PrefilledOneToOneContentionTest.RING_BUFFER);
 
-        expectClass(FastAtomicWriteRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
-        expectClass(FastAtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
+        expectClass(LockfreeAtomicWriteRingBuffer.class, ProducersToProcessorToConsumersContentionTest.PRODUCERS_RING_BUFFER);
+        expectClass(LockfreeAtomicReadPrefilledRingBuffer.class, ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER);
 
-        expectClass(FastConcurrentRingBuffer.class, FastManyToManyContentionTest.Holder.RING_BUFFER);
-        expectClass(FastAtomicReadRingBuffer.class, FastManyReadersContentionTest.Holder.RING_BUFFER);
-        expectClass(FastAtomicWriteRingBuffer.class, FastManyWritersContentionTest.Holder.RING_BUFFER);
-        expectClass(FastVolatileRingBuffer.class, FastOneToOneContentionTest.Holder.RING_BUFFER);
+        expectClass(LockfreeConcurrentRingBuffer.class, LockfreeManyToManyContentionTest.Holder.RING_BUFFER);
+        expectClass(LockfreeAtomicReadRingBuffer.class, LockfreeManyReadersContentionTest.Holder.RING_BUFFER);
+        expectClass(LockfreeAtomicWriteRingBuffer.class, LockfreeManyWritersContentionTest.Holder.RING_BUFFER);
+        expectClass(LockfreeVolatileRingBuffer.class, LockfreeOneToOneContentionTest.Holder.RING_BUFFER);
 
-        expectClass(FastConcurrentPrefilledRingBuffer.class, FastPrefilledManyToManyContentionTest.RING_BUFFER);
-        expectClass(FastAtomicReadPrefilledRingBuffer.class, FastPrefilledManyReadersContentionTest.RING_BUFFER);
-        expectClass(FastAtomicWritePrefilledRingBuffer.class, FastPrefilledManyWritersContentionTest.RING_BUFFER);
-        expectClass(FastVolatilePrefilledRingBuffer.class, FastPrefilledOneToOneContentionTest.RING_BUFFER);
+        expectClass(LockfreeConcurrentPrefilledRingBuffer.class, LockfreePrefilledManyToManyContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicReadPrefilledRingBuffer.class, LockfreePrefilledManyReadersContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicWritePrefilledRingBuffer.class, LockfreePrefilledManyWritersContentionTest.RING_BUFFER);
+        expectClass(LockfreeVolatilePrefilledRingBuffer.class, LockfreePrefilledOneToOneContentionTest.RING_BUFFER);
     }
 }

@@ -55,8 +55,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
      * Do not support the {@code null} element.
      */
     @Override
-    public RingBufferBuilder<T> withoutLocks() {
-        super.withoutLocks0();
+    public RingBufferBuilder<T> lockfree() {
+        super.lockfree0();
         return this;
     }
 
@@ -93,8 +93,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
                             return instantiateCopy(VolatileRingBuffer.class);
                         }
                         return new VolatileRingBuffer<>(this);
-                    case FAST:
-                        return new FastVolatileRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeVolatileRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -131,8 +131,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
                             return instantiateCopy(AtomicReadRingBuffer.class);
                         }
                         return new AtomicReadRingBuffer<>(this);
-                    case FAST:
-                        return new FastAtomicReadRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicReadRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -169,8 +169,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
                             return instantiateCopy(AtomicWriteRingBuffer.class);
                         }
                         return new AtomicWriteRingBuffer<>(this);
-                    case FAST:
-                        return new FastAtomicWriteRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicWriteRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {
@@ -207,8 +207,8 @@ public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
                             return instantiateCopy(ConcurrentRingBuffer.class);
                         }
                         return new ConcurrentRingBuffer<>(this);
-                    case FAST:
-                        return new FastConcurrentRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeConcurrentRingBuffer<>(this);
                     case BLOCKING:
                         if (gcEnabled) {
                             if (copyClass) {

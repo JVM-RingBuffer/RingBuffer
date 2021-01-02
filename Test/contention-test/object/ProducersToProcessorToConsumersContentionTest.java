@@ -6,17 +6,17 @@ import org.ringbuffer.object.RingBuffer;
 
 public class ProducersToProcessorToConsumersContentionTest extends RingBufferTest {
     public static final RingBuffer<Event> PRODUCERS_RING_BUFFER =
-            RingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
+            RingBuffer.<Event>withCapacity(LOCKFREE_NOT_ONE_TO_ONE_SIZE)
                     .manyWriters()
                     .oneReader()
-                    .withoutLocks()
+                    .lockfree()
                     .build();
     public static final PrefilledRingBuffer<Event> CONSUMERS_RING_BUFFER =
-            PrefilledRingBuffer.<Event>withCapacity(FAST_NOT_ONE_TO_ONE_SIZE)
+            PrefilledRingBuffer.<Event>withCapacity(LOCKFREE_NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .oneWriter()
                     .manyReaders()
-                    .withoutLocks()
+                    .lockfree()
                     .build();
 
     public static void main(String[] args) {

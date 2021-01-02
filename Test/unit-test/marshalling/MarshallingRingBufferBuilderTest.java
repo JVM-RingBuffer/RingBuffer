@@ -27,13 +27,13 @@ class MarshallingRingBufferBuilderTest extends RingBufferBuilderTest {
         expectClass(VolatileDirectRingBuffer.class, OneToOneDirectContentionTest.RING_BUFFER);
         expectClass(VolatileDirectBlockingRingBuffer.class, OneToOneDirectBlockingContentionTest.Holder.RING_BUFFER, OneToOneDirectBlockingContentionPerfTest.RING_BUFFER);
 
-        expectClass(FastConcurrentHeapRingBuffer.class, FastManyToManyHeapContentionTest.RING_BUFFER);
-        expectClass(FastConcurrentDirectRingBuffer.class, FastManyToManyDirectContentionTest.RING_BUFFER);
-        expectClass(FastAtomicReadHeapRingBuffer.class, FastManyReadersHeapContentionTest.RING_BUFFER);
-        expectClass(FastAtomicReadDirectRingBuffer.class, FastManyReadersDirectContentionTest.RING_BUFFER);
-        expectClass(FastAtomicWriteHeapRingBuffer.class, FastManyWritersHeapContentionTest.RING_BUFFER);
-        expectClass(FastAtomicWriteDirectRingBuffer.class, FastManyWritersDirectContentionTest.RING_BUFFER);
-        expectClass(FastVolatileHeapRingBuffer.class, FastOneToOneHeapContentionTest.RING_BUFFER);
-        expectClass(FastVolatileDirectRingBuffer.class, FastOneToOneDirectContentionTest.RING_BUFFER);
+        expectClass(LockfreeConcurrentHeapRingBuffer.class, LockfreeManyToManyHeapContentionTest.RING_BUFFER);
+        expectClass(LockfreeConcurrentDirectRingBuffer.class, LockfreeManyToManyDirectContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicReadHeapRingBuffer.class, LockfreeManyReadersHeapContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicReadDirectRingBuffer.class, LockfreeManyReadersDirectContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicWriteHeapRingBuffer.class, LockfreeManyWritersHeapContentionTest.RING_BUFFER);
+        expectClass(LockfreeAtomicWriteDirectRingBuffer.class, LockfreeManyWritersDirectContentionTest.RING_BUFFER);
+        expectClass(LockfreeVolatileHeapRingBuffer.class, LockfreeOneToOneHeapContentionTest.RING_BUFFER);
+        expectClass(LockfreeVolatileDirectRingBuffer.class, LockfreeOneToOneDirectContentionTest.RING_BUFFER);
     }
 }

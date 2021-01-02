@@ -48,7 +48,7 @@ scenario|msg/sec|latency
 1 producer → 3 consumers | 54 million | 2ns
 1 producer → 1 consumer | 587 million | 1.5ns
 
-The following are lock-free implementations (call `withoutLocks()` on the builder).  
+The following are lock-free implementations (call `lockfree()` on the builder).  
 They must never become full.
 
 scenario|msg/sec|latency

@@ -1,7 +1,6 @@
 package test.runner;
 
 import eu.menzani.benchmark.Benchmark;
-import eu.menzani.swing.Swing;
 import test.Config;
 import test.competitors.*;
 import test.marshalling.*;
@@ -15,7 +14,7 @@ import java.awt.event.WindowEvent;
 
 class TestRunner {
     public static void main(String[] args) {
-        Swing.run(() -> new TestRunner().initialize());
+        new TestRunner().initialize();
         Config.init();
     }
 
@@ -235,34 +234,34 @@ class TestRunner {
                                             case EMPTY:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastManyToManyContentionTest.class;
+                                                        return LockfreeManyToManyContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastManyToManyTest.class;
+                                                        return LockfreeManyToManyTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastPrefilledManyToManyContentionTest.class;
+                                                        return LockfreePrefilledManyToManyContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastPrefilledManyToManyTest.class;
+                                                        return LockfreePrefilledManyToManyTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                         }
                                     case HEAP:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyToManyHeapContentionTest.class;
+                                                return LockfreeManyToManyHeapContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyToManyHeapTest.class;
+                                                return LockfreeManyToManyHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyToManyDirectContentionTest.class;
+                                                return LockfreeManyToManyDirectContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyToManyDirectTest.class;
+                                                return LockfreeManyToManyDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                 }
@@ -406,34 +405,34 @@ class TestRunner {
                                             case EMPTY:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastManyReadersContentionTest.class;
+                                                        return LockfreeManyReadersContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastManyReadersTest.class;
+                                                        return LockfreeManyReadersTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastPrefilledManyReadersContentionTest.class;
+                                                        return LockfreePrefilledManyReadersContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastPrefilledManyReadersTest.class;
+                                                        return LockfreePrefilledManyReadersTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                         }
                                     case HEAP:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyReadersHeapContentionTest.class;
+                                                return LockfreeManyReadersHeapContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyReadersHeapTest.class;
+                                                return LockfreeManyReadersHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyReadersDirectContentionTest.class;
+                                                return LockfreeManyReadersDirectContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyReadersDirectTest.class;
+                                                return LockfreeManyReadersDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                 }
@@ -577,34 +576,34 @@ class TestRunner {
                                             case EMPTY:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastManyWritersContentionTest.class;
+                                                        return LockfreeManyWritersContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastManyWritersTest.class;
+                                                        return LockfreeManyWritersTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastPrefilledManyWritersContentionTest.class;
+                                                        return LockfreePrefilledManyWritersContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastPrefilledManyWritersTest.class;
+                                                        return LockfreePrefilledManyWritersTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                         }
                                     case HEAP:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyWritersHeapContentionTest.class;
+                                                return LockfreeManyWritersHeapContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyWritersHeapTest.class;
+                                                return LockfreeManyWritersHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastManyWritersDirectContentionTest.class;
+                                                return LockfreeManyWritersDirectContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastManyWritersDirectTest.class;
+                                                return LockfreeManyWritersDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                 }
@@ -748,34 +747,34 @@ class TestRunner {
                                             case EMPTY:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastOneToOneContentionTest.class;
+                                                        return LockfreeOneToOneContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastOneToOneTest.class;
+                                                        return LockfreeOneToOneTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
                                                     case CONTENTION:
-                                                        return FastPrefilledOneToOneContentionTest.class;
+                                                        return LockfreePrefilledOneToOneContentionTest.class;
                                                     case NO_CONTENTION:
-                                                        return FastPrefilledOneToOneTest.class;
+                                                        return LockfreePrefilledOneToOneTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                 }
                                         }
                                     case HEAP:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastOneToOneHeapContentionTest.class;
+                                                return LockfreeOneToOneHeapContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastOneToOneHeapTest.class;
+                                                return LockfreeOneToOneHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
                                             case CONTENTION:
-                                                return FastOneToOneDirectContentionTest.class;
+                                                return LockfreeOneToOneDirectContentionTest.class;
                                             case NO_CONTENTION:
-                                                return FastOneToOneDirectTest.class;
+                                                return LockfreeOneToOneDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
                                         }
                                 }

@@ -64,10 +64,10 @@ public abstract class AbstractRingBufferBuilder<T> {
         writeBusyWaitStrategy = busyWaitStrategy;
     }
 
-    protected abstract AbstractRingBufferBuilder<?> withoutLocks();
+    protected abstract AbstractRingBufferBuilder<?> lockfree();
 
-    protected void withoutLocks0() {
-        type = RingBufferType.FAST;
+    protected void lockfree0() {
+        type = RingBufferType.LOCKFREE;
     }
 
     public abstract AbstractRingBufferBuilder<T> waitingWith(BusyWaitStrategy busyWaitStrategy);
@@ -163,6 +163,6 @@ public abstract class AbstractRingBufferBuilder<T> {
         BLOCKING,
         DISCARDING,
 
-        FAST
+        LOCKFREE
     }
 }

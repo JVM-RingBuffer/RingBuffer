@@ -3,12 +3,12 @@ package test.competitors;
 import eu.menzani.benchmark.Profiler;
 import org.jctools.queues.MpmcArrayQueue;
 import test.object.Event;
-import test.object.FastManyToManyContentionTest;
+import test.object.LockfreeManyToManyContentionTest;
 
 import java.util.Queue;
 
-public class JCToolsManyToManyContentionTest extends FastManyToManyContentionTest {
-    static final Queue<Event> QUEUE = new MpmcArrayQueue<>(FAST_NOT_ONE_TO_ONE_SIZE);
+public class JCToolsManyToManyContentionTest extends LockfreeManyToManyContentionTest {
+    static final Queue<Event> QUEUE = new MpmcArrayQueue<>(LOCKFREE_NOT_ONE_TO_ONE_SIZE);
 
     public static void main(String[] args) {
         new JCToolsManyToManyContentionTest().runBenchmark();

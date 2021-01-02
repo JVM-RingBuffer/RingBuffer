@@ -43,7 +43,7 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
     }
 
     @Override
-    protected AbstractRingBufferBuilder<?> withoutLocks() {
+    protected AbstractRingBufferBuilder<?> lockfree() {
         throw new AssertionError();
     }
 
@@ -69,8 +69,8 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
                             return instantiateCopy(VolatileHeapBlockingRingBuffer.class);
                         }
                         return new VolatileHeapBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastVolatileHeapRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeVolatileHeapRingBuffer(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
@@ -79,8 +79,8 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
                             return instantiateCopy(AtomicReadHeapBlockingRingBuffer.class);
                         }
                         return new AtomicReadHeapBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastAtomicReadHeapRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicReadHeapRingBuffer(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
@@ -89,8 +89,8 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
                             return instantiateCopy(AtomicWriteHeapBlockingRingBuffer.class);
                         }
                         return new AtomicWriteHeapBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastAtomicWriteHeapRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicWriteHeapRingBuffer(this);
                 }
             case CONCURRENT:
                 switch (type) {
@@ -99,8 +99,8 @@ public class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapRin
                             return instantiateCopy(ConcurrentHeapBlockingRingBuffer.class);
                         }
                         return new ConcurrentHeapBlockingRingBuffer(this);
-                    case FAST:
-                        return new FastConcurrentHeapRingBuffer(this);
+                    case LOCKFREE:
+                        return new LockfreeConcurrentHeapRingBuffer(this);
                 }
         }
         throw new AssertionError();

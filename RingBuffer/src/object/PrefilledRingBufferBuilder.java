@@ -58,8 +58,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
     }
 
     @Override
-    public PrefilledRingBufferBuilder<T> withoutLocks() {
-        super.withoutLocks0();
+    public PrefilledRingBufferBuilder<T> lockfree() {
+        super.lockfree0();
         return this;
     }
 
@@ -85,8 +85,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
                             return instantiateCopy(VolatilePrefilledRingBuffer.class);
                         }
                         return new VolatilePrefilledRingBuffer<>(this);
-                    case FAST:
-                        return new FastVolatilePrefilledRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeVolatilePrefilledRingBuffer<>(this);
                 }
             case ATOMIC_READ:
                 switch (type) {
@@ -95,8 +95,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
                             return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
                         }
                         return new AtomicReadPrefilledRingBuffer<>(this);
-                    case FAST:
-                        return new FastAtomicReadPrefilledRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicReadPrefilledRingBuffer<>(this);
                 }
             case ATOMIC_WRITE:
                 switch (type) {
@@ -105,8 +105,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
                             return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
                         }
                         return new AtomicWritePrefilledRingBuffer<>(this);
-                    case FAST:
-                        return new FastAtomicWritePrefilledRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeAtomicWritePrefilledRingBuffer<>(this);
                 }
             case CONCURRENT:
                 switch (type) {
@@ -115,8 +115,8 @@ public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBu
                             return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
                         }
                         return new ConcurrentPrefilledRingBuffer<>(this);
-                    case FAST:
-                        return new FastConcurrentPrefilledRingBuffer<>(this);
+                    case LOCKFREE:
+                        return new LockfreeConcurrentPrefilledRingBuffer<>(this);
                 }
         }
         throw new AssertionError();
