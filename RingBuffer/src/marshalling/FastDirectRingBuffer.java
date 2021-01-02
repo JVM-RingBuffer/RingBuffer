@@ -20,4 +20,9 @@ abstract class FastDirectRingBuffer implements DirectRingBuffer {
     public boolean isEmpty() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isNotEmpty() {
+        throw new UnsupportedOperationException();
+    }
 }

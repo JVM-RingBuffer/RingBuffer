@@ -189,6 +189,11 @@ class AtomicWritePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return AtomicInt.getAcquire(this, WRITE_POSITION) != readPosition;
+    }
+
+    @Override
     public String toString() {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         if (isEmpty(writePosition)) {

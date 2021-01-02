@@ -118,6 +118,11 @@ class AtomicWriteDirectBlockingRingBuffer implements DirectRingBuffer {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (AtomicLong.getAcquire(this, READ_POSITION) & capacityMinusOne);
+    }
+
+    @Override
     public void writeByte(long offset, byte value) {
         putByte(buffer, offset & capacityMinusOne, value);
     }

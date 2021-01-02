@@ -88,6 +88,11 @@ class AtomicReadDirectRingBuffer implements DirectClearingRingBuffer {
         return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
+    @Override
+    public boolean isNotEmpty() {
+        return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (getReadPosition() & capacityMinusOne);
+    }
+
     private synchronized long getReadPosition() {
         return readPosition;
     }

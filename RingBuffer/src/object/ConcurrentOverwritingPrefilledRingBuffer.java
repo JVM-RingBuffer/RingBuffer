@@ -102,6 +102,11 @@ public class ConcurrentOverwritingPrefilledRingBuffer<T> implements PrefilledOve
     }
 
     @Override
+    public synchronized boolean isNotEmpty() {
+        return writePosition != readPosition || isFull;
+    }
+
+    @Override
     public void takeBatch(int size) {
         throw new UnsupportedOperationException();
     }

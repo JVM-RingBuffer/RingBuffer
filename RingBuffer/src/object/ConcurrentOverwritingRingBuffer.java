@@ -98,6 +98,11 @@ public class ConcurrentOverwritingRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public synchronized boolean isNotEmpty() {
+        return writePosition != readPosition || isFull;
+    }
+
+    @Override
     public void takeBatch(int size) {
         throw new UnsupportedOperationException();
     }

@@ -216,6 +216,11 @@ class AtomicReadGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return getReadPosition() != AtomicInt.getAcquire(this, WRITE_POSITION);
+    }
+
+    @Override
     public String toString() {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         StringBuilder builder;

@@ -45,8 +45,8 @@ class Worker extends Thread {
         int parkedThreadsCount = 0;
 
         while (true) {
-            if (!ringBuffer.isEmpty()) {
-                ParkedThread parkedThread = ringBuffer.take();
+            if (ringBuffer.isNotEmpty()) {
+                ParkedThread parkedThread = ringBuffer.takePlain();
                 parkedThreads[parkedThreadsCount++] = parkedThread;
                 if (parkedThread.shouldTerminate) {
                     unparkAll(parkedThreads, parkedThreadsCount);

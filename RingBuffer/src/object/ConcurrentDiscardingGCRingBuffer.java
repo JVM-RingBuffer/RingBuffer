@@ -238,6 +238,11 @@ class ConcurrentDiscardingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return AtomicInt.getAcquire(this, READ_POSITION) != AtomicInt.getAcquire(this, WRITE_POSITION);
+    }
+
+    @Override
     public String toString() {
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);
         StringBuilder builder;

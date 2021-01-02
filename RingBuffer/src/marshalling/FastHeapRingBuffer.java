@@ -20,4 +20,9 @@ abstract class FastHeapRingBuffer implements HeapRingBuffer {
     public boolean isEmpty() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isNotEmpty() {
+        throw new UnsupportedOperationException();
+    }
 }

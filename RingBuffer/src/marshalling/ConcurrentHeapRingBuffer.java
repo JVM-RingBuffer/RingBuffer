@@ -88,6 +88,11 @@ class ConcurrentHeapRingBuffer implements HeapClearingRingBuffer {
         return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
+    @Override
+    public boolean isNotEmpty() {
+        return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (getReadPosition() & capacityMinusOne);
+    }
+
     private int getReadPosition() {
         synchronized (readBusyWaitStrategy) {
             return readPosition;

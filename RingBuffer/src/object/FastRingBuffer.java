@@ -44,6 +44,11 @@ abstract class FastRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String toString() {
         throw new UnsupportedOperationException();
     }

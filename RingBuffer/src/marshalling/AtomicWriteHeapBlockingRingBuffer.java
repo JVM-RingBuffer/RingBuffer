@@ -118,6 +118,11 @@ class AtomicWriteHeapBlockingRingBuffer implements HeapRingBuffer {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (AtomicInt.getAcquire(this, READ_POSITION) & capacityMinusOne);
+    }
+
+    @Override
     public void writeByte(int offset, byte value) {
         putByte(buffer, offset & capacityMinusOne, value);
     }

@@ -84,6 +84,11 @@ class AtomicWriteDirectRingBuffer implements DirectClearingRingBuffer {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (readPosition & capacityMinusOne);
+    }
+
+    @Override
     public void writeByte(long offset, byte value) {
         putByte(buffer, offset & capacityMinusOne, value);
     }

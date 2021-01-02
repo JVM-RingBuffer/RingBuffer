@@ -88,6 +88,11 @@ class ConcurrentDirectRingBuffer implements DirectClearingRingBuffer {
         return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) == (getReadPosition() & capacityMinusOne);
     }
 
+    @Override
+    public boolean isNotEmpty() {
+        return (AtomicLong.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (getReadPosition() & capacityMinusOne);
+    }
+
     private long getReadPosition() {
         synchronized (readBusyWaitStrategy) {
             return readPosition;

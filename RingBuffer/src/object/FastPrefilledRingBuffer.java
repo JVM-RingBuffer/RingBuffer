@@ -44,6 +44,11 @@ abstract class FastPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String toString() {
         throw new UnsupportedOperationException();
     }

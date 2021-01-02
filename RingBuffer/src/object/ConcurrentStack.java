@@ -48,6 +48,11 @@ public class ConcurrentStack<T> extends Stack<T> {
     }
 
     @Override
+    public synchronized boolean isNotEmpty() {
+        return index != 0;
+    }
+
+    @Override
     public synchronized void put(T element) {
         elements[index++] = element;
     }

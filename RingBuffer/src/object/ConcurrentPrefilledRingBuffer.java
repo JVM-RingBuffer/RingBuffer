@@ -201,6 +201,11 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return getReadPosition() != AtomicInt.getAcquire(this, WRITE_POSITION);
+    }
+
+    @Override
     public String toString() {
         int readPosition = getReadPosition();
         int writePosition = AtomicInt.getAcquire(this, WRITE_POSITION);

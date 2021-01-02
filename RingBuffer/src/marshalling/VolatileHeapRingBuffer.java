@@ -84,6 +84,11 @@ class VolatileHeapRingBuffer implements HeapClearingRingBuffer {
     }
 
     @Override
+    public boolean isNotEmpty() {
+        return (AtomicInt.getAcquire(this, WRITE_POSITION) & capacityMinusOne) != (readPosition & capacityMinusOne);
+    }
+
+    @Override
     public void writeByte(int offset, byte value) {
         putByte(buffer, offset & capacityMinusOne, value);
     }
