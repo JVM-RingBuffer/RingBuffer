@@ -6,7 +6,7 @@ public class BusyWaitException extends RuntimeException {
     private final boolean wasReading;
 
     public BusyWaitException(String message, boolean wasReading) {
-        this(message, null, false, false, wasReading);
+        this(message, null, true, false, wasReading);
     }
 
     public BusyWaitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, boolean wasReading) {

@@ -1,11 +1,11 @@
 package org.ringbuffer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import eu.menzani.lang.Assert;
 
 public abstract class RingBufferBuilderTest {
     protected static void expectClass(Class<?> clazz, AbstractRingBuffer... ringBuffers) {
         for (AbstractRingBuffer ringBuffer : ringBuffers) {
-            assertEquals(clazz, ringBuffer.getClass());
+            Assert.equal(ringBuffer.getClass(), clazz);
         }
     }
 }

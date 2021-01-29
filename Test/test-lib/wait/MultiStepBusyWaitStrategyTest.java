@@ -10,12 +10,12 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     public static final int STEP_TICKS = 100;
     public static final int NUM_TICKS = STEP_TICKS * (6 + 1);
 
-    public static BusyWaitStrategy FIRST;
-    public static BusyWaitStrategy SECOND;
-    public static BusyWaitStrategy THIRD;
-    public static BusyWaitStrategy FOURTH;
-    public static BusyWaitStrategy FIFTH;
-    public static BusyWaitStrategy SIXTH;
+    public BusyWaitStrategy first;
+    public BusyWaitStrategy second;
+    public BusyWaitStrategy third;
+    public BusyWaitStrategy fourth;
+    public BusyWaitStrategy fifth;
+    public BusyWaitStrategy sixth;
 
     private final boolean isPerfTest;
     private BusyWaitStrategy strategy;
@@ -23,7 +23,7 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     MultiStepBusyWaitStrategyTest(boolean isPerfTest) {
         this.isPerfTest = isPerfTest;
         if (isPerfTest) {
-            FIRST = SECOND = THIRD = FOURTH = FIFTH = SIXTH = NoopBusyWaitStrategy.DEFAULT_INSTANCE;
+            first = second = third = fourth = fifth = sixth = NoopBusyWaitStrategy.DEFAULT_INSTANCE;
         }
     }
 
@@ -71,12 +71,12 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
     }
 
     BusyWaitStrategy getStrategy() {
-        return getStrategyBuilder().endWith(SIXTH)
-                .after(FIFTH, STEP_TICKS)
-                .after(FOURTH, STEP_TICKS)
-                .after(getStrategyBuilder().endWith(THIRD)
-                        .after(SECOND, STEP_TICKS)
-                        .after(FIRST, STEP_TICKS)
+        return getStrategyBuilder().endWith(sixth)
+                .after(fifth, STEP_TICKS)
+                .after(fourth, STEP_TICKS)
+                .after(getStrategyBuilder().endWith(third)
+                        .after(second, STEP_TICKS)
+                        .after(first, STEP_TICKS)
                         .build(), STEP_TICKS)
                 .build();
     }

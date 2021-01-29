@@ -5,7 +5,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import static eu.menzani.buffer.DirectBuffer.*;
+import static eu.menzani.struct.DirectBuffer.*;
 
 @Contended
 class LockfreeVolatileDirectRingBuffer extends LockfreeDirectRingBuffer {

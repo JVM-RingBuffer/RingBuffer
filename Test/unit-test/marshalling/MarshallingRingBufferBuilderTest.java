@@ -1,12 +1,10 @@
 package org.ringbuffer.marshalling;
 
-import org.junit.jupiter.api.Test;
 import org.ringbuffer.RingBufferBuilderTest;
 import test.marshalling.*;
 
-class MarshallingRingBufferBuilderTest extends RingBufferBuilderTest {
-    @Test
-    void testClasses() {
+public class MarshallingRingBufferBuilderTest extends RingBufferBuilderTest {
+    public void testClasses() {
         expectClass(ConcurrentHeapRingBuffer.class, ManyToManyHeapContentionTest.RING_BUFFER);
         expectClass(ConcurrentHeapBlockingRingBuffer.class, ManyToManyHeapBlockingContentionTest.Holder.RING_BUFFER, ManyToManyHeapBlockingContentionPerfTest.RING_BUFFER);
         expectClass(ConcurrentDirectRingBuffer.class, ManyToManyDirectContentionTest.RING_BUFFER);

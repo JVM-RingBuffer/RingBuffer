@@ -25,7 +25,7 @@ public class TwoStepManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         return 2;
     }
 
-    private static class TwoStepManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {
+    private class TwoStepManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         private int counter;
 
         @Override
@@ -37,16 +37,16 @@ public class TwoStepManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         public void tick() {
             switch (counter) {
                 case 0:
-                    SECOND.tick();
+                    second.tick();
                     return;
                 case 1:
-                    SECOND.reset();
-                    SECOND.tick();
+                    second.reset();
+                    second.tick();
                     break;
                 case STEP_TICKS + 1:
-                    FIRST.reset();
+                    first.reset();
                 default:
-                    FIRST.tick();
+                    first.tick();
             }
             counter--;
         }

@@ -1,13 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Unit Tests" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="Unit Tests" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eu.menzani.test.Runner" />
     <module name="Test" />
-    <useClassPathOnly />
-    <option name="MAIN_CLASS_NAME" value="" />
-    <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="directory" />
     <option name="VM_PARAMETERS" value="-ea -Xms2g -Xmx2g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
-    <option name="PARAMETERS" value="" />
-    <dir value="$PROJECT_DIR$/Test/unit-test" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Test" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

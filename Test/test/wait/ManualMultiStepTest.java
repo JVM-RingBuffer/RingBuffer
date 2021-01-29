@@ -20,7 +20,7 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         return new ManualMultiStepBusyWaitStrategy();
     }
 
-    private static class ManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {
+    private class ManualMultiStepBusyWaitStrategy implements BusyWaitStrategy {
         private int counter;
         private int step;
 
@@ -34,25 +34,25 @@ public class ManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
         public void tick() {
             switch (step) {
                 case 0:
-                    SIXTH.tick();
+                    sixth.tick();
                     break;
                 case 1:
-                    countDown(SIXTH);
+                    countDown(sixth);
                     break;
                 case 2:
-                    countDown(FIFTH);
+                    countDown(fifth);
                     break;
                 case 3:
-                    countDown(FOURTH);
+                    countDown(fourth);
                     break;
                 case 4:
-                    countDown(THIRD);
+                    countDown(third);
                     break;
                 case 5:
-                    countDown(SECOND);
+                    countDown(second);
                     break;
                 case 6:
-                    countDown(FIRST);
+                    countDown(first);
             }
         }
 

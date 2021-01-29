@@ -18,8 +18,8 @@ public class TwoStepArrayMultiStepTest extends MultiStepBusyWaitStrategyTest {
 
     @Override
     BusyWaitStrategy getStrategy() {
-        return ArrayMultiStepBusyWaitStrategy.endWith(SECOND)
-                .after(FIRST, STEP_TICKS)
+        return ArrayMultiStepBusyWaitStrategy.endWith(second)
+                .after(first, STEP_TICKS)
                 .build();
     }
 

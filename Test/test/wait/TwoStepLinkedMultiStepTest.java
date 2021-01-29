@@ -18,8 +18,8 @@ public class TwoStepLinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
 
     @Override
     BusyWaitStrategy getStrategy() {
-        return LinkedMultiStepBusyWaitStrategy.endWith(SECOND)
-                .after(FIRST, STEP_TICKS)
+        return LinkedMultiStepBusyWaitStrategy.endWith(second)
+                .after(first, STEP_TICKS)
                 .build();
     }
 

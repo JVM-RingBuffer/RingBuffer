@@ -5,7 +5,7 @@ import eu.menzani.lang.Lang;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import static eu.menzani.buffer.DirectBuffer.*;
+import static eu.menzani.struct.DirectBuffer.*;
 
 @Contended
 class ConcurrentDirectBlockingRingBuffer implements DirectRingBuffer {

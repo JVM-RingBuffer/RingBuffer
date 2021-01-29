@@ -1,60 +1,45 @@
 package org.ringbuffer.object;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import eu.menzani.lang.Assert;
 import org.ringbuffer.RingBufferBuilderTest;
 import test.object.*;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
+    private final RingBufferBuilder<?> builder = new RingBufferBuilder<>(2);
 
-class ObjectRingBufferBuilderTest extends RingBufferBuilderTest {
-    private RingBufferBuilder<?> builder;
-
-    @BeforeEach
-    void setUp() {
-        builder = new RingBufferBuilder<>(2);
-    }
-
-    @Test
-    void testConcurrencyNotSet() {
+    public void testConcurrencyNotSet() {
         builder.blocking();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testWriterConcurrencyNotSet() {
+    public void testWriterConcurrencyNotSet() {
         builder.oneReader();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testWriterConcurrencyNotSet2() {
+    public void testWriterConcurrencyNotSet2() {
         builder.manyReaders();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testReaderConcurrencyNotSet() {
+    public void testReaderConcurrencyNotSet() {
         builder.oneWriter();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testReaderConcurrencyNotSet2() {
+    public void testReaderConcurrencyNotSet2() {
         builder.manyWriters();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testFillerNotSet() {
+    public void testFillerNotSet() {
         ObjectRingBufferBuilder<?> builder = new PrefilledRingBufferBuilder<>(2);
         builder.oneReader();
         builder.oneWriter();
-        assertThrows(IllegalStateException.class, builder::build);
+        Assert.fails(builder::build, IllegalStateException.class);
     }
 
-    @Test
-    void testClasses() {
+    public void testClasses() {
         expectClass(ConcurrentBlockingRingBuffer.class, ManyToManyBlockingContentionTest.Holder.RING_BUFFER, ManyToManyBlockingContentionPerfTest.RING_BUFFER);
         expectClass(ConcurrentRingBuffer.class, ManyToManyContentionTest.Holder.RING_BUFFER);
 

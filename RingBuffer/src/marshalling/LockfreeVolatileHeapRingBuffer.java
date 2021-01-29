@@ -5,7 +5,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import static eu.menzani.buffer.HeapBuffer.*;
+import static eu.menzani.struct.HeapBuffer.*;
 
 @Contended
 class LockfreeVolatileHeapRingBuffer extends LockfreeHeapRingBuffer {

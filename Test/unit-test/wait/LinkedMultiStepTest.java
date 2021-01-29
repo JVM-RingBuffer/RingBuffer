@@ -1,7 +1,7 @@
 package org.ringbuffer.wait;
 
-class LinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
-    LinkedMultiStepTest() {
+public class LinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
+    public LinkedMultiStepTest() {
         super(new test.wait.LinkedMultiStepTest(false));
     }
 }

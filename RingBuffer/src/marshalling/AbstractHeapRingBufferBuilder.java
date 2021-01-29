@@ -1,6 +1,6 @@
 package org.ringbuffer.marshalling;
 
-import eu.menzani.buffer.HeapBuffer;
+import eu.menzani.struct.HeapBuffer;
 
 import java.util.Arrays;
 

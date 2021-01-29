@@ -5,7 +5,7 @@ import eu.menzani.lang.Lang;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import static eu.menzani.buffer.HeapBuffer.*;
+import static eu.menzani.struct.HeapBuffer.*;
 
 @Contended
 class AtomicReadHeapBlockingRingBuffer implements HeapRingBuffer {
