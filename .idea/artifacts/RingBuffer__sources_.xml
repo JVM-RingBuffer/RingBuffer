@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="RingBuffer (sources)">
-    <output-path>R:/</output-path>
-    <root id="archive" name="RingBuffer-sources.jar">
-      <element id="module-source" name="RingBuffer" />
-    </root>
-  </artifact>
-</component>

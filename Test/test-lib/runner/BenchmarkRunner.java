@@ -1,8 +1,9 @@
 package test.runner;
 
 import eu.menzani.benchmark.Benchmark;
+import eu.menzani.benchmark.BenchmarkListener;
+import eu.menzani.lang.Lang;
 import eu.menzani.lang.Nonblocking;
-import eu.menzani.lang.UncaughtException;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,19 +42,15 @@ class BenchmarkRunner extends Thread {
 
     @Override
     public void run() {
-        BenchmarkListener benchmarkListener = new BenchmarkListener();
-        try {
-            while (true) {
-                Class<? extends Benchmark> testClass = Nonblocking.take(queue);
-                Benchmark benchmark = testClass.getDeclaredConstructor().newInstance();
-                benchmark.launchBenchmark(benchmarkListener);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new UncaughtException(e);
+        BenchmarkListener benchmarkListener = new BenchmarkListenerImpl();
+        while (true) {
+            Class<? extends Benchmark> testClass = Nonblocking.take(queue);
+            Benchmark benchmark = Lang.newInstance(testClass);
+            benchmark.launchBenchmark(benchmarkListener);
         }
     }
 
-    private class BenchmarkListener implements eu.menzani.benchmark.BenchmarkListener {
+    private class BenchmarkListenerImpl implements BenchmarkListener {
         @Override
         public void beginProcessCreate() {
             processLock.lock();
@@ -72,6 +69,15 @@ class BenchmarkRunner extends Thread {
         @Override
         public void updateOutput(String output) {
             testRunner.setOutput(output);
+        }
+
+        @Override
+        public void onErrorLineAdded(String line) {
+            System.err.println(line);
+        }
+
+        @Override
+        public void updateError(String error) {
         }
 
         @Override
