@@ -3,7 +3,7 @@ package org.ringbuffer.marshalling;
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<DirectRingBuffer> {
+public final class DirectRingBufferBuilder extends AbstractDirectRingBufferBuilder<DirectRingBuffer> {
     DirectRingBufferBuilder(DirectClearingRingBufferBuilder builder) {
         super(builder);
     }

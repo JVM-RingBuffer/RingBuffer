@@ -1,4 +1,4 @@
-package org.ringbuffer.clock;
+package org.ringbuffer.dependant;
 
 class ParkedThread {
     Thread thread;

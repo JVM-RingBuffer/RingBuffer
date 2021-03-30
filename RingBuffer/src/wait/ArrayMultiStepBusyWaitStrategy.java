@@ -56,7 +56,7 @@ public class ArrayMultiStepBusyWaitStrategy implements MultiStepBusyWaitStrategy
 
     @Override
     public List<Integer> getStrategiesTicks() {
-        return new IntArrayView(strategiesTicks, 1);
+        return new IntArrayView(strategiesTicks, 1, strategiesTicks.length);
     }
 
     public static class Builder implements MultiStepBusyWaitStrategy.Builder {

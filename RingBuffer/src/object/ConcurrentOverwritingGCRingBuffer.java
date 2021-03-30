@@ -1,5 +1,6 @@
 package org.ringbuffer.object;
 
+import eu.menzani.struct.Arrays;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
@@ -16,11 +17,10 @@ public class ConcurrentOverwritingGCRingBuffer<T> implements RingBuffer<T> {
     private int writePosition;
     private boolean isFull;
 
-    @SuppressWarnings("unchecked")
     public ConcurrentOverwritingGCRingBuffer(int capacity) {
         this.capacity = capacity;
         capacityMinusOne = capacity - 1;
-        buffer = (T[]) new Object[capacity];
+        buffer = Arrays.allocateGeneric(capacity);
     }
 
     @Override

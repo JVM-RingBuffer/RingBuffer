@@ -1,11 +1,11 @@
 package org.ringbuffer.object;
 
 import eu.menzani.lang.Assume;
-
-import java.util.function.Supplier;
+import eu.menzani.object.ObjectFactory;
+import eu.menzani.struct.Arrays;
 
 abstract class AbstractPrefilledRingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
-    private Supplier<? extends T> filler;
+    private ObjectFactory<T> filler;
     // All fields are copied in <init>(AbstractPrefilledRingBufferBuilder<T>)
 
     AbstractPrefilledRingBufferBuilder(int capacity) {
@@ -17,9 +17,9 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends ObjectRingBufferBui
         filler = builder.filler;
     }
 
-    public abstract AbstractPrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler);
+    public abstract AbstractPrefilledRingBufferBuilder<T> fillWith(ObjectFactory<T> filler);
 
-    void fillWith0(Supplier<? extends T> filler) {
+    void fillWith0(ObjectFactory<T> filler) {
         Assume.notNull(filler);
         this.filler = filler;
     }
@@ -35,13 +35,11 @@ abstract class AbstractPrefilledRingBufferBuilder<T> extends ObjectRingBufferBui
     @Override
     T[] getBuffer() {
         T[] buffer = super.getBuffer();
-        for (int i = 0; i < buffer.length; i++) {
-            buffer[i] = filler.get();
-        }
+        Arrays.fill(buffer, filler);
         return buffer;
     }
 
     T getDummyElement() {
-        return filler.get();
+        return filler.newInstance();
     }
 }

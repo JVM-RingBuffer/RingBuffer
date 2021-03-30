@@ -1,16 +1,15 @@
 package org.ringbuffer.object;
 
+import eu.menzani.object.ObjectFactory;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-import java.util.function.Supplier;
-
-public class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
+public final class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBufferBuilder<T> {
     PrefilledRingBufferBuilder(int capacity) {
         super(capacity);
     }
 
     @Override
-    public PrefilledRingBufferBuilder<T> fillWith(Supplier<? extends T> filler) {
+    public PrefilledRingBufferBuilder<T> fillWith(ObjectFactory<T> filler) {
         super.fillWith0(filler);
         return this;
     }

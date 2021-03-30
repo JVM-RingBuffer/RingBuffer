@@ -1,4 +1,4 @@
-package org.ringbuffer.clock;
+package org.ringbuffer.dependant;
 
 import eu.menzani.atomic.AtomicLong;
 import eu.menzani.system.ThreadManipulation;

@@ -2,7 +2,7 @@ package org.ringbuffer.marshalling;
 
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapClearingRingBuffer> {
+public final class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferBuilder<HeapClearingRingBuffer> {
     HeapClearingRingBufferBuilder(int capacity) {
         super(capacity);
     }

@@ -1,11 +1,12 @@
 package org.ringbuffer.object;
 
+import eu.menzani.object.ObjectFactory;
+import eu.menzani.struct.Arrays;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @Contended
 public class ConcurrentOverwritingPrefilledRingBuffer<T> implements PrefilledOverwritingRingBuffer<T> {
@@ -17,14 +18,11 @@ public class ConcurrentOverwritingPrefilledRingBuffer<T> implements PrefilledOve
     private int writePosition;
     private boolean isFull;
 
-    @SuppressWarnings("unchecked")
-    public ConcurrentOverwritingPrefilledRingBuffer(int capacity, Supplier<? extends T> filler) {
+    public ConcurrentOverwritingPrefilledRingBuffer(int capacity, ObjectFactory<T> filler) {
         this.capacity = capacity;
         capacityMinusOne = capacity - 1;
-        buffer = (T[]) new Object[capacity];
-        for (int i = 0; i < capacity; i++) {
-            buffer[i] = filler.get();
-        }
+        buffer = Arrays.allocateGeneric(capacity);
+        Arrays.fill(buffer, filler);
     }
 
     @Override

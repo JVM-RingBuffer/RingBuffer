@@ -1,5 +1,8 @@
 package org.ringbuffer.object;
 
+import eu.menzani.atomic.AtomicArray;
+import eu.menzani.object.ObjectFactory;
+import eu.menzani.struct.Arrays;
 import jdk.internal.vm.annotation.Contended;
 
 public class ConcurrentStack<T> extends Stack<T> {
@@ -8,14 +11,21 @@ public class ConcurrentStack<T> extends Stack<T> {
     @Contended
     private int index;
 
-    @SuppressWarnings("unchecked")
     public ConcurrentStack(int capacity) {
-        elements = (T[]) new Object[capacity];
+        elements = Arrays.allocateGeneric(capacity);
     }
 
     @Override
     public int getCapacity() {
         return elements.length;
+    }
+
+    public void pushMany(int amount, ObjectFactory<T> factory) {
+        int toIndex = index + amount;
+        for (int i = index; i < toIndex; i++) {
+            AtomicArray.setPlain(elements, i, factory.newInstance());
+        }
+        index = toIndex;
     }
 
     public boolean canPush() {
@@ -27,15 +37,15 @@ public class ConcurrentStack<T> extends Stack<T> {
     }
 
     public void push(T element) {
-        elements[index++] = element;
+        AtomicArray.setPlain(elements, index++, element);
     }
 
     public T pop() {
-        return elements[--index];
+        return AtomicArray.getPlain(elements, --index);
     }
 
     public T peek() {
-        return elements[index];
+        return AtomicArray.getPlain(elements, index);
     }
 
     public synchronized boolean isFull() {
@@ -54,15 +64,15 @@ public class ConcurrentStack<T> extends Stack<T> {
 
     @Override
     public synchronized void put(T element) {
-        elements[index++] = element;
+        AtomicArray.setPlain(elements, index++, element);
     }
 
     @Override
     public synchronized T take() {
-        return elements[--index];
+        return AtomicArray.getPlain(elements, --index);
     }
 
     public synchronized T get() {
-        return elements[index];
+        return AtomicArray.getPlain(elements, index);
     }
 }

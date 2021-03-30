@@ -1,9 +1,8 @@
 package org.ringbuffer.object;
 
+import eu.menzani.struct.Arrays;
 import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
-
-import java.util.Arrays;
 
 abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
     private final int capacity;
@@ -49,14 +48,13 @@ abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<Obje
         return capacity - 1;
     }
 
-    @SuppressWarnings("unchecked")
     T[] getBuffer() {
-        return (T[]) new Object[capacity];
+        return Arrays.allocateGeneric(capacity);
     }
 
     boolean[] getPositionNotModified() {
         boolean[] positionNotModified = new boolean[capacity];
-        Arrays.fill(positionNotModified, true);
+        java.util.Arrays.fill(positionNotModified, true);
         return positionNotModified;
     }
 }

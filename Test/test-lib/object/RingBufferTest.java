@@ -1,9 +1,8 @@
 package test.object;
 
 import eu.menzani.lang.Numbers;
+import eu.menzani.object.ObjectFactory;
 import test.AbstractRingBufferTest;
-
-import java.util.function.Supplier;
 
 public abstract class RingBufferTest extends AbstractRingBufferTest {
     static final int BLOCKING_SIZE = 5;
@@ -15,5 +14,5 @@ public abstract class RingBufferTest extends AbstractRingBufferTest {
     static final int BATCH_SIZE = 20;
     static final int BLOCKING_BATCH_SIZE = 4;
 
-    static final Supplier<Event> FILLER = () -> new Event(0);
+    static final ObjectFactory<Event> FILLER = () -> new Event(0);
 }

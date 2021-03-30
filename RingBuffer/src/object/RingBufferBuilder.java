@@ -2,7 +2,7 @@ package org.ringbuffer.object;
 
 import org.ringbuffer.wait.BusyWaitStrategy;
 
-public class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
+public final class RingBufferBuilder<T> extends ObjectRingBufferBuilder<T> {
     private boolean gcEnabled;
 
     RingBufferBuilder(int capacity) {

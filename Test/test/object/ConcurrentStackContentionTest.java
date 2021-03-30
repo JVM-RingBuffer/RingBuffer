@@ -8,9 +8,7 @@ public class ConcurrentStackContentionTest extends RingBufferTest {
         static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
 
         static {
-            for (int i = 0; i < stack.getCapacity() / 2; i++) {
-                stack.push(new Event(0));
-            }
+            stack.pushMany(stack.getCapacity() / 2, FILLER);
         }
     }
 

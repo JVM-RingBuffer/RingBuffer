@@ -4,5 +4,5 @@ module org.ringbuffer {
     exports org.ringbuffer.object;
     exports org.ringbuffer.marshalling;
     exports org.ringbuffer.wait;
-    exports org.ringbuffer.clock;
+    exports org.ringbuffer.dependant;
 }
