@@ -990,9 +990,9 @@ class TestRunner {
                     case STACK:
                         switch (contention.getOption()) {
                             case CONTENTION:
-                                return ConcurrentStackContentionTest.class;
+                                return StackContentionTest.class;
                             case NO_CONTENTION:
-                                return ConcurrentStackTest.class;
+                                return StackTest.class;
                             case UNBLOCKED_CONTENTION:
                         }
                     case COMPLEX:

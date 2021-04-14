@@ -1,14 +1,11 @@
 package test.object;
 
-import org.ringbuffer.object.ObjectRingBuffer;
-import org.ringbuffer.object.PrefilledRingBuffer;
-import org.ringbuffer.object.PrefilledRingBuffer2;
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.*;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
-    TestThread(int numIterations, ObjectRingBuffer<Event> ringBuffer) {
-        super(numIterations, ringBuffer);
+    TestThread(int numIterations, Object dataStructure) {
+        super(numIterations, dataStructure);
     }
 
     @SuppressWarnings("unchecked")
@@ -29,5 +26,10 @@ abstract class TestThread extends AbstractTestThread {
     @SuppressWarnings("unchecked")
     PrefilledRingBuffer2<Event> getPrefilledRingBuffer2() {
         return (PrefilledRingBuffer2<Event>) dataStructure;
+    }
+
+    @SuppressWarnings("unchecked")
+    Stack<Event> getStack() {
+        return (Stack<Event>) dataStructure;
     }
 }

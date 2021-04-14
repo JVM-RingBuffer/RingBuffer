@@ -55,12 +55,12 @@ public abstract class MultiStepBusyWaitStrategyTest extends Benchmark {
         if (isPerfTest) {
             super.runBenchmark();
         } else {
-            test(getNumIterations());
+            measure(getNumIterations());
         }
     }
 
     @Override
-    protected void test(int i) {
+    protected void measure(int i) {
         BusyWaitStrategy strategy = this.strategy;
         for (; i > 0; i--) {
             strategy.reset();

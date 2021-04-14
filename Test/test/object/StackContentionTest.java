@@ -1,11 +1,11 @@
 package test.object;
 
 import eu.menzani.benchmark.Profiler;
-import org.ringbuffer.object.ConcurrentStack;
+import org.ringbuffer.object.Stack;
 
-public class ConcurrentStackContentionTest extends RingBufferTest {
+public class StackContentionTest extends RingBufferTest {
     private static class Holder {
-        static final ConcurrentStack<Event> stack = new ConcurrentStack<>(NOT_ONE_TO_ONE_SIZE * 2);
+        static final Stack<Event> stack = new Stack<>(NOT_ONE_TO_ONE_SIZE * 2);
 
         static {
             stack.pushMany(stack.getCapacity() / 2, FILLER);
@@ -13,7 +13,7 @@ public class ConcurrentStackContentionTest extends RingBufferTest {
     }
 
     public static void main(String[] args) {
-        ConcurrentStackContentionTest test = new ConcurrentStackContentionTest();
+        StackContentionTest test = new StackContentionTest();
         test.doNotCheckSum();
         test.runBenchmark();
     }
@@ -26,7 +26,7 @@ public class ConcurrentStackContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.startGroupAsync(Holder.stack, profiler);
-        return Reader.runGroupAsync(Holder.stack, profiler);
+        StackWriter.startGroupAsync(Holder.stack, profiler);
+        return StackReader.runGroupAsync(Holder.stack, profiler);
     }
 }

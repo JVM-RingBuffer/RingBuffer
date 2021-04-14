@@ -8,7 +8,6 @@
       <sourceFolder url="file://$MODULE_DIR$/test-lib" isTestSource="false" packagePrefix="test" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test" isTestSource="true" packagePrefix="org.ringbuffer" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test-lib" isTestSource="true" packagePrefix="org.ringbuffer" />
-      <excludeFolder url="file://$MODULE_DIR$/cfg" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

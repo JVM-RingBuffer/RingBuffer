@@ -3,7 +3,6 @@
     <option name="MAIN_CLASS_NAME" value="eu.menzani.test.Runner" />
     <module name="Test" />
     <option name="VM_PARAMETERS" value="-ea -Xms2g -Xmx2g -XX:+UseLargePages -XX:+AlwaysPreTouch -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Test" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

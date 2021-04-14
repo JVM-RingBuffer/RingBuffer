@@ -32,6 +32,16 @@ public class ConcurrentPrefilledRingBufferObjectPool<T extends PoolObject> imple
     }
 
     @Override
+    public boolean isFull() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void gc() {
         ringBuffer.forEach(PoolObject::gc);
     }

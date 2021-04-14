@@ -55,7 +55,7 @@ public abstract class AbstractRingBufferTest extends Benchmark {
     }
 
     @Override
-    protected void test(int i) {
+    protected void measure(int i) {
         AbstractTestThread.resetThreadSpreader();
 
         long sum = testSum();
