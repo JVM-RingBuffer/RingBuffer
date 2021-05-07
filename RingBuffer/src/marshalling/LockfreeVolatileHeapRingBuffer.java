@@ -8,7 +8,7 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 import static eu.menzani.struct.HeapBuffer.*;
 
 @Contended
-class LockfreeVolatileHeapRingBuffer extends LockfreeHeapRingBuffer {
+class LockfreeVolatileHeapRingBuffer implements LockfreeHeapRingBuffer {
     private final int capacityMinusOne;
     private final byte[] buffer;
     private final boolean[] positionNotModified;
@@ -18,7 +18,7 @@ class LockfreeVolatileHeapRingBuffer extends LockfreeHeapRingBuffer {
     @Contended
     private int writePosition;
 
-    LockfreeVolatileHeapRingBuffer(HeapRingBufferBuilder builder) {
+    LockfreeVolatileHeapRingBuffer(LockfreeHeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

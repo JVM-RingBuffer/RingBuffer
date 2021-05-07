@@ -10,8 +10,8 @@ public class ProducersToProcessorToConsumersTest extends ProducersToProcessorToC
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(PRODUCERS_RING_BUFFER, profiler);
+        LockfreeWriter.runGroupAsync(PRODUCERS_RING_BUFFER, profiler);
         Processor.runAsync(TOTAL_ELEMENTS, PRODUCERS_RING_BUFFER);
-        return Reader.runGroupAsync(CONSUMERS_RING_BUFFER, profiler);
+        return LockfreePrefilledReader.runGroupAsync(CONSUMERS_RING_BUFFER, profiler);
     }
 }

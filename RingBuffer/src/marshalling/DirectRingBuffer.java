@@ -2,7 +2,7 @@ package org.ringbuffer.marshalling;
 
 public interface DirectRingBuffer extends AbstractDirectRingBuffer {
     /**
-     * If the ring buffer supports multiple writers and is not lock-free, then external synchronization must be performed:
+     * If the ring buffer supports multiple writers, then external synchronization must be performed:
      *
      * <pre>{@code
      * synchronized (ringBuffer) {
@@ -14,9 +14,6 @@ public interface DirectRingBuffer extends AbstractDirectRingBuffer {
      */
     long next(long size);
 
-    /**
-     * If the ring buffer is lock-free, then this method must not be called.
-     */
     void advance(long offset);
 
     static DirectClearingRingBufferBuilder withCapacity(long capacity) {

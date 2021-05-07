@@ -10,7 +10,7 @@ public class LockfreeOneToOneTest extends LockfreeOneToOneContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
+        LockfreeWriter.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
+        return LockfreeReader.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
     }
 }

@@ -7,7 +7,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 @Contended
-class LockfreeAtomicWriteRingBuffer<T> extends LockfreeRingBuffer<T> {
+class LockfreeAtomicWriteRingBuffer<T> implements LockfreeRingBuffer<T> {
     private static final long WRITE_POSITION = Lang.objectFieldOffset(LockfreeAtomicWriteRingBuffer.class, "writePosition");
 
     private final int capacityMinusOne;
@@ -19,7 +19,7 @@ class LockfreeAtomicWriteRingBuffer<T> extends LockfreeRingBuffer<T> {
     @Contended
     private int writePosition;
 
-    LockfreeAtomicWriteRingBuffer(RingBufferBuilder<T> builder) {
+    LockfreeAtomicWriteRingBuffer(LockfreeRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         readBusyWaitStrategy = builder.getReadBusyWaitStrategy();

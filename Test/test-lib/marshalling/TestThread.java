@@ -1,9 +1,6 @@
 package test.marshalling;
 
-import org.ringbuffer.marshalling.DirectClearingRingBuffer;
-import org.ringbuffer.marshalling.DirectRingBuffer;
-import org.ringbuffer.marshalling.HeapClearingRingBuffer;
-import org.ringbuffer.marshalling.HeapRingBuffer;
+import org.ringbuffer.marshalling.*;
 import test.AbstractTestThread;
 
 abstract class TestThread extends AbstractTestThread {
@@ -19,11 +16,19 @@ abstract class TestThread extends AbstractTestThread {
         return (HeapRingBuffer) dataStructure;
     }
 
+    LockfreeHeapRingBuffer getLockfreeHeapRingBuffer() {
+        return (LockfreeHeapRingBuffer) dataStructure;
+    }
+
     DirectClearingRingBuffer getDirectClearingRingBuffer() {
         return (DirectClearingRingBuffer) dataStructure;
     }
 
     DirectRingBuffer getDirectRingBuffer() {
         return (DirectRingBuffer) dataStructure;
+    }
+
+    LockfreeDirectRingBuffer getLockfreeDirectRingBuffer() {
+        return (LockfreeDirectRingBuffer) dataStructure;
     }
 }

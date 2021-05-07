@@ -44,9 +44,9 @@ public final class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferB
     }
 
     @Override
-    public HeapRingBufferBuilder lockfree() {
+    public LockfreeHeapRingBufferBuilder lockfree() {
         super.lockfree0();
-        return new HeapRingBufferBuilder(this);
+        return new LockfreeHeapRingBufferBuilder(this);
     }
 
     @Override
@@ -63,35 +63,29 @@ public final class HeapClearingRingBufferBuilder extends AbstractHeapRingBufferB
 
     @Override
     protected HeapClearingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        switch (concurrency) {
-            case VOLATILE:
-                if (type == RingBufferType.CLEARING) {
+        if (type == RingBufferType.CLEARING) {
+            switch (concurrency) {
+                case VOLATILE:
                     if (copyClass) {
                         return instantiateCopy(VolatileHeapRingBuffer.class);
                     }
                     return new VolatileHeapRingBuffer(this);
-                }
-            case ATOMIC_READ:
-                if (type == RingBufferType.CLEARING) {
+                case ATOMIC_READ:
                     if (copyClass) {
                         return instantiateCopy(AtomicReadHeapRingBuffer.class);
                     }
                     return new AtomicReadHeapRingBuffer(this);
-                }
-            case ATOMIC_WRITE:
-                if (type == RingBufferType.CLEARING) {
+                case ATOMIC_WRITE:
                     if (copyClass) {
                         return instantiateCopy(AtomicWriteHeapRingBuffer.class);
                     }
                     return new AtomicWriteHeapRingBuffer(this);
-                }
-            case CONCURRENT:
-                if (type == RingBufferType.CLEARING) {
+                case CONCURRENT:
                     if (copyClass) {
                         return instantiateCopy(ConcurrentHeapRingBuffer.class);
                     }
                     return new ConcurrentHeapRingBuffer(this);
-                }
+            }
         }
         throw new AssertionError();
     }

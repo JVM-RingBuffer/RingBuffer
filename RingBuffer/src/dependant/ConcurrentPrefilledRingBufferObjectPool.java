@@ -3,10 +3,11 @@ package org.ringbuffer.dependant;
 import eu.menzani.object.ObjectFactory;
 import eu.menzani.object.ObjectPool;
 import eu.menzani.object.PoolObject;
+import org.ringbuffer.object.LockfreeRingBuffer;
 import org.ringbuffer.object.RingBuffer;
 
 public class ConcurrentPrefilledRingBufferObjectPool<T extends PoolObject> implements ObjectPool<T> {
-    private final RingBuffer<T> ringBuffer;
+    private final LockfreeRingBuffer<T> ringBuffer;
 
     public ConcurrentPrefilledRingBufferObjectPool(int capacity, ObjectFactory<T> filler) {
         ringBuffer = RingBuffer.<T>withCapacity(capacity)
@@ -43,6 +44,6 @@ public class ConcurrentPrefilledRingBufferObjectPool<T extends PoolObject> imple
 
     @Override
     public void gc() {
-        ringBuffer.forEach(PoolObject::gc);
+        throw new UnsupportedOperationException();
     }
 }

@@ -4,7 +4,7 @@ import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.DirectRingBuffer;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.INT;
+import static eu.menzani.struct.DirectOffsets.INT;
 
 class SynchronizedDirectReader extends HeapReader {
     static long runGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {

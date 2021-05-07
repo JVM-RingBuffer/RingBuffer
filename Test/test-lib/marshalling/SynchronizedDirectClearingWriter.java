@@ -4,7 +4,7 @@ import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.DirectClearingRingBuffer;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.INT;
+import static eu.menzani.struct.DirectOffsets.INT;
 
 class SynchronizedDirectClearingWriter extends TestThread {
     static TestThreadGroup startGroupAsync(DirectClearingRingBuffer ringBuffer, Profiler profiler) {

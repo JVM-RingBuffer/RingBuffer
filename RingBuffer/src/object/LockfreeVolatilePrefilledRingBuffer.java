@@ -6,7 +6,7 @@ import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 @Contended
-class LockfreeVolatilePrefilledRingBuffer<T> extends LockfreePrefilledRingBuffer<T> {
+class LockfreeVolatilePrefilledRingBuffer<T> implements LockfreePrefilledRingBuffer<T> {
     private final int capacityMinusOne;
     private final T[] buffer;
     private final boolean[] positionNotModified;
@@ -17,7 +17,7 @@ class LockfreeVolatilePrefilledRingBuffer<T> extends LockfreePrefilledRingBuffer
     @Contended
     private int writePosition;
 
-    LockfreeVolatilePrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    LockfreeVolatilePrefilledRingBuffer(LockfreePrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

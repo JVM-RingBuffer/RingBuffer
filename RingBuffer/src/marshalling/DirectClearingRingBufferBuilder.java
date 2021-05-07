@@ -44,9 +44,9 @@ public final class DirectClearingRingBufferBuilder extends AbstractDirectRingBuf
     }
 
     @Override
-    public DirectRingBufferBuilder lockfree() {
+    public LockfreeDirectRingBufferBuilder lockfree() {
         super.lockfree0();
-        return new DirectRingBufferBuilder(this);
+        return new LockfreeDirectRingBufferBuilder(this);
     }
 
     @Override
@@ -63,35 +63,29 @@ public final class DirectClearingRingBufferBuilder extends AbstractDirectRingBuf
 
     @Override
     protected DirectClearingRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        switch (concurrency) {
-            case VOLATILE:
-                if (type == RingBufferType.CLEARING) {
+        if (type == RingBufferType.CLEARING) {
+            switch (concurrency) {
+                case VOLATILE:
                     if (copyClass) {
                         return instantiateCopy(VolatileDirectRingBuffer.class);
                     }
                     return new VolatileDirectRingBuffer(this);
-                }
-            case ATOMIC_READ:
-                if (type == RingBufferType.CLEARING) {
+                case ATOMIC_READ:
                     if (copyClass) {
                         return instantiateCopy(AtomicReadDirectRingBuffer.class);
                     }
                     return new AtomicReadDirectRingBuffer(this);
-                }
-            case ATOMIC_WRITE:
-                if (type == RingBufferType.CLEARING) {
+                case ATOMIC_WRITE:
                     if (copyClass) {
                         return instantiateCopy(AtomicWriteDirectRingBuffer.class);
                     }
                     return new AtomicWriteDirectRingBuffer(this);
-                }
-            case CONCURRENT:
-                if (type == RingBufferType.CLEARING) {
+                case CONCURRENT:
                     if (copyClass) {
                         return instantiateCopy(ConcurrentDirectRingBuffer.class);
                     }
                     return new ConcurrentDirectRingBuffer(this);
-                }
+            }
         }
         throw new AssertionError();
     }

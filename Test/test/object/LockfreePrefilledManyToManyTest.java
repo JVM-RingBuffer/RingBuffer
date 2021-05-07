@@ -10,7 +10,7 @@ public class LockfreePrefilledManyToManyTest extends LockfreePrefilledManyToMany
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        LockfreePrefilledWriter.runGroupAsync(RING_BUFFER, profiler);
+        return LockfreePrefilledReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

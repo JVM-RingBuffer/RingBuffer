@@ -253,9 +253,4 @@ class ConcurrentBlockingRingBuffer<T> implements RingBuffer<T> {
             builder.append(", ");
         }
     }
-
-    @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
-    }
 }

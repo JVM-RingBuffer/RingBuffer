@@ -1,33 +1,33 @@
 package test.marshalling;
 
 import eu.menzani.benchmark.Profiler;
-import org.ringbuffer.marshalling.DirectRingBuffer;
+import org.ringbuffer.marshalling.LockfreeDirectRingBuffer;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.DirectOffsets.INT;
+import static eu.menzani.struct.DirectOffsets.INT;
 
 class LockfreeDirectReader extends HeapReader {
-    static long runGroupAsync(DirectRingBuffer ringBuffer, Profiler profiler) {
+    static long runGroupAsync(LockfreeDirectRingBuffer ringBuffer, Profiler profiler) {
         TestThreadGroup group = new TestThreadGroup(numIterations -> new LockfreeDirectReader(numIterations, ringBuffer));
         group.start(null);
         group.waitForCompletion(profiler);
         return group.getReaderSum();
     }
 
-    static long runAsync(int numIterations, DirectRingBuffer ringBuffer, Profiler profiler) {
+    static long runAsync(int numIterations, LockfreeDirectRingBuffer ringBuffer, Profiler profiler) {
         LockfreeDirectReader reader = new LockfreeDirectReader(numIterations, ringBuffer);
         reader.startNow(null);
         reader.waitForCompletion(profiler);
         return reader.getSum();
     }
 
-    private LockfreeDirectReader(int numIterations, DirectRingBuffer ringBuffer) {
+    private LockfreeDirectReader(int numIterations, LockfreeDirectRingBuffer ringBuffer) {
         super(numIterations, ringBuffer);
     }
 
     @Override
     long collect() {
-        DirectRingBuffer ringBuffer = getDirectRingBuffer();
+        LockfreeDirectRingBuffer ringBuffer = getLockfreeDirectRingBuffer();
         long sum = 0L;
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             sum += ringBuffer.readInt(ringBuffer.take(INT));

@@ -61,47 +61,29 @@ public final class HeapRingBufferBuilder extends AbstractHeapRingBufferBuilder<H
 
     @Override
     protected HeapRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        switch (concurrency) {
-            case VOLATILE:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(VolatileHeapBlockingRingBuffer.class);
-                        }
-                        return new VolatileHeapBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeVolatileHeapRingBuffer(this);
-                }
-            case ATOMIC_READ:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicReadHeapBlockingRingBuffer.class);
-                        }
-                        return new AtomicReadHeapBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicReadHeapRingBuffer(this);
-                }
-            case ATOMIC_WRITE:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicWriteHeapBlockingRingBuffer.class);
-                        }
-                        return new AtomicWriteHeapBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicWriteHeapRingBuffer(this);
-                }
-            case CONCURRENT:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(ConcurrentHeapBlockingRingBuffer.class);
-                        }
-                        return new ConcurrentHeapBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeConcurrentHeapRingBuffer(this);
-                }
+        if (type == RingBufferType.BLOCKING) {
+            switch (concurrency) {
+                case VOLATILE:
+                    if (copyClass) {
+                        return instantiateCopy(VolatileHeapBlockingRingBuffer.class);
+                    }
+                    return new VolatileHeapBlockingRingBuffer(this);
+                case ATOMIC_READ:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicReadHeapBlockingRingBuffer.class);
+                    }
+                    return new AtomicReadHeapBlockingRingBuffer(this);
+                case ATOMIC_WRITE:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicWriteHeapBlockingRingBuffer.class);
+                    }
+                    return new AtomicWriteHeapBlockingRingBuffer(this);
+                case CONCURRENT:
+                    if (copyClass) {
+                        return instantiateCopy(ConcurrentHeapBlockingRingBuffer.class);
+                    }
+                    return new ConcurrentHeapBlockingRingBuffer(this);
+            }
         }
         throw new AssertionError();
     }

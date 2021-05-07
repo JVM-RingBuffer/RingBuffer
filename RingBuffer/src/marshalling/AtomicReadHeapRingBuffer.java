@@ -176,9 +176,4 @@ class AtomicReadHeapRingBuffer implements HeapClearingRingBuffer {
     public double readDouble(int offset) {
         return getDouble(buffer, offset & capacityMinusOne);
     }
-
-    @Override
-    public int take(int size, BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
-    }
 }

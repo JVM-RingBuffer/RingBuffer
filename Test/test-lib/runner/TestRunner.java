@@ -1,6 +1,7 @@
 package test.runner;
 
 import eu.menzani.benchmark.Benchmark;
+import eu.menzani.swing.DisableFocus;
 import test.Config;
 import test.competitors.*;
 import test.marshalling.*;
@@ -61,8 +62,11 @@ class TestRunner {
         frame.setResizable(false);
         frame.setVisible(true);
 
+        DisableFocus disableFocus = new DisableFocus();
+        disableFocus.exclude(outputTextArea);
+        disableFocus.apply(frame);
+
         outputTextArea.setFont(outputTextArea.getFont().deriveFont(16F));
-        outputTextArea.requestFocus();
     }
 
     private void initialize() {
@@ -112,6 +116,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyToManyTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -120,6 +126,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyToManyBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -131,6 +139,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyToManyTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -139,6 +149,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyToManyBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -149,6 +161,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyToManyHeapTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -157,6 +171,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyToManyDirectTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case BLOCKING:
@@ -173,6 +189,8 @@ class TestRunner {
                                                                         return ManyToManyBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyToManyBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -182,6 +200,8 @@ class TestRunner {
                                                                         return ManyToManyBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyToManyBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -194,6 +214,8 @@ class TestRunner {
                                                                         return PrefilledManyToManyBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyToManyBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -203,6 +225,8 @@ class TestRunner {
                                                                         return PrefilledManyToManyBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyToManyBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -214,6 +238,8 @@ class TestRunner {
                                                         return ManyToManyHeapBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyToManyHeapBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -223,9 +249,13 @@ class TestRunner {
                                                         return ManyToManyDirectBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyToManyHeapBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case DISCARDING:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case LOCK_FREE:
                                 switch (elementType.getOption()) {
@@ -238,6 +268,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreeManyToManyTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
@@ -246,6 +278,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreePrefilledManyToManyTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case HEAP:
@@ -255,6 +289,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyToManyHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
@@ -263,6 +299,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyToManyDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                 }
                         }
@@ -283,6 +321,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyReadersTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -291,6 +331,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyReadersBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -302,6 +344,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyReadersTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -310,6 +354,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyReadersBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -320,6 +366,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyReadersHeapTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -328,6 +376,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyReadersDirectTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case BLOCKING:
@@ -344,6 +394,8 @@ class TestRunner {
                                                                         return ManyReadersBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyReadersBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -353,6 +405,8 @@ class TestRunner {
                                                                         return ManyReadersBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyReadersBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -365,6 +419,8 @@ class TestRunner {
                                                                         return PrefilledManyReadersBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyReadersBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -374,6 +430,8 @@ class TestRunner {
                                                                         return PrefilledManyReadersBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyReadersBlockingBatchContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -385,6 +443,8 @@ class TestRunner {
                                                         return ManyReadersHeapBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyReadersHeapBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -394,9 +454,13 @@ class TestRunner {
                                                         return ManyReadersDirectBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyReadersDirectBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case DISCARDING:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case LOCK_FREE:
                                 switch (elementType.getOption()) {
@@ -409,6 +473,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreeManyReadersTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
@@ -417,6 +483,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreePrefilledManyReadersTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case HEAP:
@@ -426,6 +494,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyReadersHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
@@ -434,6 +504,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyReadersDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                 }
                         }
@@ -454,6 +526,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyWritersTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -462,6 +536,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return ManyWritersBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -473,6 +549,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyWritersTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -481,6 +559,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledManyWritersBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -491,6 +571,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyWritersHeapTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -499,6 +581,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return ManyWritersDirectTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case BLOCKING:
@@ -515,6 +599,8 @@ class TestRunner {
                                                                         return ManyWritersBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyWritersBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -524,6 +610,8 @@ class TestRunner {
                                                                         return ManyWritersBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return ManyWritersBlockingBatchContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -536,6 +624,8 @@ class TestRunner {
                                                                         return PrefilledManyWritersBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyWritersBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -545,6 +635,8 @@ class TestRunner {
                                                                         return PrefilledManyWritersBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledManyWritersBlockingBatchContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -556,6 +648,8 @@ class TestRunner {
                                                         return ManyWritersHeapBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyWritersHeapBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -565,9 +659,13 @@ class TestRunner {
                                                         return ManyWritersDirectBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return ManyWritersDirectBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case DISCARDING:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case LOCK_FREE:
                                 switch (elementType.getOption()) {
@@ -580,6 +678,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreeManyWritersTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
@@ -588,6 +688,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreePrefilledManyWritersTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case HEAP:
@@ -597,6 +699,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyWritersHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
@@ -605,6 +709,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeManyWritersDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                 }
                         }
@@ -625,6 +731,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return OneToOneTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -633,6 +741,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return OneToOneBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -644,6 +754,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledOneToOneTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -652,6 +764,8 @@ class TestRunner {
                                                                     case NO_CONTENTION:
                                                                         return PrefilledOneToOneBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -662,6 +776,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return OneToOneHeapTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -670,6 +786,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return OneToOneDirectTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case BLOCKING:
@@ -686,6 +804,8 @@ class TestRunner {
                                                                         return OneToOneBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return OneToOneBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -695,6 +815,8 @@ class TestRunner {
                                                                         return OneToOneBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return OneToOneBlockingBatchContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                     case PREFILLED:
@@ -707,6 +829,8 @@ class TestRunner {
                                                                         return PrefilledOneToOneBlockingTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledOneToOneBlockingContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                             case BATCH:
                                                                 switch (contention.getOption()) {
@@ -716,6 +840,8 @@ class TestRunner {
                                                                         return PrefilledOneToOneBlockingBatchTest.class;
                                                                     case UNBLOCKED_CONTENTION:
                                                                         return PrefilledOneToOneBlockingBatchContentionPerfTest.class;
+                                                                    default:
+                                                                        throw new AssertionError();
                                                                 }
                                                         }
                                                 }
@@ -727,6 +853,8 @@ class TestRunner {
                                                         return OneToOneHeapBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return OneToOneHeapBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case DIRECT:
                                                 switch (contention.getOption()) {
@@ -736,9 +864,13 @@ class TestRunner {
                                                         return OneToOneDirectBlockingTest.class;
                                                     case UNBLOCKED_CONTENTION:
                                                         return OneToOneDirectBlockingContentionPerfTest.class;
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case DISCARDING:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case LOCK_FREE:
                                 switch (elementType.getOption()) {
@@ -751,6 +883,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreeOneToOneTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                             case PREFILLED:
                                                 switch (contention.getOption()) {
@@ -759,6 +893,8 @@ class TestRunner {
                                                     case NO_CONTENTION:
                                                         return LockfreePrefilledOneToOneTest.class;
                                                     case UNBLOCKED_CONTENTION:
+                                                    default:
+                                                        throw new AssertionError();
                                                 }
                                         }
                                     case HEAP:
@@ -768,6 +904,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeOneToOneHeapTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                     case DIRECT:
                                         switch (contention.getOption()) {
@@ -776,6 +914,8 @@ class TestRunner {
                                             case NO_CONTENTION:
                                                 return LockfreeOneToOneDirectTest.class;
                                             case UNBLOCKED_CONTENTION:
+                                            default:
+                                                throw new AssertionError();
                                         }
                                 }
                         }
@@ -789,6 +929,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return AgronaManyToManyTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case MANY_WRITERS:
                         switch (contention.getOption()) {
@@ -797,6 +939,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return AgronaManyWritersTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case VOLATILE:
                         switch (contention.getOption()) {
@@ -805,7 +949,11 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return AgronaOneToOneTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
+                    default:
+                        throw new AssertionError();
                 }
             case JCTOOLS:
                 switch (concurrency.getOption()) {
@@ -816,6 +964,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return JCToolsManyToManyTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case MANY_READERS:
                         switch (contention.getOption()) {
@@ -824,6 +974,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return JCToolsManyReadersTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case MANY_WRITERS:
                         switch (contention.getOption()) {
@@ -832,6 +984,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return JCToolsManyWritersTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case VOLATILE:
                         switch (contention.getOption()) {
@@ -840,6 +994,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return JCToolsOneToOneTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                 }
             case JDK:
@@ -853,6 +1009,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return ArrayManyToManyTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_READERS:
                                 switch (contention.getOption()) {
@@ -861,6 +1019,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return ArrayManyReadersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_WRITERS:
                                 switch (contention.getOption()) {
@@ -869,6 +1029,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return ArrayManyWritersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case VOLATILE:
                                 switch (contention.getOption()) {
@@ -877,6 +1039,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return ArrayOneToOneTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                         }
                     case LINKED_BLOCKING:
@@ -888,6 +1052,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedBlockingManyToManyTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_READERS:
                                 switch (contention.getOption()) {
@@ -896,6 +1062,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedBlockingManyReadersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_WRITERS:
                                 switch (contention.getOption()) {
@@ -904,6 +1072,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedBlockingManyWritersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case VOLATILE:
                                 switch (contention.getOption()) {
@@ -912,6 +1082,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedBlockingOneToOneTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                         }
                     case LINKED_TRANSFER:
@@ -923,6 +1095,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedTransferManyToManyTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_READERS:
                                 switch (contention.getOption()) {
@@ -931,6 +1105,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedTransferManyReadersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_WRITERS:
                                 switch (contention.getOption()) {
@@ -939,6 +1115,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedTransferManyWritersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case VOLATILE:
                                 switch (contention.getOption()) {
@@ -947,6 +1125,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedTransferOneToOneTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                         }
                     case LINKED_CONCURRENT:
@@ -958,6 +1138,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedConcurrentManyToManyTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_READERS:
                                 switch (contention.getOption()) {
@@ -966,6 +1148,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedConcurrentManyReadersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case MANY_WRITERS:
                                 switch (contention.getOption()) {
@@ -974,6 +1158,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedConcurrentManyWritersTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                             case VOLATILE:
                                 switch (contention.getOption()) {
@@ -982,6 +1168,8 @@ class TestRunner {
                                     case NO_CONTENTION:
                                         return LinkedConcurrentOneToOneTest.class;
                                     case UNBLOCKED_CONTENTION:
+                                    default:
+                                        throw new AssertionError();
                                 }
                         }
                 }
@@ -994,6 +1182,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return StackTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case COMPLEX:
                         switch (contention.getOption()) {
@@ -1002,6 +1192,8 @@ class TestRunner {
                             case NO_CONTENTION:
                                 return ProducersToProcessorToConsumersTest.class;
                             case UNBLOCKED_CONTENTION:
+                            default:
+                                throw new AssertionError();
                         }
                     case WAIT:
                         switch (wait.getOption()) {
@@ -1011,6 +1203,8 @@ class TestRunner {
                                 return LinkedMultiStepTest.class;
                             case MANUAL:
                                 return ManualMultiStepTest.class;
+                            default:
+                                throw new AssertionError();
                         }
                     case WAIT_TWO_STEP:
                         switch (wait.getOption()) {
@@ -1020,9 +1214,12 @@ class TestRunner {
                                 return TwoStepLinkedMultiStepTest.class;
                             case MANUAL:
                                 return TwoStepManualMultiStepTest.class;
+                            default:
+                                throw new AssertionError();
                         }
                 }
+            default:
+                throw new AssertionError();
         }
-        throw new AssertionError();
     }
 }

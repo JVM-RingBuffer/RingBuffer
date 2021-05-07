@@ -5,7 +5,7 @@ import org.ringbuffer.AbstractRingBufferBuilder;
 import org.ringbuffer.wait.BusyWaitStrategy;
 
 abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<ObjectRingBuffer<T>> {
-    private final int capacity;
+    final int capacity;
     // All fields are copied in <init>(ObjectRingBufferBuilder<?>)
 
     ObjectRingBufferBuilder(int capacity) {
@@ -26,8 +26,8 @@ abstract class ObjectRingBufferBuilder<T> extends AbstractRingBufferBuilder<Obje
 
     @Override
     protected void lockfree0() {
-        super.lockfree0();
         validateCapacityPowerOfTwo(capacity);
+        super.lockfree0();
     }
 
     @Override

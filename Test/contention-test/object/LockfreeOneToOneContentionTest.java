@@ -1,11 +1,12 @@
 package test.object;
 
 import eu.menzani.benchmark.Profiler;
+import org.ringbuffer.object.LockfreeRingBuffer;
 import org.ringbuffer.object.RingBuffer;
 
 public class LockfreeOneToOneContentionTest extends RingBufferTest {
     public static class Holder {
-        public static final RingBuffer<Event> RING_BUFFER =
+        public static final LockfreeRingBuffer<Event> RING_BUFFER =
                 RingBuffer.<Event>withCapacity(LOCKFREE_ONE_TO_ONE_SIZE)
                         .oneReader()
                         .oneWriter()
@@ -25,7 +26,7 @@ public class LockfreeOneToOneContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        Writer.startAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
+        LockfreeWriter.startAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
+        return LockfreeReader.runAsync(NUM_ITERATIONS, Holder.RING_BUFFER, profiler);
     }
 }

@@ -57,9 +57,9 @@ public final class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBu
     }
 
     @Override
-    public PrefilledRingBufferBuilder<T> lockfree() {
+    public LockfreePrefilledRingBufferBuilder<T> lockfree() {
         super.lockfree0();
-        return this;
+        return new LockfreePrefilledRingBufferBuilder<>(this);
     }
 
     @Override
@@ -76,47 +76,29 @@ public final class PrefilledRingBufferBuilder<T> extends AbstractPrefilledRingBu
 
     @Override
     protected ObjectRingBuffer<T> create(RingBufferConcurrency concurrency, RingBufferType type) {
-        switch (concurrency) {
-            case VOLATILE:
-                switch (type) {
-                    case CLEARING:
-                        if (copyClass) {
-                            return instantiateCopy(VolatilePrefilledRingBuffer.class);
-                        }
-                        return new VolatilePrefilledRingBuffer<>(this);
-                    case LOCKFREE:
-                        return new LockfreeVolatilePrefilledRingBuffer<>(this);
-                }
-            case ATOMIC_READ:
-                switch (type) {
-                    case CLEARING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
-                        }
-                        return new AtomicReadPrefilledRingBuffer<>(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicReadPrefilledRingBuffer<>(this);
-                }
-            case ATOMIC_WRITE:
-                switch (type) {
-                    case CLEARING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
-                        }
-                        return new AtomicWritePrefilledRingBuffer<>(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicWritePrefilledRingBuffer<>(this);
-                }
-            case CONCURRENT:
-                switch (type) {
-                    case CLEARING:
-                        if (copyClass) {
-                            return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
-                        }
-                        return new ConcurrentPrefilledRingBuffer<>(this);
-                    case LOCKFREE:
-                        return new LockfreeConcurrentPrefilledRingBuffer<>(this);
-                }
+        if (type == RingBufferType.CLEARING) {
+            switch (concurrency) {
+                case VOLATILE:
+                    if (copyClass) {
+                        return instantiateCopy(VolatilePrefilledRingBuffer.class);
+                    }
+                    return new VolatilePrefilledRingBuffer<>(this);
+                case ATOMIC_READ:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicReadPrefilledRingBuffer.class);
+                    }
+                    return new AtomicReadPrefilledRingBuffer<>(this);
+                case ATOMIC_WRITE:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicWritePrefilledRingBuffer.class);
+                    }
+                    return new AtomicWritePrefilledRingBuffer<>(this);
+                case CONCURRENT:
+                    if (copyClass) {
+                        return instantiateCopy(ConcurrentPrefilledRingBuffer.class);
+                    }
+                    return new ConcurrentPrefilledRingBuffer<>(this);
+            }
         }
         throw new AssertionError();
     }

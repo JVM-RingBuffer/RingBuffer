@@ -15,7 +15,7 @@ public class Config {
 
     static {
         PropertyConfiguration configuration = new PropertyConfiguration(Path.of("cfg", "test.properties"));
-        int numberOfCores = Platform.getNumberOfCores();
+        int numberOfCores = Platform.getCPUInfo().getNumberOfCores();
         final String useAllCPUs = "USE_ALL_CPUS";
         concurrentProducersAndConsumers = configuration.getInt("concurrent-producers-and-consumers", numberOfCores / 2, useAllCPUs);
         ConcurrentPrefilledRingBufferObjectPoolTest_concurrency = configuration.getInt("ConcurrentPrefilledRingBufferObjectPoolTest-concurrency", numberOfCores, useAllCPUs);

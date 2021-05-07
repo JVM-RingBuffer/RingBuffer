@@ -78,7 +78,7 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
 
     @Override
     public Object getReadMonitor() {
-        return this;
+        return null;
     }
 
     @Override
@@ -205,10 +205,5 @@ class AtomicReadDirectBlockingRingBuffer implements DirectRingBuffer {
     @Override
     public double readDouble(long offset) {
         return getDouble(buffer, offset & capacityMinusOne);
-    }
-
-    @Override
-    public long take(long size, BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
     }
 }

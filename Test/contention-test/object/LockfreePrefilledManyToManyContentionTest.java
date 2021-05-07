@@ -1,10 +1,11 @@
 package test.object;
 
 import eu.menzani.benchmark.Profiler;
+import org.ringbuffer.object.LockfreePrefilledRingBuffer;
 import org.ringbuffer.object.PrefilledRingBuffer;
 
 public class LockfreePrefilledManyToManyContentionTest extends RingBufferTest {
-    public static final PrefilledRingBuffer<Event> RING_BUFFER =
+    public static final LockfreePrefilledRingBuffer<Event> RING_BUFFER =
             PrefilledRingBuffer.<Event>withCapacity(LOCKFREE_NOT_ONE_TO_ONE_SIZE)
                     .fillWith(FILLER)
                     .manyReaders()
@@ -24,7 +25,7 @@ public class LockfreePrefilledManyToManyContentionTest extends RingBufferTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.startGroupAsync(RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        LockfreePrefilledWriter.startGroupAsync(RING_BUFFER, profiler);
+        return LockfreePrefilledReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

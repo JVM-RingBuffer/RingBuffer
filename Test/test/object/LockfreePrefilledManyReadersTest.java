@@ -10,7 +10,7 @@ public class LockfreePrefilledManyReadersTest extends LockfreePrefilledManyReade
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        PrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
-        return Reader.runGroupAsync(RING_BUFFER, profiler);
+        LockfreePrefilledWriter.runAsync(TOTAL_ELEMENTS, RING_BUFFER, profiler);
+        return LockfreePrefilledReader.runGroupAsync(RING_BUFFER, profiler);
     }
 }

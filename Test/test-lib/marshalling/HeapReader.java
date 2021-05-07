@@ -5,7 +5,7 @@ import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.AbstractReader;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.HeapOffsets.INT;
+import static eu.menzani.struct.HeapOffsets.INT;
 
 class HeapReader extends TestThread implements AbstractReader {
     static long runGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {

@@ -19,6 +19,11 @@ abstract class TestThread extends AbstractTestThread {
     }
 
     @SuppressWarnings("unchecked")
+    LockfreeRingBuffer<Event> getLockfreeRingBuffer() {
+        return (LockfreeRingBuffer<Event>) dataStructure;
+    }
+
+    @SuppressWarnings("unchecked")
     PrefilledRingBuffer<Event> getPrefilledRingBuffer() {
         return (PrefilledRingBuffer<Event>) dataStructure;
     }
@@ -26,6 +31,11 @@ abstract class TestThread extends AbstractTestThread {
     @SuppressWarnings("unchecked")
     PrefilledRingBuffer2<Event> getPrefilledRingBuffer2() {
         return (PrefilledRingBuffer2<Event>) dataStructure;
+    }
+
+    @SuppressWarnings("unchecked")
+    LockfreePrefilledRingBuffer<Event> getLockfreePrefilledRingBuffer() {
+        return (LockfreePrefilledRingBuffer<Event>) dataStructure;
     }
 
     @SuppressWarnings("unchecked")

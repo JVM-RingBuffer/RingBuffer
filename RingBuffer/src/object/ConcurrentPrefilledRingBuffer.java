@@ -243,9 +243,4 @@ class ConcurrentPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
             return readPosition;
         }
     }
-
-    @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
-    }
 }

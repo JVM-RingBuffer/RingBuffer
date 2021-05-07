@@ -8,7 +8,7 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 import static eu.menzani.struct.DirectBuffer.*;
 
 @Contended
-class LockfreeVolatileDirectRingBuffer extends LockfreeDirectRingBuffer {
+class LockfreeVolatileDirectRingBuffer implements LockfreeDirectRingBuffer {
     private final long capacityMinusOne;
     private final long buffer;
     private final long positionNotModified;
@@ -18,7 +18,7 @@ class LockfreeVolatileDirectRingBuffer extends LockfreeDirectRingBuffer {
     @Contended
     private long writePosition;
 
-    LockfreeVolatileDirectRingBuffer(DirectRingBufferBuilder builder) {
+    LockfreeVolatileDirectRingBuffer(LockfreeDirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

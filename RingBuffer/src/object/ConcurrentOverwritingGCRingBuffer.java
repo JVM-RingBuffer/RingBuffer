@@ -1,14 +1,13 @@
 package org.ringbuffer.object;
 
+import eu.menzani.concurrent.ThreadLocal;
 import eu.menzani.struct.Arrays;
 import jdk.internal.vm.annotation.Contended;
 import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
-import java.util.function.Consumer;
-
 @Contended
-public class ConcurrentOverwritingGCRingBuffer<T> implements RingBuffer<T> {
+public class ConcurrentOverwritingGCRingBuffer<T> implements OverwritingRingBuffer<T> {
     private final int capacity;
     private final int capacityMinusOne;
     private final T[] buffer;
@@ -57,7 +56,7 @@ public class ConcurrentOverwritingGCRingBuffer<T> implements RingBuffer<T> {
     }
 
     @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
+    public T take(@ThreadLocal BusyWaitStrategy busyWaitStrategy) {
         busyWaitStrategy.reset();
         while (true) {
             synchronized (this) {
@@ -102,35 +101,5 @@ public class ConcurrentOverwritingGCRingBuffer<T> implements RingBuffer<T> {
     @Override
     public synchronized boolean isNotEmpty() {
         return writePosition != readPosition || isFull;
-    }
-
-    @Override
-    public void takeBatch(int size) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T takePlain() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T takeLast() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void forEach(Consumer<T> action) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean contains(T element) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
     }
 }

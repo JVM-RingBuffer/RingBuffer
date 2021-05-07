@@ -241,9 +241,4 @@ class AtomicReadPrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
     private synchronized int getReadPosition() {
         return readPosition;
     }
-
-    @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
-    }
 }

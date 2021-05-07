@@ -4,7 +4,7 @@ import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapRingBuffer;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.HeapOffsets.INT;
+import static eu.menzani.struct.HeapOffsets.INT;
 
 class HeapWriter extends TestThread {
     private static TestThreadGroup startGroupAsync(HeapRingBuffer ringBuffer, Profiler profiler) {

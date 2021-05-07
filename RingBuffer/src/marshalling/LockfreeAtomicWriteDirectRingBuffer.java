@@ -10,7 +10,7 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 import static eu.menzani.struct.DirectBuffer.*;
 
 @Contended
-class LockfreeAtomicWriteDirectRingBuffer extends LockfreeDirectRingBuffer {
+class LockfreeAtomicWriteDirectRingBuffer implements LockfreeDirectRingBuffer {
     private static final long WRITE_POSITION = Lang.objectFieldOffset(LockfreeAtomicWriteDirectRingBuffer.class, "writePosition");
 
     private final long capacityMinusOne;
@@ -22,7 +22,7 @@ class LockfreeAtomicWriteDirectRingBuffer extends LockfreeDirectRingBuffer {
     @Contended
     private long writePosition;
 
-    LockfreeAtomicWriteDirectRingBuffer(DirectRingBufferBuilder builder) {
+    LockfreeAtomicWriteDirectRingBuffer(LockfreeDirectRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

@@ -10,7 +10,7 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 import static eu.menzani.struct.HeapBuffer.*;
 
 @Contended
-class LockfreeAtomicReadHeapRingBuffer extends LockfreeHeapRingBuffer {
+class LockfreeAtomicReadHeapRingBuffer implements LockfreeHeapRingBuffer {
     private static final long READ_POSITION = Lang.objectFieldOffset(LockfreeAtomicReadHeapRingBuffer.class, "readPosition");
 
     private final int capacityMinusOne;
@@ -22,7 +22,7 @@ class LockfreeAtomicReadHeapRingBuffer extends LockfreeHeapRingBuffer {
     @Contended
     private int writePosition;
 
-    LockfreeAtomicReadHeapRingBuffer(HeapRingBufferBuilder builder) {
+    LockfreeAtomicReadHeapRingBuffer(LockfreeHeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

@@ -9,7 +9,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
-class LockfreeConcurrentPrefilledRingBuffer<T> extends LockfreePrefilledRingBuffer<T> {
+class LockfreeConcurrentPrefilledRingBuffer<T> implements LockfreePrefilledRingBuffer<T> {
     private static final long READ_POSITION, WRITE_POSITION;
 
     static {
@@ -27,7 +27,7 @@ class LockfreeConcurrentPrefilledRingBuffer<T> extends LockfreePrefilledRingBuff
     @Contended
     private int writePosition;
 
-    LockfreeConcurrentPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    LockfreeConcurrentPrefilledRingBuffer(LockfreePrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

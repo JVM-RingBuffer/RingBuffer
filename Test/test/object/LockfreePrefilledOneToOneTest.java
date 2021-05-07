@@ -10,7 +10,7 @@ public class LockfreePrefilledOneToOneTest extends LockfreePrefilledOneToOneCont
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(NUM_ITERATIONS);
-        PrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
-        return Reader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        LockfreePrefilledWriter.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
+        return LockfreePrefilledReader.runAsync(NUM_ITERATIONS, RING_BUFFER, profiler);
     }
 }

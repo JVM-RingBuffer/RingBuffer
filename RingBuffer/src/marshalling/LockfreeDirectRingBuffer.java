@@ -1,28 +1,17 @@
 package org.ringbuffer.marshalling;
 
-abstract class LockfreeDirectRingBuffer implements DirectRingBuffer {
-    @Override
-    public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
-    }
+import eu.menzani.struct.AbstractDirectBuffer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
-    @Override
-    public void advance(long offset) {
-        throw new UnsupportedOperationException();
-    }
+public interface LockfreeDirectRingBuffer extends AbstractDirectBuffer {
+    long next(long size);
 
-    @Override
-    public long size() {
-        throw new UnsupportedOperationException();
-    }
+    /**
+     * {@code offset} is the value returned by {@link LockfreeDirectRingBuffer#next(long)}.
+     */
+    void put(long offset);
 
-    @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException();
-    }
+    long take(long size);
 
-    @Override
-    public boolean isNotEmpty() {
-        throw new UnsupportedOperationException();
-    }
+    long take(long size, BusyWaitStrategy busyWaitStrategy);
 }

@@ -2,9 +2,10 @@ package test.marshalling;
 
 import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapRingBuffer;
+import org.ringbuffer.marshalling.LockfreeHeapRingBuffer;
 
 public class LockfreeOneToOneHeapContentionTest extends RingBufferTest {
-    public static final HeapRingBuffer RING_BUFFER =
+    public static final LockfreeHeapRingBuffer RING_BUFFER =
             HeapRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()

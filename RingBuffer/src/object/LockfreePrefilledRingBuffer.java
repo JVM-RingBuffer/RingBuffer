@@ -1,55 +1,17 @@
 package org.ringbuffer.object;
 
-import java.util.function.Consumer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
-abstract class LockfreePrefilledRingBuffer<T> implements PrefilledRingBuffer<T> {
-    @Override
-    public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
-    }
+public interface LockfreePrefilledRingBuffer<T> {
+    int getCapacity();
 
-    @Override
-    public void takeBatch(int size) {
-        throw new UnsupportedOperationException();
-    }
+    int nextKey();
 
-    @Override
-    public T takePlain() {
-        throw new UnsupportedOperationException();
-    }
+    T next(int key);
 
-    @Override
-    public T takeLast() {
-        throw new UnsupportedOperationException();
-    }
+    void put(int key);
 
-    @Override
-    public void forEach(Consumer<T> action) {
-        throw new UnsupportedOperationException();
-    }
+    T take();
 
-    @Override
-    public boolean contains(T element) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int size() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String toString() {
-        throw new UnsupportedOperationException();
-    }
+    T take(BusyWaitStrategy busyWaitStrategy);
 }

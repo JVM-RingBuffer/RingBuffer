@@ -10,7 +10,7 @@ import org.ringbuffer.wait.HintBusyWaitStrategy;
 import static eu.menzani.struct.HeapBuffer.*;
 
 @Contended
-class LockfreeConcurrentHeapRingBuffer extends LockfreeHeapRingBuffer {
+class LockfreeConcurrentHeapRingBuffer implements LockfreeHeapRingBuffer {
     private static final long READ_POSITION, WRITE_POSITION;
 
     static {
@@ -28,7 +28,7 @@ class LockfreeConcurrentHeapRingBuffer extends LockfreeHeapRingBuffer {
     @Contended
     private int writePosition;
 
-    LockfreeConcurrentHeapRingBuffer(HeapRingBufferBuilder builder) {
+    LockfreeConcurrentHeapRingBuffer(LockfreeHeapRingBufferBuilder builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

@@ -21,8 +21,8 @@ abstract class AbstractHeapRingBufferBuilder<T> extends MarshallingRingBufferBui
 
     @Override
     protected void lockfree0() {
-        super.lockfree0();
         validateCapacityPowerOfTwo(capacity);
+        super.lockfree0();
     }
 
     int getCapacity() {

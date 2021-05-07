@@ -257,11 +257,6 @@ class VolatileBlockingPrefilledRingBuffer<T> implements PrefilledRingBuffer2<T> 
 
     @Override
     public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 }

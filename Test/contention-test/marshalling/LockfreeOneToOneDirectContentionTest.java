@@ -2,9 +2,10 @@ package test.marshalling;
 
 import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.DirectRingBuffer;
+import org.ringbuffer.marshalling.LockfreeDirectRingBuffer;
 
 public class LockfreeOneToOneDirectContentionTest extends RingBufferTest {
-    public static final DirectRingBuffer RING_BUFFER =
+    public static final LockfreeDirectRingBuffer RING_BUFFER =
             DirectRingBuffer.withCapacity(ONE_TO_ONE_SIZE)
                     .oneReader()
                     .oneWriter()

@@ -8,7 +8,7 @@ package org.ringbuffer.object;
  * ringBuffer.put(key);
  * }</pre>
  * <p>
- * If the ring buffer supports multiple writers and is not lock-free, then external synchronization must be performed:
+ * If the ring buffer supports multiple writers, then external synchronization must be performed:
  *
  * <pre>{@code
  * synchronized (ringBuffer) {

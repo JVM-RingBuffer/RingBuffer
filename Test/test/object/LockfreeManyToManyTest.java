@@ -10,7 +10,7 @@ public class LockfreeManyToManyTest extends LockfreeManyToManyContentionTest {
     @Override
     protected long testSum() {
         Profiler profiler = createThroughputProfiler(TOTAL_ELEMENTS);
-        Writer.runGroupAsync(Holder.RING_BUFFER, profiler);
-        return Reader.runGroupAsync(Holder.RING_BUFFER, profiler);
+        LockfreeWriter.runGroupAsync(Holder.RING_BUFFER, profiler);
+        return LockfreeReader.runGroupAsync(Holder.RING_BUFFER, profiler);
     }
 }

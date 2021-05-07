@@ -264,11 +264,6 @@ class VolatileDiscardingGCRingBuffer<T> implements RingBuffer<T> {
 
     @Override
     public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public T take(BusyWaitStrategy busyWaitStrategy) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 }

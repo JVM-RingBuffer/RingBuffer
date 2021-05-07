@@ -1,7 +1,7 @@
 package test.marshalling;
 
 import eu.menzani.lang.Numbers;
-import org.ringbuffer.marshalling.HeapOffsets;
+import eu.menzani.struct.HeapOffsets;
 import test.AbstractRingBufferTest;
 
 abstract class RingBufferTest extends AbstractRingBufferTest {

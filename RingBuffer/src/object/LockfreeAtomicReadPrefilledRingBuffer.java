@@ -9,7 +9,7 @@ import org.ringbuffer.wait.BusyWaitStrategy;
 import org.ringbuffer.wait.HintBusyWaitStrategy;
 
 @Contended
-class LockfreeAtomicReadPrefilledRingBuffer<T> extends LockfreePrefilledRingBuffer<T> {
+class LockfreeAtomicReadPrefilledRingBuffer<T> implements LockfreePrefilledRingBuffer<T> {
     private static final long READ_POSITION = Lang.objectFieldOffset(LockfreeAtomicReadPrefilledRingBuffer.class, "readPosition");
 
     private final int capacityMinusOne;
@@ -21,7 +21,7 @@ class LockfreeAtomicReadPrefilledRingBuffer<T> extends LockfreePrefilledRingBuff
     @Contended
     private int writePosition;
 
-    LockfreeAtomicReadPrefilledRingBuffer(PrefilledRingBufferBuilder<T> builder) {
+    LockfreeAtomicReadPrefilledRingBuffer(LockfreePrefilledRingBufferBuilder<T> builder) {
         capacityMinusOne = builder.getCapacityMinusOne();
         buffer = builder.getBuffer();
         positionNotModified = builder.getPositionNotModified();

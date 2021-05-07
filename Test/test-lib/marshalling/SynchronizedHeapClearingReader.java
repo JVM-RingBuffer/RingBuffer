@@ -4,7 +4,7 @@ import eu.menzani.benchmark.Profiler;
 import org.ringbuffer.marshalling.HeapClearingRingBuffer;
 import test.TestThreadGroup;
 
-import static org.ringbuffer.marshalling.HeapOffsets.INT;
+import static eu.menzani.struct.HeapOffsets.INT;
 
 class SynchronizedHeapClearingReader extends HeapReader {
     static long runGroupAsync(HeapClearingRingBuffer ringBuffer, Profiler profiler) {

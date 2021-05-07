@@ -24,12 +24,18 @@ public class ConcurrentPrefilledRingBufferObjectPoolTest extends Benchmark {
         return ResultFormat.THROUGHPUT;
     }
 
-    private static final ObjectPool<PoolObject> objectPool = new ConcurrentObjectPoolThreadLocalCache<>(
-            () -> new PrefilledObjectPool<>(64, PoolObject.FILLER),
-            new ConcurrentPrefilledRingBufferObjectPool<>(Numbers.getNextPowerOfTwo(1_000_000), PoolObject.FILLER));
+    private ObjectPool<PoolObject> objectPool;
+
+    @Override
+    protected void init() {
+        objectPool = new ConcurrentObjectPoolThreadLocalCache<>(
+                () -> new PrefilledObjectPool<>(64, PoolObject.FILLER),
+                new ConcurrentPrefilledRingBufferObjectPool<>(Numbers.getNextPowerOfTwo(1_000_000), PoolObject.FILLER));
+    }
 
     @Override
     protected void measure(int i) {
+        var objectPool = this.objectPool;
         for (; i > 0; i--) {
             PoolObject one = objectPool.release();
             PoolObject two = objectPool.release();

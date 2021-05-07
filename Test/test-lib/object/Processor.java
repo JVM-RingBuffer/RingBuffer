@@ -1,28 +1,27 @@
 package test.object;
 
-import org.ringbuffer.object.ObjectRingBuffer;
-import org.ringbuffer.object.RingBuffer;
+import org.ringbuffer.object.LockfreeRingBuffer;
 
 import static test.object.ProducersToProcessorToConsumersContentionTest.CONSUMERS_RING_BUFFER;
 
 class Processor extends TestThread {
-    static Processor startAsync(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
+    static Processor startAsync(int numIterations, LockfreeRingBuffer<Event> producersRingBuffer) {
         Processor processor = new Processor(numIterations, producersRingBuffer);
         processor.startNow(null);
         return processor;
     }
 
-    static void runAsync(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
+    static void runAsync(int numIterations, LockfreeRingBuffer<Event> producersRingBuffer) {
         startAsync(numIterations, producersRingBuffer).waitForCompletion(null);
     }
 
-    private Processor(int numIterations, ObjectRingBuffer<Event> producersRingBuffer) {
+    private Processor(int numIterations, LockfreeRingBuffer<Event> producersRingBuffer) {
         super(numIterations, producersRingBuffer);
     }
 
     @Override
     protected void loop() {
-        RingBuffer<Event> producersRingBuffer = getRingBuffer();
+        LockfreeRingBuffer<Event> producersRingBuffer = getLockfreeRingBuffer();
         for (int numIterations = getNumIterations(); numIterations > 0; numIterations--) {
             int eventData = producersRingBuffer.take().getData();
             int key = CONSUMERS_RING_BUFFER.nextKey();

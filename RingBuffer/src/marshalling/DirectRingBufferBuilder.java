@@ -61,47 +61,29 @@ public final class DirectRingBufferBuilder extends AbstractDirectRingBufferBuild
 
     @Override
     protected DirectRingBuffer create(RingBufferConcurrency concurrency, RingBufferType type) {
-        switch (concurrency) {
-            case VOLATILE:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(VolatileDirectBlockingRingBuffer.class);
-                        }
-                        return new VolatileDirectBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeVolatileDirectRingBuffer(this);
-                }
-            case ATOMIC_READ:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicReadDirectBlockingRingBuffer.class);
-                        }
-                        return new AtomicReadDirectBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicReadDirectRingBuffer(this);
-                }
-            case ATOMIC_WRITE:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(AtomicWriteDirectBlockingRingBuffer.class);
-                        }
-                        return new AtomicWriteDirectBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeAtomicWriteDirectRingBuffer(this);
-                }
-            case CONCURRENT:
-                switch (type) {
-                    case BLOCKING:
-                        if (copyClass) {
-                            return instantiateCopy(ConcurrentDirectBlockingRingBuffer.class);
-                        }
-                        return new ConcurrentDirectBlockingRingBuffer(this);
-                    case LOCKFREE:
-                        return new LockfreeConcurrentDirectRingBuffer(this);
-                }
+        if (type == RingBufferType.BLOCKING) {
+            switch (concurrency) {
+                case VOLATILE:
+                    if (copyClass) {
+                        return instantiateCopy(VolatileDirectBlockingRingBuffer.class);
+                    }
+                    return new VolatileDirectBlockingRingBuffer(this);
+                case ATOMIC_READ:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicReadDirectBlockingRingBuffer.class);
+                    }
+                    return new AtomicReadDirectBlockingRingBuffer(this);
+                case ATOMIC_WRITE:
+                    if (copyClass) {
+                        return instantiateCopy(AtomicWriteDirectBlockingRingBuffer.class);
+                    }
+                    return new AtomicWriteDirectBlockingRingBuffer(this);
+                case CONCURRENT:
+                    if (copyClass) {
+                        return instantiateCopy(ConcurrentDirectBlockingRingBuffer.class);
+                    }
+                    return new ConcurrentDirectBlockingRingBuffer(this);
+            }
         }
         throw new AssertionError();
     }

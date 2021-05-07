@@ -1,28 +1,17 @@
 package org.ringbuffer.marshalling;
 
-abstract class LockfreeHeapRingBuffer implements HeapRingBuffer {
-    @Override
-    public Object getReadMonitor() {
-        throw new UnsupportedOperationException();
-    }
+import eu.menzani.struct.AbstractHeapBuffer;
+import org.ringbuffer.wait.BusyWaitStrategy;
 
-    @Override
-    public void advance(int offset) {
-        throw new UnsupportedOperationException();
-    }
+public interface LockfreeHeapRingBuffer extends AbstractHeapBuffer {
+    int next(int size);
 
-    @Override
-    public int size() {
-        throw new UnsupportedOperationException();
-    }
+    /**
+     * {@code offset} is the value returned by {@link LockfreeHeapRingBuffer#next(int)}.
+     */
+    void put(int offset);
 
-    @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException();
-    }
+    int take(int size);
 
-    @Override
-    public boolean isNotEmpty() {
-        throw new UnsupportedOperationException();
-    }
+    int take(int size, BusyWaitStrategy busyWaitStrategy);
 }
