@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="JCTools" type="repository">
-    <properties maven-id="org.jctools:jctools-core:3.0.0" />
+    <properties maven-id="org.jctools:jctools-core:3.3.0" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/JCTools/jctools-core-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/JCTools/jctools-core-3.3.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/lib/JCTools/jctools-core-3.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/JCTools/jctools-core-3.3.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

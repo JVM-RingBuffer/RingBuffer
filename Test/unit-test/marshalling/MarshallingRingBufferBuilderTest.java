@@ -1,37 +1,37 @@
 package org.ringbuffer.marshalling;
 
+import bench.marshalling.*;
 import org.ringbuffer.RingBufferBuilderTest;
-import test.marshalling.*;
 
 public class MarshallingRingBufferBuilderTest extends RingBufferBuilderTest {
     public void testClasses() {
-        expectClass(ConcurrentHeapRingBuffer.class, ManyToManyHeapContentionTest.RING_BUFFER);
-        expectClass(ConcurrentHeapBlockingRingBuffer.class, ManyToManyHeapBlockingContentionTest.Holder.RING_BUFFER, ManyToManyHeapBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(ConcurrentDirectRingBuffer.class, ManyToManyDirectContentionTest.RING_BUFFER);
-        expectClass(ConcurrentDirectBlockingRingBuffer.class, ManyToManyDirectBlockingContentionTest.Holder.RING_BUFFER, ManyToManyDirectBlockingContentionPerfTest.RING_BUFFER);
+        expectClass(ConcurrentHeapRingBuffer.class, ManyToManyHeapContentionBenchmark.RING_BUFFER);
+        expectClass(ConcurrentHeapBlockingRingBuffer.class, ManyToManyHeapBlockingContentionBenchmark.Holder.RING_BUFFER, ManyToManyHeapBlockingContentionPerfBenchmark.RING_BUFFER);
+        expectClass(ConcurrentDirectRingBuffer.class, ManyToManyDirectContentionBenchmark.RING_BUFFER);
+        expectClass(ConcurrentDirectBlockingRingBuffer.class, ManyToManyDirectBlockingContentionBenchmark.Holder.RING_BUFFER, ManyToManyDirectBlockingContentionPerfBenchmark.RING_BUFFER);
 
-        expectClass(AtomicReadHeapRingBuffer.class, ManyReadersHeapContentionTest.RING_BUFFER);
-        expectClass(AtomicReadHeapBlockingRingBuffer.class, ManyReadersHeapBlockingContentionTest.Holder.RING_BUFFER, ManyReadersHeapBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(AtomicReadDirectRingBuffer.class, ManyReadersDirectContentionTest.RING_BUFFER);
-        expectClass(AtomicReadDirectBlockingRingBuffer.class, ManyReadersDirectBlockingContentionTest.Holder.RING_BUFFER, ManyReadersDirectBlockingContentionPerfTest.RING_BUFFER);
+        expectClass(AtomicReadHeapRingBuffer.class, ManyReadersHeapContentionBenchmark.RING_BUFFER);
+        expectClass(AtomicReadHeapBlockingRingBuffer.class, ManyReadersHeapBlockingContentionBenchmark.Holder.RING_BUFFER, ManyReadersHeapBlockingContentionPerfBenchmark.RING_BUFFER);
+        expectClass(AtomicReadDirectRingBuffer.class, ManyReadersDirectContentionBenchmark.RING_BUFFER);
+        expectClass(AtomicReadDirectBlockingRingBuffer.class, ManyReadersDirectBlockingContentionBenchmark.Holder.RING_BUFFER, ManyReadersDirectBlockingContentionPerfBenchmark.RING_BUFFER);
 
-        expectClass(AtomicWriteHeapRingBuffer.class, ManyWritersHeapContentionTest.RING_BUFFER);
-        expectClass(AtomicWriteHeapBlockingRingBuffer.class, ManyWritersHeapBlockingContentionTest.Holder.RING_BUFFER, ManyWritersHeapBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(AtomicWriteDirectRingBuffer.class, ManyWritersDirectContentionTest.RING_BUFFER);
-        expectClass(AtomicWriteDirectBlockingRingBuffer.class, ManyWritersDirectBlockingContentionTest.Holder.RING_BUFFER, ManyWritersDirectBlockingContentionPerfTest.RING_BUFFER);
+        expectClass(AtomicWriteHeapRingBuffer.class, ManyWritersHeapContentionBenchmark.RING_BUFFER);
+        expectClass(AtomicWriteHeapBlockingRingBuffer.class, ManyWritersHeapBlockingContentionBenchmark.Holder.RING_BUFFER, ManyWritersHeapBlockingContentionPerfBenchmark.RING_BUFFER);
+        expectClass(AtomicWriteDirectRingBuffer.class, ManyWritersDirectContentionBenchmark.RING_BUFFER);
+        expectClass(AtomicWriteDirectBlockingRingBuffer.class, ManyWritersDirectBlockingContentionBenchmark.Holder.RING_BUFFER, ManyWritersDirectBlockingContentionPerfBenchmark.RING_BUFFER);
 
-        expectClass(VolatileHeapRingBuffer.class, OneToOneHeapContentionTest.RING_BUFFER);
-        expectClass(VolatileHeapBlockingRingBuffer.class, OneToOneHeapBlockingContentionTest.Holder.RING_BUFFER, OneToOneHeapBlockingContentionPerfTest.RING_BUFFER);
-        expectClass(VolatileDirectRingBuffer.class, OneToOneDirectContentionTest.RING_BUFFER);
-        expectClass(VolatileDirectBlockingRingBuffer.class, OneToOneDirectBlockingContentionTest.Holder.RING_BUFFER, OneToOneDirectBlockingContentionPerfTest.RING_BUFFER);
+        expectClass(VolatileHeapRingBuffer.class, OneToOneHeapContentionBenchmark.RING_BUFFER);
+        expectClass(VolatileHeapBlockingRingBuffer.class, OneToOneHeapBlockingContentionBenchmark.Holder.RING_BUFFER, OneToOneHeapBlockingContentionPerfBenchmark.RING_BUFFER);
+        expectClass(VolatileDirectRingBuffer.class, OneToOneDirectContentionBenchmark.RING_BUFFER);
+        expectClass(VolatileDirectBlockingRingBuffer.class, OneToOneDirectBlockingContentionBenchmark.Holder.RING_BUFFER, OneToOneDirectBlockingContentionPerfBenchmark.RING_BUFFER);
 
-        expectClass(LockfreeConcurrentHeapRingBuffer.class, LockfreeManyToManyHeapContentionTest.RING_BUFFER);
-        expectClass(LockfreeConcurrentDirectRingBuffer.class, LockfreeManyToManyDirectContentionTest.RING_BUFFER);
-        expectClass(LockfreeAtomicReadHeapRingBuffer.class, LockfreeManyReadersHeapContentionTest.RING_BUFFER);
-        expectClass(LockfreeAtomicReadDirectRingBuffer.class, LockfreeManyReadersDirectContentionTest.RING_BUFFER);
-        expectClass(LockfreeAtomicWriteHeapRingBuffer.class, LockfreeManyWritersHeapContentionTest.RING_BUFFER);
-        expectClass(LockfreeAtomicWriteDirectRingBuffer.class, LockfreeManyWritersDirectContentionTest.RING_BUFFER);
-        expectClass(LockfreeVolatileHeapRingBuffer.class, LockfreeOneToOneHeapContentionTest.RING_BUFFER);
-        expectClass(LockfreeVolatileDirectRingBuffer.class, LockfreeOneToOneDirectContentionTest.RING_BUFFER);
+        expectClass(LockfreeConcurrentHeapRingBuffer.class, LockfreeManyToManyHeapContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeConcurrentDirectRingBuffer.class, LockfreeManyToManyDirectContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeAtomicReadHeapRingBuffer.class, LockfreeManyReadersHeapContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeAtomicReadDirectRingBuffer.class, LockfreeManyReadersDirectContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeAtomicWriteHeapRingBuffer.class, LockfreeManyWritersHeapContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeAtomicWriteDirectRingBuffer.class, LockfreeManyWritersDirectContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeVolatileHeapRingBuffer.class, LockfreeOneToOneHeapContentionBenchmark.RING_BUFFER);
+        expectClass(LockfreeVolatileDirectRingBuffer.class, LockfreeOneToOneDirectContentionBenchmark.RING_BUFFER);
     }
 }

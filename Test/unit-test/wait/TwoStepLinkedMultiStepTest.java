@@ -1,7 +1,9 @@
 package org.ringbuffer.wait;
 
+import bench.wait.TwoStepLinkedMultiStepBenchmark;
+
 public class TwoStepLinkedMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public TwoStepLinkedMultiStepTest() {
-        super(new test.wait.TwoStepLinkedMultiStepTest(false));
+        super(new TwoStepLinkedMultiStepBenchmark(false));
     }
 }

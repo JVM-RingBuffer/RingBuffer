@@ -1,5 +1,6 @@
 package org.ringbuffer.wait;
 
+import bench.wait.MultiStepBusyWaitStrategyBenchmark;
 import eu.menzani.lang.Assert;
 
 import java.util.ArrayList;
@@ -7,33 +8,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static test.wait.MultiStepBusyWaitStrategyTest.NUM_TICKS;
-import static test.wait.MultiStepBusyWaitStrategyTest.STEP_TICKS;
+import static bench.wait.MultiStepBusyWaitStrategyBenchmark.NUM_TICKS;
+import static bench.wait.MultiStepBusyWaitStrategyBenchmark.STEP_TICKS;
 
 abstract class MultiStepBusyWaitStrategyTest {
-    private final test.wait.MultiStepBusyWaitStrategyTest performanceTest;
+    private final MultiStepBusyWaitStrategyBenchmark benchmark;
     private Iterator<TestBusyWaitStrategy.Event> eventIterator;
     private final List<TestBusyWaitStrategy.Event> events = new ArrayList<>();
 
-    MultiStepBusyWaitStrategyTest(test.wait.MultiStepBusyWaitStrategyTest performanceTest) {
-        this.performanceTest = performanceTest;
+    MultiStepBusyWaitStrategyTest(MultiStepBusyWaitStrategyBenchmark benchmark) {
+        this.benchmark = benchmark;
     }
 
     public void testResetAndTick() {
-        performanceTest.first = new TestBusyWaitStrategy("first");
-        performanceTest.second = new TestBusyWaitStrategy("second");
-        performanceTest.third = new TestBusyWaitStrategy("third");
-        performanceTest.fourth = new TestBusyWaitStrategy("fourth");
-        performanceTest.fifth = new TestBusyWaitStrategy("fifth");
-        performanceTest.sixth = new TestBusyWaitStrategy("sixth");
-        BusyWaitStrategy[] steps = {performanceTest.first, performanceTest.second, performanceTest.third,
-                performanceTest.fourth, performanceTest.fifth, performanceTest.sixth};
+        benchmark.first = new TestBusyWaitStrategy("first");
+        benchmark.second = new TestBusyWaitStrategy("second");
+        benchmark.third = new TestBusyWaitStrategy("third");
+        benchmark.fourth = new TestBusyWaitStrategy("fourth");
+        benchmark.fifth = new TestBusyWaitStrategy("fifth");
+        benchmark.sixth = new TestBusyWaitStrategy("sixth");
+        BusyWaitStrategy[] steps = {benchmark.first, benchmark.second, benchmark.third,
+                benchmark.fourth, benchmark.fifth, benchmark.sixth};
 
-        performanceTest.runBenchmark();
+        benchmark.runBenchmark();
         eventIterator = events.iterator();
 
-        int numIterations = performanceTest.getNumIterations();
-        int numSteps = performanceTest.getNumSteps();
+        int numIterations = benchmark.getNumIterations();
+        int numSteps = benchmark.getNumSteps();
         Assert.notGreater(numSteps, steps.length);
         int numStepsMinusOne = numSteps - 1;
 

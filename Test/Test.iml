@@ -3,9 +3,9 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/contention-test" isTestSource="false" packagePrefix="test" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" packagePrefix="test" />
-      <sourceFolder url="file://$MODULE_DIR$/test-lib" isTestSource="false" packagePrefix="test" />
+      <sourceFolder url="file://$MODULE_DIR$/contention-bench" isTestSource="false" packagePrefix="bench" />
+      <sourceFolder url="file://$MODULE_DIR$/bench" isTestSource="false" packagePrefix="bench" />
+      <sourceFolder url="file://$MODULE_DIR$/bench-lib" isTestSource="false" packagePrefix="bench" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test" isTestSource="true" packagePrefix="org.ringbuffer" />
       <sourceFolder url="file://$MODULE_DIR$/unit-test-lib" isTestSource="true" packagePrefix="org.ringbuffer" />
     </content>

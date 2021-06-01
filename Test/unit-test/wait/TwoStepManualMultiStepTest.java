@@ -1,7 +1,9 @@
 package org.ringbuffer.wait;
 
+import bench.wait.TwoStepManualMultiStepBenchmark;
+
 public class TwoStepManualMultiStepTest extends MultiStepBusyWaitStrategyTest {
     public TwoStepManualMultiStepTest() {
-        super(new test.wait.TwoStepManualMultiStepTest(false));
+        super(new TwoStepManualMultiStepBenchmark(false));
     }
 }
